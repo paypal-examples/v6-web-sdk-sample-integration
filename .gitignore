@@ -1,0 +1,12 @@
+.env
+dist/
+
+### MacOS ###
+.DS_Store
+
+### Node.js ###
+node_modules/
+
+### Devcontainer ###
+.vscode/settings.json
+.devcontainer/update_settings.sh

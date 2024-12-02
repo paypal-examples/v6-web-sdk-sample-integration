@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PayPal Payment Handler</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>PayPal Payment Handler</h1>
+
+    <paypal-button id="paypal-button"></paypal-button>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6-beta/core"
+      onload="onLoad()"
+    ></script>
+
+    <script>
+      async function createOrder() {
+        const orderPayload = {
+          intent: "CAPTURE",
+          purchase_units: [
+            {
+              amount: {
+                currency_code: "USD",
+                value: "10.00",
+                breakdown: {
+                  item_total: {
+                    currency_code: "USD",
+                    value: "10.00",
+                  },
+                },
+              },
+            },
+          ],
+        };
+
+        const response = await fetch(`/order`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderPayload),
+        });
+        const orderData = await response.json();
+
+        return { orderId: orderData.id };
+      }
+
+      async function captureOrder({ orderId, headers }) {
+        const response = await fetch(`/order/${orderId}/capture`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const data = await response.json();
+
+        return data;
+      }
+
+      async function onApprove(data) {
+        console.log("onApprove", data);
+        const orderData = await captureOrder({
+          orderId: data.orderId,
+        });
+        console.log("Capture result", orderData);
+      }
+
+      function onCancel(data) {
+        console.log("onCancel", data);
+      }
+
+      function onError(data) {
+        console.log("onError", data);
+      }
+
+      async function onLoad() {
+        try {
+          const clientToken = "<%= clientToken %>";
+          const sdkInstance = await window.paypal.createInstance({
+            clientToken,
+            components: ["paypal-payments"],
+          });
+          const paypalCheckout = sdkInstance.createPayPalCheckout({
+            onApprove,
+            onCancel,
+            onError,
+          });
+
+          async function onClick() {
+            try {
+              // do not await this checkoutOptionsPromise since it's used for lazy order creation
+              const checkoutOptionsPromise = createOrder();
+
+              await paypalCheckout.start(
+                { paymentFlow: "payment-handler" },
+                checkoutOptionsPromise
+              );
+            } catch (e) {
+              console.error(e);
+            }
+          }
+          const paypalButton = document.querySelector("#paypal-button");
+          paypalButton.addEventListener("click", onClick);
+        } catch (e) {
+          console.error(e);
+        }
+      }
+    </script>
+  </body>
+</html>
