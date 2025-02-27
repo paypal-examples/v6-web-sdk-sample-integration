@@ -1,0 +1,13 @@
+# v6-web-sdk-sample-integration CODEOWNERS file
+#
+# Read more about code owners here: https://docs.github.com/en/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+# Pattern formats are the same as .gitignore: https://git-scm.com/docs/gitignore#_pattern_format
+# Order is important; the last matching pattern takes the most precedence.
+
+###############
+# Global Owners
+###############
+* @paypal-examples/web-sdk
+
+# Changes to this has to be approved by the below folks
+/.github/ @gregjopa @wsbrunson @bdellis
