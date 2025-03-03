@@ -14,16 +14,16 @@ import {
  * Set up PayPal controllers
  * ###################################################################### */
 
-const { PAYPAL_CLIENT_ID, PAYPAL_CLIENT_SECRET } = process.env;
+const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
 
-if (!PAYPAL_CLIENT_ID || !PAYPAL_CLIENT_SECRET) {
+if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
 }
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
-    oAuthClientId: PAYPAL_CLIENT_ID,
-    oAuthClientSecret: PAYPAL_CLIENT_SECRET,
+    oAuthClientId: PAYPAL_SANDBOX_CLIENT_ID,
+    oAuthClientSecret: PAYPAL_SANDBOX_CLIENT_SECRET,
   },
   timeout: 0,
   environment: Environment.Sandbox,
@@ -47,7 +47,7 @@ const oAuthAuthorizationController = new OAuthAuthorizationController(client);
 
 async function getClientToken() {
   const auth = Buffer.from(
-    `${PAYPAL_CLIENT_ID}:${PAYPAL_CLIENT_SECRET}`
+    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`
   ).toString("base64");
 
   const { result } = await oAuthAuthorizationController.requestToken(
