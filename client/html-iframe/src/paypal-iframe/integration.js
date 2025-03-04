@@ -1,5 +1,7 @@
+const getSandboxUrl = (path) => `http://localhost:8080${path}`;
+
 async function getBrowserSafeClientToken() {
-	const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+	const response = await fetch(getSandboxUrl("/paypal-api/auth/browser-safe-client-token"), {
 		method: "GET",
 		headers: {
 			"Content-Type": "application/json",
@@ -11,7 +13,7 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createOrder() {
-	const response = await fetch("/paypal-api/checkout/orders/create", {
+	const response = await fetch(getSandboxUrl("/paypal-api/checkout/orders/create"), {
 		method: "POST",
 		headers: {
 			"Content-Type": "application/json",
@@ -24,7 +26,7 @@ async function createOrder() {
 
 async function captureOrder({ orderId, headers }) {
 	const response = await fetch(
-		`/paypal-api/checkout/orders/${orderId}/capture`,
+		getSandboxUrl(`/paypal-api/checkout/orders/${orderId}/capture`),
 		{
 			method: "POST",
 			headers: {
@@ -38,19 +40,32 @@ async function captureOrder({ orderId, headers }) {
 }
 
 async function onApprove(data) {
-	console.log("onApprove", data);
 	const orderData = await captureOrder({
 		orderId: data.orderId,
 	});
-	console.log("Capture result", orderData);
+
+	sendPostMessageToParent({
+		eventName: "payment-flow-approved",
+		data: orderData,
+	});
 }
 
 function onCancel(data) {
-	console.log("onCancel", data);
+	sendPostMessageToParent({
+		eventName: "payment-flow-canceled",
+		data: {
+			orderId: data?.orderId,
+		},
+	});
 }
 
 function onError(data) {
-	console.log("onError", data);
+	sendPostMessageToParent({
+		eventName: "payment-flow-error",
+		data: {
+			error: data?.error,
+		},
+	});
 }
 
 async function onLoad() {
@@ -85,4 +100,10 @@ async function onLoad() {
 	} catch (e) {
 		console.error(e);
 	}
+}
+
+function sendPostMessageToParent (payload) {
+	const {location, parent} = window;
+	const parentOrigin = new URLSearchParams(location.search).get("origin");
+	parent.postMessage(parent, parentOrigin);
 }
