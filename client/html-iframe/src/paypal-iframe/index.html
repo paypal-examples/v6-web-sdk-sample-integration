@@ -88,12 +88,12 @@
 
           async function onClick() {
             try {
-              // do not await this paymentOptionsPromise since it's used for lazy order creation
-              const paymentOptionsPromise = createOrder();
-
               await paypalOneTimePaymentSession.start(
-                { presentationMode: "payment-handler" },
-                paymentOptionsPromise,
+                {
+									presentationMode: "popup",
+									fullPageOverlay: { enabled: false },
+								},
+                createOrder(),
               );
             } catch (e) {
               console.error(e);
