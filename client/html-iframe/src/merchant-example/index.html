@@ -5,13 +5,13 @@
     <title>PayPal iframe Example</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-		<style>
-			#extraHeight {
-				height: 1000px;
-				width: 100%;
-				background: #00330044;
-			}
-		</style>
+    <style>
+      #extraHeight {
+        height: 1000px;
+        width: 100%;
+        background: #00330044;
+      }
+    </style>
   </head>
   <body>
     <script
@@ -27,22 +27,22 @@
       <span id="merchantDomain"></span>
     </p>
 
-		<p>
-			<span>status from iframe: </span>
-			<span id="postMessageStatus">No messages 😴</span>
-		</p>
+    <p>
+      <span>status from iframe: </span>
+      <span id="postMessageStatus">No messages 😴</span>
+    </p>
 
-		<iframe
-				id="iframe-wrapper"
-				src="http://localhost:3000/?origin=http://localhost:3001"
-				sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-				allow="payment"
-				width="800"
-				height="250"
-		></iframe>
+    <iframe
+        id="iframe-wrapper"
+        src="http://localhost:3000/?origin=http://localhost:3001"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        allow="payment"
+        width="800"
+        height="250"
+    ></iframe>
 
-		<div id="extraHeight">
-			Some extra height
-		</div>
+    <div id="extraHeight">
+      Some extra height
+    </div>
   </body>
 </html>

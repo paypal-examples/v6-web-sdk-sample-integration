@@ -5,6 +5,7 @@ function setupPage () {
 
 function setupPostMessageListener () {
   window.addEventListener("message", (event) => {
+    // It's very important to check that the `origin` is expected to prevent XSS attacks!
     if (event.origin !== "http://localhost:3000") {
       return;
     }
