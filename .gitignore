@@ -10,3 +10,6 @@ node_modules/
 ### Devcontainer ###
 .vscode/settings.json
 .devcontainer/update_settings.sh
+
+### vim ###
+*.sw*
