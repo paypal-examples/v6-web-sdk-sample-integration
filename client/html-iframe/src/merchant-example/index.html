@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PayPal iframe Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <script
+      async
+      src="/app.js"
+      onload="onLoad()"
+    ></script>
+
+    <h1>PayPal iframe Example</h1>
+
+		<iframe
+				id="iframe-wrapper"
+				src="http://localhost:3000/?origin=http://localhost:3001"
+				sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+				allow="payment"
+				width="800"
+				height="250"
+		></iframe>
+		
+  </body>
+</html>
