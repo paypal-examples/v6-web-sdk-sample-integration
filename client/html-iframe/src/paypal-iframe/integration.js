@@ -105,5 +105,5 @@ async function onLoad() {
 function sendPostMessageToParent (payload) {
 	const {location, parent} = window;
 	const parentOrigin = new URLSearchParams(location.search).get("origin");
-	parent.postMessage(parent, parentOrigin);
+	parent.postMessage(payload, parentOrigin);
 }
