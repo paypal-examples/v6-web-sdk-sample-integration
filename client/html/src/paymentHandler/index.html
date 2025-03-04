@@ -17,31 +17,24 @@
     ></script>
 
     <script>
-      async function createOrder() {
-        const orderPayload = {
-          intent: "CAPTURE",
-          purchase_units: [
-            {
-              amount: {
-                currency_code: "USD",
-                value: "10.00",
-                breakdown: {
-                  item_total: {
-                    currency_code: "USD",
-                    value: "10.00",
-                  },
-                },
-              },
-            },
-          ],
-        };
+      async function getBrowserSafeClientToken() {
+        const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        const { access_token } = await response.json();
 
-        const response = await fetch(`/order`, {
+        return access_token;
+      }
+
+      async function createOrder() {
+        const response = await fetch("/paypal-api/checkout/orders/create", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
           },
-          body: JSON.stringify(orderPayload),
         });
         const orderData = await response.json();
 
@@ -49,12 +42,15 @@
       }
 
       async function captureOrder({ orderId, headers }) {
-        const response = await fetch(`/order/${orderId}/capture`, {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
+        const response = await fetch(
+          `/paypal-api/checkout/orders/${orderId}/capture`,
+          {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
           },
-        });
+        );
         const data = await response.json();
 
         return data;
@@ -78,25 +74,26 @@
 
       async function onLoad() {
         try {
-          const clientToken = "<%= clientToken %>";
+          const clientToken = await getBrowserSafeClientToken();
           const sdkInstance = await window.paypal.createInstance({
             clientToken,
             components: ["paypal-payments"],
           });
-          const paypalCheckout = sdkInstance.createPayPalCheckout({
-            onApprove,
-            onCancel,
-            onError,
-          });
+          const paypalOneTimePaymentSession =
+            sdkInstance.createPayPalOneTimePaymentSession({
+              onApprove,
+              onCancel,
+              onError,
+            });
 
           async function onClick() {
             try {
-              // do not await this checkoutOptionsPromise since it's used for lazy order creation
-              const checkoutOptionsPromise = createOrder();
+              // do not await this paymentOptionsPromise since it's used for lazy order creation
+              const paymentOptionsPromise = createOrder();
 
-              await paypalCheckout.start(
-                { paymentFlow: "payment-handler" },
-                checkoutOptionsPromise
+              await paypalOneTimePaymentSession.start(
+                { presentationMode: "payment-handler" },
+                paymentOptionsPromise,
               );
             } catch (e) {
               console.error(e);

@@ -1,0 +1,29 @@
+{
+  "name": "v6-web-sdk-sample-integration-server",
+  "version": "1.0.0",
+  "private": true,
+  "description": "",
+  "main": "src/server.ts",
+  "scripts": {
+    "build": "npm run clean && tsc",
+    "check-node-version": "tsx src/checkNodeVersion.ts",
+    "clean": "rm -rf dist",
+    "dev": "npm run check-node-version && tsx --watch src/server.ts",
+    "start": "NODE_ENV=production node dist/server.js"
+  },
+  "license": "ISC",
+  "dependencies": {
+    "@paypal/paypal-server-sdk": "^0.6.1",
+    "cors": "^2.8.5",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2"
+  },
+  "devDependencies": {
+    "@types/cors": "^2.8.17",
+    "@types/express": "^5.0.0",
+    "@types/node": "^22.13.9",
+    "semver": "^7.7.1",
+    "tsx": "^4.19.3",
+    "typescript": "^5.8.2"
+  }
+}

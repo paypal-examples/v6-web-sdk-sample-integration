@@ -13,7 +13,7 @@ const isValidNodeVersion = semver.satisfies(
 
 // successfully exit when Node version is valid
 if (isValidNodeVersion) {
-  return;
+  process.exit(0);
 }
 
 const output = `

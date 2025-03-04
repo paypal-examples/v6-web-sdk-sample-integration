@@ -1,6 +1,9 @@
-import "dotenv/config";
-import express, { Application, Request, Response } from "express";
-import cors from "cors";
+import { config } from "dotenv";
+import { join } from "path";
+
+const envFilePath = join(__dirname, "../../../", ".env");
+config({ path: envFilePath });
+
 import {
   CheckoutPaymentIntent,
   Client,
@@ -45,26 +48,30 @@ const oAuthAuthorizationController = new OAuthAuthorizationController(client);
  * Token generation helpers
  * ###################################################################### */
 
-async function getClientToken() {
+export async function getBrowserSafeClientToken() {
   const auth = Buffer.from(
-    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`
+    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
   ).toString("base64");
 
-  const { result } = await oAuthAuthorizationController.requestToken(
-    {
-      authorization: `Basic ${auth}`,
-    },
-    { intent: "sdk_init", response_type: "client_token" }
-  );
+  const { body, ...httpResponse } =
+    await oAuthAuthorizationController.requestToken(
+      {
+        authorization: `Basic ${auth}`,
+      },
+      { response_type: "client_token" },
+    );
 
-  return result.accessToken;
+  return {
+    jsonResponse: JSON.parse(String(body)),
+    httpStatusCode: httpResponse.statusCode,
+  };
 }
 
 /* ######################################################################
  * Process transactions
  * ###################################################################### */
 
-const createOrder = async () => {
+export async function createOrder() {
   const { body, ...httpResponse } = await ordersController.ordersCreate({
     body: {
       intent: CheckoutPaymentIntent.Capture,
@@ -84,11 +91,11 @@ const createOrder = async () => {
     jsonResponse: JSON.parse(String(body)),
     httpStatusCode: httpResponse.statusCode,
   };
-};
+}
 
-const captureOrder = async (orderID: string) => {
+export async function captureOrder(orderId: string) {
   const { body, ...httpResponse } = await ordersController.ordersCapture({
-    id: orderID,
+    id: orderId,
     prefer: "return=minimal",
   });
 
@@ -96,50 +103,4 @@ const captureOrder = async (orderID: string) => {
     jsonResponse: JSON.parse(String(body)),
     httpStatusCode: httpResponse.statusCode,
   };
-};
-
-/* ######################################################################
- * Run the server
- * ###################################################################### */
-
-const app = express();
-
-app.set("view engine", "ejs");
-app.set("views", "./client/views");
-
-app.use(cors());
-app.use(express.json());
-
-app.get("/payment-handler", async (req: Request, res: Response) => {
-  const clientToken = await getClientToken();
-  res.render("payment-handler.ejs", {
-    clientToken,
-  });
-});
-
-app.post("/order", async (req: Request, res: Response) => {
-  try {
-    const { jsonResponse, httpStatusCode } = await createOrder();
-    res.status(httpStatusCode).json(jsonResponse);
-  } catch (error) {
-    console.error("Failed to create order:", error);
-    res.status(500).json({ error: "Failed to create order." });
-  }
-});
-
-app.post("/order/:orderID/capture", async (req: Request, res: Response) => {
-  try {
-    const { orderID } = req.params;
-    const { jsonResponse, httpStatusCode } = await captureOrder(orderID);
-    res.status(httpStatusCode).json(jsonResponse);
-  } catch (error) {
-    console.error("Failed to create order:", error);
-    res.status(500).json({ error: "Failed to capture order." });
-  }
-});
-
-const port = process.env.PORT ?? 8080;
-
-app.listen(port, () => {
-  console.log(`Server listening at port ${port}`);
-});
+}
