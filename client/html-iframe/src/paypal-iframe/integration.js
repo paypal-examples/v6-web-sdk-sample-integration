@@ -70,6 +70,8 @@ function onError(data) {
 
 async function onLoad() {
   try {
+    setupPostMessageListener();
+
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
@@ -83,6 +85,8 @@ async function onLoad() {
       });
 
     async function onClick() {
+      sendPostMessageToParent({eventName: "payment-flow-start"});
+
       try {
         await paypalOneTimePaymentSession.start(
           {
@@ -102,8 +106,31 @@ async function onLoad() {
   }
 }
 
+function getParentOrigin () {
+  const parentOrigin = new URLSearchParams(window.location.search).get("origin");
+  return parentOrigin;
+}
+
+function setupPostMessageListener () {
+  window.addEventListener("message", (event) => {
+    // It's very important to check that the `origin` is expected to prevent XSS attacks!
+    if (event.origin !== getParentOrigin()) {
+      return;
+    }
+
+    const {eventName, data} = event.data;
+
+    const statusContainer = document.querySelector("#postMessageStatus");
+    statusContainer.innerHTML = eventName;
+
+    if (eventName === "refocus-payment-window") {
+      // TODO
+    } else if (eventName === "close-payment-window") {
+      // TODO
+    }
+  });
+}
+
 function sendPostMessageToParent (payload) {
-  const {location, parent} = window;
-  const parentOrigin = new URLSearchParams(location.search).get("origin");
-  parent.postMessage(payload, parentOrigin);
+  window.parent.postMessage(payload, getParentOrigin());
 }
