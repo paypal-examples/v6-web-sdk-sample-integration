@@ -72,7 +72,6 @@ async function onLoad() {
         await paypalOneTimePaymentSession.start(
           {
             presentationMode: "payment-handler",
-            fullPageOverlay: { enabled: false },
           },
           createOrder(),
         );
