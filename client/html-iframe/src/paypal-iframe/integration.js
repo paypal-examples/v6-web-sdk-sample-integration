@@ -85,16 +85,19 @@ async function onLoad() {
       });
 
     async function onClick() {
-      sendPostMessageToParent({eventName: "payment-flow-start"});
+      const selectedPresentationMode = document.querySelector("input[name='presentationMode']:checked").value;
+      const paymentFlowConfig = {
+        presentationMode: selectedPresentationMode,
+        fullPageOverlay: { enabled: false },
+      };
+
+      sendPostMessageToParent({
+        eventName: "payment-flow-start",
+        data: {paymentFlowConfig},
+      });
 
       try {
-        await paypalOneTimePaymentSession.start(
-          {
-            presentationMode: "popup",
-            fullPageOverlay: { enabled: false },
-          },
-          createOrder(),
-        );
+        await paypalOneTimePaymentSession.start(paymentFlowConfig, createOrder());
       } catch (e) {
         console.error(e);
       }

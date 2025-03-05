@@ -17,7 +17,10 @@ function setupPostMessageListener (overlayControls) {
     const statusContainer = document.querySelector("#postMessageStatus");
 
     if (eventName === "payment-flow-start") {
-      showOverlay();
+      const {paymentFlowConfig: { presentationMode } } = data;
+      if (presentationMode === "popup") {
+        showOverlay();
+      }
     } else if (eventName === "payment-flow-approved") {
       statusContainer.innerHTML = `🥳 approved, order id ${JSON.stringify(data)}`;
       hideOverlay();

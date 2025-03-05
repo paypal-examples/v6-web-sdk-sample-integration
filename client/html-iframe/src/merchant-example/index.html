@@ -46,15 +46,16 @@
     <div id="mainContainer">
       <h1>PayPal iframe Example</h1>
 
-      <p>
-        <span>merchant page domain:</span>
-        <span id="merchantDomain"></span>
-      </p>
-
-      <p>
-        <span>status from iframe: </span>
-        <span id="postMessageStatus">No messages 😴</span>
-      </p>
+      <ul>
+        <li>
+          <span>merchant page domain:</span>
+          <span id="merchantDomain"></span>
+        </li>
+        <li>
+          <span>status from iframe: </span>
+          <span id="postMessageStatus">No messages 😴</span>
+        </li>
+      </ul>
 
       <iframe
           id="iframeWrapper"
@@ -70,6 +71,7 @@
       </div>
     </div>
 
+    <!-- TODO try out dialog -->
     <div id="overlayContainer" class="hidden">
       <button id="overlayCloseButton">Close</button>
       <button id="overlayRefocusButton">Refocus</button>
