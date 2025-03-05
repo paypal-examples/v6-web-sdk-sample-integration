@@ -20,19 +20,8 @@
         background: #00330044;
       }
 
-      #overlayContainer {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 100%;
+      #overlayContainer::backdrop {
         background: #000000aa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-
-      #overlayContainer.hidden {
-        display: none;
       }
     </style>
   </head>
@@ -72,7 +61,7 @@
     </div>
 
     <!-- TODO try out dialog -->
-    <div id="overlayContainer" class="hidden">
+    <dialog id="overlayContainer">
       <button id="overlayCloseButton">Close</button>
       <button id="overlayRefocusButton">Refocus</button>
     </div>

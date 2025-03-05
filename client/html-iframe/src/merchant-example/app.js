@@ -38,11 +38,11 @@ function setupOverlay () {
   const overlay = document.getElementById('overlayContainer');
 
   const showOverlay = () => {
-    overlay.classList.remove('hidden');
+    overlay.showModal();
   };
 
   const hideOverlay = () => {
-    overlay.classList.add('hidden');
+    overlay.close();
     sendPostMessageToChild({eventName: 'close-payment-window'});
   };
 
