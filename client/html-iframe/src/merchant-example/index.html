@@ -6,10 +6,33 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <style>
+      body {
+        margin: 0;
+      }
+
+      #mainContainer {
+        padding: 10px;
+      }
+
       #extraHeight {
         height: 1000px;
         width: 100%;
         background: #00330044;
+      }
+
+      #overlayContainer {
+        position: absolute;
+        top: 0;
+        height: 100%;
+        width: 100%;
+        background: #000000aa;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+
+      #overlayContainer.hidden {
+        display: none;
       }
     </style>
   </head>
@@ -20,29 +43,36 @@
       onload="onLoad()"
     ></script>
 
-    <h1>PayPal iframe Example</h1>
+    <div id="mainContainer">
+      <h1>PayPal iframe Example</h1>
 
-    <p>
-      <span>merchant page domain:</span>
-      <span id="merchantDomain"></span>
-    </p>
+      <p>
+        <span>merchant page domain:</span>
+        <span id="merchantDomain"></span>
+      </p>
 
-    <p>
-      <span>status from iframe: </span>
-      <span id="postMessageStatus">No messages 😴</span>
-    </p>
+      <p>
+        <span>status from iframe: </span>
+        <span id="postMessageStatus">No messages 😴</span>
+      </p>
 
-    <iframe
-        id="iframe-wrapper"
-        src="http://localhost:3000/?origin=http://localhost:3001"
-        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-        allow="payment"
-        width="800"
-        height="250"
-    ></iframe>
+      <iframe
+          id="iframeWrapper"
+          src="http://localhost:3000/?origin=http://localhost:3001"
+          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+          allow="payment"
+          width="800"
+          height="250"
+      ></iframe>
 
-    <div id="extraHeight">
-      Some extra height
+      <div id="extraHeight">
+        Some extra height
+      </div>
+    </div>
+
+    <div id="overlayContainer" class="hidden">
+      <button id="overlayCloseButton">Close</button>
+      <button id="overlayRefocusButton">Refocus</button>
     </div>
   </body>
 </html>
