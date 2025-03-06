@@ -37,17 +37,21 @@ class PageState {
 
 const pageState = new PageState();
 
-function popupPresentationModePostMessageHandler (event, overlayControls) {
+function popupPresentationModePostMessageHandler (event) {
   const {eventName, data} = event.data;
-  const {showOverlay, hideOverlay} = overlayControls;
+  const overlay = document.getElementById('overlayContainer');
+
   if (eventName === "payment-flow-start") {
-    showOverlay();
+    overlay.showModal();
   } else if (eventName === "payment-flow-approved") {
-    hideOverlay();
+    overlay.close();
+    sendPostMessageToChild({eventName: 'close-payment-window'});
   } else if (eventName === "payment-flow-canceled") {
-    hideOverlay();
+    overlay.close();
+    sendPostMessageToChild({eventName: 'close-payment-window'});
   } else if (eventName === "payment-flow-error") {
-    hideOverlay();
+    overlay.close();
+    sendPostMessageToChild({eventName: 'close-payment-window'});
   }
 }
 
@@ -66,7 +70,7 @@ function modalPresentationModePostMessageHandler (event) {
   }
 }
 
-function setupPostMessageListener (overlayControls) {
+function setupPostMessageListener () {
 
   window.addEventListener("message", (event) => {
     // It's very important to check that the `origin` is expected to prevent XSS attacks!
@@ -83,8 +87,7 @@ function setupPostMessageListener (overlayControls) {
       const { presentationMode } = data;
       pageState.presentationMode = presentationMode;
     } else if (presentationMode === 'popup') {
-// TODO move overlayControls down into the handler somehow
-      popupPresentationModePostMessageHandler(event, overlayControls);
+      popupPresentationModePostMessageHandler(event);
     } else if (presentationMode === 'modal') {
       modalPresentationModePostMessageHandler(event);
     }
@@ -93,10 +96,6 @@ function setupPostMessageListener (overlayControls) {
 
 function setupOverlay () {
   const overlay = document.getElementById('overlayContainer');
-
-  const showOverlay = () => {
-    overlay.showModal();
-  };
 
   const hideOverlay = () => {
     overlay.close();
@@ -112,11 +111,6 @@ function setupOverlay () {
 
   const refocus = document.getElementById('overlayRefocusButton');
   refocus.addEventListener('click', refocusPaymentWindow);
-
-  return {
-    showOverlay,
-    hideOverlay,
-  };
 }
 
 function onLoad() {
@@ -124,9 +118,8 @@ function onLoad() {
     return;
   }
 
-  const overlayControls = setupOverlay();
-
-  setupPostMessageListener(overlayControls);
+  setupOverlay();
+  setupPostMessageListener();
 
   window.setupComplete = true;
 }
