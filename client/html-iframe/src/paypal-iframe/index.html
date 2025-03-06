@@ -4,23 +4,39 @@
     <meta charset="UTF-8" />
     <title>PayPal Payment Handler</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      .stateValue {
+        font-family: monospace;
+      }
+    </style>
   </head>
   <body>
-    <h1>iframe on a different domain</h1>
+    <ul>
+      <li>
+        <span>iframe domain:</span>
+        <span id="iframeDomain" class="stateValue"></span>
+      </li>
+      <li>
+        <span>last message from parent: </span>
+        <span id="postMessageStatus" class="stateValue">No messages 😴</span>
+      </li>
+    </ul>
 
-    <p>
-      <span>iframe domain:</span>
-      <span id="iframeDomain"></span>
-    </p>
-
-    <p>
-      <span>last message from parent: </span>
-      <span id="postMessageStatus">No messages 😴</span>
-    </p>
+    <fieldset>
+      <legend>presentationMode</legend>
+      <div>
+        <label for="presentationMode-popup">popup</label>
+        <input checked type="radio" id="presentationMode-popup" name="presentationMode" value="popup">
+      </div>
+      <div>
+        <label for="presentationMode-modal">modal</label>
+        <input type="radio" id="presentationMode-modal" name="presentationMode" value="modal">
+      </div>
+    </fieldset>
 
     <paypal-button id="paypal-button"></paypal-button>
 
-    <script src="/pageSetup.js"></script>
     <script src="/integration.js"></script>
 
     <script

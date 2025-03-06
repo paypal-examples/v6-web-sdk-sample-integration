@@ -10,6 +10,14 @@
         margin: 0;
       }
 
+      #stateDebug {
+        padding: 5px;
+        position: fixed;
+        bottom: 0;
+        background: grey;
+        z-index: 100;
+      }
+
       #mainContainer {
         padding: 10px;
       }
@@ -20,19 +28,25 @@
         background: #00330044;
       }
 
-      #overlayContainer {
-        position: absolute;
-        top: 0;
-        height: 100%;
-        width: 100%;
+      #overlayContainer::backdrop {
         background: #000000aa;
-        display: flex;
-        align-items: center;
-        justify-content: center;
       }
 
-      #overlayContainer.hidden {
-        display: none;
+      #iframeWrapper {
+        background: #aa55aa;
+        border: none;
+      }
+
+      #iframeWrapper.fullWindow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      .stateValue {
+        font-family: monospace;
       }
     </style>
   </head>
@@ -46,15 +60,21 @@
     <div id="mainContainer">
       <h1>PayPal iframe Example</h1>
 
-      <p>
-        <span>merchant page domain:</span>
-        <span id="merchantDomain"></span>
-      </p>
-
-      <p>
-        <span>status from iframe: </span>
-        <span id="postMessageStatus">No messages 😴</span>
-      </p>
+      <div id="stateDebug">
+        <div>Merchant Page State</div>
+        <li>
+          <span>merchant page domain:</span>
+          <span id="merchantDomain" class="stateValue"></span>
+        </li>
+        <li>
+          <span>last message from iframe: </span>
+          <span id="postMessageStatus" class="stateValue">No messages 😴</span>
+        </li>
+        <li>
+          <span>selected presentationMode from iframe: </span>
+          <span id="presentationMode" class="stateValue">Not set 🤔</span>
+        </li>
+      </div>
 
       <iframe
           id="iframeWrapper"
@@ -70,7 +90,7 @@
       </div>
     </div>
 
-    <div id="overlayContainer" class="hidden">
+    <dialog id="overlayContainer">
       <button id="overlayCloseButton">Close</button>
       <button id="overlayRefocusButton">Refocus</button>
     </div>

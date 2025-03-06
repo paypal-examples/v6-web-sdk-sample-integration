@@ -68,44 +68,6 @@ function onError(data) {
   });
 }
 
-async function onLoad() {
-  try {
-    setupPostMessageListener();
-
-    const clientToken = await getBrowserSafeClientToken();
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken,
-      components: ["paypal-payments"],
-    });
-    const paypalOneTimePaymentSession =
-      sdkInstance.createPayPalOneTimePaymentSession({
-        onApprove,
-        onCancel,
-        onError,
-      });
-
-    async function onClick() {
-      sendPostMessageToParent({eventName: "payment-flow-start"});
-
-      try {
-        await paypalOneTimePaymentSession.start(
-          {
-            presentationMode: "popup",
-            fullPageOverlay: { enabled: false },
-          },
-          createOrder(),
-        );
-      } catch (e) {
-        console.error(e);
-      }
-    }
-    const paypalButton = document.querySelector("#paypal-button");
-    paypalButton.addEventListener("click", onClick);
-  } catch (e) {
-    console.error(e);
-  }
-}
-
 function getParentOrigin () {
   const parentOrigin = new URLSearchParams(window.location.search).get("origin");
   return parentOrigin;
@@ -121,7 +83,7 @@ function setupPostMessageListener () {
     const {eventName, data} = event.data;
 
     const statusContainer = document.querySelector("#postMessageStatus");
-    statusContainer.innerHTML = eventName;
+    statusContainer.innerHTML = JSON.stringify(event.data);
 
     if (eventName === "refocus-payment-window") {
       // TODO
@@ -133,4 +95,77 @@ function setupPostMessageListener () {
 
 function sendPostMessageToParent (payload) {
   window.parent.postMessage(payload, getParentOrigin());
+}
+
+function getSelectedPresentationMode () {
+  return document.querySelector("input[name='presentationMode']:checked").value;
+}
+
+function setupPresentationModeRadio () {
+  const selector = document.querySelectorAll("input[name='presentationMode']");
+  Array.from(selector).forEach((element) => {
+    element.addEventListener("change", (event) => {
+      const { target } = event;
+      if (target.checked) {
+        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: target.value } });
+      }
+    });
+
+    if (element.checked) {
+        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: element.value } });
+    }
+  });
+}
+
+function setupIframeOriginDisplay () {
+  const origin = window.location.origin;
+  document.querySelector('#iframeDomain').innerHTML = origin;
+}
+
+async function onLoad() {
+  if (window.setupComplete) {
+    return;
+  }
+
+  try {
+    setupPresentationModeRadio();
+    setupIframeOriginDisplay();
+    setupPostMessageListener();
+
+    const clientToken = await getBrowserSafeClientToken();
+    const sdkInstance = await window.paypal.createInstance({
+      clientToken,
+      components: ["paypal-payments"],
+    });
+    const paypalOneTimePaymentSession =
+      sdkInstance.createPayPalOneTimePaymentSession({
+        onApprove,
+        onCancel,
+        onError,
+      });
+
+    async function onClick() {
+      const paymentFlowConfig = {
+        presentationMode: getSelectedPresentationMode(),
+        fullPageOverlay: { enabled: false },
+      };
+
+      sendPostMessageToParent({
+        eventName: "payment-flow-start",
+        data: {paymentFlowConfig},
+      });
+
+      try {
+        await paypalOneTimePaymentSession.start(paymentFlowConfig, createOrder());
+      } catch (e) {
+        console.error(e);
+      }
+    }
+    const paypalButton = document.querySelector("#paypal-button");
+    paypalButton.addEventListener("click", onClick);
+  } catch (e) {
+    console.error(e);
+  }
+
+  window.setupComplete = true;
 }
