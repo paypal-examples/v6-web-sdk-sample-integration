@@ -14,6 +14,7 @@
         padding: 5px;
         position: fixed;
         bottom: 0;
+        left: 0;
         background: grey;
         z-index: 100;
       }
@@ -35,6 +36,8 @@
       #iframeWrapper {
         background: #aa55aa;
         border: none;
+        width: 100%;
+        height: 300px;
       }
 
       #iframeWrapper.fullWindow {
@@ -77,8 +80,6 @@
         src="http://localhost:3000/?origin=http://localhost:3001"
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
         allow="payment"
-        width="800"
-        height="250"
       ></iframe>
 
       <div id="extraHeight">Some extra height</div>

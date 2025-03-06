@@ -9,42 +9,52 @@
       .stateValue {
         font-family: monospace;
       }
+
+      #config {
+        padding-bottom: 10px;
+      }
     </style>
   </head>
   <body>
-    <ul>
-      <li>
-        <span>iframe domain:</span>
-        <span id="iframeDomain" class="stateValue"></span>
-      </li>
-      <li>
-        <span>last message from parent: </span>
-        <span id="postMessageStatus" class="stateValue">No messages 😴</span>
-      </li>
-    </ul>
+    <div id="stateDebug">
+      <div>Iframe Page State</div>
+      <ul>
+        <li>
+          <span>iframe domain:</span>
+          <span id="iframeDomain" class="stateValue"></span>
+        </li>
+        <li>
+          <span>last message from parent: </span>
+          <span id="postMessageStatus" class="stateValue">No messages 😴</span>
+        </li>
+      </ul>
+    </div>
 
-    <fieldset>
-      <legend>presentationMode</legend>
-      <div>
-        <label for="presentationMode-popup">popup</label>
-        <input
-          checked
-          type="radio"
-          id="presentationMode-popup"
-          name="presentationMode"
-          value="popup"
-        />
-      </div>
-      <div>
-        <label for="presentationMode-modal">modal</label>
-        <input
-          type="radio"
-          id="presentationMode-modal"
-          name="presentationMode"
-          value="modal"
-        />
-      </div>
-    </fieldset>
+    <div id="config">
+      <div>Payment flow config</div>
+      <fieldset>
+        <legend>presentationMode</legend>
+        <div>
+          <label for="presentationMode-popup">popup</label>
+          <input
+            checked
+            type="radio"
+            id="presentationMode-popup"
+            name="presentationMode"
+            value="popup"
+          />
+        </div>
+        <div>
+          <label for="presentationMode-modal">modal</label>
+          <input
+            type="radio"
+            id="presentationMode-modal"
+            name="presentationMode"
+            value="modal"
+          />
+        </div>
+      </fieldset>
+    </div>
 
     <paypal-button id="paypal-button"></paypal-button>
 
