@@ -68,8 +68,68 @@ function onError(data) {
   });
 }
 
+function getParentOrigin () {
+  const parentOrigin = new URLSearchParams(window.location.search).get("origin");
+  return parentOrigin;
+}
+
+function setupPostMessageListener () {
+  window.addEventListener("message", (event) => {
+    // It's very important to check that the `origin` is expected to prevent XSS attacks!
+    if (event.origin !== getParentOrigin()) {
+      return;
+    }
+
+    const {eventName, data} = event.data;
+
+    const statusContainer = document.querySelector("#postMessageStatus");
+    statusContainer.innerHTML = JSON.stringify(event.data);
+
+    if (eventName === "refocus-payment-window") {
+      // TODO
+    } else if (eventName === "close-payment-window") {
+      // TODO
+    }
+  });
+}
+
+function sendPostMessageToParent (payload) {
+  window.parent.postMessage(payload, getParentOrigin());
+}
+
+function getSelectedPresentationMode () {
+  return document.querySelector("input[name='presentationMode']:checked").value;
+}
+
+function setupPresentationModeRadio () {
+  const selector = document.querySelectorAll("input[name='presentationMode']");
+  Array.from(selector).forEach((element) => {
+    element.addEventListener("change", (event) => {
+      const { target } = event;
+      if (target.checked) {
+        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: target.value } });
+      }
+    });
+
+    if (element.checked) {
+        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: element.value } });
+    }
+  });
+}
+
+function setupIframeOriginDisplay () {
+  const origin = window.location.origin;
+  document.querySelector('#iframeDomain').innerHTML = origin;
+}
+
 async function onLoad() {
+  if (window.setupComplete) {
+    return;
+  }
+
   try {
+    setupPresentationModeRadio();
+    setupIframeOriginDisplay();
     setupPostMessageListener();
 
     const clientToken = await getBrowserSafeClientToken();
@@ -85,9 +145,8 @@ async function onLoad() {
       });
 
     async function onClick() {
-      const selectedPresentationMode = document.querySelector("input[name='presentationMode']:checked").value;
       const paymentFlowConfig = {
-        presentationMode: selectedPresentationMode,
+        presentationMode: getSelectedPresentationMode(),
         fullPageOverlay: { enabled: false },
       };
 
@@ -107,33 +166,6 @@ async function onLoad() {
   } catch (e) {
     console.error(e);
   }
-}
 
-function getParentOrigin () {
-  const parentOrigin = new URLSearchParams(window.location.search).get("origin");
-  return parentOrigin;
-}
-
-function setupPostMessageListener () {
-  window.addEventListener("message", (event) => {
-    // It's very important to check that the `origin` is expected to prevent XSS attacks!
-    if (event.origin !== getParentOrigin()) {
-      return;
-    }
-
-    const {eventName, data} = event.data;
-
-    const statusContainer = document.querySelector("#postMessageStatus");
-    statusContainer.innerHTML = eventName;
-
-    if (eventName === "refocus-payment-window") {
-      // TODO
-    } else if (eventName === "close-payment-window") {
-      // TODO
-    }
-  });
-}
-
-function sendPostMessageToParent (payload) {
-  window.parent.postMessage(payload, getParentOrigin());
+  window.setupComplete = true;
 }

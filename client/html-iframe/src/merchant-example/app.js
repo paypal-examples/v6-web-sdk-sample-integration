@@ -1,6 +1,16 @@
+window.pageState = {
+  presentationMode: null,
+};
+
 function setupPage () {
   const origin = window.location.origin;
   document.querySelector('#merchantDomain').innerHTML = origin;
+}
+
+function setCurrentPresentationMode (presentationMode) {
+  const element = document.getElementById('presentationMode');
+  element.innerHTML = presentationMode;
+  window.pageState.presentationMode = presentationMode;
 }
 
 function setupPostMessageListener (overlayControls) {
@@ -15,20 +25,21 @@ function setupPostMessageListener (overlayControls) {
     const {eventName, data} = event.data;
 
     const statusContainer = document.querySelector("#postMessageStatus");
+    statusContainer.innerHTML = JSON.stringify(event.data);
 
-    if (eventName === "payment-flow-start") {
+    if (eventName === 'presentationMode-changed') {
+      const { presentationMode } = data;
+      setCurrentPresentationMode(presentationMode);
+    } else if (eventName === "payment-flow-start") {
       const {paymentFlowConfig: { presentationMode } } = data;
       if (presentationMode === "popup") {
         showOverlay();
       }
     } else if (eventName === "payment-flow-approved") {
-      statusContainer.innerHTML = `🥳 approved, order id ${JSON.stringify(data)}`;
       hideOverlay();
     } else if (eventName === "payment-flow-canceled") {
-      statusContainer.innerHTML = `🙅 canceled, order id ${data.orderId}`;
       hideOverlay();
     } else if (eventName === "payment-flow-error") {
-      statusContainer.innerHTML = `😱 error, order id ${data.error.message}`;
       hideOverlay();
     }
   });

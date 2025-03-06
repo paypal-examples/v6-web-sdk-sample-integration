@@ -23,6 +23,10 @@
       #overlayContainer::backdrop {
         background: #000000aa;
       }
+
+      #postMessageStatus {
+        font-family: monospace;
+      }
     </style>
   </head>
   <body>
@@ -41,8 +45,12 @@
           <span id="merchantDomain"></span>
         </li>
         <li>
-          <span>status from iframe: </span>
+          <span>last message from iframe: </span>
           <span id="postMessageStatus">No messages 😴</span>
+        </li>
+        <li>
+          <span>selected presentationMode from iframe: </span>
+          <span id="presentationMode">Not set 🤔</span>
         </li>
       </ul>
 
