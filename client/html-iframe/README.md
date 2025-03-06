@@ -14,8 +14,8 @@ To start this example:
 
 2. Start the merchant page and iframe servers (uses [`concurrently`](https://www.npmjs.com/package/concurrently)):
 
-    ```
-    npm start
-    ```
+   ```
+   npm start
+   ```
 
 3. Navigate to `localhost:3001` to see the page.
