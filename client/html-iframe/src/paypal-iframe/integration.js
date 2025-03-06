@@ -74,8 +74,10 @@ function onError(data) {
   });
 }
 
-function getParentOrigin () {
-  const parentOrigin = new URLSearchParams(window.location.search).get("origin");
+function getParentOrigin() {
+  const parentOrigin = new URLSearchParams(window.location.search).get(
+    "origin",
+  );
   return parentOrigin;
 }
 
@@ -103,29 +105,35 @@ function sendPostMessageToParent(payload) {
   window.parent.postMessage(payload, getParentOrigin());
 }
 
-function getSelectedPresentationMode () {
+function getSelectedPresentationMode() {
   return document.querySelector("input[name='presentationMode']:checked").value;
 }
 
-function setupPresentationModeRadio () {
+function setupPresentationModeRadio() {
   const selector = document.querySelectorAll("input[name='presentationMode']");
   Array.from(selector).forEach((element) => {
     element.addEventListener("change", (event) => {
       const { target } = event;
       if (target.checked) {
-        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: target.value } });
+        sendPostMessageToParent({
+          eventName: "presentationMode-changed",
+          data: { presentationMode: target.value },
+        });
       }
     });
 
     if (element.checked) {
-        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: element.value } });
+      sendPostMessageToParent({
+        eventName: "presentationMode-changed",
+        data: { presentationMode: element.value },
+      });
     }
   });
 }
 
-function setupIframeOriginDisplay () {
+function setupIframeOriginDisplay() {
   const origin = window.location.origin;
-  document.querySelector('#iframeDomain').innerHTML = origin;
+  document.querySelector("#iframeDomain").innerHTML = origin;
 }
 
 async function onLoad() {
@@ -158,11 +166,14 @@ async function onLoad() {
 
       sendPostMessageToParent({
         eventName: "payment-flow-start",
-        data: {paymentFlowConfig},
+        data: { paymentFlowConfig },
       });
 
       try {
-        await paypalOneTimePaymentSession.start(paymentFlowConfig, createOrder());
+        await paypalOneTimePaymentSession.start(
+          paymentFlowConfig,
+          createOrder(),
+        );
       } catch (e) {
         console.error(e);
       }
