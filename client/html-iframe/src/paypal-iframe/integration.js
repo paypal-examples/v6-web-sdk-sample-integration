@@ -1,24 +1,30 @@
 const getSandboxUrl = (path) => `http://localhost:8080${path}`;
 
 async function getBrowserSafeClientToken() {
-  const response = await fetch(getSandboxUrl("/paypal-api/auth/browser-safe-client-token"), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    getSandboxUrl("/paypal-api/auth/browser-safe-client-token"),
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const { access_token } = await response.json();
 
   return access_token;
 }
 
 async function createOrder() {
-  const response = await fetch(getSandboxUrl("/paypal-api/checkout/orders/create"), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    getSandboxUrl("/paypal-api/checkout/orders/create"),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const orderData = await response.json();
 
   return { orderId: orderData.id };
@@ -68,19 +74,21 @@ function onError(data) {
   });
 }
 
-function getParentOrigin () {
-  const parentOrigin = new URLSearchParams(window.location.search).get("origin");
+function getParentOrigin() {
+  const parentOrigin = new URLSearchParams(window.location.search).get(
+    "origin",
+  );
   return parentOrigin;
 }
 
-function setupPostMessageListener () {
+function setupPostMessageListener() {
   window.addEventListener("message", (event) => {
     // It's very important to check that the `origin` is expected to prevent XSS attacks!
     if (event.origin !== getParentOrigin()) {
       return;
     }
 
-    const {eventName, data} = event.data;
+    const { eventName, data } = event.data;
 
     const statusContainer = document.querySelector("#postMessageStatus");
     statusContainer.innerHTML = JSON.stringify(event.data);
@@ -93,33 +101,39 @@ function setupPostMessageListener () {
   });
 }
 
-function sendPostMessageToParent (payload) {
+function sendPostMessageToParent(payload) {
   window.parent.postMessage(payload, getParentOrigin());
 }
 
-function getSelectedPresentationMode () {
+function getSelectedPresentationMode() {
   return document.querySelector("input[name='presentationMode']:checked").value;
 }
 
-function setupPresentationModeRadio () {
+function setupPresentationModeRadio() {
   const selector = document.querySelectorAll("input[name='presentationMode']");
   Array.from(selector).forEach((element) => {
     element.addEventListener("change", (event) => {
       const { target } = event;
       if (target.checked) {
-        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: target.value } });
+        sendPostMessageToParent({
+          eventName: "presentationMode-changed",
+          data: { presentationMode: target.value },
+        });
       }
     });
 
     if (element.checked) {
-        sendPostMessageToParent({ eventName: 'presentationMode-changed', data: { presentationMode: element.value } });
+      sendPostMessageToParent({
+        eventName: "presentationMode-changed",
+        data: { presentationMode: element.value },
+      });
     }
   });
 }
 
-function setupIframeOriginDisplay () {
+function setupIframeOriginDisplay() {
   const origin = window.location.origin;
-  document.querySelector('#iframeDomain').innerHTML = origin;
+  document.querySelector("#iframeDomain").innerHTML = origin;
 }
 
 async function onLoad() {
@@ -152,11 +166,14 @@ async function onLoad() {
 
       sendPostMessageToParent({
         eventName: "payment-flow-start",
-        data: {paymentFlowConfig},
+        data: { paymentFlowConfig },
       });
 
       try {
-        await paypalOneTimePaymentSession.start(paymentFlowConfig, createOrder());
+        await paypalOneTimePaymentSession.start(
+          paymentFlowConfig,
+          createOrder(),
+        );
       } catch (e) {
         console.error(e);
       }

@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -51,11 +51,7 @@
     </style>
   </head>
   <body>
-    <script
-      async
-      src="/app.js"
-      onload="onLoad()"
-    ></script>
+    <script async src="/app.js" onload="onLoad()"></script>
 
     <div id="mainContainer">
       <h1>PayPal iframe Example</h1>
@@ -77,22 +73,20 @@
       </div>
 
       <iframe
-          id="iframeWrapper"
-          src="http://localhost:3000/?origin=http://localhost:3001"
-          sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
-          allow="payment"
-          width="800"
-          height="250"
+        id="iframeWrapper"
+        src="http://localhost:3000/?origin=http://localhost:3001"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
+        allow="payment"
+        width="800"
+        height="250"
       ></iframe>
 
-      <div id="extraHeight">
-        Some extra height
-      </div>
+      <div id="extraHeight">Some extra height</div>
     </div>
 
     <dialog id="overlayContainer">
       <button id="overlayCloseButton">Close</button>
       <button id="overlayRefocusButton">Refocus</button>
-    </div>
+    </dialog>
   </body>
 </html>
