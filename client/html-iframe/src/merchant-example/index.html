@@ -10,6 +10,14 @@
         margin: 0;
       }
 
+      #stateDebug {
+        padding: 5px;
+        position: fixed;
+        bottom: 0;
+        background: grey;
+        z-index: 100;
+      }
+
       #mainContainer {
         padding: 10px;
       }
@@ -24,7 +32,20 @@
         background: #000000aa;
       }
 
-      #postMessageStatus {
+      #iframeWrapper {
+        background: #aa55aa;
+        border: none;
+      }
+
+      #iframeWrapper.fullWindow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      .stateValue {
         font-family: monospace;
       }
     </style>
@@ -39,20 +60,21 @@
     <div id="mainContainer">
       <h1>PayPal iframe Example</h1>
 
-      <ul>
+      <div id="stateDebug">
+        <div>Merchant Page State</div>
         <li>
           <span>merchant page domain:</span>
-          <span id="merchantDomain"></span>
+          <span id="merchantDomain" class="stateValue"></span>
         </li>
         <li>
           <span>last message from iframe: </span>
-          <span id="postMessageStatus">No messages 😴</span>
+          <span id="postMessageStatus" class="stateValue">No messages 😴</span>
         </li>
         <li>
           <span>selected presentationMode from iframe: </span>
-          <span id="presentationMode">Not set 🤔</span>
+          <span id="presentationMode" class="stateValue">Not set 🤔</span>
         </li>
-      </ul>
+      </div>
 
       <iframe
           id="iframeWrapper"

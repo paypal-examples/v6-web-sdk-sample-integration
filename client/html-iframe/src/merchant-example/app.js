@@ -1,29 +1,41 @@
 class PageState {
   state = {
     presentationMode: null,
+    lastPostMessage: null,
+    merchantDomain: null,
   };
+
+  constructor() {
+    this.merchantDomain = window.location.origin;
+  }
 
   set presentationMode (value) {
     this.state.presentationMode = value;
+    const element = document.getElementById('presentationMode');
+    element.innerHTML = value;
   }
 
   get presentationMode () {
     return this.state.presentationMode;
   }
+
+  set lastPostMessage (event) {
+    const statusContainer = document.getElementById("postMessageStatus");
+    statusContainer.innerHTML = JSON.stringify(event.data);
+    this.state.lastPostMessage = event;
+  }
+
+  get lastPostMessage () {
+    return this.state.lastPostMessage;
+  }
+
+  set merchantDomain (value) {
+    document.getElementById('merchantDomain').innerHTML = value;
+    this.state.merchantDomain = value;
+  }
 }
 
 const pageState = new PageState();
-
-function setupPage () {
-  const origin = window.location.origin;
-  document.querySelector('#merchantDomain').innerHTML = origin;
-}
-
-function setCurrentPresentationMode (presentationMode) {
-  const element = document.getElementById('presentationMode');
-  element.innerHTML = presentationMode;
-  pageState.presentationMode = presentationMode;
-}
 
 function popupPresentationModePostMessageHandler (event, overlayControls) {
   const {eventName, data} = event.data;
@@ -41,14 +53,16 @@ function popupPresentationModePostMessageHandler (event, overlayControls) {
 
 function modalPresentationModePostMessageHandler (event) {
   const {eventName, data} = event.data;
+  const iframe = document.getElementById("iframeWrapper");
+
   if (eventName === "payment-flow-start") {
-    // TODO
+    iframe.classList.add('fullWindow');
   } else if (eventName === "payment-flow-approved") {
-    // TODO
+    iframe.classList.remove('fullWindow');
   } else if (eventName === "payment-flow-canceled") {
-    // TODO
+    iframe.classList.remove('fullWindow');
   } else if (eventName === "payment-flow-error") {
-    // TODO
+    iframe.classList.remove('fullWindow');
   }
 }
 
@@ -60,16 +74,14 @@ function setupPostMessageListener (overlayControls) {
       return;
     }
 
+    pageState.lastPostMessage = event;
     const {eventName, data} = event.data;
-
-    const statusContainer = document.querySelector("#postMessageStatus");
-    statusContainer.innerHTML = JSON.stringify(event.data);
 
     const { presentationMode } = pageState;
 
     if (eventName === 'presentationMode-changed') {
       const { presentationMode } = data;
-      setCurrentPresentationMode(presentationMode);
+      pageState.presentationMode = presentationMode;
     } else if (presentationMode === 'popup') {
 // TODO move overlayControls down into the handler somehow
       popupPresentationModePostMessageHandler(event, overlayControls);
@@ -111,8 +123,6 @@ function onLoad() {
   if (window.setupComplete) {
     return;
   }
-
-  setupPage();
 
   const overlayControls = setupOverlay();
 
