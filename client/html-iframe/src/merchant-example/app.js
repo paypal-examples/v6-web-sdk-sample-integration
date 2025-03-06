@@ -1,6 +1,18 @@
-window.pageState = {
-  presentationMode: null,
-};
+class PageState {
+  state = {
+    presentationMode: null,
+  };
+
+  set presentationMode (value) {
+    this.state.presentationMode = value;
+  }
+
+  get presentationMode () {
+    return this.state.presentationMode;
+  }
+}
+
+const pageState = new PageState();
 
 function setupPage () {
   const origin = window.location.origin;
@@ -10,11 +22,37 @@ function setupPage () {
 function setCurrentPresentationMode (presentationMode) {
   const element = document.getElementById('presentationMode');
   element.innerHTML = presentationMode;
-  window.pageState.presentationMode = presentationMode;
+  pageState.presentationMode = presentationMode;
+}
+
+function popupPresentationModePostMessageHandler (event, overlayControls) {
+  const {eventName, data} = event.data;
+  const {showOverlay, hideOverlay} = overlayControls;
+  if (eventName === "payment-flow-start") {
+    showOverlay();
+  } else if (eventName === "payment-flow-approved") {
+    hideOverlay();
+  } else if (eventName === "payment-flow-canceled") {
+    hideOverlay();
+  } else if (eventName === "payment-flow-error") {
+    hideOverlay();
+  }
+}
+
+function modalPresentationModePostMessageHandler (event) {
+  const {eventName, data} = event.data;
+  if (eventName === "payment-flow-start") {
+    // TODO
+  } else if (eventName === "payment-flow-approved") {
+    // TODO
+  } else if (eventName === "payment-flow-canceled") {
+    // TODO
+  } else if (eventName === "payment-flow-error") {
+    // TODO
+  }
 }
 
 function setupPostMessageListener (overlayControls) {
-  const {showOverlay, hideOverlay} = overlayControls;
 
   window.addEventListener("message", (event) => {
     // It's very important to check that the `origin` is expected to prevent XSS attacks!
@@ -27,20 +65,16 @@ function setupPostMessageListener (overlayControls) {
     const statusContainer = document.querySelector("#postMessageStatus");
     statusContainer.innerHTML = JSON.stringify(event.data);
 
+    const { presentationMode } = pageState;
+
     if (eventName === 'presentationMode-changed') {
       const { presentationMode } = data;
       setCurrentPresentationMode(presentationMode);
-    } else if (eventName === "payment-flow-start") {
-      const {paymentFlowConfig: { presentationMode } } = data;
-      if (presentationMode === "popup") {
-        showOverlay();
-      }
-    } else if (eventName === "payment-flow-approved") {
-      hideOverlay();
-    } else if (eventName === "payment-flow-canceled") {
-      hideOverlay();
-    } else if (eventName === "payment-flow-error") {
-      hideOverlay();
+    } else if (presentationMode === 'popup') {
+// TODO move overlayControls down into the handler somehow
+      popupPresentationModePostMessageHandler(event, overlayControls);
+    } else if (presentationMode === 'modal') {
+      modalPresentationModePostMessageHandler(event);
     }
   });
 }
