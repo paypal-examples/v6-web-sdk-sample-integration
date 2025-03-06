@@ -6,15 +6,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <style>
+      :root {
+        --theme-color-text: #0a1b0f;
+        --theme-color-background: #f7fcf9;
+        --theme-color-primary: #334037;
+        --theme-color-secondary: #93e3ab;
+        --theme-color-accent: #62dc87;
+        --theme-color-overlay-background: #000000aa;
+      }
+
       body {
         margin: 0;
+        font-family: sans-serif;
+        color: var(--theme-color-text);
+      }
+
+      button {
+        border: none;
+        font-size: 1em;
+        padding: 10px;
+        border-radius: 5px;
       }
 
       #stateDebug {
         padding: 5px;
         position: fixed;
         bottom: 0;
-        background: grey;
+        left: 0;
+        background: var(--theme-color-secondary);
         z-index: 100;
       }
 
@@ -23,18 +42,31 @@
       }
 
       #extraHeight {
+        background: var(--theme-color-background);
         height: 1000px;
         width: 100%;
-        background: #00330044;
+      }
+
+      #overlayContainer {
+        background: var(--theme-color-background);
+      }
+
+      #overlayCloseButton {
+        background: var(--theme-color-secondary);
+      }
+
+      #overlayRefocusButton {
+        background: var(--theme-color-secondary);
       }
 
       #overlayContainer::backdrop {
-        background: #000000aa;
+        background: var(--theme-color-overlay-background);
       }
 
       #iframeWrapper {
-        background: #aa55aa;
         border: none;
+        width: 100%;
+        height: 300px;
       }
 
       #iframeWrapper.fullWindow {
@@ -55,6 +87,15 @@
 
     <div id="mainContainer">
       <h1>PayPal iframe Example</h1>
+
+      <p>
+        The parent page is an example merchant page. Within the merchant page,
+        an iframe uses the PayPal web SDK and communicates with a server that
+        has access to the PayPal server SDK. The merchant page and iframe then
+        communicate about the state of the payment flow via postMessage. Using
+        the PayPal web SDK in this way, inside an iframe, avoids having to
+        request the SDK script directly from the merchant page.
+      </p>
 
       <div id="stateDebug">
         <div>Merchant Page State</div>
@@ -77,11 +118,9 @@
         src="http://localhost:3000/?origin=http://localhost:3001"
         sandbox="allow-scripts allow-same-origin allow-popups allow-forms"
         allow="payment"
-        width="800"
-        height="250"
       ></iframe>
 
-      <div id="extraHeight">Some extra height</div>
+      <div id="extraHeight">Some extra height follows...</div>
     </div>
 
     <dialog id="overlayContainer">

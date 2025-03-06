@@ -12,16 +12,10 @@ To start this example:
    2. `POST /paypal-api/checkout/orders/create`
    3. `POST /paypal-api/checkout/orders/:orderId/capture`
 
-2. Start the iframe server.
+2. Start the merchant page and iframe servers (uses [`concurrently`](https://www.npmjs.com/package/concurrently)):
 
    ```
-   npm run paypal-iframe
+   npm start
    ```
 
-3. Start the merchant page server.
-
-   ```
-   npm run merchant-page
-   ```
-
-4. Navigate to `localhost:3001` to see the page.
+3. Navigate to `localhost:3001` to see the page.

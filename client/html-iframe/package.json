@@ -5,11 +5,15 @@
   "scripts": {
     "merchant-page": "vite --config vite-merchant-example.config.js",
     "paypal-iframe": "vite --config vite-paypal-iframe.config.js",
+    "start": "concurrently \"npm run merchant-page\" \"npm run paypal-iframe\"",
     "format": "npx prettier . --write"
   },
   "license": "ISC",
   "devDependencies": {
-    "prettier": "^3.5.3",
+    "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
     "vite": "^6.2.0"
   }
 }
