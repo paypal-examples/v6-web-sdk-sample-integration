@@ -6,8 +6,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
 
     <style>
+      :root {
+        --theme-color-text: #0a1b0f;
+        --theme-color-background: #f7fcf9;
+        --theme-color-primary: #334037;
+        --theme-color-secondary: #93e3ab;
+        --theme-color-accent: #62dc87;
+        --theme-color-overlay-background: #000000aa;
+      }
+
       body {
         margin: 0;
+        font-family: sans-serif;
+        color: var(--theme-color-text);
+      }
+
+      button {
+        border: none;
+        font-size: 1em;
+        padding: 10px;
+        border-radius: 5px;
       }
 
       #stateDebug {
@@ -15,7 +33,7 @@
         position: fixed;
         bottom: 0;
         left: 0;
-        background: grey;
+        background: var(--theme-color-secondary);
         z-index: 100;
       }
 
@@ -24,17 +42,28 @@
       }
 
       #extraHeight {
+        background: var(--theme-color-background);
         height: 1000px;
         width: 100%;
-        background: #00330044;
+      }
+
+      #overlayContainer {
+        background: var(--theme-color-background);
+      }
+
+      #overlayCloseButton {
+        background: var(--theme-color-secondary);
+      }
+
+      #overlayRefocusButton {
+        background: var(--theme-color-secondary);
       }
 
       #overlayContainer::backdrop {
-        background: #000000aa;
+        background: var(--theme-color-overlay-background);
       }
 
       #iframeWrapper {
-        background: #aa55aa;
         border: none;
         width: 100%;
         height: 300px;
