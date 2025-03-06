@@ -1,8 +1,6 @@
-const getSandboxUrl = (path) => `http://localhost:8080${path}`;
-
 async function getBrowserSafeClientToken() {
   const response = await fetch(
-    getSandboxUrl("/paypal-api/auth/browser-safe-client-token"),
+    "/paypal-api/auth/browser-safe-client-token",
     {
       method: "GET",
       headers: {
@@ -17,7 +15,7 @@ async function getBrowserSafeClientToken() {
 
 async function createOrder() {
   const response = await fetch(
-    getSandboxUrl("/paypal-api/checkout/orders/create"),
+    "/paypal-api/checkout/orders/create",
     {
       method: "POST",
       headers: {
@@ -32,7 +30,7 @@ async function createOrder() {
 
 async function captureOrder({ orderId, headers }) {
   const response = await fetch(
-    getSandboxUrl(`/paypal-api/checkout/orders/${orderId}/capture`),
+    `/paypal-api/checkout/orders/${orderId}/capture`,
     {
       method: "POST",
       headers: {
