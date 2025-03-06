@@ -94,8 +94,8 @@ function setupPostMessageListener () {
   });
 }
 
-function setupOverlay () {
-  const overlay = document.getElementById('overlayContainer');
+function setupOverlay() {
+  const overlay = document.getElementById("overlayContainer");
 
   const hideOverlay = () => {
     overlay.close();
@@ -103,11 +103,11 @@ function setupOverlay () {
   };
 
   const refocusPaymentWindow = () => {
-    sendPostMessageToChild({eventName: 'refocus-payment-window'});
+    sendPostMessageToChild({ eventName: "refocus-payment-window" });
   };
 
-  const close = document.getElementById('overlayCloseButton');
-  close.addEventListener('click', hideOverlay);
+  const close = document.getElementById("overlayCloseButton");
+  close.addEventListener("click", hideOverlay);
 
   const refocus = document.getElementById('overlayRefocusButton');
   refocus.addEventListener('click', refocusPaymentWindow);
@@ -124,8 +124,8 @@ function onLoad() {
   window.setupComplete = true;
 }
 
-function sendPostMessageToChild (payload) {
+function sendPostMessageToChild(payload) {
   const iframe = document.getElementById("iframeWrapper");
-  const childOrigin = new URL(iframe.getAttribute('src')).origin;
+  const childOrigin = new URL(iframe.getAttribute("src")).origin;
   iframe.contentWindow.postMessage(payload, childOrigin);
 }

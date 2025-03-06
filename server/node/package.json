@@ -9,7 +9,8 @@
     "check-node-version": "tsx src/checkNodeVersion.ts",
     "clean": "rm -rf dist",
     "dev": "npm run check-node-version && tsx --watch src/server.ts",
-    "start": "NODE_ENV=production node dist/server.js"
+    "start": "NODE_ENV=production node dist/server.js",
+    "format": "npx prettier . --write"
   },
   "license": "ISC",
   "dependencies": {
@@ -22,6 +23,7 @@
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.0",
     "@types/node": "^22.13.9",
+    "prettier": "^3.5.3",
     "semver": "^7.7.1",
     "tsx": "^4.19.3",
     "typescript": "^5.8.2"

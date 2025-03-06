@@ -7,20 +7,21 @@ to work entirely in an iframe.
 To start this example:
 
 1. Start a server in the `server/` directory. Note, the server needs to provide the following endpoints:
-    1. `GET /paypal-api/auth/browser-safe-client-token`
-    2. `POST /paypal-api/checkout/orders/create`
-    3. `POST /paypal-api/checkout/orders/:orderId/capture`
+
+   1. `GET /paypal-api/auth/browser-safe-client-token`
+   2. `POST /paypal-api/checkout/orders/create`
+   3. `POST /paypal-api/checkout/orders/:orderId/capture`
 
 2. Start the iframe server.
 
-    ```
-    npm run paypal-iframe
-    ```
+   ```
+   npm run paypal-iframe
+   ```
 
 3. Start the merchant page server.
 
-    ```
-    npm run merchant-page
-    ```
+   ```
+   npm run merchant-page
+   ```
 
 4. Navigate to `localhost:3001` to see the page.

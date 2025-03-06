@@ -1,24 +1,30 @@
 const getSandboxUrl = (path) => `http://localhost:8080${path}`;
 
 async function getBrowserSafeClientToken() {
-  const response = await fetch(getSandboxUrl("/paypal-api/auth/browser-safe-client-token"), {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    getSandboxUrl("/paypal-api/auth/browser-safe-client-token"),
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const { access_token } = await response.json();
 
   return access_token;
 }
 
 async function createOrder() {
-  const response = await fetch(getSandboxUrl("/paypal-api/checkout/orders/create"), {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    getSandboxUrl("/paypal-api/checkout/orders/create"),
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const orderData = await response.json();
 
   return { orderId: orderData.id };
@@ -73,14 +79,14 @@ function getParentOrigin () {
   return parentOrigin;
 }
 
-function setupPostMessageListener () {
+function setupPostMessageListener() {
   window.addEventListener("message", (event) => {
     // It's very important to check that the `origin` is expected to prevent XSS attacks!
     if (event.origin !== getParentOrigin()) {
       return;
     }
 
-    const {eventName, data} = event.data;
+    const { eventName, data } = event.data;
 
     const statusContainer = document.querySelector("#postMessageStatus");
     statusContainer.innerHTML = JSON.stringify(event.data);
@@ -93,7 +99,7 @@ function setupPostMessageListener () {
   });
 }
 
-function sendPostMessageToParent (payload) {
+function sendPostMessageToParent(payload) {
   window.parent.postMessage(payload, getParentOrigin());
 }
 

@@ -6,10 +6,12 @@
   "scripts": {
     "build": "vite build",
     "preview": "vite preview",
-    "start": "vite"
+    "start": "vite",
+    "format": "npx prettier . --write"
   },
   "license": "ISC",
   "devDependencies": {
+    "prettier": "^3.5.3",
     "vite": "^6.2.0"
   }
 }

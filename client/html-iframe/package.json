@@ -4,10 +4,12 @@
   "description": "In this example, we serve a merchant page with an embedded iframe on a different domain. The iframe interacts with a server using the PayPal Server SDK and uses `postMessage` to the merchant page. This demonstrates the v6 ability to work entirely in an iframe.",
   "scripts": {
     "merchant-page": "vite --config vite-merchant-example.config.js",
-    "paypal-iframe": "vite --config vite-paypal-iframe.config.js"
+    "paypal-iframe": "vite --config vite-paypal-iframe.config.js",
+    "format": "npx prettier . --write"
   },
   "license": "ISC",
   "devDependencies": {
+    "prettier": "^3.5.3",
     "vite": "^6.2.0"
   }
 }
