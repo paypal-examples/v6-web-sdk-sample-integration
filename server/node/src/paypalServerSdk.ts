@@ -5,6 +5,7 @@ const envFilePath = join(__dirname, "../../../", ".env");
 config({ path: envFilePath });
 
 import {
+  ApiError,
   CheckoutPaymentIntent,
   Client,
   Environment,
@@ -51,22 +52,34 @@ const oAuthAuthorizationController = new OAuthAuthorizationController(client);
  * ###################################################################### */
 
 export async function getBrowserSafeClientToken() {
-  const auth = Buffer.from(
-    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
-  ).toString("base64");
+  try {
+    const auth = Buffer.from(
+      `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
+    ).toString("base64");
 
-  const { body, ...httpResponse } =
-    await oAuthAuthorizationController.requestToken(
-      {
-        authorization: `Basic ${auth}`,
-      },
-      { response_type: "client_token" },
-    );
+    const { body, statusCode } =
+      await oAuthAuthorizationController.requestToken(
+        {
+          authorization: `Basic ${auth}`,
+        },
+        { response_type: "client_token" },
+      );
 
-  return {
-    jsonResponse: JSON.parse(String(body)),
-    httpStatusCode: httpResponse.statusCode,
-  };
+    return {
+      jsonResponse: JSON.parse(String(body)),
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { statusCode, body } = error;
+      return {
+        jsonResponse: JSON.parse(String(body)),
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
 }
 
 /* ######################################################################
@@ -74,15 +87,27 @@ export async function getBrowserSafeClientToken() {
  * ###################################################################### */
 
 export async function createOrder(orderRequestBody: OrderRequest) {
-  const { body, ...httpResponse } = await ordersController.ordersCreate({
-    body: orderRequestBody,
-    prefer: "return=minimal",
-  });
+  try {
+    const { body, statusCode } = await ordersController.ordersCreate({
+      body: orderRequestBody,
+      prefer: "return=minimal",
+    });
 
-  return {
-    jsonResponse: JSON.parse(String(body)),
-    httpStatusCode: httpResponse.statusCode,
-  };
+    return {
+      jsonResponse: JSON.parse(String(body)),
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { statusCode, body } = error;
+      return {
+        jsonResponse: JSON.parse(String(body)),
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
 }
 
 export async function createOrderWithSampleData() {
@@ -101,13 +126,25 @@ export async function createOrderWithSampleData() {
 }
 
 export async function captureOrder(orderId: string) {
-  const { body, ...httpResponse } = await ordersController.ordersCapture({
-    id: orderId,
-    prefer: "return=minimal",
-  });
+  try {
+    const { body, statusCode } = await ordersController.ordersCapture({
+      id: orderId,
+      prefer: "return=minimal",
+    });
 
-  return {
-    jsonResponse: JSON.parse(String(body)),
-    httpStatusCode: httpResponse.statusCode,
-  };
+    return {
+      jsonResponse: JSON.parse(String(body)),
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { statusCode, body } = error;
+      return {
+        jsonResponse: JSON.parse(String(body)),
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
 }
