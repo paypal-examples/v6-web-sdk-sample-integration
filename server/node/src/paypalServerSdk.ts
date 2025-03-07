@@ -13,6 +13,8 @@ import {
   OrdersController,
 } from "@paypal/paypal-server-sdk";
 
+import type { OrderRequest } from "@paypal/paypal-server-sdk";
+
 /* ######################################################################
  * Set up PayPal controllers
  * ###################################################################### */
@@ -71,19 +73,9 @@ export async function getBrowserSafeClientToken() {
  * Process transactions
  * ###################################################################### */
 
-export async function createOrder() {
+export async function createOrder(orderRequestBody: OrderRequest) {
   const { body, ...httpResponse } = await ordersController.ordersCreate({
-    body: {
-      intent: CheckoutPaymentIntent.Capture,
-      purchaseUnits: [
-        {
-          amount: {
-            currencyCode: "USD",
-            value: "100.00",
-          },
-        },
-      ],
-    },
+    body: orderRequestBody,
     prefer: "return=minimal",
   });
 
@@ -91,6 +83,21 @@ export async function createOrder() {
     jsonResponse: JSON.parse(String(body)),
     httpStatusCode: httpResponse.statusCode,
   };
+}
+
+export async function createOrderWithSampleData() {
+  const defaultOrderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode: "USD",
+          value: "100.00",
+        },
+      },
+    ],
+  };
+  return createOrder(defaultOrderRequestBody);
 }
 
 export async function captureOrder(orderId: string) {
