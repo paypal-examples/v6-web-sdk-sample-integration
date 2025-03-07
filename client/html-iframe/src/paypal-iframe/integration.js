@@ -1,30 +1,42 @@
-const getSandboxUrl = (path) => `http://localhost:8080${path}`;
+class PageState {
+  state = {
+    paymentSession: null,
+  };
+
+  get paymentSession() {
+    return this.state.paymentSession;
+  }
+
+  set paymentSession(value) {
+    this.state.paymentSession = value;
+  }
+
+  clearPaymentSession = () => {
+    this.state.paymentSession = null;
+  };
+}
+
+const pageState = new PageState();
 
 async function getBrowserSafeClientToken() {
-  const response = await fetch(
-    getSandboxUrl("/paypal-api/auth/browser-safe-client-token"),
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   const { access_token } = await response.json();
 
   return access_token;
 }
 
 async function createOrder() {
-  const response = await fetch(
-    getSandboxUrl("/paypal-api/checkout/orders/create"),
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await fetch("/paypal-api/checkout/orders/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   const orderData = await response.json();
 
   return { orderId: orderData.id };
@@ -32,7 +44,7 @@ async function createOrder() {
 
 async function captureOrder({ orderId, headers }) {
   const response = await fetch(
-    getSandboxUrl(`/paypal-api/checkout/orders/${orderId}/capture`),
+    `/paypal-api/checkout/orders/${orderId}/capture`,
     {
       method: "POST",
       headers: {
@@ -88,15 +100,14 @@ function setupPostMessageListener() {
       return;
     }
 
-    const { eventName, data } = event.data;
+    const { eventName } = event.data;
 
     const statusContainer = document.querySelector("#postMessageStatus");
     statusContainer.innerHTML = JSON.stringify(event.data);
 
-    if (eventName === "refocus-payment-window") {
-      // TODO
-    } else if (eventName === "close-payment-window") {
-      // TODO
+    if (eventName === "close-payment-window") {
+      pageState.paymentSession?.cancel();
+      pageState.clearPaymentSession();
     }
   });
 }
@@ -136,27 +147,18 @@ function setupIframeOriginDisplay() {
   document.querySelector("#iframeDomain").innerHTML = origin;
 }
 
-async function onLoad() {
-  if (window.setupComplete) {
-    return;
-  }
-
+async function setupPayPalButton() {
   try {
-    setupPresentationModeRadio();
-    setupIframeOriginDisplay();
-    setupPostMessageListener();
-
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
       components: ["paypal-payments"],
     });
-    const paypalOneTimePaymentSession =
-      sdkInstance.createPayPalOneTimePaymentSession({
-        onApprove,
-        onCancel,
-        onError,
-      });
+    pageState.paymentSession = sdkInstance.createPayPalOneTimePaymentSession({
+      onApprove,
+      onCancel,
+      onError,
+    });
 
     async function onClick() {
       const paymentFlowConfig = {
@@ -170,19 +172,30 @@ async function onLoad() {
       });
 
       try {
-        await paypalOneTimePaymentSession.start(
-          paymentFlowConfig,
-          createOrder(),
-        );
+        await pageState.paymentSession.start(paymentFlowConfig, createOrder());
       } catch (e) {
+        pageState.clearPaymentSession();
         console.error(e);
       }
     }
     const paypalButton = document.querySelector("#paypal-button");
     paypalButton.addEventListener("click", onClick);
   } catch (e) {
+    pageState.clearPaymentSession();
     console.error(e);
   }
+}
+
+function onLoad() {
+  if (window.setupComplete) {
+    return;
+  }
+
+  setupPresentationModeRadio();
+  setupIframeOriginDisplay();
+  setupPostMessageListener();
+
+  setupPayPalButton();
 
   window.setupComplete = true;
 }
