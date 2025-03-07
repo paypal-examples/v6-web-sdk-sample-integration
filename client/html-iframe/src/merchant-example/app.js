@@ -101,15 +101,8 @@ function setupOverlay() {
     sendPostMessageToChild({ eventName: "close-payment-window" });
   };
 
-  const refocusPaymentWindow = () => {
-    sendPostMessageToChild({ eventName: "refocus-payment-window" });
-  };
-
   const close = document.getElementById("overlayCloseButton");
   close.addEventListener("click", hideOverlay);
-
-  const refocus = document.getElementById("overlayRefocusButton");
-  refocus.addEventListener("click", refocusPaymentWindow);
 }
 
 function onLoad() {

@@ -1,3 +1,23 @@
+class PageState {
+  state = {
+    paymentSession: null,
+  }
+
+  get paymentSession () {
+    return this.state.paymentSession;
+  }
+
+  set paymentSession (value) {
+    this.state.paymentSession = value;
+  }
+
+  clearPaymentSession = () => {
+    this.state.paymentSession = null;
+  }
+}
+
+const pageState = new PageState();
+
 async function getBrowserSafeClientToken() {
   const response = await fetch(
     "/paypal-api/auth/browser-safe-client-token",
@@ -86,15 +106,14 @@ function setupPostMessageListener() {
       return;
     }
 
-    const { eventName, data } = event.data;
+    const { eventName } = event.data;
 
     const statusContainer = document.querySelector("#postMessageStatus");
     statusContainer.innerHTML = JSON.stringify(event.data);
 
-    if (eventName === "refocus-payment-window") {
-      // TODO
-    } else if (eventName === "close-payment-window") {
-      // TODO
+    if (eventName === "close-payment-window") {
+      pageState.paymentSession?.cancel();
+      pageState.clearPaymentSession();
     }
   });
 }
@@ -129,27 +148,19 @@ function setupPresentationModeRadio() {
   });
 }
 
-function setupIframeOriginDisplay() {
+function setupIframeOriginDisplay () {
   const origin = window.location.origin;
   document.querySelector("#iframeDomain").innerHTML = origin;
 }
 
-async function onLoad() {
-  if (window.setupComplete) {
-    return;
-  }
-
+async function setupPayPalButton () {
   try {
-    setupPresentationModeRadio();
-    setupIframeOriginDisplay();
-    setupPostMessageListener();
-
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
       components: ["paypal-payments"],
     });
-    const paypalOneTimePaymentSession =
+    pageState.paymentSession =
       sdkInstance.createPayPalOneTimePaymentSession({
         onApprove,
         onCancel,
@@ -168,19 +179,33 @@ async function onLoad() {
       });
 
       try {
-        await paypalOneTimePaymentSession.start(
+        await pageState.paymentSession.start(
           paymentFlowConfig,
           createOrder(),
         );
       } catch (e) {
+        pageState.clearPaymentSession();
         console.error(e);
       }
     }
     const paypalButton = document.querySelector("#paypal-button");
     paypalButton.addEventListener("click", onClick);
   } catch (e) {
+    pageState.clearPaymentSession();
     console.error(e);
   }
+}
+
+function onLoad() {
+  if (window.setupComplete) {
+    return;
+  }
+
+  setupPresentationModeRadio();
+  setupIframeOriginDisplay();
+  setupPostMessageListener();
+
+  setupPayPalButton();
 
   window.setupComplete = true;
 }
