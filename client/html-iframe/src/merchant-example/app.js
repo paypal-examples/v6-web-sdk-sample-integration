@@ -45,13 +45,10 @@ function popupPresentationModePostMessageHandler(event) {
     overlay.showModal();
   } else if (eventName === "payment-flow-approved") {
     overlay.close();
-    sendPostMessageToChild({ eventName: "close-payment-window" });
   } else if (eventName === "payment-flow-canceled") {
     overlay.close();
-    sendPostMessageToChild({ eventName: "close-payment-window" });
   } else if (eventName === "payment-flow-error") {
     overlay.close();
-    sendPostMessageToChild({ eventName: "close-payment-window" });
   }
 }
 
