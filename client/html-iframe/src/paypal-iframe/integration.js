@@ -10,10 +10,6 @@ class PageState {
   set paymentSession(value) {
     this.state.paymentSession = value;
   }
-
-  clearPaymentSession = () => {
-    this.state.paymentSession = null;
-  };
 }
 
 const pageState = new PageState();
@@ -107,7 +103,6 @@ function setupPostMessageListener() {
 
     if (eventName === "close-payment-window") {
       pageState.paymentSession?.cancel();
-      pageState.clearPaymentSession();
     }
   });
 }
@@ -155,6 +150,13 @@ async function setupPayPalButton() {
       components: ["paypal-payments"],
     });
 
+    pageState.paymentSession =
+      sdkInstance.createPayPalOneTimePaymentSession({
+        onApprove,
+        onCancel,
+        onError,
+      });
+
     async function onClick() {
       const paymentFlowConfig = {
         presentationMode: getSelectedPresentationMode(),
@@ -167,22 +169,14 @@ async function setupPayPalButton() {
       });
 
       try {
-        pageState.paymentSession =
-          sdkInstance.createPayPalOneTimePaymentSession({
-            onApprove,
-            onCancel,
-            onError,
-          });
         await pageState.paymentSession.start(paymentFlowConfig, createOrder());
       } catch (e) {
-        pageState.clearPaymentSession();
         console.error(e);
       }
     }
     const paypalButton = document.querySelector("#paypal-button");
     paypalButton.addEventListener("click", onClick);
   } catch (e) {
-    pageState.clearPaymentSession();
     console.error(e);
   }
 }
