@@ -154,11 +154,6 @@ async function setupPayPalButton() {
       clientToken,
       components: ["paypal-payments"],
     });
-    pageState.paymentSession = sdkInstance.createPayPalOneTimePaymentSession({
-      onApprove,
-      onCancel,
-      onError,
-    });
 
     async function onClick() {
       const paymentFlowConfig = {
@@ -172,6 +167,12 @@ async function setupPayPalButton() {
       });
 
       try {
+        pageState.paymentSession =
+          sdkInstance.createPayPalOneTimePaymentSession({
+            onApprove,
+            onCancel,
+            onError,
+          });
         await pageState.paymentSession.start(paymentFlowConfig, createOrder());
       } catch (e) {
         pageState.clearPaymentSession();
