@@ -1,48 +1,42 @@
 class PageState {
   state = {
     paymentSession: null,
-  }
+  };
 
-  get paymentSession () {
+  get paymentSession() {
     return this.state.paymentSession;
   }
 
-  set paymentSession (value) {
+  set paymentSession(value) {
     this.state.paymentSession = value;
   }
 
   clearPaymentSession = () => {
     this.state.paymentSession = null;
-  }
+  };
 }
 
 const pageState = new PageState();
 
 async function getBrowserSafeClientToken() {
-  const response = await fetch(
-    "/paypal-api/auth/browser-safe-client-token",
-    {
-      method: "GET",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   const { access_token } = await response.json();
 
   return access_token;
 }
 
 async function createOrder() {
-  const response = await fetch(
-    "/paypal-api/checkout/orders/create",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+  const response = await fetch("/paypal-api/checkout/orders/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+  });
   const orderData = await response.json();
 
   return { orderId: orderData.id };
@@ -148,24 +142,23 @@ function setupPresentationModeRadio() {
   });
 }
 
-function setupIframeOriginDisplay () {
+function setupIframeOriginDisplay() {
   const origin = window.location.origin;
   document.querySelector("#iframeDomain").innerHTML = origin;
 }
 
-async function setupPayPalButton () {
+async function setupPayPalButton() {
   try {
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
       components: ["paypal-payments"],
     });
-    pageState.paymentSession =
-      sdkInstance.createPayPalOneTimePaymentSession({
-        onApprove,
-        onCancel,
-        onError,
-      });
+    pageState.paymentSession = sdkInstance.createPayPalOneTimePaymentSession({
+      onApprove,
+      onCancel,
+      onError,
+    });
 
     async function onClick() {
       const paymentFlowConfig = {
@@ -179,10 +172,7 @@ async function setupPayPalButton () {
       });
 
       try {
-        await pageState.paymentSession.start(
-          paymentFlowConfig,
-          createOrder(),
-        );
+        await pageState.paymentSession.start(paymentFlowConfig, createOrder());
       } catch (e) {
         pageState.clearPaymentSession();
         console.error(e);
