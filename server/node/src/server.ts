@@ -3,7 +3,7 @@ import cors from "cors";
 
 import {
   getBrowserSafeClientToken,
-  createOrder,
+  createOrderWithSampleData,
   captureOrder,
 } from "./paypalServerSdk";
 
@@ -36,7 +36,8 @@ app.post(
   "/paypal-api/checkout/orders/create",
   async (req: Request, res: Response) => {
     try {
-      const { jsonResponse, httpStatusCode } = await createOrder();
+      const { jsonResponse, httpStatusCode } =
+        await createOrderWithSampleData();
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error("Failed to create order:", error);

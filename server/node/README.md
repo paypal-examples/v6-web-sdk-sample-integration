@@ -5,5 +5,5 @@ Node.js [Express](https://expressjs.com/) server that provides several endpoints
 Start the server by running:
 
 ```
-npm run dev
+npm start
 ```

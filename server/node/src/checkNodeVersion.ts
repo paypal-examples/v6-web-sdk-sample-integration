@@ -1,12 +1,13 @@
-const { readFileSync } = require("fs");
-const { join } = require("path");
-const semver = require("semver");
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
+import { satisfies } from "semver";
 
 const minimumNodeVersion = readFileSync(
   join(__dirname, "../", ".nvmrc"),
   "utf-8",
 );
-const isValidNodeVersion = semver.satisfies(
+
+const isValidNodeVersion = satisfies(
   process.version,
   `>= ${minimumNodeVersion}`,
 );
