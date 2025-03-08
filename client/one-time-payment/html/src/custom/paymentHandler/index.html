@@ -2,20 +2,19 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>PayPal Payment Handler</title>
+    <title>One-Time Payment - Payment Handler - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
   </head>
   <body>
-    <h1>PayPal Payment Handler</h1>
+    <h1>One-Time Payment with Payment Handler</h1>
 
-    <paypal-button id="paypal-button"></paypal-button>
-
+    <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
     <script src="app.js"></script>
 
     <script
       async
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
-      onload="onLoad()"
+      onload="onPayPalLoaded()"
     ></script>
   </body>
 </html>
