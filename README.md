@@ -18,7 +18,7 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
 
 2. **Create an Application**
 
-   Once you've setup a PayPal account, you'll need to obtain a **Client ID** and **Secret**. [Create a sandbox application](https://developer.paypal.com/dashboard/applications/sandbox/create).
+   Once you've setup a PayPal account, [create a sandbox application](https://developer.paypal.com/dashboard/applications/sandbox/create) to obtain a **Client ID** and **Secret**.
 
 ## How to Run Locally
 
@@ -26,10 +26,10 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
    ```
    git clone https://github.com/paypal-examples/v6-web-sdk-sample-integration.git
    ```
-2. Create a `.env` file based on the `.env.example` file at the root of this repository:
+2. Create a `.env` file based on the `.env.sample` file at the root of this repository:
    ```
    cd v6-web-sdk-sample-integration
-   cp .env.example .env
+   cp .env.sample .env
    ```
 3. Open the `.env` file in a text editor and add values for the `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET` environment variables.
 4. To run the server, choose a server implementation from the `server` folder at the root of this repository and follow the instructions in that folder's README. For example, for Node.js run:
