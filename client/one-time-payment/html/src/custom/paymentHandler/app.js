@@ -40,23 +40,37 @@ async function setupPayPalButton(sdkInstance) {
   paypalButton.addEventListener("click", async () => {
     const createOrderPromiseReference = createOrder();
 
-    try {
-      await paypalPaymentSession.start(
-        { presentationMode: "payment-handler" },
-        createOrderPromiseReference,
-      );
-    } catch (error) {
-      if (error.code === "ERR_FLOW_PAYMENT_HANDLER_BROWSER_INCOMPATIBLE") {
-        try {
-          await paypalPaymentSession.start(
-            { presentationMode: "popup" },
-            createOrderPromiseReference,
-          );
-        } catch (error) {
-          console.error(error);
+    const presentationModesToTry = [
+      {
+        presentationMode: "payment-handler",
+        recoverableErrorCode: "ERR_FLOW_PAYMENT_HANDLER_BROWSER_INCOMPATIBLE",
+      },
+      {
+        presentationMode: "popup",
+        recoverableErrorCode: "ERR_DEV_UNABLE_TO_OPEN_POPUP",
+      },
+      {
+        presentationMode: "modal",
+      },
+    ];
+
+    for (const {
+      presentationMode,
+      recoverableErrorCode,
+    } of presentationModesToTry) {
+      try {
+        await paypalPaymentSession.start(
+          { presentationMode },
+          createOrderPromiseReference,
+        );
+        // exit early when start() successfully resolves
+        break;
+      } catch (error) {
+        // try another presentationMode for a recoverable error
+        if (error.code === recoverableErrorCode) {
+          continue;
         }
-      } else {
-        console.error(error);
+        throw error;
       }
     }
   });
