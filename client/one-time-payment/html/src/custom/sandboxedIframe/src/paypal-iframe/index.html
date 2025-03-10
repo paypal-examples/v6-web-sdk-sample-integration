@@ -52,7 +52,6 @@
       <fieldset>
         <legend>presentationMode</legend>
         <div>
-          <label for="presentationMode-popup">popup</label>
           <input
             checked
             type="radio"
@@ -60,15 +59,25 @@
             name="presentationMode"
             value="popup"
           />
+          <label for="presentationMode-popup">popup</label>
         </div>
         <div>
-          <label for="presentationMode-modal">modal</label>
           <input
             type="radio"
             id="presentationMode-modal"
             name="presentationMode"
             value="modal"
           />
+          <label for="presentationMode-modal">modal</label>
+        </div>
+        <div>
+          <input
+            type="radio"
+            id="presentationMode-payment-handler"
+            name="presentationMode"
+            value="payment-handler"
+          />
+          <label for="presentationMode-modal">payment-handler</label>
         </div>
       </fieldset>
     </div>

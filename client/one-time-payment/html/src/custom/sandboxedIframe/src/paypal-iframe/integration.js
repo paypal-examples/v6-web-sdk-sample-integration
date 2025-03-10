@@ -14,35 +14,6 @@ class PageState {
 
 const pageState = new PageState();
 
-async function onApprove(data) {
-  const orderData = await captureOrder({
-    orderId: data.orderId,
-  });
-
-  sendPostMessageToParent({
-    eventName: "payment-flow-approved",
-    data: orderData,
-  });
-}
-
-function onCancel(data) {
-  sendPostMessageToParent({
-    eventName: "payment-flow-canceled",
-    data: {
-      orderId: data?.orderId,
-    },
-  });
-}
-
-function onError(data) {
-  sendPostMessageToParent({
-    eventName: "payment-flow-error",
-    data: {
-      error: data?.error,
-    },
-  });
-}
-
 function getParentOrigin() {
   const parentOrigin = new URLSearchParams(window.location.search).get(
     "origin",
@@ -105,9 +76,32 @@ function setupIframeOriginDisplay() {
 
 async function setupPayPalButton(sdkInstance) {
   pageState.paymentSession = sdkInstance.createPayPalOneTimePaymentSession({
-    onApprove,
-    onCancel,
-    onError,
+    onApprove: async (data) => {
+      const orderData = await captureOrder({
+        orderId: data.orderId,
+      });
+
+      sendPostMessageToParent({
+        eventName: "payment-flow-approved",
+        data: orderData,
+      });
+    },
+    onCancel: (data) => {
+      sendPostMessageToParent({
+        eventName: "payment-flow-canceled",
+        data: {
+          orderId: data?.orderId,
+        },
+      });
+    },
+    onError: (data) => {
+      sendPostMessageToParent({
+        eventName: "payment-flow-canceled",
+        data: {
+          orderId: data?.orderId,
+        },
+      });
+    },
   });
 
   const paypalButton = document.querySelector("#paypal-button");
