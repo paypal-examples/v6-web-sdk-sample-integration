@@ -8,7 +8,7 @@
     "start": "concurrently \"npm run merchant-page\" \"npm run paypal-iframe\"",
     "format": "npx prettier . --write"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "prettier": "^3.5.3"
   },

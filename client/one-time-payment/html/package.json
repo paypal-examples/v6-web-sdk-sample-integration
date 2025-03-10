@@ -9,7 +9,7 @@
     "start": "vite",
     "format": "npx prettier . --write"
   },
-  "license": "ISC",
+  "license": "Apache-2.0",
   "devDependencies": {
     "prettier": "^3.5.3",
     "vite": "^6.2.0"
