@@ -98,8 +98,11 @@ function setupOverlay() {
     sendPostMessageToChild({ eventName: "close-payment-window" });
   };
 
-  const close = document.getElementById("overlayCloseButton");
-  close.addEventListener("click", hideOverlay);
+  const closeCTA = document.getElementById("overlayCloseButtonCTA");
+  closeCTA.addEventListener("click", hideOverlay);
+
+  const closeBackdrop = document.getElementById("overlayCloseButtonBackdrop");
+  closeBackdrop.addEventListener("click", hideOverlay);
 }
 
 function onLoad() {

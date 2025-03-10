@@ -17,7 +17,9 @@
         --theme-color-primary: #334037;
         --theme-color-secondary: #93e3ab;
         --theme-color-accent: #62dc87;
+        --theme-color-overlay-cta: #ffffff;
         --theme-color-overlay-background: #000000aa;
+        --theme-color-overlay-background-close-text: #cccccc;
       }
 
       body {
@@ -53,11 +55,31 @@
       }
 
       #overlayContainer {
-        background: var(--theme-color-background);
+        background: none;
+        border: none;
+        overflow: visible;
+        text-align: center;
       }
 
-      #overlayCloseButton {
-        background: var(--theme-color-secondary);
+      #overlayContainerLogo {
+        margin-bottom: 10px;
+      }
+
+      #overlayCloseButtonCTA {
+        background: var(--theme-color-overlay-cta);
+        cursor: pointer;
+        border-radius: 20px;
+        padding: 10px 20px;
+      }
+
+      #overlayCloseButtonBackdrop {
+        background: none;
+        color: var(--theme-color-overlay-background-close-text);
+        position: fixed;
+        top: 0;
+        right: 0;
+        font-size: 1.5em;
+        cursor: pointer;
       }
 
       #overlayContainer::backdrop {
@@ -125,7 +147,11 @@
     </div>
 
     <dialog id="overlayContainer">
-      <button id="overlayCloseButton">Close</button>
+      <div id="overlayContainerLogo">
+        <img src="https://www.paypalobjects.com/js-sdk-logos/2.2.7/paypal-white.svg" />
+      </div>
+      <button id="overlayCloseButtonCTA">Close</button>
+      <button id="overlayCloseButtonBackdrop">X</button>
     </dialog>
   </body>
 </html>
