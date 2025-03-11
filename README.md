@@ -23,23 +23,23 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
 ## How to Run Locally
 
 1. Clone the repository by running the following command in your terminal:
-   ```
+   ```bash
    git clone https://github.com/paypal-examples/v6-web-sdk-sample-integration.git
    ```
 2. Create a `.env` file based on the `.env.sample` file at the root of this repository:
-   ```
+   ```bash
    cd v6-web-sdk-sample-integration
    cp .env.sample .env
    ```
 3. Open the `.env` file in a text editor and add values for the `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET` environment variables.
 4. To run the server, choose a server implementation from the `server` folder at the root of this repository and follow the instructions in that folder's README. For example, for Node.js run:
-   ```
+   ```bash
    cd server/node
    npm install
    npm start
    ```
 5. To view the sample integration in your browser, choose a front-end implementation from the `client` folder at the root of this repository and follow the instructions in that folder's README. For example, for the one-time payments html example run:
-   ```
+   ```bash
    cd client/one-time-payment/html
    npm install
    npm start
