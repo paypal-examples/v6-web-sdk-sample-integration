@@ -1,0 +1,19 @@
+{
+  "name": "v6-web-sdk-sample-html-iframe",
+  "version": "1.0.0",
+  "description": "In this example, we serve a merchant page with an embedded iframe on a different domain. The iframe interacts with a server using the PayPal Server SDK and uses `postMessage` to the merchant page. This demonstrates the v6 ability to work entirely in an iframe.",
+  "scripts": {
+    "merchant-page": "vite --config vite-merchant-example.config.js",
+    "paypal-iframe": "vite --config vite-paypal-iframe.config.js",
+    "start": "concurrently \"npm run merchant-page\" \"npm run paypal-iframe\"",
+    "format": "npx prettier . --write"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "prettier": "^3.5.3"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "vite": "^6.2.0"
+  }
+}

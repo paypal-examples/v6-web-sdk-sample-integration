@@ -12,9 +12,13 @@ import {
   LogLevel,
   OAuthAuthorizationController,
   OrdersController,
+  VaultController,
 } from "@paypal/paypal-server-sdk";
 
-import type { OrderRequest } from "@paypal/paypal-server-sdk";
+import type {
+  OrderRequest,
+  VaultTokenRequest,
+} from "@paypal/paypal-server-sdk";
 
 /* ######################################################################
  * Set up PayPal controllers
@@ -46,6 +50,7 @@ const client = new Client({
 
 const ordersController = new OrdersController(client);
 const oAuthAuthorizationController = new OAuthAuthorizationController(client);
+const vaultController = new VaultController(client);
 
 /* ######################################################################
  * Token generation helpers
@@ -139,6 +144,42 @@ export async function captureOrder(orderId: string) {
   } catch (error) {
     if (error instanceof ApiError) {
       const { statusCode, body } = error;
+      return {
+        jsonResponse: JSON.parse(String(body)),
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
+}
+
+export async function createSetupToken() {
+  try {
+    const { body, statusCode } = await vaultController.setupTokensCreate({
+      paypalRequestId: Date.now().toString(),
+      body: {
+        paymentSource: {
+          paypal: {
+            experienceContext: {
+              cancelUrl: "https://example.com/cancelUrl",
+              returnUrl: "https://example.com/returnUrl",
+              vaultInstruction: "ON_PAYER_APPROVAL",
+            },
+            usageType: "MERCHANT",
+          },
+        },
+      },
+    });
+
+    return {
+      jsonResponse: JSON.parse(String(body)),
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { statusCode, body } = error;
+
       return {
         jsonResponse: JSON.parse(String(body)),
         httpStatusCode: statusCode,
