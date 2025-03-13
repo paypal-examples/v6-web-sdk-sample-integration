@@ -1,9 +1,11 @@
+import React from 'react';
+import PayPalButton from './components/PayPalButton';
 
 function App() {
 
   return (
     <>
-      <h1>something</h1>
+      <PayPalButton />
     </>
   )
 }
