@@ -62,10 +62,11 @@ export const setupPayPalButton = (sdkInstance: any) => {
     paymentSessionOptions
   );
 
-  // the onClick contains the .start
+  // onClick should include the .start call
+  // this triggers the presentation mode selected (auto, popup, modal etc.)
   const onClick = async () => {
     try {
-      await paypalSession.start({ paymentFlow: "auto" }, createOrder());
+      await paypalSession.start({ presentationMode: "auto" }, createOrder());
     } catch (e) {
       console.error(e);
     }
@@ -83,10 +84,11 @@ export const setupVenmoButton = (sdkInstance: any) => {
     paymentSessionOptions
   );
 
-  // the onClick contains the .start
+  // onClick should include the .start call
+  // this triggers the presentation mode selected (auto, popup, modal etc.)
   const onClick = async () => {
     try {
-      await venmoSession.start({ paymentFlow: "auto" }, createOrder());
+      await venmoSession.start({ presentationMode: "auto" }, createOrder());
     } catch (e) {
       console.error(e);
     }
@@ -117,12 +119,13 @@ export const initSdkInstance = async (
       pageType: "checkout",
     });
 
-    // check if they're eligible first
+    // Check Payment Method Eligibility
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currency: "USD",
     });
 
     if (paymentMethods.isEligible(type)) {
+      // If eligible, update `isEligible` for the specific Button Component and return the SDK Instance
       setIsEligible(true);
       return sdkInstance;
     } else {
