@@ -57,7 +57,7 @@ const paymentSessionOptions = {
   },
 };
 
-const setupPayPalButton = (sdkInstance: any) => {
+export const setupPayPalButton = (sdkInstance: any) => {
   const paypalSession = sdkInstance.createPayPalOneTimePaymentSession(
     paymentSessionOptions
   );
@@ -78,7 +78,7 @@ const setupPayPalButton = (sdkInstance: any) => {
   }
 }
 
-const setupVenmoButton = (sdkInstance: any) => {
+export const setupVenmoButton = (sdkInstance: any) => {
   const venmoSession = sdkInstance.createVenmoOneTimePaymentSession(
     paymentSessionOptions
   );
@@ -96,11 +96,14 @@ const setupVenmoButton = (sdkInstance: any) => {
 
   if (venmoButton) {
     venmoButton.addEventListener("click", onClick);
+
+    return () => {
+      venmoButton.removeEventListener("click", onClick);
+    };
   }
 }
 
-
-export const initButton = async (
+export const initSdkInstance = async (
   setIsEligible: React.Dispatch<React.SetStateAction<boolean>>,
   type: "paypal" | "venmo"
 ) => {
@@ -119,18 +122,14 @@ export const initButton = async (
       currency: "USD",
     });
 
-    if (paymentMethods.isEligible(type) && type === "paypal") {
-      // use state to reveal the button
-      setupPayPalButton(sdkInstance);
+    if (paymentMethods.isEligible(type)) {
       setIsEligible(true);
-    }
-
-    if (paymentMethods.isEligible(type) && type === "venmo") {
-      // use state to reveal the button
-      setupVenmoButton(sdkInstance);
-      setIsEligible(true);
+      return sdkInstance;
+    } else {
+        return undefined;
     }
   } catch (e) {
-    console.error("Failed to intialize PayPal Button", e);
+    console.error("Failed to intialize SDK Instance", e);
+    return undefined;
   }
 };
