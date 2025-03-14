@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { initVenmoButton } from "./utils";
+import { initButton } from "./utils";
 
 const VenmoButton: React.FC = () => {
   const [isEligible, setIsEligible] = useState<boolean>(false);
 
   useEffect(() => {
     if (window.paypal) {
-      initVenmoButton(setIsEligible);
+      initButton(setIsEligible, "venmo");
     }
   }, []);
 

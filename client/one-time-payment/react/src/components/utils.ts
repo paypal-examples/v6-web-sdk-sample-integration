@@ -57,8 +57,52 @@ const paymentSessionOptions = {
   },
 };
 
-export const initPayPalButton = async (
-  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>
+const setupPayPalButton = (sdkInstance: any) => {
+  const paypalSession = sdkInstance.createPayPalOneTimePaymentSession(
+    paymentSessionOptions
+  );
+
+  // the onClick contains the .start
+  const onClick = async () => {
+    try {
+      await paypalSession.start({ paymentFlow: "auto" }, createOrder());
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const paypalButton = document.getElementById("paypal-button");
+
+  if (paypalButton) {
+    paypalButton.addEventListener("click", onClick);
+  }
+}
+
+const setupVenmoButton = (sdkInstance: any) => {
+  const venmoSession = sdkInstance.createVenmoOneTimePaymentSession(
+    paymentSessionOptions
+  );
+
+  // the onClick contains the .start
+  const onClick = async () => {
+    try {
+      await venmoSession.start({ paymentFlow: "auto" }, createOrder());
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  const venmoButton = document.getElementById("venmo-button");
+
+  if (venmoButton) {
+    venmoButton.addEventListener("click", onClick);
+  }
+}
+
+
+export const initButton = async (
+  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>,
+  type: "paypal" | "venmo"
 ) => {
   let clientToken;
   try {
@@ -66,7 +110,7 @@ export const initPayPalButton = async (
 
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
-      components: ["paypal-payments"],
+      components: ["paypal-payments", "venmo-payments"],
       pageType: "checkout",
     });
 
@@ -75,74 +119,18 @@ export const initPayPalButton = async (
       currency: "USD",
     });
 
-    if (paymentMethods.isEligible("paypal")) {
+    if (paymentMethods.isEligible(type) && type === "paypal") {
       // use state to reveal the button
+      setupPayPalButton(sdkInstance);
       setIsEligible(true);
-      const paypalCheckout = sdkInstance.createPayPalOneTimePaymentSession(
-        paymentSessionOptions
-      );
+    }
 
-      // the onClick contains the .start
-      const onClick = async () => {
-        try {
-          await paypalCheckout.start({ paymentFlow: "auto" }, createOrder());
-        } catch (e) {
-          console.error(e);
-        }
-      };
-
-      const paypalButton = document.getElementById("paypal-button");
-
-      if (paypalButton) {
-        paypalButton.addEventListener("click", onClick);
-      }
+    if (paymentMethods.isEligible(type) && type === "venmo") {
+      // use state to reveal the button
+      setupVenmoButton(sdkInstance);
+      setIsEligible(true);
     }
   } catch (e) {
     console.error("Failed to intialize PayPal Button", e);
-  }
-};
-
-export const initVenmoButton = async (
-  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  let clientToken;
-  try {
-    clientToken = await getBrowserSafeClientToken();
-
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken,
-      components: ["venmo-payments"],
-      pageType: "checkout",
-    });
-
-    // check if they're eligible first
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currency: "USD",
-    });
-
-    if (paymentMethods.isEligible("venmo")) {
-      // use state to reveal the button
-      setIsEligible(true);
-      const venmoSession = sdkInstance.createVenmoOneTimePaymentSession(
-        paymentSessionOptions
-      );
-
-      // the onClick contains the .start
-      const onClick = async () => {
-        try {
-          await venmoSession.start({ paymentFlow: "auto" }, createOrder());
-        } catch (e) {
-          console.error(e);
-        }
-      };
-
-      const venmoButton = document.getElementById("venmo-button");
-
-      if (venmoButton) {
-        venmoButton.addEventListener("click", onClick);
-      }
-    }
-  } catch (e) {
-    console.error("Failed to intialize Venmo Button", e);
   }
 };

@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { initPayPalButton } from "./utils";
+import { initButton } from "./utils";
 
 const PayPalButton: React.FC = () => {
   const [isEligible, setIsEligible] = useState<boolean>(false);
 
   useEffect(() => {
     if (window.paypal) {
-      initPayPalButton(setIsEligible);
+      initButton(setIsEligible, "paypal");
     }
   }, []);
 
