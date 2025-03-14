@@ -1,4 +1,3 @@
-import React from "react";
 import PayPalButton from "./components/PayPalButton";
 import VenmoButton from "./components/VenmoButton";
 
