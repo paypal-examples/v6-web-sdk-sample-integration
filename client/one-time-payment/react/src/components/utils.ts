@@ -1,65 +1,4 @@
-const paymentSessionOptions = {
-  async onApprove(data) {
-    console.log("onApprove", data);
-    const orderData = await captureOrder({
-      orderId: data.orderId,
-    });
-    console.log("Capture result", orderData);
-  },
-  onCancel(data) {
-    console.log("onCancel", data);
-  },
-  onError(error) {
-    console.log("onError", error);
-  },
-};
-
-export const initPayPalButton = async (
-  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>
-) => {
-  let clientToken;
-  try {
-    clientToken = await getClientToken();
-
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken,
-      components: ["paypal-payments"],
-      pageType: "checkout",
-    });
-
-    // check if they're eligible first
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currency: "USD",
-    });
-
-    if (paymentMethods.isEligible("paypal")) {
-      // use state to reveal the button
-      setIsEligible(true);
-      const paypalCheckout = sdkInstance.createPayPalOneTimePaymentSession(
-        paymentSessionOptions
-      );
-
-      // the onClick contains the .start
-      const onClick = async () => {
-        try {
-          await paypalCheckout.start({ paymentFlow: "auto" }, createOrder());
-        } catch (e) {
-          console.error(e);
-        }
-      };
-
-      const paypalButton = document.getElementById("paypal-button");
-
-      if (paypalButton) {
-        paypalButton.addEventListener("click", onClick);
-      }
-    }
-  } catch (e) {
-    console.error("Failed to intialize PayPal Button", e);
-  }
-};
-
-const getClientToken = async () => {
+const getBrowserSafeClientToken = async () => {
   {
     const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
       method: "GET",
@@ -101,3 +40,109 @@ const captureOrder = async ({ orderId }: { orderId: string }) => {
 
   return data;
 }
+
+const paymentSessionOptions = {
+  async onApprove(data) {
+    console.log("onApprove", data);
+    const orderData = await captureOrder({
+      orderId: data.orderId,
+    });
+    console.log("Capture result", orderData);
+  },
+  onCancel(data) {
+    console.log("onCancel", data);
+  },
+  onError(error) {
+    console.log("onError", error);
+  },
+};
+
+export const initPayPalButton = async (
+  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  let clientToken;
+  try {
+    clientToken = await getBrowserSafeClientToken();
+
+    const sdkInstance = await window.paypal.createInstance({
+      clientToken,
+      components: ["paypal-payments"],
+      pageType: "checkout",
+    });
+
+    // check if they're eligible first
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currency: "USD",
+    });
+
+    if (paymentMethods.isEligible("paypal")) {
+      // use state to reveal the button
+      setIsEligible(true);
+      const paypalCheckout = sdkInstance.createPayPalOneTimePaymentSession(
+        paymentSessionOptions
+      );
+
+      // the onClick contains the .start
+      const onClick = async () => {
+        try {
+          await paypalCheckout.start({ paymentFlow: "auto" }, createOrder());
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      const paypalButton = document.getElementById("paypal-button");
+
+      if (paypalButton) {
+        paypalButton.addEventListener("click", onClick);
+      }
+    }
+  } catch (e) {
+    console.error("Failed to intialize PayPal Button", e);
+  }
+};
+
+export const initVenmoButton = async (
+  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>
+) => {
+  let clientToken;
+  try {
+    clientToken = await getBrowserSafeClientToken();
+
+    const sdkInstance = await window.paypal.createInstance({
+      clientToken,
+      components: ["venmo-payments"],
+      pageType: "checkout",
+    });
+
+    // check if they're eligible first
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currency: "USD",
+    });
+
+    if (paymentMethods.isEligible("venmo")) {
+      // use state to reveal the button
+      setIsEligible(true);
+      const venmoSession = sdkInstance.createVenmoOneTimePaymentSession(
+        paymentSessionOptions
+      );
+
+      // the onClick contains the .start
+      const onClick = async () => {
+        try {
+          await venmoSession.start({ paymentFlow: "auto" }, createOrder());
+        } catch (e) {
+          console.error(e);
+        }
+      };
+
+      const venmoButton = document.getElementById("venmo-button");
+
+      if (venmoButton) {
+        venmoButton.addEventListener("click", onClick);
+      }
+    }
+  } catch (e) {
+    console.error("Failed to intialize Venmo Button", e);
+  }
+};
