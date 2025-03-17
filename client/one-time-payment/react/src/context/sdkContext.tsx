@@ -26,7 +26,6 @@ export const PayPalSDKProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           script.async = true;
           script.onload = async () => {
             await initSdkInstance();
-            setIsSDKReady(true);
           };
           script.onerror = (e) => {
             setSdkError(e);
@@ -35,13 +34,13 @@ export const PayPalSDKProvider: React.FC<{ children: React.ReactNode }> = ({ chi
           document.body.appendChild(script);
         } else {
           await initSdkInstance();
-          setIsSDKReady(true);
         }
       } catch (e) {
         console.error("Failed to load PayPal SDK", e);
         setSdkError(e);
         throw new Error(`Failed to load Paypal SDK Script: ${e}`);
       }
+      setIsSDKReady(true);
     };
 
     loadPayPalSDK();
