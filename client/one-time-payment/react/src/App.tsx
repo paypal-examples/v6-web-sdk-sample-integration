@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import PayPalButton from "./components/PayPalButton";
 import VenmoButton from "./components/VenmoButton";
+import { initSdkInstance } from "./components/utils";
 
 function App() {
   const [isSDKReady, setIsSDKReady] = useState<boolean>(false);
@@ -12,7 +13,10 @@ function App() {
           const script = document.createElement("script");
           script.src = "https://www.sandbox.paypal.com/web-sdk/v6/core";
           script.async = true;
-          script.onload = () => setIsSDKReady(true);
+          script.onload = () => {
+            setIsSDKReady(true);
+            initSdkInstance();
+          };
           document.body.appendChild(script);
         } else {
           setIsSDKReady(true);

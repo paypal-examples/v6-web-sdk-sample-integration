@@ -73,6 +73,7 @@ export const setupPayPalButton = (sdkInstance: any) => {
   };
 
   const paypalButton = document.getElementById("paypal-button");
+  paypalButton?.removeAttribute("hidden")
 
   if (paypalButton) {
     paypalButton.addEventListener("click", onClick);
@@ -95,6 +96,7 @@ export const setupVenmoButton = (sdkInstance: any) => {
   };
 
   const venmoButton = document.getElementById("venmo-button");
+  venmoButton?.removeAttribute("hidden")
 
   if (venmoButton) {
     venmoButton.addEventListener("click", onClick);
@@ -105,10 +107,7 @@ export const setupVenmoButton = (sdkInstance: any) => {
   }
 }
 
-export const initSdkInstance = async (
-  setIsEligible: React.Dispatch<React.SetStateAction<boolean>>,
-  type: "paypal" | "venmo"
-) => {
+export const initSdkInstance = async () => {
   let clientToken;
   try {
     clientToken = await getBrowserSafeClientToken();
@@ -124,15 +123,15 @@ export const initSdkInstance = async (
       currency: "USD",
     });
 
-    if (paymentMethods.isEligible(type)) {
-      // If eligible, update `isEligible` for the specific Button Component and return the SDK Instance
-      setIsEligible(true);
-      return sdkInstance;
-    } else {
-        return undefined;
+    if (paymentMethods.isEligible("paypal")) {
+      setupPayPalButton(sdkInstance);
     }
+
+    if (paymentMethods.isEligible("venmo")) {
+      setupVenmoButton(sdkInstance);
+    }
+
   } catch (e) {
     console.error("Failed to intialize SDK Instance", e);
-    return undefined;
   }
 };
