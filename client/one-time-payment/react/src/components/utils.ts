@@ -133,5 +133,6 @@ export const initSdkInstance = async () => {
 
   } catch (e) {
     console.error("Failed to intialize SDK Instance", e);
+    throw new Error(`Failed to initialize SDK Instance: ${e}`);
   }
 };

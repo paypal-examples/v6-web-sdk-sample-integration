@@ -1,35 +1,24 @@
-import { useState, useEffect } from "react";
 import PayPalButton from "./components/PayPalButton";
 import VenmoButton from "./components/VenmoButton";
-import { initSdkInstance } from "./components/utils";
+import { PayPalSDKProvider } from "./context/sdkContext";
+import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+
+function ErrorFallback({ error }) {
+  console.log("error: ", error);
+  const { resetBoundary } = useErrorBoundary();
+
+  return (
+    <div role="alert">
+      <p>Something went wrong:</p>
+      <pre style={{ color: "red" }}>{error.message}</pre>
+      <button onClick={resetBoundary}>Try again</button>
+    </div>
+  );
+}
 
 function App() {
-  const [isSDKReady, setIsSDKReady] = useState<boolean>(false);
-
-  useEffect(() => {
-    const loadPayPalSDK = async () => {
-      try {
-        if (!window.paypal) {
-          const script = document.createElement("script");
-          script.src = "https://www.sandbox.paypal.com/web-sdk/v6/core";
-          script.async = true;
-          script.onload = () => {
-            setIsSDKReady(true);
-            initSdkInstance();
-          };
-          document.body.appendChild(script);
-        } else {
-          setIsSDKReady(true);
-        }
-      } catch (e) {
-        console.error("Failed to load PayPal SDK", e);
-      }
-    };
-
-    loadPayPalSDK();
-  }, []);
   return (
-    <>
+    <PayPalSDKProvider>
       <h1>React One-Time Payment Recommended Integration</h1>
       <div
         style={{
@@ -38,10 +27,12 @@ function App() {
           gap: "12px",
         }}
       >
-        {isSDKReady && <PayPalButton />}
-        {isSDKReady && <VenmoButton />}
+        <ErrorBoundary FallbackComponent={ErrorFallback}>
+          <PayPalButton />
+          <VenmoButton />
+        </ErrorBoundary>
       </div>
-    </>
+    </PayPalSDKProvider>
   );
 }
 
