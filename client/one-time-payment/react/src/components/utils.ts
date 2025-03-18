@@ -36,7 +36,7 @@ const captureOrder = async ({ orderId }: { orderId: string }) => {
       },
     },
   );
-  const data = await response.json();
+const data = await response.json();
 
   return data;
 }
@@ -108,31 +108,20 @@ export const setupVenmoButton = (sdkInstance: any) => {
 }
 
 export const initSdkInstance = async () => {
-  let clientToken;
-  try {
-    clientToken = await getBrowserSafeClientToken();
+  const clientToken = await getBrowserSafeClientToken();
+  const sdkInstance = await window.paypal.createInstance({
+    clientToken,
+    components: ["paypal-payments", "venmo-payments"],
+    pageType: "checkout",
+  });
+  // Check Payment Method Eligibility
+  const paymentMethods = await sdkInstance.findEligibleMethods({
+    currency: "USD",
+  });
 
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken,
-      components: ["paypal-payments", "venmo-payments"],
-      pageType: "checkout",
-    });
-
-    // Check Payment Method Eligibility
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currency: "USD",
-    });
-
-    if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
-    }
-
-    if (paymentMethods.isEligible("venmo")) {
-      setupVenmoButton(sdkInstance);
-    }
-
-  } catch (e) {
-    console.error("Failed to intialize SDK Instance", e);
-    throw new Error(`Failed to initialize SDK Instance: ${e}`);
-  }
+  return {
+    sdkInstance,
+    isPayPalEligible: paymentMethods.isEligible("paypal"),
+    isVenmoEligible: paymentMethods.isEligible("venmo")
+  };
 };
