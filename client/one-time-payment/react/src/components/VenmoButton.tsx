@@ -19,17 +19,24 @@ const VenmoButton: React.FC = () => {
           console.error(e);
         }
       };
-
-      const venmoButton = document.getElementById("venmo-button");
-      venmoButton?.removeAttribute("hidden");
     }
   }, [isReady, paymentMethodEligibility.isVenmoEligible, sdkInstance]);
 
   if (!isReady) {
-    return <p>LOADING.....</p>
+    return <p>LOADING.....</p>;
   }
 
-  return <venmo-button hidden type="pay" id="venmo-button"></venmo-button>;
+  if (isReady && !paymentMethodEligibility.isVenmoEligible) {
+    return <p>VENMO NOT ELIGIBLE</p>;
+  }
+
+  return (
+    <venmo-button
+      onClick={() => onClickRef.current()}
+      type="pay"
+      id="venmo-button"
+    ></venmo-button>
+  );
 };
 
 export default VenmoButton;
