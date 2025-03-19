@@ -14,7 +14,7 @@ const getBrowserSafeClientToken = async () => {
   }
 }
 
-const createOrder = async () => {
+export const createOrder = async () => {
   const response = await fetch(
     "/paypal-api/checkout/orders/create",
     {
@@ -43,7 +43,7 @@ const data = await response.json();
   return data;
 }
 
-const paymentSessionOptions: PaymentSessionOptions = {
+export const paymentSessionOptions: PaymentSessionOptions = {
   async onApprove(data) {
     console.log("onApprove", data);
     const orderData = await captureOrder({
@@ -63,56 +63,6 @@ const paymentSessionOptions: PaymentSessionOptions = {
     console.log("onError", error);
   },
 };
-
-export const setupPayPalButton = (sdkInstance: any) => {
-  const paypalSession = sdkInstance.createPayPalOneTimePaymentSession(
-    paymentSessionOptions
-  );
-
-  // onClick should include the .start call
-  // this triggers the presentation mode selected (auto, popup, modal etc.)
-  const onClick = async () => {
-    try {
-      await paypalSession.start({ presentationMode: "auto" }, createOrder());
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const paypalButton = document.getElementById("paypal-button");
-  paypalButton?.removeAttribute("hidden")
-
-  if (paypalButton) {
-    paypalButton.addEventListener("click", onClick);
-  }
-}
-
-export const setupVenmoButton = (sdkInstance: any) => {
-  const venmoSession = sdkInstance.createVenmoOneTimePaymentSession(
-    paymentSessionOptions
-  );
-
-  // onClick should include the .start call
-  // this triggers the presentation mode selected (auto, popup, modal etc.)
-  const onClick = async () => {
-    try {
-      await venmoSession.start({ presentationMode: "auto" }, createOrder());
-    } catch (e) {
-      console.error(e);
-    }
-  };
-
-  const venmoButton = document.getElementById("venmo-button");
-  venmoButton?.removeAttribute("hidden")
-
-  if (venmoButton) {
-    venmoButton.addEventListener("click", onClick);
-
-    return () => {
-      venmoButton.removeEventListener("click", onClick);
-    };
-  }
-}
 
 export const initSdkInstance = async () => {
   const clientToken = await getBrowserSafeClientToken();
