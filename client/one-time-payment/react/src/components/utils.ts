@@ -51,9 +51,11 @@ export const paymentSessionOptions: PaymentSessionOptions = {
     });
     console.log("Capture result", orderData);
     if (orderData.status === "COMPLETED") {
-      window.location.replace("/success"); // Redirect to success
+      window.history.pushState({}, "", "/success"); // Redirect to success
+      window.dispatchEvent(new PopStateEvent("popstate"));
     } else {
-      window.location.replace("/failure"); // Redirect to failure
+      window.history.pushState({}, "", "/failure"); // Redirect to failure
+      window.dispatchEvent(new PopStateEvent("popstate"));
     }
   },
   onCancel(data) {
