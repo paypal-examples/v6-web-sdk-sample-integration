@@ -39,12 +39,8 @@ export const PayPalSDKProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const loadPayPalSDK = async () => {
       try {
-        if (!window.paypal) {
-          const script = document.createElement("script");
-          script.src = "https://www.sandbox.paypal.com/web-sdk/v6/core";
-          script.async = true;
-          script.onload = async () => {
-            const { sdkInstance, isPayPalEligible, isVenmoEligible } =
+        if (!window.paypal && !sdkInstance) {
+          const { sdkInstance, isPayPalEligible, isVenmoEligible } =
               await initSdkInstance();
             setSdkInstance(sdkInstance);
             setPaymentMethodEligibility({
@@ -52,20 +48,6 @@ export const PayPalSDKProvider: React.FC<{ children: React.ReactNode }> = ({
               isPayPalEligible,
               isVenmoEligible,
             })
-          };
-          script.onerror = (e) => {
-            setSdkError(e);
-          };
-          document.body.appendChild(script);
-        } else {
-          const { sdkInstance, isPayPalEligible, isVenmoEligible } =
-            await initSdkInstance();
-          setSdkInstance(sdkInstance);
-          setPaymentMethodEligibility({
-            ...paymentMethodEligibility,
-            isPayPalEligible,
-            isVenmoEligible,
-          })
         }
         setIsSDKReady(true);
       } catch (e) {
