@@ -1,3 +1,5 @@
+import { PaymentSessionOptions } from "../types/paypal";
+
 const getBrowserSafeClientToken = async () => {
   {
     const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
@@ -41,7 +43,7 @@ const data = await response.json();
   return data;
 }
 
-const paymentSessionOptions = {
+const paymentSessionOptions: PaymentSessionOptions = {
   async onApprove(data) {
     console.log("onApprove", data);
     const orderData = await captureOrder({
