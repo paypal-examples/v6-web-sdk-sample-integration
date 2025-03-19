@@ -18,10 +18,14 @@ function ErrorFallback({ error }) {
     <div role="alert">
       <p>Something went wrong:</p>
       <pre style={{ color: "red" }}>{error.message}</pre>
-      <button onClick={() => {
-        resetBoundary();
-        refreshPage();
-      }}>Try again</button>
+      <button
+        onClick={() => {
+          resetBoundary();
+          refreshPage();
+        }}
+      >
+        Try again
+      </button>
     </div>
   );
 }
@@ -59,8 +63,33 @@ function App() {
             display: "flex",
             flexDirection: "column",
             gap: "12px",
+            alignItems: "center",
           }}
         >
+          <div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "row",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <h1>⚽️ World Cup Ball</h1>
+              <h3 style={{marginLeft: "24px"}}>Price: 29.99</h3>
+            </div>
+            <div
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "space-evenly",
+              }}
+            >
+              <p>Estimated Total: 29.99</p>
+              <p>Taxes, discounts and shipping calculated at checkout</p>
+            </div>
+          </div>
           <PayPalButton />
           <VenmoButton />
         </div>
