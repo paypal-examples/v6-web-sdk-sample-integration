@@ -1,54 +1,34 @@
-# React + TypeScript + Vite
+# One-Time Payments React Sample Integration
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+This React sample integration uses Vite to spin up an application with a React-Typescript template. Vite is used for the local web server and provides the following functionality:
 
-Currently, two official plugins are available:
+1. Runs the Vite development server on port 3000 where the React App is accessible.
+2. Proxies the API server and forwards requests to port 8080.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## How to Run Locally
 
-## Expanding the ESLint configuration
+Run the UI application and the Node server concurrently.
 
-If you are developing a production application, we recommend updating the configuration to enable type-aware lint rules:
+```bash
+v6-web-sdk-sample-integration/client/one-time-payment/react
+npm install
+npm run dev
 
-```js
-export default tseslint.config({
-  extends: [
-    // Remove ...tseslint.configs.recommended and replace with this
-    ...tseslint.configs.recommendedTypeChecked,
-    // Alternatively, use this for stricter rules
-    ...tseslint.configs.strictTypeChecked,
-    // Optionally, add this for stylistic rules
-    ...tseslint.configs.stylisticTypeChecked,
-  ],
-  languageOptions: {
-    // other options...
-    parserOptions: {
-      project: ['./tsconfig.node.json', './tsconfig.app.json'],
-      tsconfigRootDir: import.meta.dirname,
-    },
-  },
-})
+v6-web-sdk-sample-integration/server/node
+npm install
+npm run start
 ```
 
-You can also install [eslint-plugin-react-x](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-x) and [eslint-plugin-react-dom](https://github.com/Rel1cx/eslint-react/tree/main/packages/plugins/eslint-plugin-react-dom) for React-specific lint rules:
+### Sample Integrations
 
-```js
-// eslint.config.js
-import reactX from 'eslint-plugin-react-x'
-import reactDom from 'eslint-plugin-react-dom'
+Currently there is only one example integration, One-Time Payment with PayPal or Venmo.  There are several key aspects to the integration:
+  1. The Core Script is placed directly into the index.html file that renders the application, rather than injected.
+  2. Leveraging the Context Provider pattern the relevant data is available throughout the application.  Via this strategy one can initialize the SDK, query for eligibility (based on the payment method, in this case 'paypal' and 'venmo'), and create One-Time Payment Sessions that are used by the buttons themselves all in one place.
+  3. React component wrappers around the `paypal-button` and `venmo-button`, where the onClickHandler lives.  The onClick is where `session.start` should be called.
 
-export default tseslint.config({
-  plugins: {
-    // Add the react-x and react-dom plugins
-    'react-x': reactX,
-    'react-dom': reactDom,
-  },
-  rules: {
-    // other rules...
-    // Enable its recommended typescript rules
-    ...reactX.configs['recommended-typescript'].rules,
-    ...reactDom.configs.recommended.rules,
-  },
-})
-```
+
+### Extras
+
+There are 2 extra aspects included that are worth highlighting as well.  Graceful error handling is accomplished using [react-error-boundary](https://github.com/bvaughn/react-error-boundary), a helpful library that has more functionality than is demonstrated here.
+
+Also there is a very basic example of post-onApprove redirection; oftentimes when integrating with the PayPal Web SDK a merchant will want to redirect to a new page after a successful purchase.  Including redirect logic in the onApprove function body will successfully redirect within the application.  Leveraging a helper like `react-router-dom` would make this process cleaner.
