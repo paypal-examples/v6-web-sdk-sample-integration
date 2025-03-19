@@ -1,26 +1,20 @@
-import React, { useContext, useEffect, useRef } from "react";
+import React, { useContext } from "react";
 import { PayPalSDKContext } from "../context/sdkContext";
-import { createOrder, paymentSessionOptions } from "./utils";
+import { createOrder } from "./utils";
 
 const VenmoButton: React.FC = () => {
-  const { isReady, sdkInstance, paymentMethodEligibility } =
+  const { isReady, paymentMethodEligibility, venmoSession } =
     useContext(PayPalSDKContext);
-  const onClickRef = useRef(() => {});
-
-  useEffect(() => {
-    if (isReady && paymentMethodEligibility.isVenmoEligible) {
-      const venmoSession = sdkInstance.createVenmoOneTimePaymentSession(
-        paymentSessionOptions
-      );
-      onClickRef.current = async () => {
-        try {
-          await venmoSession.start({ presentationMode: "auto" }, createOrder());
-        } catch (e) {
-          console.error(e);
-        }
-      };
-    }
-  }, [isReady, paymentMethodEligibility.isVenmoEligible, sdkInstance]);
+  const venmoOnClickHandler = async () => {
+      try {
+        await venmoSession.start(
+          { presentationMode: "auto" },
+          createOrder()
+        );
+      } catch (e) {
+        console.error(e);
+      }
+    };
 
   if (!isReady) {
     return <p>LOADING.....</p>;
@@ -32,7 +26,7 @@ const VenmoButton: React.FC = () => {
 
   return (
     <venmo-button
-      onClick={() => onClickRef.current()}
+      onClick={() => venmoOnClickHandler()}
       type="pay"
       id="venmo-button"
     ></venmo-button>
