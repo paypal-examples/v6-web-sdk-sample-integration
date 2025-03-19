@@ -39,7 +39,7 @@ export const PayPalSDKProvider: React.FC<{ children: React.ReactNode }> = ({
   useEffect(() => {
     const loadPayPalSDK = async () => {
       try {
-        if (!window.paypal && !sdkInstance) {
+        if (!window.paypal || !sdkInstance) {
           const { sdkInstance, isPayPalEligible, isVenmoEligible } =
               await initSdkInstance();
             setSdkInstance(sdkInstance);
