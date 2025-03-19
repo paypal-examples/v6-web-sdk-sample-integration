@@ -11,7 +11,6 @@ function refreshPage() {
 }
 
 function ErrorFallback({ error }) {
-  console.log("error: ", error);
   const { resetBoundary } = useErrorBoundary();
 
   return (
@@ -76,7 +75,7 @@ function App() {
               }}
             >
               <h1>⚽️ World Cup Ball</h1>
-              <h3 style={{marginLeft: "24px"}}>Price: 29.99</h3>
+              <h3 style={{ marginLeft: "24px" }}>Price: 29.99</h3>
             </div>
             <div
               style={{
