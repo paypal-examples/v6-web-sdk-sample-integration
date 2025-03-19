@@ -48,6 +48,11 @@ const paymentSessionOptions = {
       orderId: data.orderId,
     });
     console.log("Capture result", orderData);
+    if (orderData.status === "COMPLETED") {
+      window.location.replace("/success"); // Redirect to success
+    } else {
+      window.location.replace("/failure"); // Redirect to failure
+    }
   },
   onCancel(data) {
     console.log("onCancel", data);
