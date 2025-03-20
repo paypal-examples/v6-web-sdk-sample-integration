@@ -118,9 +118,9 @@ function onLoad() {
 
     // not setting iframe.src, then using the button will leave the popup open
 
-    // setting iframe src will trigger beforeunload, unload, and pagehide
+    // setting iframe src will trigger beforeunload, unload, pagehide, and visibilitychange
     iframe.src = 'about:blank';
-    // using only remove will trigger unload, and pagehide, and *not* beforeunload
+    // using only remove will trigger unload, pagehide, and visibilitychange, but *not* beforeunload
     iframe.remove();
 
   });
