@@ -116,6 +116,7 @@ function onLoad() {
   document.getElementById('iframeCloseButton').addEventListener('click', () => {
     const iframe = document.getElementById('iframeWrapper');
 
+    // commenting this line out, then using the button will leave the popup open
     iframe.src = 'about:blank';
 
     iframe.remove();
