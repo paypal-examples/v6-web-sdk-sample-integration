@@ -114,7 +114,11 @@ function onLoad() {
   setupPostMessageListener();
 
   document.getElementById('iframeCloseButton').addEventListener('click', () => {
-    document.getElementById('iframeWrapper').remove();
+    const iframe = document.getElementById('iframeWrapper');
+
+    iframe.src = 'about:blank';
+
+    iframe.remove();
   });
 
   window.setupComplete = true;
