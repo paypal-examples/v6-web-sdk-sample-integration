@@ -42,7 +42,7 @@ function popupPresentationModePostMessageHandler(event) {
   const overlay = document.getElementById("overlayContainer");
 
   if (eventName === "payment-flow-start") {
-    overlay.showModal();
+    //overlay.showModal();
   } else if (eventName === "payment-flow-approved") {
     overlay.close();
   } else if (eventName === "payment-flow-canceled") {
@@ -112,6 +112,10 @@ function onLoad() {
 
   setupOverlay();
   setupPostMessageListener();
+
+  document.getElementById('iframeCloseButton').addEventListener('click', () => {
+    document.getElementById('iframeWrapper').remove();
+  });
 
   window.setupComplete = true;
 }

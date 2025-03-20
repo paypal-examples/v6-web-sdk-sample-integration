@@ -81,6 +81,12 @@ async function setupPayPalButton(sdkInstance) {
         orderId: data.orderId,
       });
 
+      // TODO try a button that removes the iframe
+      // TODO try moving the merchant stuff to outside the iframe
+
+      // TODO does not work, popup still closes
+      //document.querySelector('body').remove();
+
       sendPostMessageToParent({
         eventName: "payment-flow-approved",
         data: orderData,
