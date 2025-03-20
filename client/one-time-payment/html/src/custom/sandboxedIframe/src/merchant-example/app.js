@@ -116,10 +116,13 @@ function onLoad() {
   document.getElementById('iframeCloseButton').addEventListener('click', () => {
     const iframe = document.getElementById('iframeWrapper');
 
-    // commenting this line out, then using the button will leave the popup open
-    iframe.src = 'about:blank';
+    // not setting iframe.src, then using the button will leave the popup open
 
+    // setting iframe src will trigger beforeunload, unload, and pagehide
+    iframe.src = 'about:blank';
+    // using only remove will trigger unload, and pagehide, and *not* beforeunload
     iframe.remove();
+
   });
 
   window.setupComplete = true;
