@@ -86,9 +86,16 @@
 
     <script src="/integration.js"></script>
 
+    <!--
     <script
       async
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalLoaded()"
+    ></script>
+    -->
+    <script
+      async
+      src="https://localhost:3002/web-sdk/v6/core"
       onload="onPayPalLoaded()"
     ></script>
   </body>

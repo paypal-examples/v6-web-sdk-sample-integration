@@ -116,10 +116,14 @@ function onLoad() {
   document.getElementById('iframeCloseButton').addEventListener('click', () => {
     const iframe = document.getElementById('iframeWrapper');
 
+    // test safari, other browsers
+    // test with (p?)react, when a conditional changes that stops a component from rendering, do we get pagehide
+    // will pagehide trigger when switching tabs in a certain browser?
+
     // not setting iframe.src, then using the button will leave the popup open
 
     // setting iframe src will trigger beforeunload, unload, pagehide, and visibilitychange
-    iframe.src = 'about:blank';
+    //iframe.src = 'about:blank';
     // using only remove will trigger unload, pagehide, and visibilitychange, but *not* beforeunload
     iframe.remove();
 
