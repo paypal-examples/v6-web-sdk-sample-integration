@@ -12,11 +12,11 @@ Run the React UI application and the Node.js backend API server concurrently.
 ```bash
 v6-web-sdk-sample-integration/server/node
 npm install
-npm run start
+npm start
 
 v6-web-sdk-sample-integration/client/one-time-payment/react
 npm install
-npm run dev
+npm start
 ```
 
 This sample integration requires two servers to be running, the React application, and the backend API server. The React application will run on port 3000, and the backend API server will run on port 8080. The backend API server handles sensitive interactions with the PayPal API, such as generating client tokens and capturing orders. The React application will use a proxy to securely interact with the backend API.
