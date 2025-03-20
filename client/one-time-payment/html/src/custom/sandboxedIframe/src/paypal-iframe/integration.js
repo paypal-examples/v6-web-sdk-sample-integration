@@ -191,6 +191,6 @@ async function captureOrder({ orderId }) {
 window.addEventListener('beforeunload', () => console.log('beforeunload => iframe is being removed!'));
 window.addEventListener('unload', () => console.log('unload => iframe is being removed!'));
 window.addEventListener('pagehide', () => console.log('pagehide => iframe is being removed!'));
-window.addEventListener('visibilitychange', () => {
+document.addEventListener('visibilitychange', () => {
   console.log(performance.now(), 'visibilitychange => iframe is being removed!', document.hidden);
 });
