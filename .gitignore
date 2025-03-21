@@ -1,5 +1,7 @@
 .env
 dist/
+dist-ssr
+*.local
 
 ### MacOS ###
 .DS_Store
@@ -14,3 +16,23 @@ package-lock.json
 
 ### vim ###
 *.sw*
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
