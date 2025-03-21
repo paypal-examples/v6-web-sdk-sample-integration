@@ -38,7 +38,7 @@ const captureOrder = async ({ orderId }: { orderId: string }) => {
       },
     },
   );
-const data = await response.json();
+  const data = await response.json();
 
   return data;
 }
