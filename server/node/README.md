@@ -26,7 +26,6 @@ Generates and returns a browser-safe client token for initializing the PayPal Ja
   }
   ```
 
-- `500 Internal Server Error` returned if token generation fails.
 
 ---
 
