@@ -27,6 +27,7 @@ Generates and returns a browser-safe client token for initializing the PayPal Ja
     // additional metadata
   }
   ```
+  For more details, visit PayPal's [Developer Documentation](https://developer.paypal.com/api/rest/authentication/) site 
 
 
 ---
@@ -50,6 +51,7 @@ No body required.
     "status": "CREATED"
   }
   ```
+  For more information on the Create endpoint, visit PayPal's [Developer Documentation](https://developer.paypal.com/docs/api/orders/v2/#orders_create) site.
 
 
 ---
@@ -71,7 +73,10 @@ Captures an existing PayPal order and finalizes the payment.
   ```json
   {
     "id": "ORDER-ID",
-    "status": "COMPLETED"
+    "status": "COMPLETED",
+    // additional order information
   }
   ```
+  
+  For more information on the Capture endpoint, visit PayPal's [Developer Documentation](https://developer.paypal.com/docs/api/orders/v2/#orders_capture) site.
 
