@@ -1,4 +1,4 @@
-# `html-iframe` Example App
+# One-Time Payments HTML Sandboxed Iframe Sample Integration
 
 In this example, we serve a merchant page with an embedded iframe on a different domain. The iframe interacts
 with a server using the PayPal Server SDK and uses `postMessage` to the merchant page. This demonstrates the v6 ability
