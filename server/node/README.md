@@ -74,4 +74,3 @@ Captures an existing PayPal order and finalizes the payment.
   }
   ```
 
-- `500 Internal Server Error` returned if the capture fails.
