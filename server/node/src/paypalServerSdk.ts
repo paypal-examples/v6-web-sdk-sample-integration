@@ -88,7 +88,7 @@ export async function getBrowserSafeClientToken() {
 
 export async function createOrder(orderRequestBody: OrderRequest) {
   try {
-    const { body, statusCode } = await ordersController.ordersCreate({
+    const { body, statusCode } = await ordersController.createOrder({
       body: orderRequestBody,
       prefer: "return=minimal",
     });
@@ -127,7 +127,7 @@ export async function createOrderWithSampleData() {
 
 export async function captureOrder(orderId: string) {
   try {
-    const { body, statusCode } = await ordersController.ordersCapture({
+    const { body, statusCode } = await ordersController.captureOrder({
       id: orderId,
       prefer: "return=minimal",
     });
