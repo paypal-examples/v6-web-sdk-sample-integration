@@ -49,7 +49,6 @@ No body required.
   }
   ```
 
-- `500 Internal Server Error` returned if order creation fails.
 
 ---
 
