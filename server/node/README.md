@@ -22,7 +22,9 @@ Generates and returns a browser-safe client token for initializing the PayPal Ja
 
   ```json
   {
-    "client_token": "abc123..."
+    "access_token": "abc123...",
+    "expires_in": "900" // TTL in seconds,
+    // additional metadata
   }
   ```
 
