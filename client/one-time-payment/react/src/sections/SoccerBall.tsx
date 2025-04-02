@@ -1,12 +1,23 @@
-import React, { useContext, useState } from "react";
+import React, { useContext, useState, useCallback } from "react";
 import { PayPalSDKContext } from "../context/sdkContext";
-import PayPalButton from "./PayPalButton";
-import VenmoButton from "./VenmoButton";
-import { PaymentSessionOptions } from "../types/paypal";
+import PayPalButton from "../components/PayPalButton";
+import VenmoButton from "../components/VenmoButton";
+import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
+import ProductDisplay from "../components/ProductDisplay";
+import PaymentModal from "../components/PaymentModal";
 
 import soccerBallImage from '../static/images/world-cup.jpg'
+import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
+
+// Types
+type ModalType = 'success' | 'cancel' | 'error' | null;
+
+interface ModalContent {
+  title: string;
+  message: string;
+}
 
 // Constants
 const PRODUCT = {
@@ -15,22 +26,18 @@ const PRODUCT = {
   price: 100.00,
   imageSrc: soccerBallImage,
   imageAlt: "Official World Cup Soccer Ball",
-};
-
-type ModalType = 'success' | 'cancel' | 'error' | null;
+} as const;
 
 const SoccerBall: React.FC = () => {
   const { isReady, eligiblePaymentMethods } = useContext(PayPalSDKContext);
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
-  const handlePaymentCallbacks: {
-    onApprove: PaymentSessionOptions['onApprove'];
-    onCancel: PaymentSessionOptions['onCancel'];
-    onError: PaymentSessionOptions['onError'];
-  } = {
-    onApprove: (data) => {
+  const handlePaymentCallbacks: PaymentSessionOptions = {
+    onApprove: async (data: OnApproveData) => {
       console.log('Payment approved:', data);
+      const captureResult = await captureOrder({ orderId: data.orderId });
+      console.log('Payment capture result:', captureResult);
       setModalState('success');
     },
 
@@ -39,14 +46,14 @@ const SoccerBall: React.FC = () => {
       setModalState('cancel');
     },
 
-    onError: (error: any) => {
+    onError: (error: Error) => {
       console.error('Payment error:', error);
       setModalState('error');
     }
   };
 
-  const getModalContent = () => {
-    switch (modalState) {
+  const getModalContent = useCallback((state: ModalType): ModalContent | null => {
+    switch (state) {
       case 'success':
         return {
           title: 'Payment Successful! 🎉',
@@ -65,51 +72,24 @@ const SoccerBall: React.FC = () => {
       default:
         return null;
     }
-  };
+  }, []);
 
   // Check payment method eligibility
   const isPayPalEligible = isReady && eligiblePaymentMethods?.isEligible('paypal');
   const isVenmoEligible = isReady && eligiblePaymentMethods?.isEligible('venmo');
 
-  const modalContent = getModalContent();
+  const modalContent = getModalContent(modalState);
 
   return (
-    <div className="soccer-ball-container">
+    <div className="soccer-ball-container" data-testid="soccer-ball-container">
       {modalContent && (
-        <div className="modal-overlay" onClick={() => setModalState(null)}>
-          <div className="modal-content">
-            <button 
-              className="close-button" 
-              onClick={(e) => {
-                e.stopPropagation();
-                setModalState(null);
-              }}
-            >
-              ×
-            </button>
-            <h2>{modalContent.title}</h2>
-            <p>{modalContent.message}</p>
-          </div>
-        </div>
+        <PaymentModal
+          content={modalContent}
+          onClose={() => setModalState(null)}
+        />
       )}
       
-      <div className="product-header">
-        <h1 className="product-title">{PRODUCT.icon} {PRODUCT.name}</h1>
-        <h3 className="product-price">Price: ${PRODUCT.price.toFixed(2)}</h3>
-      </div>
-
-      <div className="product-image-container">
-        <img
-          src={PRODUCT.imageSrc}
-          alt={PRODUCT.imageAlt}
-          className="product-image"
-        />
-      </div>
-
-      <div className="checkout-summary">
-        <p>Estimated Total: ${PRODUCT.price.toFixed(2)}</p>
-        <p>Taxes, discounts and shipping calculated at checkout</p>
-      </div>
+      <ProductDisplay product={PRODUCT} />
 
       <div className="payment-options">
         {isPayPalEligible && (

@@ -3,14 +3,10 @@ import { useEffect, useState } from "react";
 import { PayPalSDKProvider } from "./context/sdkContext";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
-import {getBrowserSafeClientToken} from "./utils.ts";
-import SoccerBall from "./components/SoccerBall.tsx";
+import { getBrowserSafeClientToken } from "./utils.ts";
+import SoccerBall from "./sections/SoccerBall.tsx";
 
-function refreshPage() {
-  window.location.reload();
-}
-
-function ErrorFallback({ error }) {
+function ErrorFallback({ error }: { error: Error }) {
   const { resetBoundary } = useErrorBoundary();
 
   return (
@@ -20,7 +16,6 @@ function ErrorFallback({ error }) {
       <button
         onClick={() => {
           resetBoundary();
-          refreshPage();
         }}
       >
         Try again

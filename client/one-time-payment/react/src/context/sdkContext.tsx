@@ -1,5 +1,6 @@
 import React, { useState, useEffect, createContext } from "react";
 import { EligiblePaymentMethods, SdkInstance } from "../types/paypal";
+import { useErrorBoundary } from "react-error-boundary";
 
 interface PayPalSDKContextProps {
   isReady: boolean;
@@ -29,6 +30,7 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
   children,
   pageType
 }) => {
+  const { showBoundary } = useErrorBoundary();
   const [isSDKReady, setIsSDKReady] = useState<boolean>(false);
   const [sdkInstance, setSdkInstance] = useState<SdkInstance | null>(null);
   const [eligiblePaymentMethods, setEligiblePaymentMethods] = useState<EligiblePaymentMethods | null>(null);
@@ -54,10 +56,14 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
   useEffect(() => {
     const loadPayPalSDK = async () => {
       if (!sdkInstance && clientToken) {
-        const { sdkInstance, eligiblePaymentMethods } = await initSdkInstance();
-        setSdkInstance(sdkInstance);
-        setEligiblePaymentMethods(eligiblePaymentMethods);
-        setIsSDKReady(true);
+        try {
+          const { sdkInstance, eligiblePaymentMethods } = await initSdkInstance();
+          setSdkInstance(sdkInstance);
+          setEligiblePaymentMethods(eligiblePaymentMethods);
+          setIsSDKReady(true);
+        } catch (error) {
+          showBoundary(error);
+        }
       }
     };
 

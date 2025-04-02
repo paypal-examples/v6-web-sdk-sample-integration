@@ -26,7 +26,7 @@ export const createOrder = async () => {
   return { orderId: orderData.id };
 };
 
-const captureOrder = async ({ orderId }: { orderId: string }) => {
+export const captureOrder = async ({ orderId }: { orderId: string }) => {
   const response = await fetch(
     `/paypal-api/checkout/orders/${orderId}/capture`,
     {
