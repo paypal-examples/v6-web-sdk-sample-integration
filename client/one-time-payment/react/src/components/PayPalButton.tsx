@@ -1,13 +1,16 @@
 import React, { useContext } from "react";
 import { PayPalSDKContext } from "../context/sdkContext";
-import { createOrder } from "./utils";
+import { createOrder } from "../utils";
+import { PaymentSessionOptions } from "../types/paypal";
 
-const PayPalButton: React.FC = () => {
-  const { isReady, paymentMethodEligibility, paypalSession } =
-    useContext(PayPalSDKContext);
+const PayPalButton: React.FC<PaymentSessionOptions> = (paymentSessionOptions) => {
+  const { sdkInstance } = useContext(PayPalSDKContext);
+
+  const paypalSession = sdkInstance?.createPayPalOneTimePaymentSession(paymentSessionOptions);
+
   const payPalOnClickHandler = async () => {
     try {
-      await paypalSession.start(
+      await paypalSession?.start(
         { presentationMode: "auto" },
         createOrder()
       );
@@ -15,14 +18,6 @@ const PayPalButton: React.FC = () => {
       console.error(e);
     }
   };
-
-  if (!isReady) {
-    return <p>LOADING.....</p>;
-  }
-
-  if (isReady && !paymentMethodEligibility.isPayPalEligible) {
-    return <p>PAYPAL NOT ELIGIBLE</p>;
-  }
 
   return (
     <paypal-button

@@ -1,0 +1,55 @@
+/* SoccerBall.css */
+.soccer-ball-container {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    align-items: center;
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.product-image-container {
+    display: flex;
+    justify-content: center;
+
+    img {
+        width: 100%;
+    }
+}
+
+.product-header {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+}
+
+.product-title {
+    margin: 0;
+}
+
+.product-price {
+    margin: 0 0 0 24px;
+}
+
+.checkout-summary {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 16px 0;
+    text-align: center;
+}
+
+.checkout-summary p {
+    margin: 5px 0;
+}
+
+.payment-options {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    gap: 12px;
+    width: 100%;
+}
