@@ -29,7 +29,7 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { isReady, eligiblePaymentMethods } = useContext(PayPalSDKContext);
+  const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
@@ -75,8 +75,8 @@ const SoccerBall: React.FC = () => {
   }, []);
 
   // Check payment method eligibility
-  const isPayPalEligible = isReady && eligiblePaymentMethods?.isEligible('paypal');
-  const isVenmoEligible = isReady && eligiblePaymentMethods?.isEligible('venmo');
+  const isPayPalEligible = sdkInstance && eligiblePaymentMethods?.isEligible('paypal');
+  const isVenmoEligible = sdkInstance && eligiblePaymentMethods?.isEligible('venmo');
 
   const modalContent = getModalContent(modalState);
 
