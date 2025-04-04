@@ -1,7 +1,9 @@
 // src/types/paypal.d.ts
 declare global {
   interface Window {
-      paypal: unknown;
+      paypal: {
+        createInstance: (createInstanceOptions) => Promise<SdkInstance>
+      }
   }
 }
 
@@ -14,12 +16,16 @@ declare module 'react' {
   }
 }
 
+export interface EligiblePaymentMethods {
+  isEligible: (paymentMethod: string) => boolean;
+}
+
 export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
   type: string;
 }
 
 export type PaymentSessionOptions = {
-  onApprove?: (data: OnApproveData) => Promise<void>;
+  onApprove?: (data: OnApproveData) => Promise<void> | void;
   onCancel?: (data?: { orderId: string; }) => void;
   onError?: (data: Error) => void;
 };
@@ -30,11 +36,12 @@ type OnApproveData = {
   billingToken?: string;
 }
 
-type CreateInstanceOutput = {
+export type SdkInstance = {
   // "paypal-payments" component
-  createPayPalOneTimePaymentSession?: (paymentSessionOptions: PaymentSessionInput) => SessionOutput;
+  createPayPalOneTimePaymentSession: (paymentSessionOptions: PaymentSessionOptions) => SessionOutput;
   // "venmo-payments" component
-  createVenmoOneTimePaymentSession?: (paymentSessionOptions: PaymentSessionInput) => SessionOutput;
+  createVenmoOneTimePaymentSession: (paymentSessionOptions: PaymentSessionOptions) => SessionOutput;
+  findEligibleMethods: (options) => Promise<EligiblePaymentMethods>,
 };
 
 type SessionOutput = {
