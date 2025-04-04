@@ -5,6 +5,7 @@ import {
   getBrowserSafeClientToken,
   createOrderWithSampleData,
   captureOrder,
+  createSetupToken,
 } from "./paypalServerSdk";
 
 const app = express();
@@ -18,7 +19,7 @@ app.use(express.json());
 
 app.get(
   "/paypal-api/auth/browser-safe-client-token",
-  async (req: Request, res: Response) => {
+  async (_req: Request, res: Response) => {
     try {
       const { jsonResponse, httpStatusCode } =
         await getBrowserSafeClientToken();
@@ -34,7 +35,7 @@ app.get(
 
 app.post(
   "/paypal-api/checkout/orders/create",
-  async (req: Request, res: Response) => {
+  async (_req: Request, res: Response) => {
     try {
       const { jsonResponse, httpStatusCode } =
         await createOrderWithSampleData();
@@ -56,6 +57,19 @@ app.post(
     } catch (error) {
       console.error("Failed to create order:", error);
       res.status(500).json({ error: "Failed to capture order." });
+    }
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/setup-token/create",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } = await createSetupToken();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create setup token:", error);
+      res.status(500).json({ error: "Failed to create setup token." });
     }
   },
 );
