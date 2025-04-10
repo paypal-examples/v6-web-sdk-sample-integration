@@ -17,16 +17,16 @@
     "@paypal/paypal-server-sdk": "^1.0.0",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
-    "express": "^4.21.2"
+    "express": "^5.1.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.17",
     "@types/express": "^5.0.1",
-    "@types/node": "^22.13.13",
-    "@types/semver": "^7.5.8",
+    "@types/node": "^22.14.0",
+    "@types/semver": "^7.7.0",
     "prettier": "^3.5.3",
     "semver": "^7.7.1",
     "tsx": "^4.19.3",
-    "typescript": "^5.8.2"
+    "typescript": "^5.8.3"
   }
 }

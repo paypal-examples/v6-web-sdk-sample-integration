@@ -14,7 +14,7 @@ export const getBrowserSafeClientToken = async () => {
 
 export const createOrder = async () => {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create",
+    "/paypal-api/checkout/orders/create-with-sample-data",
     {
       method: "POST",
       headers: {
