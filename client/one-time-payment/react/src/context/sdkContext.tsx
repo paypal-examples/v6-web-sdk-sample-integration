@@ -13,10 +13,10 @@ const initialContext: PayPalSDKContextProps = {
 };
 
 interface PayPalSDKProviderProps {
-  components: string[],
-  children: React.ReactNode,
-  pageType: string,
-  clientToken?: string,
+  components: string[];
+  children: React.ReactNode;
+  pageType: string;
+  clientToken?: string;
 }
 
 export const PayPalSDKContext =
@@ -26,11 +26,12 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
   clientToken,
   components,
   children,
-  pageType
+  pageType,
 }) => {
   const { showBoundary } = useErrorBoundary();
   const [sdkInstance, setSdkInstance] = useState<SdkInstance | null>(null);
-  const [eligiblePaymentMethods, setEligiblePaymentMethods] = useState<EligiblePaymentMethods | null>(null);
+  const [eligiblePaymentMethods, setEligiblePaymentMethods] =
+    useState<EligiblePaymentMethods | null>(null);
 
   const initSdkInstance = async () => {
     const sdkInstance: SdkInstance = await window.paypal.createInstance({
@@ -49,12 +50,12 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
     };
   };
 
-
   useEffect(() => {
     const loadPayPalSDK = async () => {
       if (!sdkInstance && clientToken) {
         try {
-          const { sdkInstance, eligiblePaymentMethods } = await initSdkInstance();
+          const { sdkInstance, eligiblePaymentMethods } =
+            await initSdkInstance();
           setSdkInstance(sdkInstance);
           setEligiblePaymentMethods(eligiblePaymentMethods);
         } catch (error) {

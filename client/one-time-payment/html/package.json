@@ -7,7 +7,7 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite",
-    "format": "npx prettier . --write"
+    "format": "prettier . --write"
   },
   "license": "Apache-2.0",
   "devDependencies": {
