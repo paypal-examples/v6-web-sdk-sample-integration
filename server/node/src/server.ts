@@ -33,7 +33,7 @@ app.get(
 );
 
 app.post(
-  "/paypal-api/checkout/orders/create",
+  "/paypal-api/checkout/orders/create-with-sample-data",
   async (req: Request, res: Response) => {
     try {
       const { jsonResponse, httpStatusCode } =
