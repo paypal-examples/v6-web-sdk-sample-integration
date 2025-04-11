@@ -89,12 +89,15 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createOrder() {
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-with-sample-data",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const orderData = await response.json();
 
   return { orderId: orderData.id };

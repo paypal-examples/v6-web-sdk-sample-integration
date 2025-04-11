@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface ModalContent {
   title: string;
@@ -12,8 +12,8 @@ interface PaymentModalProps {
 
 const PaymentModal: React.FC<PaymentModalProps> = ({ content, onClose }) => {
   return (
-    <div 
-      className="modal-overlay" 
+    <div
+      className="modal-overlay"
       onClick={onClose}
       role="dialog"
       aria-modal="true"
@@ -21,8 +21,8 @@ const PaymentModal: React.FC<PaymentModalProps> = ({ content, onClose }) => {
       data-testid="payment-modal"
     >
       <div className="modal-content">
-        <button 
-          className="close-button" 
+        <button
+          className="close-button"
           onClick={(e) => {
             e.stopPropagation();
             onClose();

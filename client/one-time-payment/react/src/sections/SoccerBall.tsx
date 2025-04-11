@@ -6,13 +6,13 @@ import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
-import soccerBallImage from '../static/images/world-cup.jpg'
+import soccerBallImage from "../static/images/world-cup.jpg";
 import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 
 // Types
-type ModalType = 'success' | 'cancel' | 'error' | null;
+type ModalType = "success" | "cancel" | "error" | null;
 
 interface ModalContent {
   title: string;
@@ -23,7 +23,7 @@ interface ModalContent {
 const PRODUCT = {
   name: "World Cup Ball",
   icon: "⚽️",
-  price: 100.00,
+  price: 100.0,
   imageSrc: soccerBallImage,
   imageAlt: "Official World Cup Soccer Ball",
 } as const;
@@ -35,48 +35,54 @@ const SoccerBall: React.FC = () => {
   // Payment handlers
   const handlePaymentCallbacks: PaymentSessionOptions = {
     onApprove: async (data: OnApproveData) => {
-      console.log('Payment approved:', data);
+      console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
-      console.log('Payment capture result:', captureResult);
-      setModalState('success');
+      console.log("Payment capture result:", captureResult);
+      setModalState("success");
     },
 
     onCancel: () => {
-      console.log('Payment cancelled');
-      setModalState('cancel');
+      console.log("Payment cancelled");
+      setModalState("cancel");
     },
 
     onError: (error: Error) => {
-      console.error('Payment error:', error);
-      setModalState('error');
-    }
+      console.error("Payment error:", error);
+      setModalState("error");
+    },
   };
 
-  const getModalContent = useCallback((state: ModalType): ModalContent | null => {
-    switch (state) {
-      case 'success':
-        return {
-          title: 'Payment Successful! 🎉',
-          message: 'Thank you for your purchase!'
-        };
-      case 'cancel':
-        return {
-          title: 'Payment Cancelled',
-          message: 'Your payment was cancelled.'
-        };
-      case 'error':
-        return {
-          title: 'Payment Error',
-          message: 'There was an error processing your payment. Please try again.'
-        };
-      default:
-        return null;
-    }
-  }, []);
+  const getModalContent = useCallback(
+    (state: ModalType): ModalContent | null => {
+      switch (state) {
+        case "success":
+          return {
+            title: "Payment Successful! 🎉",
+            message: "Thank you for your purchase!",
+          };
+        case "cancel":
+          return {
+            title: "Payment Cancelled",
+            message: "Your payment was cancelled.",
+          };
+        case "error":
+          return {
+            title: "Payment Error",
+            message:
+              "There was an error processing your payment. Please try again.",
+          };
+        default:
+          return null;
+      }
+    },
+    [],
+  );
 
   // Check payment method eligibility
-  const isPayPalEligible = sdkInstance && eligiblePaymentMethods?.isEligible('paypal');
-  const isVenmoEligible = sdkInstance && eligiblePaymentMethods?.isEligible('venmo');
+  const isPayPalEligible =
+    sdkInstance && eligiblePaymentMethods?.isEligible("paypal");
+  const isVenmoEligible =
+    sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
 
   const modalContent = getModalContent(modalState);
 
@@ -88,21 +94,13 @@ const SoccerBall: React.FC = () => {
           onClose={() => setModalState(null)}
         />
       )}
-      
+
       <ProductDisplay product={PRODUCT} />
 
       <div className="payment-options">
-        {isPayPalEligible && (
-          <PayPalButton
-            {...handlePaymentCallbacks}
-          />
-        )}
+        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
 
-        {isVenmoEligible && (
-          <VenmoButton
-            {...handlePaymentCallbacks}
-          />
-        )}
+        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
       </div>
     </div>
   );

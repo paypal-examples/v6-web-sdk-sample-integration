@@ -25,7 +25,7 @@ function ErrorFallback({ error }: { error: Error }) {
 }
 
 function App() {
-  const [clientToken, setClientToken] = useState<string>('');
+  const [clientToken, setClientToken] = useState<string>("");
 
   useEffect(() => {
     const getClientToken = async () => {
@@ -38,7 +38,11 @@ function App() {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <PayPalSDKProvider clientToken={clientToken} components={["paypal-payments", "venmo-payments"]} pageType="checkout">
+      <PayPalSDKProvider
+        clientToken={clientToken}
+        components={["paypal-payments", "venmo-payments"]}
+        pageType="checkout"
+      >
         <h1>React One-Time Payment Recommended Integration</h1>
         <SoccerBall />
       </PayPalSDKProvider>
