@@ -74,18 +74,3 @@ async function createSetupToken() {
 
   return { setupToken: setupTokenData.id };
 }
-
-async function captureOrder({ orderId }) {
-  const response = await fetch(
-    `/paypal-api/checkout/orders/${orderId}/capture`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  const data = await response.json();
-
-  return data;
-}
