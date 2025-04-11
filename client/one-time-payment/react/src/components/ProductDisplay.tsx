@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 
 interface Product {
   name: string;
@@ -16,7 +16,9 @@ const ProductDisplay: React.FC<ProductDisplayProps> = ({ product }) => {
   return (
     <>
       <div className="product-header">
-        <h1 className="product-title">{product.icon} {product.name}</h1>
+        <h1 className="product-title">
+          {product.icon} {product.name}
+        </h1>
         <h3 className="product-price">Price: ${product.price.toFixed(2)}</h3>
       </div>
 
