@@ -12,7 +12,9 @@ import {
   LogLevel,
   OAuthAuthorizationController,
   OrdersController,
+  PaypalPaymentTokenUsageType,
   VaultController,
+  VaultInstructionAction,
 } from "@paypal/paypal-server-sdk";
 
 import type {
@@ -156,7 +158,7 @@ export async function captureOrder(orderId: string) {
 
 export async function createSetupToken() {
   try {
-    const { body, statusCode } = await vaultController.setupTokensCreate({
+    const { body, statusCode } = await vaultController.createSetupToken({
       paypalRequestId: Date.now().toString(),
       body: {
         paymentSource: {
@@ -164,9 +166,9 @@ export async function createSetupToken() {
             experienceContext: {
               cancelUrl: "https://example.com/cancelUrl",
               returnUrl: "https://example.com/returnUrl",
-              vaultInstruction: "ON_PAYER_APPROVAL",
+              vaultInstruction: VaultInstructionAction.OnPayerApproval,
             },
-            usageType: "MERCHANT",
+            usageType: PaypalPaymentTokenUsageType.Merchant,
           },
         },
       },
