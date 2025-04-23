@@ -18,8 +18,8 @@ declare module "react" {
   }
 }
 
-type Component = "paypal-payments" | "venmo-payments";
-type PageType =
+export type Component = "paypal-payments" | "venmo-payments";
+export type PageType =
   | "cart"
   | "checkout"
   | "mini-cart"

@@ -1,6 +1,7 @@
 import React, { useState, useEffect, createContext } from "react";
-import { EligiblePaymentMethods, SdkInstance } from "../types/paypal";
 import { useErrorBoundary } from "react-error-boundary";
+
+import type { Component, EligiblePaymentMethods, PageType, SdkInstance } from "../types/paypal";
 
 interface PayPalSDKContextProps {
   eligiblePaymentMethods: EligiblePaymentMethods | null;
@@ -13,9 +14,9 @@ const initialContext: PayPalSDKContextProps = {
 };
 
 interface PayPalSDKProviderProps {
-  components: string[];
+  components: Component[];
   children: React.ReactNode;
-  pageType: string;
+  pageType: PageType;
   clientToken?: string;
 }
 
@@ -35,13 +36,13 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
 
   const initSdkInstance = async () => {
     const sdkInstance: SdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientToken: clientToken!,
       components,
       pageType,
     });
 
     const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
-      currency: "USD",
+      currencyCode: "USD",
     });
 
     return {

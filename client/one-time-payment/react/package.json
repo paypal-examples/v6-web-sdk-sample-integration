@@ -5,11 +5,11 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "tsc -b && vite build",
+    "build": "tsc --build && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier . --write",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --build --noEmit"
   },
   "dependencies": {
     "react": "19.0.0",
