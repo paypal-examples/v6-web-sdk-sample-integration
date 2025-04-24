@@ -77,7 +77,7 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
     };
 
     loadPayPalSDK();
-  }, [clientToken]);
+  }, [clientToken, pageType, components]);
 
   return (
     <PayPalSDKContext.Provider
