@@ -2,7 +2,9 @@
 declare global {
   interface Window {
     paypal: {
-      createInstance: (createInstanceOptions) => Promise<SdkInstance>;
+      createInstance: (
+        createInstanceOptions: CreateInstanceOptions,
+      ) => Promise<SdkInstance>;
     };
   }
 }
@@ -16,6 +18,24 @@ declare module "react" {
   }
 }
 
+export type Component = "paypal-payments" | "venmo-payments";
+export type PageType =
+  | "cart"
+  | "checkout"
+  | "mini-cart"
+  | "product-details"
+  | "product-listing"
+  | "search-results";
+
+type CreateInstanceOptions = {
+  clientMetadataId?: string;
+  clientToken: string;
+  components?: Component[];
+  locale?: string;
+  pageType?: PageType;
+  partnerAttributionId?: string;
+};
+
 export interface EligiblePaymentMethods {
   isEligible: (paymentMethod: string) => boolean;
 }
@@ -25,7 +45,7 @@ export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
 }
 
 export type PaymentSessionOptions = {
-  onApprove?: (data: OnApproveData) => Promise<void> | void;
+  onApprove?: (data: OnApproveData) => Promise<void>;
   onCancel?: (data?: { orderId: string }) => void;
   onError?: (data: Error) => void;
 };
@@ -33,7 +53,6 @@ export type PaymentSessionOptions = {
 type OnApproveData = {
   orderId: string;
   payerId: string;
-  billingToken?: string;
 };
 
 export type SdkInstance = {
@@ -45,7 +64,13 @@ export type SdkInstance = {
   createVenmoOneTimePaymentSession: (
     paymentSessionOptions: PaymentSessionOptions,
   ) => SessionOutput;
-  findEligibleMethods: (options) => Promise<EligiblePaymentMethods>;
+  findEligibleMethods: (
+    findEligibleMethodsOptions: FindEligibleMethodsOptions,
+  ) => Promise<EligiblePaymentMethods>;
+};
+
+type FindEligibleMethodsOptions = {
+  currencyCode?: string;
 };
 
 type SessionOutput = {
@@ -58,8 +83,6 @@ type SessionOutput = {
 };
 
 type StartSessionInput = {
-  // note that Venmo only supports "auto"
-  // we plan to update Venmo to support "popup" and "modal"
   presentationMode?: "auto" | "popup" | "modal" | "payment-handler";
   fullPageOverlay?: {
     enabled?: boolean;
