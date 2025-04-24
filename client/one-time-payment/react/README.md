@@ -26,9 +26,9 @@ This sample integration requires two servers to be running, the React applicatio
 Currently there is only one example integration, One-Time Payment with PayPal or Venmo. There are several key aspects to the integration:
 
 1. The Core SDK Script is placed directly into the [index.html file](index.html) that renders the application, rather than injected.
-2. The `<PayPalSDKProvider>` component is created using the React Context API and provides relevant SDK data to the rest of the application. With this strategy one can initialize the SDK, query for eligibility (based on the payment method, in this case 'paypal' and 'venmo'), and create One-Time Payment Sessions that are used by the buttons themselves all in one place.
+2. The `<PayPalSDKProvider>` component is created using the React Context API and provides relevant SDK data to child components. With this strategy one can initialize the SDK, query for eligibility (based on the payment method, in this case 'paypal' and 'venmo'), and create One-Time Payment Sessions that are used by the buttons themselves all in one place.
 3. React component wrappers around the `paypal-button` and `venmo-button` web component buttons, where the `onClick` handler is implemented. The `session.start` method should be called within the `onClickHandler` to initialize checkout.
 
 ### Error Handling
 
-Graceful error handling is accomplished using [react-error-boundary](https://github.com/bvaughn/react-error-boundary), a helpful library that has more functionality than is demonstrated here.
+Graceful error handling is accomplished using [react-error-boundary](https://github.com/bvaughn/react-error-boundary).
