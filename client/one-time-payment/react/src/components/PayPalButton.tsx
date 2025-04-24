@@ -14,16 +14,19 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
   useEffect(() => {
     if (sdkInstance) {
       paypalSession.current = sdkInstance.createPayPalOneTimePaymentSession(
-        paymentSessionOptions
+        paymentSessionOptions,
       );
     }
   }, [sdkInstance]);
 
   const payPalOnClickHandler = async () => {
     if (!paypalSession.current) return;
-    
+
     try {
-      await paypalSession.current.start({ presentationMode: "auto" }, createOrder());
+      await paypalSession.current.start(
+        { presentationMode: "auto" },
+        createOrder(),
+      );
     } catch (e) {
       console.error(e);
       showBoundary(e);

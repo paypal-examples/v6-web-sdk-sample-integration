@@ -14,16 +14,19 @@ const VenmoButton: React.FC<PaymentSessionOptions> = (
   useEffect(() => {
     if (sdkInstance) {
       venmoSession.current = sdkInstance.createVenmoOneTimePaymentSession(
-        paymentSessionOptions
+        paymentSessionOptions,
       );
     }
   }, [sdkInstance]);
 
   const venmoOnClickHandler = async () => {
     if (!venmoSession.current) return;
-    
+
     try {
-      await venmoSession.current.start({ presentationMode: "auto" }, createOrder());
+      await venmoSession.current.start(
+        { presentationMode: "auto" },
+        createOrder(),
+      );
     } catch (e) {
       console.error(e);
       showBoundary(e);
