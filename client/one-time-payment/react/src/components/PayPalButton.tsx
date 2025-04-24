@@ -1,7 +1,7 @@
-import React, { useContext } from "react";
+import React, { useContext, useRef, useEffect } from "react";
 import { PayPalSDKContext } from "../context/sdkContext";
 import { createOrder } from "../utils";
-import { PaymentSessionOptions } from "../types/paypal";
+import { PaymentSessionOptions, SessionOutput } from "../types/paypal";
 import { useErrorBoundary } from "react-error-boundary";
 
 const PayPalButton: React.FC<PaymentSessionOptions> = (
@@ -9,14 +9,21 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
 ) => {
   const { sdkInstance } = useContext(PayPalSDKContext);
   const { showBoundary } = useErrorBoundary();
+  const paypalSession = useRef<SessionOutput>(null);
 
-  const paypalSession = sdkInstance!.createPayPalOneTimePaymentSession(
-    paymentSessionOptions,
-  );
+  useEffect(() => {
+    if (sdkInstance) {
+      paypalSession.current = sdkInstance.createPayPalOneTimePaymentSession(
+        paymentSessionOptions
+      );
+    }
+  }, [sdkInstance]);
 
   const payPalOnClickHandler = async () => {
+    if (!paypalSession.current) return;
+    
     try {
-      await paypalSession.start({ presentationMode: "auto" }, createOrder());
+      await paypalSession.current.start({ presentationMode: "auto" }, createOrder());
     } catch (e) {
       console.error(e);
       showBoundary(e);
