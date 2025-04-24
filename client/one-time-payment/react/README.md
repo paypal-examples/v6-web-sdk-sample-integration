@@ -25,12 +25,10 @@ This sample integration requires two servers to be running, the React applicatio
 
 Currently there is only one example integration, One-Time Payment with PayPal or Venmo. There are several key aspects to the integration:
 
-1. The Core Script is placed directly into the index.html file (see client/one-time-payment/react/index.html) that renders the application, rather than injected.
-2. Leveraging the React Context API with the PayPalSDKProvider relevant SDK data is available throughout the application. Via this strategy one can initialize the SDK, query for eligibility (based on the payment method, in this case 'paypal' and 'venmo'), and create One-Time Payment Sessions that are used by the buttons themselves all in one place.
-3. React component wrappers around the `paypal-button` and `venmo-button`, where the `onClick` handler is implemented. The `session.start` method should be called within the `onClickHandler` to initialize checkout.
+1. The Core SDK Script is placed directly into the [index.html file](index.html) that renders the application, rather than injected.
+2. The `<PayPalSDKProvider>` component is created using the React Context API and provides relevant SDK data to the rest of the application. With this strategy one can initialize the SDK, query for eligibility (based on the payment method, in this case 'paypal' and 'venmo'), and create One-Time Payment Sessions that are used by the buttons themselves all in one place.
+3. React component wrappers around the `paypal-button` and `venmo-button` web component buttons, where the `onClick` handler is implemented. The `session.start` method should be called within the `onClickHandler` to initialize checkout.
 
-### Extras
+### Error Handling
 
-There are 2 extra aspects included that are worth highlighting as well. Graceful error handling is accomplished using [react-error-boundary](https://github.com/bvaughn/react-error-boundary), a helpful library that has more functionality than is demonstrated here.
-
-Also there is a very basic example of post-onApprove redirection; oftentimes when integrating with the PayPal Web SDK a merchant will want to redirect to a new page after a successful purchase. Including redirect logic in the onApprove function body will successfully redirect within the application. Leveraging a helper like `react-router-dom` would make this process cleaner.
+Graceful error handling is accomplished using [react-error-boundary](https://github.com/bvaughn/react-error-boundary), a helpful library that has more functionality than is demonstrated here.
