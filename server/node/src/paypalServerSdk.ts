@@ -72,7 +72,7 @@ export async function getBrowserSafeClientToken() {
         { response_type: "client_token" },
       );
 
-    // the OAuthToken type is too general
+    // the OAuthToken interface is too general
     // this interface is specific to the "client_token" response type
     interface ClientToken {
       accessToken: string;
