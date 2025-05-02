@@ -83,9 +83,9 @@ async function getBrowserSafeClientToken() {
       "Content-Type": "application/json",
     },
   });
-  const { access_token } = await response.json();
+  const { accessToken } = await response.json();
 
-  return access_token;
+  return accessToken;
 }
 
 async function createOrder() {
@@ -98,9 +98,9 @@ async function createOrder() {
       },
     },
   );
-  const orderData = await response.json();
+  const { id } = await response.json();
 
-  return { orderId: orderData.id };
+  return { orderId: id };
 }
 
 async function captureOrder({ orderId }) {

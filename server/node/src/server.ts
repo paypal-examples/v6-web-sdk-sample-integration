@@ -13,6 +13,14 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+// @ts-ignore - BigInt.prototype.toJSON() exists.
+// The paypal-server-sdk casts numbers to BigInt values (ex: { expiresIn: 900n }).
+// BitInt values must be cast to numbers to work with JSON.stringify() which is used by Express.
+// https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Errors/BigInt_not_serializable
+BigInt.prototype.toJSON = function () {
+  return Number(this);
+};
+
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
  * ###################################################################### */

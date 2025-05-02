@@ -58,9 +58,9 @@ async function getBrowserSafeClientToken() {
       "Content-Type": "application/json",
     },
   });
-  const { access_token } = await response.json();
+  const { accessToken } = await response.json();
 
-  return access_token;
+  return accessToken;
 }
 
 async function createSetupToken() {
@@ -70,7 +70,7 @@ async function createSetupToken() {
       "Content-Type": "application/json",
     },
   });
-  const setupTokenData = await response.json();
+  const { id } = await response.json();
 
-  return { setupToken: setupTokenData.id };
+  return { setupToken: id };
 }
