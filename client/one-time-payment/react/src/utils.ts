@@ -6,9 +6,9 @@ export const getBrowserSafeClientToken = async () => {
         "Content-Type": "application/json",
       },
     });
-    const { access_token } = await response.json();
+    const { accessToken } = await response.json();
 
-    return access_token;
+    return accessToken;
   }
 };
 
@@ -22,8 +22,8 @@ export const createOrder = async () => {
       },
     },
   );
-  const orderData = await response.json();
-  return { orderId: orderData.id };
+  const { id } = await response.json();
+  return { orderId: id };
 };
 
 export const captureOrder = async ({ orderId }: { orderId: string }) => {

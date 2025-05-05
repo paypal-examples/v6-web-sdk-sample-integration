@@ -8,6 +8,7 @@ import {
   ApiError,
   CheckoutPaymentIntent,
   Client,
+  CustomError,
   Environment,
   LogLevel,
   OAuthAuthorizationController,
@@ -18,8 +19,9 @@ import {
 } from "@paypal/paypal-server-sdk";
 
 import type {
+  OAuthProviderError,
+  OAuthToken,
   OrderRequest,
-  VaultTokenRequest,
 } from "@paypal/paypal-server-sdk";
 
 /* ######################################################################
@@ -64,23 +66,43 @@ export async function getBrowserSafeClientToken() {
       `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
     ).toString("base64");
 
-    const { body, statusCode } =
+    const { result, statusCode } =
       await oAuthAuthorizationController.requestToken(
-        {
-          authorization: `Basic ${auth}`,
-        },
+        { authorization: `Basic ${auth}` },
         { response_type: "client_token" },
       );
 
+    // the OAuthToken interface is too general
+    // this interface is specific to the "client_token" response type
+    interface ClientToken {
+      accessToken: string;
+      expiresIn: number;
+      scope: string;
+      tokenType: string;
+    }
+
+    const { accessToken, expiresIn, scope, tokenType } = result;
+    const transformedResult: ClientToken = {
+      accessToken,
+      // convert BigInt value to a Number
+      expiresIn: Number(expiresIn),
+      scope: String(scope),
+      tokenType,
+    };
+
     return {
-      jsonResponse: JSON.parse(String(body)),
+      jsonResponse: transformedResult,
       httpStatusCode: statusCode,
     };
   } catch (error) {
     if (error instanceof ApiError) {
-      const { statusCode, body } = error;
+      const { result, statusCode } = error;
+      type OAuthError = {
+        error: OAuthProviderError;
+        error_description?: string;
+      };
       return {
-        jsonResponse: JSON.parse(String(body)),
+        jsonResponse: result as OAuthError,
         httpStatusCode: statusCode,
       };
     } else {
@@ -95,20 +117,20 @@ export async function getBrowserSafeClientToken() {
 
 export async function createOrder(orderRequestBody: OrderRequest) {
   try {
-    const { body, statusCode } = await ordersController.createOrder({
+    const { result, statusCode } = await ordersController.createOrder({
       body: orderRequestBody,
       prefer: "return=minimal",
     });
 
     return {
-      jsonResponse: JSON.parse(String(body)),
+      jsonResponse: result,
       httpStatusCode: statusCode,
     };
   } catch (error) {
     if (error instanceof ApiError) {
-      const { statusCode, body } = error;
+      const { result, statusCode } = error;
       return {
-        jsonResponse: JSON.parse(String(body)),
+        jsonResponse: result as CustomError,
         httpStatusCode: statusCode,
       };
     } else {
@@ -134,20 +156,20 @@ export async function createOrderWithSampleData() {
 
 export async function captureOrder(orderId: string) {
   try {
-    const { body, statusCode } = await ordersController.captureOrder({
+    const { result, statusCode } = await ordersController.captureOrder({
       id: orderId,
       prefer: "return=minimal",
     });
 
     return {
-      jsonResponse: JSON.parse(String(body)),
+      jsonResponse: result,
       httpStatusCode: statusCode,
     };
   } catch (error) {
     if (error instanceof ApiError) {
-      const { statusCode, body } = error;
+      const { result, statusCode } = error;
       return {
-        jsonResponse: JSON.parse(String(body)),
+        jsonResponse: result as CustomError,
         httpStatusCode: statusCode,
       };
     } else {
@@ -158,7 +180,7 @@ export async function captureOrder(orderId: string) {
 
 export async function createSetupToken() {
   try {
-    const { body, statusCode } = await vaultController.createSetupToken({
+    const { result, statusCode } = await vaultController.createSetupToken({
       paypalRequestId: Date.now().toString(),
       body: {
         paymentSource: {
@@ -175,15 +197,15 @@ export async function createSetupToken() {
     });
 
     return {
-      jsonResponse: JSON.parse(String(body)),
+      jsonResponse: result,
       httpStatusCode: statusCode,
     };
   } catch (error) {
     if (error instanceof ApiError) {
-      const { statusCode, body } = error;
+      const { result, statusCode } = error;
 
       return {
-        jsonResponse: JSON.parse(String(body)),
+        jsonResponse: result as CustomError,
         httpStatusCode: statusCode,
       };
     } else {
