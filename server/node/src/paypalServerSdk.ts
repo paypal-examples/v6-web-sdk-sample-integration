@@ -16,12 +16,13 @@ import {
   PaypalPaymentTokenUsageType,
   VaultController,
   VaultInstructionAction,
+  VaultTokenRequestType,
 } from "@paypal/paypal-server-sdk";
 
 import type {
   OAuthProviderError,
-  OAuthToken,
   OrderRequest,
+  SetupTokenRequest,
 } from "@paypal/paypal-server-sdk";
 
 /* ######################################################################
@@ -112,7 +113,7 @@ export async function getBrowserSafeClientToken() {
 }
 
 /* ######################################################################
- * Process transactions
+ * Process orders
  * ###################################################################### */
 
 export async function createOrder(orderRequestBody: OrderRequest) {
@@ -178,22 +179,18 @@ export async function captureOrder(orderId: string) {
   }
 }
 
-export async function createSetupToken() {
+/* ######################################################################
+ * Save payment methods
+ * ###################################################################### */
+
+export async function createSetupToken(
+  setupTokenRequestBody: SetupTokenRequest,
+  paypalRequestId?: string,
+) {
   try {
     const { result, statusCode } = await vaultController.createSetupToken({
-      paypalRequestId: Date.now().toString(),
-      body: {
-        paymentSource: {
-          paypal: {
-            experienceContext: {
-              cancelUrl: "https://example.com/cancelUrl",
-              returnUrl: "https://example.com/returnUrl",
-              vaultInstruction: VaultInstructionAction.OnPayerApproval,
-            },
-            usageType: PaypalPaymentTokenUsageType.Merchant,
-          },
-        },
-      },
+      body: setupTokenRequestBody,
+      paypalRequestId,
     });
 
     return {
@@ -206,6 +203,56 @@ export async function createSetupToken() {
 
       return {
         jsonResponse: result as CustomError,
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
+}
+
+export async function createSetupTokenWithSampleDataForPayPal() {
+  const defaultSetupTokenRequestBody = {
+    paymentSource: {
+      paypal: {
+        experienceContext: {
+          cancelUrl: "https://example.com/cancelUrl",
+          returnUrl: "https://example.com/returnUrl",
+          vaultInstruction: VaultInstructionAction.OnPayerApproval,
+        },
+        usageType: PaypalPaymentTokenUsageType.Merchant,
+      },
+    },
+  };
+
+  return createSetupToken(defaultSetupTokenRequestBody, Date.now().toString());
+}
+
+
+export async function createPaymentToken(vaultSetupToken: string, paypalRequestId?: string) {
+  try {
+    const { body, statusCode } = await vaultController.createPaymentToken({
+      paypalRequestId: Date.now().toString(),
+      body: {
+        paymentSource: {
+          token: {
+            id: vaultSetupToken,
+            type: VaultTokenRequestType.SetupToken,
+          },
+        },
+      },
+    });
+
+    return {
+      jsonResponse: JSON.parse(String(body)),
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { statusCode, body } = error;
+
+      return {
+        jsonResponse: JSON.parse(String(body)),
         httpStatusCode: statusCode,
       };
     } else {

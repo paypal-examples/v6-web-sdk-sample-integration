@@ -5,7 +5,7 @@ import {
   getBrowserSafeClientToken,
   createOrderWithSampleData,
   captureOrder,
-  createSetupToken,
+  createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
 const app = express();
@@ -65,7 +65,8 @@ app.post(
   "/paypal-api/checkout/setup-token/create",
   async (_req: Request, res: Response) => {
     try {
-      const { jsonResponse, httpStatusCode } = await createSetupToken();
+      const { jsonResponse, httpStatusCode } =
+        await createSetupTokenWithSampleDataForPayPal();
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error("Failed to create setup token:", error);
