@@ -7,7 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "license": "Apache-2.0",
   "devDependencies": {

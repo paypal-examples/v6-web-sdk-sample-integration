@@ -25,7 +25,7 @@ jobs:
 
       - name: 📥 Download deps
         run: >
-          find . -name package.json -maxdepth 4 -type f | while read -r file; do
+          find . -name package.json -maxdepth 6 -type f | while read -r file; do
             directory=$(dirname "$file")
             echo "\"package.json directory: $directory\""
             cd "$directory" && npm install && cd -
@@ -33,7 +33,7 @@ jobs:
 
       - name: 🧹 Check code formatting with Prettier
         run: >
-          find . -name package.json -maxdepth 3 -type f | while read -r file; do
+          find . -name package.json -maxdepth 6 -type f | while read -r file; do
             directory=$(dirname "$file")
             echo "\"package.json directory: $directory\""
             cd "$directory" && npm run format:check && cd -
@@ -41,7 +41,7 @@ jobs:
 
       - name: 👕 Lint code with ESLint
         run: >
-          find . -name package.json -maxdepth 3 -type f | while read -r file; do
+          find . -name package.json -maxdepth 6 -type f | while read -r file; do
             directory=$(dirname "$file")
             echo "\"package.json directory: $directory\""
             cd "$directory" && npm run lint && cd -

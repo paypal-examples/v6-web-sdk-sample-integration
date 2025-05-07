@@ -6,7 +6,8 @@
     "merchant-page": "vite --config vite-merchant-example.config.js",
     "paypal-iframe": "vite --config vite-paypal-iframe.config.js",
     "start": "concurrently \"npm run merchant-page\" \"npm run paypal-iframe\"",
-    "format": "prettier . --write"
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "license": "Apache-2.0",
   "devDependencies": {
