@@ -27,7 +27,7 @@ jobs:
         run: >
           directories=$(find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*")
           echo "\"found directories: $directories\""
-          directories | while read -r file; do
+          $directories | while read -r file; do
             directory=$(dirname "$file")
             echo "\"cd: $directory\""
             cd "$directory" && npm install && cd -
@@ -37,7 +37,7 @@ jobs:
         run: >
           directories=$(find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*")
           echo "\"found directories: $directories\""
-          directories | while read -r file; do
+          $directories | while read -r file; do
             directory=$(dirname "$file")
             echo "\"cd: $directory\""
             cd "$directory" && npm run format:check && cd -
@@ -47,7 +47,7 @@ jobs:
         run: >
           directories=$(find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*")
           echo "\"found directories: $directories\""
-          directories | while read -r file; do
+          $directories | while read -r file; do
             directory=$(dirname "$file")
             echo "\"cd: $directory\""
             cd "$directory" && npm run lint && cd -
