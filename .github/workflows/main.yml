@@ -27,8 +27,9 @@ jobs:
         run: >
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
             directory=$(dirname "$file")
-            echo "cd $directory"
+            echo "::group:: $directory"
             cd "$directory" && npm install && cd -
+            echo "::endgroup::"
           done
 
       - name: 🧹 Check code formatting with Prettier
