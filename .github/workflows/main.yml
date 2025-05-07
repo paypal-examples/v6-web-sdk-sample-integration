@@ -28,7 +28,7 @@ jobs:
           find . -name package.json -maxdepth 4 -type f | while read -r file; do
             directory=$(dirname "$file")
             echo "\"package.json directory: $directory\""
-            npm install
+            cd "$directory" && npm install && cd -
           done
 
       - name: 🧹 Check code formatting with Prettier
