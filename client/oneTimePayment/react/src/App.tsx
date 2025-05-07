@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { PayPalSDKProvider } from "./context/sdkContext";
+import { PayPalSDKProvider } from "./context/sdkContext.tsx";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils.ts";
