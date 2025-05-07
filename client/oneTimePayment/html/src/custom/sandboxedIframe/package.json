@@ -7,7 +7,8 @@
     "paypal-iframe": "vite --config vite-paypal-iframe.config.js",
     "start": "concurrently \"npm run merchant-page\" \"npm run paypal-iframe\"",
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "lint": "echo \"eslint is not set up\""
   },
   "license": "Apache-2.0",
   "devDependencies": {
