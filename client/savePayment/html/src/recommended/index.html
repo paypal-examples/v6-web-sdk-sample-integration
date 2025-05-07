@@ -1,28 +1,30 @@
 <!doctype html>
 <html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Save Payment - Recommended Integration - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+    </style>
+  </head>
 
-<head>
-  <meta charset="UTF-8" />
-  <title>Save Payment - Recommended Integration - PayPal Web SDK</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <style>
-    .buttons-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-  </style>
-</head>
+  <body>
+    <h1>Save Payment Recommended Integration</h1>
 
-<body>
-  <h1>Save Payment Recommended Integration</h1>
+    <div class="buttons-container">
+      <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+    </div>
+    <script src="app.js"></script>
 
-  <div class="buttons-container">
-    <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
-  </div>
-  <script src="app.js"></script>
-
-  <script async src="https://www.sandbox.paypal.com/web-sdk/v6/core" onload="onPayPalLoaded()"></script>
-</body>
-
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalLoaded()"
+    ></script>
+  </body>
 </html>
