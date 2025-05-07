@@ -36,8 +36,9 @@ jobs:
         run: >
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
             directory=$(dirname "$file")
-            echo "cd $directory"
+            echo "::group:: $directory"
             cd "$directory" && npm run format:check && cd -
+            echo "::endgroup::"
           done
 
       - name: 👕 Lint code with ESLint
@@ -45,5 +46,7 @@ jobs:
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
             directory=$(dirname "$file")
             echo "cd $directory"
+            echo "::group:: $directory"
             cd "$directory" && npm run lint && cd -
+            echo "::endgroup::"
           done
