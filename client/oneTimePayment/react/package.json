@@ -9,6 +9,7 @@
     "lint": "eslint .",
     "preview": "vite preview",
     "format": "prettier . --write",
+    "format:check": "prettier . --check",
     "typecheck": "tsc --build --noEmit"
   },
   "dependencies": {
