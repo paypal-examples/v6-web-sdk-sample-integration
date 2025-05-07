@@ -9,7 +9,7 @@
     "check-node-version": "tsx src/checkNodeVersion.ts",
     "clean": "rm -rf dist",
     "format": "prettier . --write",
-    "format:check": "npx prettier . --check",
+    "format:check": "prettier . --check",
     "start": "npm run check-node-version && tsx --watch src/server.ts",
     "start-production": "NODE_ENV=production node dist/server.js"
   },

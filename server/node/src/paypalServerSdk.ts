@@ -119,7 +119,7 @@ export async function createOrder(orderRequestBody: OrderRequest) {
   try {
     const { result, statusCode } = await ordersController.createOrder({
       body: orderRequestBody,
-      prefer: 'return=minimal',
+      prefer: "return=minimal",
     });
 
     return {
