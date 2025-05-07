@@ -1,4 +1,4 @@
-name: validate
+name: main
 on:
   # run on push but only for the main branch
   push:
@@ -15,10 +15,21 @@ jobs:
         with:
           fetch-depth: 0
 
+      - name: 🤝 Set Node version from .nvmrc
+        run: echo NVMRC=`cat .nvmrc` >> $GITHUB_ENV
+
       - name: ⎔ Setup node
         uses: actions/setup-node@v4
         with:
-          node-version: 20
+          node-version: ${{ env.NVMRC }}
+
+      - name: 📥 Download deps
+        run: >
+          find . -name package.json -maxdepth 4 -type f | while read -r file; do
+            directory=$(dirname "$file")
+            echo "\"package.json directory: $directory\""
+            npm ci
+          done
 
       - name: 🧹 Check code formatting with Prettier
         run: >
