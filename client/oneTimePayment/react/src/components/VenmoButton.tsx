@@ -17,7 +17,7 @@ const VenmoButton: React.FC<PaymentSessionOptions> = (
         paymentSessionOptions,
       );
     }
-  }, [sdkInstance]);
+  }, [sdkInstance, paymentSessionOptions]);
 
   const venmoOnClickHandler = async () => {
     if (!venmoSession.current) return;

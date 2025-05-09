@@ -7,12 +7,14 @@ import tsParser from "@typescript-eslint/parser";
 import * as tsResolver from "eslint-import-resolver-typescript";
 
 export default tseslint.config(
-  js.configs.recommended,
-  tseslint.configs.recommended,
-  pluginImportX.flatConfigs.recommended,
-  pluginImportX.flatConfigs.typescript,
   { ignores: ["dist"] },
   {
+    extends: [
+      js.configs.recommended,
+      tseslint.configs.recommended,
+      pluginImportX.flatConfigs.recommended,
+      pluginImportX.flatConfigs.typescript,
+    ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
       parser: tsParser,
@@ -26,6 +28,7 @@ export default tseslint.config(
     rules: {
       ...reactHooks.configs.recommended.rules,
       "import-x/extensions": ["error", "never"],
+      "import-x/default": "off",
       "react-refresh/only-export-components": [
         "warn",
         { allowConstantExport: true },
