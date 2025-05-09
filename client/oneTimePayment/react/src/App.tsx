@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 
-import { PayPalSDKProvider } from "./context/sdkContext.tsx";
+import { PayPalSDKProvider } from "./context/sdkContext";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
-import { getBrowserSafeClientToken } from "./utils.ts";
-import SoccerBall from "./sections/SoccerBall.tsx";
+import { getBrowserSafeClientToken } from "./utils";
+import SoccerBall from "./sections/SoccerBall";
 
 function ErrorFallback({ error }: { error: Error }) {
   const { resetBoundary } = useErrorBoundary();

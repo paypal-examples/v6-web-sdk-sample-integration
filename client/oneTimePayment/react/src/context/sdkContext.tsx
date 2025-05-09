@@ -47,6 +47,7 @@ interface PayPalSDKProviderProps {
   clientToken?: string;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export const PayPalSDKContext =
   createContext<PayPalSDKContextProps>(initialContext);
 
@@ -77,7 +78,7 @@ export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
     };
 
     loadPayPalSDK();
-  }, [clientToken, pageType, components]);
+  });
 
   return (
     <PayPalSDKContext.Provider
