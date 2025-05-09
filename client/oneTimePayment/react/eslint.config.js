@@ -1,5 +1,5 @@
 import js from "@eslint/js";
-import * as pluginImportX from "eslint-plugin-import-x";
+import { flatConfigs as pluginImportXFlatConfigs } from "eslint-plugin-import-x";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
 import tseslint from "typescript-eslint";
@@ -12,8 +12,8 @@ export default tseslint.config(
     extends: [
       js.configs.recommended,
       tseslint.configs.recommended,
-      pluginImportX.flatConfigs.recommended,
-      pluginImportX.flatConfigs.typescript,
+      pluginImportXFlatConfigs.recommended,
+      pluginImportXFlatConfigs.typescript,
     ],
     files: ["**/*.{ts,tsx}"],
     languageOptions: {
