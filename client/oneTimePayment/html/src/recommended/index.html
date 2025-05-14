@@ -17,13 +17,15 @@
 
     <div class="buttons-container">
       <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+      <paypal-pay-later-button id="paypal-pay-later-button" type="pay" hidden></paypal-pay-later-button>
       <venmo-button id="venmo-button" type="pay" hidden></venmo-button>
     </div>
     <script src="app.js"></script>
 
+    <script src="https://www.sandbox.paypal.com/web-sdk/v6.16.1/paypal-payments?debug=true"></script>
+    <script src="https://www.sandbox.paypal.com/web-sdk/v6.16.1/venmo-payments?debug=true"></script>
     <script
-      async
-      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      src="https://www.sandbox.paypal.com/web-sdk/v6.16.1/core?debug=true"
       onload="onPayPalLoaded()"
     ></script>
   </body>

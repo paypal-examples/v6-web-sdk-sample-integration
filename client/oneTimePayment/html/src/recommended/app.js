@@ -3,17 +3,22 @@ async function onPayPalLoaded() {
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
-      components: ["paypal-payments", "venmo-payments"],
+      // components: ["paypal-payments", "venmo-payments"],
       pageType: "checkout",
     });
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
-      currency: "USD",
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT"
     });
 
     if (paymentMethods.isEligible("paypal")) {
       setupPayPalButton(sdkInstance);
     }
+
+    // if (paymentMethods.isEligible("paylater")) {
+      setupPayLaterButton(sdkInstance);
+    // }
 
     if (paymentMethods.isEligible("venmo")) {
       setupVenmoButton(sdkInstance);
@@ -50,6 +55,26 @@ async function setupPayPalButton(sdkInstance) {
   paypalButton.addEventListener("click", async () => {
     try {
       await paypalPaymentSession.start(
+        { presentationMode: "auto" },
+        createOrder(),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  });
+}
+
+async function setupPayLaterButton(sdkInstance) {
+  const paylaterPaymentSession = sdkInstance.createPayLaterOneTimePaymentSession(
+    paymentSessionOptions,
+  );
+
+  const paylaterButton = document.querySelector("#paypal-pay-later-button");
+  paylaterButton.removeAttribute("hidden");
+
+  paylaterButton.addEventListener("click", async () => {
+    try {
+      await paylaterPaymentSession.start(
         { presentationMode: "auto" },
         createOrder(),
       );
