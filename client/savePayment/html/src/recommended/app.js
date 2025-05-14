@@ -8,7 +8,7 @@ async function onPayPalLoaded() {
     });
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
-      currency: "USD",
+      currencyCode: "USD",
     });
 
     if (paymentMethods.isEligible("paypal")) {
