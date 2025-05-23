@@ -228,11 +228,13 @@ export async function createSetupTokenWithSampleDataForPayPal() {
   return createSetupToken(defaultSetupTokenRequestBody, Date.now().toString());
 }
 
-
-export async function createPaymentToken(vaultSetupToken: string, paypalRequestId?: string) {
+export async function createPaymentToken(
+  vaultSetupToken: string,
+  paypalRequestId?: string,
+) {
   try {
-    const { body, statusCode } = await vaultController.createPaymentToken({
-      paypalRequestId: Date.now().toString(),
+    const { result, statusCode } = await vaultController.createPaymentToken({
+      paypalRequestId: paypalRequestId ?? Date.now().toString(),
       body: {
         paymentSource: {
           token: {
@@ -244,15 +246,15 @@ export async function createPaymentToken(vaultSetupToken: string, paypalRequestI
     });
 
     return {
-      jsonResponse: JSON.parse(String(body)),
+      jsonResponse: result,
       httpStatusCode: statusCode,
     };
   } catch (error) {
     if (error instanceof ApiError) {
-      const { statusCode, body } = error;
+      const { result, statusCode } = error;
 
       return {
-        jsonResponse: JSON.parse(String(body)),
+        jsonResponse: result as CustomError,
         httpStatusCode: statusCode,
       };
     } else {
