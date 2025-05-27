@@ -37,7 +37,9 @@ jobs:
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
             directory=$(dirname "$file")
             echo "::group:: $directory"
-            cd "$directory" && npm run format:check && cd -
+            cd "$directory" 
+            npm run format:check || exit 1
+            cd -
             echo "::endgroup::"
           done
 
