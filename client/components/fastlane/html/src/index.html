@@ -1,0 +1,47 @@
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link href="app.css" rel="styesheet">
+  </head>
+  <body>
+    <div>
+      <form id="email-form">
+        <fieldset>
+          <legend>Email</legend>
+          <input type="email" id="email-input" />
+          <div id="watermark-container">
+            <img
+              src="https://www.paypalobjects.com/fastlane-v1/assets/fastlane-with-tooltip_en_sm_light.0808.svg"
+            />
+          </div>
+
+          <button id="email-submit-button">Submit</button>
+        </fieldset>
+      </form>
+
+      <p id="card-testing-info" hidden>
+        For more info on testing cards with PayPal, see
+        <a href="https://developer.paypal.com/tools/sandbox/card-testing/"
+          >https://developer.paypal.com/tools/sandbox/card-testing/</a
+        >.
+      </p>
+      <div id="card-container"></div>
+
+      <div id="shipping-display-container" hidden></div>
+      <button id="change-shipping-button" hidden>
+        Change Shipping Address
+      </button>
+
+      <div id="payment-container"></div>
+      <button id="submit-button">Submit Order</button>
+    </div>
+
+    <script src="app.js"></script>
+    <script
+      async
+      onload="onLoad()"
+      src="https://www.msmaster.qa.paypal.com/web-sdk/v6/core"
+    ></script>
+  </body>
+</html>
