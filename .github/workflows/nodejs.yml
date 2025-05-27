@@ -28,7 +28,9 @@ jobs:
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
             directory=$(dirname "$file")
             echo "::group:: $directory"
-            cd "$directory" && npm install && cd -
+            cd "$directory" 
+            npm install || exit 1
+            cd -
             echo "::endgroup::"
           done
 
@@ -48,6 +50,8 @@ jobs:
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
             directory=$(dirname "$file")
             echo "::group:: $directory"
-            cd "$directory" && npm run lint && cd -
+            cd "$directory" 
+            npm run lint || exit 1
+            cd -
             echo "::endgroup::"
           done
