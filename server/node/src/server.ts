@@ -89,6 +89,10 @@ app.post(
       const paymentTokenResponse = jsonResponse as PaymentTokenResponse;
 
       if (paymentTokenResponse.id) {
+        // This payment token id is a long-lived value for making
+        // future payments when the buyer is not present.
+        // PayPal recommends storing this value in your database
+        // and NOT returning it back to the browser.
         await savePaymentTokenToDatabase(paymentTokenResponse);
         res.status(httpStatusCode).json({
           status: "SUCCESS",
