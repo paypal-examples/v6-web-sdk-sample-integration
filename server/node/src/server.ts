@@ -90,20 +90,16 @@ app.post(
 
       if (paymentTokenResponse.id) {
         await savePaymentTokenToDatabase(paymentTokenResponse);
-        res
-          .status(httpStatusCode)
-          .json({
-            status: "SUCCESS",
-            description:
-              "Payment token saved to database for future transactions",
-          });
+        res.status(httpStatusCode).json({
+          status: "SUCCESS",
+          description:
+            "Payment token saved to database for future transactions",
+        });
       } else {
-        res
-          .status(httpStatusCode)
-          .json({
-            status: "ERROR",
-            description: "Failed to create payment token",
-          });
+        res.status(httpStatusCode).json({
+          status: "ERROR",
+          description: "Failed to create payment token",
+        });
       }
     } catch (error) {
       console.error("Failed to create payment token:", error);
