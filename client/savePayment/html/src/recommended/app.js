@@ -26,7 +26,7 @@ const paymentSessionOptions = {
     const createPaymentTokenResponse = await createPaymentToken(
       data.vaultSetupToken,
     );
-    console.log(createPaymentTokenResponse);
+    console.log("Create payment token response: ", createPaymentTokenResponse);
   },
   onCancel(data) {
     console.log("onCancel", data);
