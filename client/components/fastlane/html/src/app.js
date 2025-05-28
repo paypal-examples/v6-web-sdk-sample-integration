@@ -66,10 +66,20 @@ async function onLoad() {
     });
   }
 
-  const clientTokenResponse = await fetch(
-    "/web-sdk/demo/api/paypal/browser-safe-client-token",
-  );
-  const { access_token: clientToken } = await clientTokenResponse.json();
+  async function getBrowserSafeClientToken() {
+    const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+    const { accessToken } = await response.json();
+
+    return accessToken;
+  }
+
+  const clientToken = await getBrowserSafeClientToken();
+
   const sdkInstance = await window.paypal.createInstance({
     clientToken,
     pageType: "product-details",
