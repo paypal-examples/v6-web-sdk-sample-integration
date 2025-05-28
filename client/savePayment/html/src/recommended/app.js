@@ -23,6 +23,10 @@ async function onPayPalLoaded() {
 const paymentSessionOptions = {
   async onApprove(data) {
     console.log("onApprove", data);
+    const createPaymentTokenResponse = await createPaymentToken(
+      data.vaultSetupToken,
+    );
+    console.log("Create payment token response: ", createPaymentTokenResponse);
   },
   onCancel(data) {
     console.log("onCancel", data);
@@ -65,7 +69,7 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createSetupToken() {
-  const response = await fetch("/paypal-api/checkout/setup-token/create", {
+  const response = await fetch("/paypal-api/vault/setup-token/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -74,4 +78,17 @@ async function createSetupToken() {
   const { id } = await response.json();
 
   return { setupToken: id };
+}
+
+async function createPaymentToken(vaultSetupToken) {
+  const response = await fetch("/paypal-api/vault/payment-token/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({ vaultSetupToken }),
+  });
+  const data = await response.json();
+
+  return data;
 }

@@ -1,11 +1,14 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 
+import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
+
 import {
   getBrowserSafeClientToken,
   createOrderWithSampleData,
   captureOrder,
-  createSetupToken,
+  createPaymentToken,
+  createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
 const app = express();
@@ -62,10 +65,11 @@ app.post(
 );
 
 app.post(
-  "/paypal-api/checkout/setup-token/create",
+  "/paypal-api/vault/setup-token/create",
   async (_req: Request, res: Response) => {
     try {
-      const { jsonResponse, httpStatusCode } = await createSetupToken();
+      const { jsonResponse, httpStatusCode } =
+        await createSetupTokenWithSampleDataForPayPal();
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error("Failed to create setup token:", error);
@@ -73,6 +77,48 @@ app.post(
     }
   },
 );
+
+app.post(
+  "/paypal-api/vault/payment-token/create",
+  async (req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } = await createPaymentToken(
+        req.body.vaultSetupToken as string,
+      );
+
+      const paymentTokenResponse = jsonResponse as PaymentTokenResponse;
+
+      if (paymentTokenResponse.id) {
+        // This payment token id is a long-lived value for making
+        // future payments when the buyer is not present.
+        // PayPal recommends storing this value in your database
+        // and NOT returning it back to the browser.
+        await savePaymentTokenToDatabase(paymentTokenResponse);
+        res.status(httpStatusCode).json({
+          status: "SUCCESS",
+          description:
+            "Payment token saved to database for future transactions",
+        });
+      } else {
+        res.status(httpStatusCode).json({
+          status: "ERROR",
+          description: "Failed to create payment token",
+        });
+      }
+    } catch (error) {
+      console.error("Failed to create payment token:", error);
+      res.status(500).json({ error: "Failed to create payment token." });
+    }
+  },
+);
+
+async function savePaymentTokenToDatabase(
+  paymentTokenResponse: PaymentTokenResponse,
+) {
+  // example function to teach saving the paymentToken to a database
+  // to be used for future transactions
+  return Promise.resolve();
+}
 
 const port = process.env.PORT ?? 8080;
 
