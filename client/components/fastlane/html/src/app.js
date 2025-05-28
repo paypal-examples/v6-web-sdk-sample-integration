@@ -30,11 +30,10 @@ async function onLoad() {
         }
       });
 
-      const fastlanePaymentComponent =
-        await fastlane.FastlanePaymentComponent({
-          options: {},
-          shippingAddress: profileData.shippingAddress,
-        });
+      const fastlanePaymentComponent = await fastlane.FastlanePaymentComponent({
+        options: {},
+        shippingAddress: profileData.shippingAddress,
+      });
 
       fastlanePaymentComponent.render("#payment-container");
 
@@ -54,13 +53,13 @@ async function onLoad() {
     const cardTestingInfo = document.getElementById("card-testing-info");
     cardTestingInfo.removeAttribute("hidden");
 
-    const FastlanePaymentComponent =
-      await fastlane.FastlanePaymentComponent({});
+    const FastlanePaymentComponent = await fastlane.FastlanePaymentComponent(
+      {},
+    );
     await FastlanePaymentComponent.render("#card-container");
 
     const submitButton = document.getElementById("submit-button");
     submitButton.addEventListener("click", async () => {
-
       const { id } = await FastlanePaymentComponent.getPaymentToken();
 
       const orderResponse = await createOrder(id);
@@ -89,27 +88,23 @@ async function onLoad() {
   fastlaneWatermark.render("#watermark-container");
 
   const emailInput = document.getElementById("email-input");
-  const emailSubmitButton = document.getElementById(
-    "email-submit-button",
-  );
+  const emailSubmitButton = document.getElementById("email-submit-button");
   emailSubmitButton.addEventListener("click", async (e) => {
     e.preventDefault();
 
-    const { customerContextId } =
-      await fastlane.identity.lookupCustomerByEmail(emailInput.value);
+    const { customerContextId } = await fastlane.identity.lookupCustomerByEmail(
+      emailInput.value,
+    );
 
     let shouldRenderFastlaneMemberExperience = false;
     let profileData;
     if (customerContextId) {
       const response =
-        await fastlane.identity.triggerAuthenticationFlow(
-          customerContextId,
-        );
+        await fastlane.identity.triggerAuthenticationFlow(customerContextId);
 
       if (response.authenticationState === "succeeded") {
         shouldRenderFastlaneMemberExperience = true;
         profileData = response.profileData;
-
       } else {
         shouldRenderFastlaneMemberExperience = false;
       }
