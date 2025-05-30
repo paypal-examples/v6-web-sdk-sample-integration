@@ -18,6 +18,12 @@ async function onPayPalLoaded() {
     if (paymentMethods.isEligible("venmo")) {
       setupVenmoButton(sdkInstance);
     }
+
+    if (paymentMethods.isEligible("paylater")) {
+      const paylaterPaymentMethodDetails =
+        paymentMethods.getDetails("paylater");
+      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -69,6 +75,29 @@ async function setupVenmoButton(sdkInstance) {
   venmoButton.addEventListener("click", async () => {
     try {
       await venmoPaymentSession.start(
+        { presentationMode: "auto" },
+        createOrder(),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  });
+}
+
+async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
+  const paylaterPaymentSession =
+    sdkInstance.createPayLaterOneTimePaymentSession(paymentSessionOptions);
+
+  const { productCode, countryCode } = paylaterPaymentMethodDetails;
+  const paylaterButton = document.querySelector("#paylater-button");
+
+  paylaterButton.productCode = productCode;
+  paylaterButton.countryCode = countryCode;
+  paylaterButton.removeAttribute("hidden");
+
+  paylaterButton.addEventListener("click", async () => {
+    try {
+      await paylaterPaymentSession.start(
         { presentationMode: "auto" },
         createOrder(),
       );
