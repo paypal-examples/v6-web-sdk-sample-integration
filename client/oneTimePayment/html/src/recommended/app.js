@@ -24,6 +24,12 @@ async function onPayPalLoaded() {
         paymentMethods.getDetails("paylater");
       setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
     }
+
+    if (paymentMethods.isEligible("credit")) {
+      const paypalCreditPaymentMethodDetails =
+        paymentMethods.getDetails("credit");
+      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -98,6 +104,31 @@ async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
   paylaterButton.addEventListener("click", async () => {
     try {
       await paylaterPaymentSession.start(
+        { presentationMode: "auto" },
+        createOrder(),
+      );
+    } catch (error) {
+      console.error(error);
+    }
+  });
+}
+
+async function setupPayPalCreditButton(
+  sdkInstance,
+  paypalCreditPaymentMethodDetails,
+) {
+  const paypalCreditPaymentSession =
+    sdkInstance.createPayPalCreditOneTimePaymentSession(paymentSessionOptions);
+
+  const { countryCode } = paypalCreditPaymentMethodDetails;
+  const paypalCreditButton = document.querySelector("#paypal-credit-button");
+
+  paypalCreditButton.countryCode = countryCode;
+  paypalCreditButton.removeAttribute("hidden");
+
+  paypalCreditButton.addEventListener("click", async () => {
+    try {
+      await paypalCreditPaymentSession.start(
         { presentationMode: "auto" },
         createOrder(),
       );
