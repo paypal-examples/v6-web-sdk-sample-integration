@@ -29,7 +29,8 @@ import type {
  * Set up PayPal controllers
  * ###################################################################### */
 
-const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
+const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
+  process.env;
 
 if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
@@ -67,10 +68,17 @@ export async function getBrowserSafeClientToken() {
       `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
     ).toString("base64");
 
+    const fieldParameters = {
+      response_type: "client_token",
+      ...(DOMAINS ? { "domains[]": DOMAINS } : {}),
+    };
+
     const { result, statusCode } =
       await oAuthAuthorizationController.requestToken(
-        { authorization: `Basic ${auth}` },
-        { response_type: "client_token" },
+        {
+          authorization: `Basic ${auth}`,
+        },
+        fieldParameters,
       );
 
     // the OAuthToken interface is too general
