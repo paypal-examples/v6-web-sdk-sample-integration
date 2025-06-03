@@ -42,7 +42,7 @@ async function onLoad() {
         const { id } = await fastlanePaymentComponent.getPaymentToken();
 
         const orderResponse = await createOrder(id);
-        console.log(orderResponse);
+        console.log("orderResponse: ", orderResponse);
       });
     } else {
       // Render your shipping address form
@@ -63,6 +63,7 @@ async function onLoad() {
       const { id } = await FastlanePaymentComponent.getPaymentToken();
 
       const orderResponse = await createOrder(id);
+      console.log("orderResponse: ", orderResponse);
     });
   }
 
@@ -189,6 +190,6 @@ function createOrder(paymentToken) {
   })
     .then((response) => response.json())
     .then((order) => {
-      return order.id;
+      return order;
     });
 }
