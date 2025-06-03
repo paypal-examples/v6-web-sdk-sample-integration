@@ -124,10 +124,17 @@ export async function getBrowserSafeClientToken() {
  * Process orders
  * ###################################################################### */
 
-export async function createOrder(orderRequestBody: OrderRequest) {
+export async function createOrder({
+  orderRequestBody,
+  paypalRequestId,
+}: {
+  orderRequestBody: OrderRequest;
+  paypalRequestId?: string;
+}) {
   try {
     const { result, statusCode } = await ordersController.createOrder({
       body: orderRequestBody,
+      ...(paypalRequestId ? { paypalRequestId } : {}),
       prefer: "return=minimal",
     });
 

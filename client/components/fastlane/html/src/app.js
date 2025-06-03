@@ -134,25 +134,26 @@ async function onLoad() {
 }
 
 function createOrder(paymentToken) {
-  return fetch("/web-sdk/demo/api/paypal/order", {
+  return fetch("/paypal-api/checkout/orders/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
+      "PayPal-Request-Id": Date.now().toString(),
     },
     body: JSON.stringify({
-      payment_source: {
+      paymentSource: {
         card: {
-          single_use_token: paymentToken,
+          singleUseToken: paymentToken,
         },
       },
-      purchase_units: [
+      purchaseUnits: [
         {
           amount: {
-            currency_code: "USD",
+            currencyCode: "USD",
             value: "10.00",
             breakdown: {
-              item_total: {
-                currency_code: "USD",
+              itemTotal: {
+                currencyCode: "USD",
                 value: "10.00",
               },
             },
@@ -166,7 +167,7 @@ function createOrder(paymentToken) {
                 selected: true,
                 amount: {
                   value: "0.00",
-                  currency_code: "USD",
+                  currencyCode: "USD",
                 },
               },
               {
@@ -176,7 +177,7 @@ function createOrder(paymentToken) {
                 selected: false,
                 amount: {
                   value: "5.00",
-                  currency_code: "USD",
+                  currencyCode: "USD",
                 },
               },
             ],
