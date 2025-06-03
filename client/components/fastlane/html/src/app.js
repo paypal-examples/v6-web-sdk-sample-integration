@@ -43,6 +43,7 @@ async function onLoad() {
 
         const orderResponse = await createOrder(id);
         console.log("orderResponse: ", orderResponse);
+        alert("Order completed successfully! Check console for details.");
       });
     } else {
       // Render your shipping address form
@@ -64,6 +65,7 @@ async function onLoad() {
 
       const orderResponse = await createOrder(id);
       console.log("orderResponse: ", orderResponse);
+      alert("Order completed successfully! Check console for details.");
     });
   }
 
