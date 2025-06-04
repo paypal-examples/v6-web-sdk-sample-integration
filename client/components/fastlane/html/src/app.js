@@ -43,7 +43,12 @@ async function onLoad() {
 
         const orderResponse = await createOrder(id);
         console.log("orderResponse: ", orderResponse);
-        alert("Order completed successfully! Check console for details.");
+
+        if (orderResponse.status === "COMPLETED") {
+          alert("Order completed successfully! Check console for details.");
+        } else {
+          alert("There was an issue processing your order. Please try again.");
+        }
       });
     } else {
       // Render your shipping address form
@@ -65,7 +70,12 @@ async function onLoad() {
 
       const orderResponse = await createOrder(id);
       console.log("orderResponse: ", orderResponse);
-      alert("Order completed successfully! Check console for details.");
+
+      if (orderResponse.status === "COMPLETED") {
+        alert("Order completed successfully! Check console for details.");
+      } else {
+        alert("There was an issue processing your order. Please try again.");
+      }
     });
   }
 
