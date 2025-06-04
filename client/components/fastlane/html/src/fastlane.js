@@ -81,7 +81,7 @@ function createOrder(paymentToken) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      // "PayPal-Request-Id": Date.now().toString(),
+      "PayPal-Request-Id": Date.now().toString(),
     },
     body: JSON.stringify({
       paymentSource: {
