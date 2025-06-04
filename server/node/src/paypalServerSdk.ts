@@ -70,6 +70,7 @@ export async function getBrowserSafeClientToken() {
 
     const fieldParameters = {
       response_type: "client_token",
+      // the Fastlane component requires this domains[] parameter
       ...(DOMAINS ? { "domains[]": DOMAINS } : {}),
     };
 
@@ -134,7 +135,7 @@ export async function createOrder({
   try {
     const { result, statusCode } = await ordersController.createOrder({
       body: orderRequestBody,
-      ...(paypalRequestId ? { paypalRequestId } : {}),
+      paypalRequestId,
       prefer: "return=minimal",
     });
 
@@ -156,7 +157,7 @@ export async function createOrder({
 }
 
 export async function createOrderWithSampleData() {
-  const defaultOrderRequestBody = {
+  const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
       {
@@ -167,7 +168,7 @@ export async function createOrderWithSampleData() {
       },
     ],
   };
-  return createOrder(defaultOrderRequestBody);
+  return createOrder({ orderRequestBody });
 }
 
 export async function captureOrder(orderId: string) {

@@ -41,15 +41,10 @@ app.post(
   "/paypal-api/checkout/orders/create",
   async (req: Request, res: Response) => {
     try {
-      const paypalRequestIdHeader = req.headers["paypal-request-id"];
-      const paypalRequestIdValue = Array.isArray(paypalRequestIdHeader)
-        ? paypalRequestIdHeader[0]
-        : paypalRequestIdHeader;
+      const paypalRequestId = req.headers["paypal-request-id"]?.toString();
       const { jsonResponse, httpStatusCode } = await createOrder({
         orderRequestBody: req.body,
-        ...(paypalRequestIdValue
-          ? { paypalRequestId: paypalRequestIdValue }
-          : {}),
+        paypalRequestId,
       });
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
