@@ -101,8 +101,6 @@ async function onLoad() {
   });
 
   const fastlane = await sdkInstance.createFastlane();
-
-  window.localStorage.setItem("fastlaneEnv", "sandbox");
   fastlane.setLocale("en_us");
 
   const fastlaneWatermark = await fastlane.FastlaneWatermarkComponent({
