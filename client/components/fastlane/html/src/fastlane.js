@@ -101,30 +101,6 @@ function createOrder(paymentToken) {
               },
             },
           },
-          shipping: {
-            options: [
-              {
-                id: "SHIP_FRE",
-                label: "Free",
-                type: "SHIPPING",
-                selected: true,
-                amount: {
-                  value: "0.00",
-                  currencyCode: "USD",
-                },
-              },
-              {
-                id: "SHIP_EXP",
-                label: "Expedited",
-                type: "SHIPPING",
-                selected: false,
-                amount: {
-                  value: "5.00",
-                  currencyCode: "USD",
-                },
-              },
-            ],
-          },
         },
       ],
       intent: "CAPTURE",
