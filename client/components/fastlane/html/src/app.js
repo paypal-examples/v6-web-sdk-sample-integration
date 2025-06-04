@@ -128,6 +128,9 @@ async function onLoad() {
     const emailForm = document.getElementById("email-form");
     emailForm.setAttribute("hidden", true);
 
+    const submitOrderButton = document.getElementById("submit-button");
+    submitOrderButton.removeAttribute("hidden");
+
     if (shouldRenderFastlaneMemberExperience) {
       renderFastlaneMemberExperience(profileData);
     } else {
