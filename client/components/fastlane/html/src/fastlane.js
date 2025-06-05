@@ -1,3 +1,50 @@
+async function setupFastlaneSdk() {
+  fastlane.setLocale("en_us");
+
+  const fastlaneWatermark = await fastlane.FastlaneWatermarkComponent({
+    includeAdditionalInfo: true,
+  });
+  fastlaneWatermark.render("#watermark-container");
+
+  const emailInput = document.getElementById("email-input");
+  const emailSubmitButton = document.getElementById("email-submit-button");
+  emailSubmitButton.addEventListener("click", async (e) => {
+    e.preventDefault();
+
+    const { customerContextId } = await fastlane.identity.lookupCustomerByEmail(
+      emailInput.value,
+    );
+
+    let shouldRenderFastlaneMemberExperience = false;
+    let profileData;
+    if (customerContextId) {
+      const response =
+        await fastlane.identity.triggerAuthenticationFlow(customerContextId);
+
+      if (response.authenticationState === "succeeded") {
+        shouldRenderFastlaneMemberExperience = true;
+        profileData = response.profileData;
+      } else {
+        shouldRenderFastlaneMemberExperience = false;
+      }
+    } else {
+      shouldRenderFastlaneMemberExperience = false;
+    }
+
+    const emailForm = document.getElementById("email-form");
+    emailForm.setAttribute("hidden", true);
+
+    const submitOrderButton = document.getElementById("submit-button");
+    submitOrderButton.removeAttribute("hidden");
+
+    if (shouldRenderFastlaneMemberExperience) {
+      renderFastlaneMemberExperience(profileData);
+    } else {
+      renderFastlaneGuestExperience();
+    }
+  });
+}
+
 function setShippingAddressDisplay(shippingAddress) {
   const {
     name: { fullName },
@@ -76,7 +123,7 @@ async function renderFastlaneGuestExperience() {
   });
 }
 
-function createOrder(paymentToken) {
+async function createOrder(paymentToken) {
   return fetch("/paypal-api/checkout/orders/create", {
     method: "POST",
     headers: {
