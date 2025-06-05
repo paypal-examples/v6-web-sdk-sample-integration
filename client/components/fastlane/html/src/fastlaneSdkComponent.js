@@ -1,5 +1,5 @@
 let fastlane;
-async function onLoad() {
+async function onPayPalLoaded() {
   const clientToken = await getBrowserSafeClientToken();
 
   const sdkInstance = await window.paypal.createInstance({
