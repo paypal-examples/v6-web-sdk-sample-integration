@@ -5,6 +5,7 @@ import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
 import {
   getBrowserSafeClientToken,
+  createOrder,
   createOrderWithSampleData,
   captureOrder,
   createPaymentToken,
@@ -32,6 +33,23 @@ app.get(
       res
         .status(500)
         .json({ error: "Failed to create browser safe access token." });
+    }
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create",
+  async (req: Request, res: Response) => {
+    try {
+      const paypalRequestId = req.headers["paypal-request-id"]?.toString();
+      const { jsonResponse, httpStatusCode } = await createOrder({
+        orderRequestBody: req.body,
+        paypalRequestId,
+      });
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      res.status(500).json({ error: "Failed to create order." });
     }
   },
 );

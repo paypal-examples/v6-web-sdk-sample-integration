@@ -29,7 +29,8 @@ import type {
  * Set up PayPal controllers
  * ###################################################################### */
 
-const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
+const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
+  process.env;
 
 if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
@@ -67,10 +68,18 @@ export async function getBrowserSafeClientToken() {
       `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
     ).toString("base64");
 
+    const fieldParameters = {
+      response_type: "client_token",
+      // the Fastlane component requires this domains[] parameter
+      ...(DOMAINS ? { "domains[]": DOMAINS } : {}),
+    };
+
     const { result, statusCode } =
       await oAuthAuthorizationController.requestToken(
-        { authorization: `Basic ${auth}` },
-        { response_type: "client_token" },
+        {
+          authorization: `Basic ${auth}`,
+        },
+        fieldParameters,
       );
 
     // the OAuthToken interface is too general
@@ -116,10 +125,17 @@ export async function getBrowserSafeClientToken() {
  * Process orders
  * ###################################################################### */
 
-export async function createOrder(orderRequestBody: OrderRequest) {
+export async function createOrder({
+  orderRequestBody,
+  paypalRequestId,
+}: {
+  orderRequestBody: OrderRequest;
+  paypalRequestId?: string;
+}) {
   try {
     const { result, statusCode } = await ordersController.createOrder({
       body: orderRequestBody,
+      paypalRequestId,
       prefer: "return=minimal",
     });
 
@@ -141,7 +157,7 @@ export async function createOrder(orderRequestBody: OrderRequest) {
 }
 
 export async function createOrderWithSampleData() {
-  const defaultOrderRequestBody = {
+  const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
       {
@@ -152,7 +168,7 @@ export async function createOrderWithSampleData() {
       },
     ],
   };
-  return createOrder(defaultOrderRequestBody);
+  return createOrder({ orderRequestBody });
 }
 
 export async function captureOrder(orderId: string) {
