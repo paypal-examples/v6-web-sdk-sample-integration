@@ -24,11 +24,7 @@ async function setupFastlaneSdk() {
       if (response.authenticationState === "succeeded") {
         shouldRenderFastlaneMemberExperience = true;
         profileData = response.profileData;
-      } else {
-        shouldRenderFastlaneMemberExperience = false;
       }
-    } else {
-      shouldRenderFastlaneMemberExperience = false;
     }
 
     const emailForm = document.getElementById("email-form");
