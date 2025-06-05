@@ -124,7 +124,7 @@ async function renderFastlaneGuestExperience() {
 }
 
 async function createOrder(paymentToken) {
-  return fetch("/paypal-api/checkout/orders/create", {
+  const response = await fetch("/paypal-api/checkout/orders/create", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -152,9 +152,8 @@ async function createOrder(paymentToken) {
       ],
       intent: "CAPTURE",
     }),
-  })
-    .then((response) => response.json())
-    .then((order) => {
-      return order;
-    });
+  });
+  const orderResponse = await response.json();
+
+  return orderResponse;
 }
