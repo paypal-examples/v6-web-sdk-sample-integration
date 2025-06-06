@@ -45,5 +45,5 @@ npm start
 
 ## Resources
 
-- [PayPal Fastlane Documentation](https://developer.paypal.com/docs/fastlane/)
+- [PayPal Fastlane Documentation](https://developer.paypal.com/studio/checkout/fastlane)
 - [PayPal Card Testing](https://developer.paypal.com/tools/sandbox/card-testing/)
