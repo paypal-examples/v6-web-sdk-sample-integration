@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>One-Time Payment - Recommended Integration - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>One-Time Payment Recommended Integration</h1>
+
+    <div class="buttons-container">
+      <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+      <venmo-button id="venmo-button" type="pay" hidden></venmo-button>
+      <paypal-pay-later-button
+        id="paylater-button"
+        hidden
+      ></paypal-pay-later-button>
+      <paypal-credit-button
+        id="paypal-credit-button"
+        hidden
+      ></paypal-credit-button>
+    </div>
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalLoaded()"
+    ></script>
+  </body>
+</html>
