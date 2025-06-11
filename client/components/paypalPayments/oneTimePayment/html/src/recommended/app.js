@@ -3,7 +3,7 @@ async function onPayPalLoaded() {
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
-      components: ["paypal-payments", "venmo-payments"],
+      components: ["paypal-payments"],
       pageType: "checkout",
     });
 
@@ -13,10 +13,6 @@ async function onPayPalLoaded() {
 
     if (paymentMethods.isEligible("paypal")) {
       setupPayPalButton(sdkInstance);
-    }
-
-    if (paymentMethods.isEligible("venmo")) {
-      setupVenmoButton(sdkInstance);
     }
 
     if (paymentMethods.isEligible("paylater")) {
@@ -62,25 +58,6 @@ async function setupPayPalButton(sdkInstance) {
   paypalButton.addEventListener("click", async () => {
     try {
       await paypalPaymentSession.start(
-        { presentationMode: "auto" },
-        createOrder(),
-      );
-    } catch (error) {
-      console.error(error);
-    }
-  });
-}
-
-async function setupVenmoButton(sdkInstance) {
-  const venmoPaymentSession = sdkInstance.createVenmoOneTimePaymentSession(
-    paymentSessionOptions,
-  );
-  const venmoButton = document.querySelector("#venmo-button");
-  venmoButton.removeAttribute("hidden");
-
-  venmoButton.addEventListener("click", async () => {
-    try {
-      await venmoPaymentSession.start(
         { presentationMode: "auto" },
         createOrder(),
       );

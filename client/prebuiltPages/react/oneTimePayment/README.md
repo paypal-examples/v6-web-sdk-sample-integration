@@ -14,7 +14,7 @@ v6-web-sdk-sample-integration/server/node
 npm install
 npm start
 
-v6-web-sdk-sample-integration/client/oneTimePayment/react
+v6-web-sdk-sample-integration/client/prebuiltPages/react/oneTimePayment
 npm install
 npm start
 ```
