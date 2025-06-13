@@ -25,10 +25,7 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createMessage(sdkInstance) {
-  const messagesInstance = sdkInstance.createPayPalMessages({
-    buyerCountry: "US",
-    currencyCode: "USD",
-  });
+  const messagesInstance = sdkInstance.createPayPalMessages();
   const messageElement = document.querySelector("#paypal-message");
 
   const content = await messagesInstance.fetchContent({
