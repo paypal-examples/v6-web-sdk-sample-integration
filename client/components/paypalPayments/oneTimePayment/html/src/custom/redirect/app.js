@@ -88,8 +88,8 @@ async function createRedirectOrder() {
                 experienceContext: {
                     shippingPreference: "NO_SHIPPING",
                     userAction: "CONTINUE",
-                    returnUrl: returnUrl,
-                    cancelUrl: cancelUrl,
+                    returnUrl,
+                    cancelUrl,
                 },
             },
         },
