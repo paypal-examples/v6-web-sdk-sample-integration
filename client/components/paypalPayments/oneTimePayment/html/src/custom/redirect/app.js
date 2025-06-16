@@ -42,7 +42,7 @@ async function setupPayPalButton(sdkInstance) {
     const createOrderPromiseReference = createRedirectOrder();
 
     try {
-      await paypalPaymentSession.start(
+      const { redirectURL } = await paypalPaymentSession.start(
         {
           presentationMode: "redirect",
           autoRedirect: {
@@ -51,6 +51,10 @@ async function setupPayPalButton(sdkInstance) {
         },
         createOrderPromiseReference
       );
+      if (redirectURL) {
+        console.log(`redirectURL: ${redirectURL}`);
+        window.location.assign(redirectURL);
+      }
     } catch (error) {
       console.error(error);
     }
