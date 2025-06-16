@@ -10,14 +10,22 @@
     <h2>JS config to fetch and set options</h2>
 
     <div id="message-background">
-      <paypal-message id="paypal-message" auto-bootstrap amount="50" currency-code="USD"></paypal-message>
+      <paypal-message
+        id="paypal-message"
+        auto-bootstrap
+        amount="50"
+        currency-code="USD"
+      ></paypal-message>
     </div>
 
     <!-- basic example product interaction -->
-    <p>Amount: $<span id="total-amount">50</span>, Quantity: <span id="quantity">1</span></p>
+    <p>
+      Amount: $<span id="total-amount">50</span>, Quantity:
+      <span id="quantity">1</span>
+    </p>
     <fieldset>
       <legend>Update the quantity of the items to adjust the amount</legend>
-      <input type="number" id="quantity-input" value="1"></input>
+      <input type="number" id="quantity-input" value="1" />
     </fieldset>
 
     <script src="app.js"></script>
