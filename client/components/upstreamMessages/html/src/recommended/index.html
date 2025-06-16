@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upstream Messages - Recommended Integration - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>Upstream Messages Recommended Integration</h1>
+    <h2>JS config to fetch and set options</h2>
+
+    <div id="message-background">
+      <paypal-message
+        id="paypal-message"
+        auto-bootstrap
+        amount="50"
+        currency-code="USD"
+      ></paypal-message>
+    </div>
+
+    <!-- basic example product interaction -->
+    <p>
+      Amount: $<span id="total-amount">50</span>, Quantity:
+      <span id="quantity">1</span>
+    </p>
+    <fieldset>
+      <legend>Update the quantity of the items to adjust the amount</legend>
+      <input type="number" id="quantity-input" value="1" />
+    </fieldset>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalLoaded()"
+    ></script>
+  </body>
+</html>

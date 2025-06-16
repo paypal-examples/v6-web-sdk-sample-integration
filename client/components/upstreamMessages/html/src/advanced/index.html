@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Upstream Messages - Minimal Integration - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>Upstream Messages Advanced Integration</h1>
+    <h2>HTML config with JS to update amount</h2>
+
+    <div id="message-background">
+      <paypal-message id="paypal-message"></paypal-message>
+    </div>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalLoaded()"
+    ></script>
+  </body>
+</html>
