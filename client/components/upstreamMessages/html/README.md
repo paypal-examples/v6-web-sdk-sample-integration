@@ -14,7 +14,7 @@ npm start
 
 ### Sample Integrations
 
-| Sample Integration                        | Description                                                                                      |
-| ----------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [Recommended](src/recommended/index.html) | Start with this recommended sample integration. It displays all messages supported by the v6 SDK |
-| [Minimal](src/minimal/index.html)         | This is a minimal integration. It only shows how a message can be auto bootstrapped              |
+| Sample Integration                        | Description                                                                                          |
+| ----------------------------------------- | ---------------------------------------------------------------------------------------------------- |
+| [Recommended](src/recommended/index.html) | Start with this recommended sample integration. It only shows how a message can be auto bootstrapped |
+| [Advanced](src/advanced/index.html)       | This is an advanced integration. It shows how a message can be configured via JavaScript             |

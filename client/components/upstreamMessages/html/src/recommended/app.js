@@ -5,8 +5,8 @@ async function onPayPalLoaded() {
       clientToken,
       components: ["paypal-messages"],
     });
-    const content = await createMessage(sdkInstance);
-    addAmountEventListener(content);
+    sdkInstance.createPayPalMessages();
+    addAmountEventListener();
   } catch (error) {
     console.error(error);
   }
@@ -24,32 +24,20 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
-async function createMessage(sdkInstance) {
-  const messagesInstance = sdkInstance.createPayPalMessages();
-  const messageElement = document.querySelector("#paypal-message");
-
-  const content = await messagesInstance.fetchContent({
-    onReady: (content) => {
-      messageElement.setContent(content);
-    },
-  });
-
-  return content;
-}
-
 // basic example product interaction
-function addAmountEventListener(content) {
+function addAmountEventListener() {
+  const messageElement = document.querySelector("#paypal-message");
   const quantityInput = document.querySelector("#quantity-input");
   const totalAmount = document.querySelector("#total-amount");
   const quantity = document.querySelector("#quantity");
 
   quantityInput.addEventListener("input", (event) => {
     const quantityValue = event.target.value;
-    const calculatedTotalAmount = (50 * quantityValue).toString();
+    const calculatedTotalAmount = (50 * quantityValue).toFixed(2).toString();
 
     quantity.innerHTML = quantityValue;
     totalAmount.innerHTML = calculatedTotalAmount;
 
-    content.update({ amount: calculatedTotalAmount });
+    messageElement.amount = calculatedTotalAmount;
   });
 }
