@@ -1,24 +1,25 @@
 <html lang="en">
-
-<head>
+  <head>
     <meta charset="UTF-8" />
     <title>One-Time Payment - Redirect Flow - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-</head>
+  </head>
 
-<body>
-
+  <body>
     <h1>Paypal Redirect Flow</h1>
     <div>
-        <input type="checkbox" id="enable-auto-redirect" checked />
-        <label for="enable-auto-redirect"> Enable auto-redirect </label>
+      <input type="checkbox" id="enable-auto-redirect" checked />
+      <label for="enable-auto-redirect"> Enable auto-redirect </label>
     </div>
     <div id="button-container">
-        <paypal-button id="paypal-button" hidden></paypal-button>
+      <paypal-button id="paypal-button" hidden></paypal-button>
     </div>
 
     <script src="app.js"></script>
-    <script async onload="onPayPalLoaded()" src="https://www.sandbox.paypal.com/web-sdk/v6/core"></script>
-</body>
-
+    <script
+      async
+      onload="onPayPalLoaded()"
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+    ></script>
+  </body>
 </html>
