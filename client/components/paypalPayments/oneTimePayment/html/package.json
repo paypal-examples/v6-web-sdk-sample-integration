@@ -7,8 +7,8 @@
     "build": "vite build",
     "preview": "vite preview",
     "start": "vite",
-    "format": "prettier . --write --log-level debug",
-    "format:check": "prettier . --check",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check --log-level debug",
     "lint": "echo \"eslint is not set up\""
   },
   "license": "Apache-2.0",
