@@ -31,7 +31,7 @@ const paymentSessionOptions = {
 
 async function setupPayPalButton(sdkInstance) {
   const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
-    paymentSessionOptions
+    paymentSessionOptions,
   );
 
   const enableAutoRedirect = document.querySelector("#enable-auto-redirect");
@@ -49,7 +49,7 @@ async function setupPayPalButton(sdkInstance) {
             enabled: enableAutoRedirect.checked,
           },
         },
-        createOrderPromiseReference
+        createOrderPromiseReference,
       );
       if (redirectURL) {
         console.log(`redirectURL: ${redirectURL}`);
@@ -127,7 +127,7 @@ async function captureOrder({ orderId }) {
       headers: {
         "Content-Type": "application/json",
       },
-    }
+    },
   );
   const data = await response.json();
   return data;
