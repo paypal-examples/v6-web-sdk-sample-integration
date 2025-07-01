@@ -7,7 +7,6 @@ to work entirely in an iframe.
 To start this example:
 
 1. Start a server in the `server/` directory. Note, the server needs to provide the following endpoints:
-
    1. `GET /paypal-api/auth/browser-safe-client-token`
    2. `POST /paypal-api/checkout/orders/create-with-sample-data`
    3. `POST /paypal-api/checkout/orders/:orderId/capture`
