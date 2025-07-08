@@ -4,7 +4,7 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
 
 - make one-time payments with different payment methods like PayPal and Venmo
 - save payment methods for future transactions
-- add Pay Later messaging (coming soon)
+- add Pay Later messaging
 
 ## Before You Code
 
