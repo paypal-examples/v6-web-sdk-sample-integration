@@ -6,8 +6,15 @@ async function onPayPalLoaded() {
       components: ["paypal-payments"],
       pageType: "checkout",
     });
+    const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
+      paymentSessionOptions
+    );
 
-    setupPayPalButton(sdkInstance);
+    if (paypalPaymentSession.hasReturned()) {
+      await paypalPaymentSession.resume({ presentationMode: "redirect" });
+    } else {
+      setupPayPalButton(sdkInstance);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -29,11 +36,7 @@ const paymentSessionOptions = {
   },
 };
 
-async function setupPayPalButton(sdkInstance) {
-  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
-    paymentSessionOptions,
-  );
-
+async function setupPayPalButton(paypalPaymentSession) {
   const enableAutoRedirect = document.querySelector("#enable-auto-redirect");
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton.removeAttribute("hidden");
@@ -74,12 +77,6 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createRedirectOrder() {
-  const returnUrl = new URL(window.location);
-  returnUrl.searchParams.set("flowState", "approve");
-
-  const cancelUrl = new URL(window.location);
-  cancelUrl.searchParams.set("flowState", "cancel");
-
   const orderPayload = {
     intent: "CAPTURE",
     paymentSource: {
@@ -87,8 +84,8 @@ async function createRedirectOrder() {
         experienceContext: {
           shippingPreference: "NO_SHIPPING",
           userAction: "CONTINUE",
-          returnUrl,
-          cancelUrl,
+          returnUrl: window.location,
+          cancelUrl: window.location,
         },
       },
     },
