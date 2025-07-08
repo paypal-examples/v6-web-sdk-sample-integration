@@ -7,7 +7,7 @@ async function onPayPalLoaded() {
       pageType: "checkout",
     });
     const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
-      paymentSessionOptions
+      paymentSessionOptions,
     );
 
     if (paypalPaymentSession.hasReturned()) {
