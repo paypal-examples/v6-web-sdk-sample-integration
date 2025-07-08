@@ -1,4 +1,4 @@
-# Upstream Messages HTML Sample Integration
+# PayPal Messages HTML Sample Integration
 
 This HTML sample integration uses HTML, JavaScript, and CSS. It does not require a build process to transpile the source code. It's just static files that can be served up by any web server. [Vite](https://vite.dev/) is used for the local web server to provide the following functionality:
 
