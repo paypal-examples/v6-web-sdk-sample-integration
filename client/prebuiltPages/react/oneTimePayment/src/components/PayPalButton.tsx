@@ -1,31 +1,44 @@
-import React, { useContext, useRef, useEffect } from "react";
+import React, { useContext, useCallback } from "react";
 import { PayPalSDKContext } from "../context/sdkContext";
-import { createOrder } from "../utils";
-import { PaymentSessionOptions, SessionOutput } from "../types/paypal";
+import { captureOrder, createOrder } from "../utils";
+import {
+  OnApproveData,
+  PaymentSessionOptions,
+} from "../types/paypal";
 import { useErrorBoundary } from "react-error-boundary";
+import { useCreatePayPalOneTimePaymentSession } from "../hooks/useCreatePayPalOneTimePaymentSession";
 
-const PayPalButton: React.FC<PaymentSessionOptions> = (
-  paymentSessionOptions,
-) => {
+const PayPalButton: React.FC<PaymentSessionOptions> = () => {
   const { sdkInstance } = useContext(PayPalSDKContext);
   const { showBoundary } = useErrorBoundary();
-  const paypalSession = useRef<SessionOutput>(null);
 
-  useEffect(() => {
-    if (sdkInstance) {
-      paypalSession.current = sdkInstance.createPayPalOneTimePaymentSession(
-        paymentSessionOptions,
-      );
-    }
-  }, [sdkInstance, paymentSessionOptions]);
+  const paypalCheckoutSession = useCreatePayPalOneTimePaymentSession({
+    sdkInstance,
+    onApprove: useCallback(async (data: OnApproveData) => {
+      console.log("Payment approved:", data);
+      const captureResult = await captureOrder({ orderId: data.orderId });
+      console.log("Payment capture result:", captureResult);
+      // setModalState("success");
+    }, []),
+
+    onCancel: useCallback(() => {
+      console.log("Payment cancelled");
+      // setModalState("cancel");
+    }, []),
+
+    onError: useCallback((error: Error) => {
+      console.error("Payment error:", error);
+      // setModalState("error");
+    }, []),
+  });
 
   const payPalOnClickHandler = async () => {
-    if (!paypalSession.current) return;
+    if (!paypalCheckoutSession) return;
 
     try {
-      await paypalSession.current.start(
+      await paypalCheckoutSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrder()
       );
     } catch (e) {
       console.error(e);
