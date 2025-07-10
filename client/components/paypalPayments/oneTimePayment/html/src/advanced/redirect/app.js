@@ -13,7 +13,7 @@ async function onPayPalLoaded() {
     if (paypalPaymentSession.hasReturned()) {
       await paypalPaymentSession.resume({ presentationMode: "redirect" });
     } else {
-      setupPayPalButton(sdkInstance);
+      setupPayPalButton(paypalPaymentSession);
     }
   } catch (error) {
     console.error(error);
@@ -84,8 +84,8 @@ async function createRedirectOrder() {
         experienceContext: {
           shippingPreference: "NO_SHIPPING",
           userAction: "CONTINUE",
-          returnUrl: window.location,
-          cancelUrl: window.location,
+          returnUrl: window.location.href,
+          cancelUrl: window.location.href,
         },
       },
     },
