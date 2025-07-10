@@ -11,7 +11,7 @@ async function onPayPalLoaded() {
     );
 
     if (paypalPaymentSession.hasReturned()) {
-      await paypalPaymentSession.resume({ presentationMode: "redirect" });
+      await paypalPaymentSession.resume();
     } else {
       setupPayPalButton(paypalPaymentSession);
     }
