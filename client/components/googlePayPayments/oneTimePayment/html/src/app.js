@@ -86,7 +86,7 @@ async function getGooglePaymentDataRequest(purchaseAmount, googlePayConfig) {
   paymentDataRequest.allowedPaymentMethods = allowedPaymentMethods;
   paymentDataRequest.transactionInfo = getGoogleTransactionInfo(
     purchaseAmount,
-    countryCode
+    countryCode,
   );
 
   paymentDataRequest.merchantInfo = merchantInfo;
@@ -98,7 +98,7 @@ async function getGooglePaymentDataRequest(purchaseAmount, googlePayConfig) {
 async function onPaymentAuthorized(
   purchaseAmount,
   paymentData,
-  googlePaySession
+  googlePaySession,
 ) {
   try {
     const orderPayload = getPayPalOrder(purchaseAmount);
@@ -130,7 +130,7 @@ async function onClick(purchaseAmount, paymentsClient, googlePayConfig) {
   try {
     const paymentDataRequest = await getGooglePaymentDataRequest(
       purchaseAmount,
-      googlePayConfig
+      googlePayConfig,
     );
 
     paymentsClient.loadPaymentData(paymentDataRequest);
@@ -205,7 +205,7 @@ async function captureOrder({ orderId }) {
       headers: {
         "Content-Type": "application/json",
       },
-    }
+    },
   );
   const data = await response.json();
 
