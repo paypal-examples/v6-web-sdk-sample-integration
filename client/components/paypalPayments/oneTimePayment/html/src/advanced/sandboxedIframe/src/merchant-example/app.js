@@ -1,34 +1,64 @@
+/**
+ * Class to manage and synchronize page state with the DOM.
+ */
 class PageState {
+  /**
+   * Internal state object.
+   * @type {{presentationMode: string|null, lastPostMessage: Object|null, merchantDomain: string|null}}
+   */
   state = {
     presentationMode: null,
     lastPostMessage: null,
     merchantDomain: null,
   };
 
+  /**
+   * Initializes the merchant domain to the current window origin.
+   */
   constructor() {
     this.merchantDomain = window.location.origin;
   }
 
+  /**
+   * Sets the current presentation mode and updates the DOM.
+   * @param {string} value - The presentation mode value.
+   */
   set presentationMode(value) {
     this.state.presentationMode = value;
     const element = document.getElementById("presentationMode");
     element.innerHTML = value;
   }
 
+  /**
+   * Gets the current presentation mode.
+   * @returns {string|null}
+   */
   get presentationMode() {
     return this.state.presentationMode;
   }
 
+  /**
+   * Sets the last postMessage event and updates the DOM.
+   * @param {MessageEvent} event - The postMessage event.
+   */
   set lastPostMessage(event) {
     const statusContainer = document.getElementById("postMessageStatus");
     statusContainer.innerHTML = JSON.stringify(event.data);
     this.state.lastPostMessage = event;
   }
 
+  /**
+   * Gets the last postMessage event.
+   * @returns {MessageEvent|null}
+   */
   get lastPostMessage() {
     return this.state.lastPostMessage;
   }
 
+  /**
+   * Sets the merchant domain and updates the DOM.
+   * @param {string} value - The merchant domain.
+   */
   set merchantDomain(value) {
     document.getElementById("merchantDomain").innerHTML = value;
     this.state.merchantDomain = value;
@@ -37,6 +67,10 @@ class PageState {
 
 const pageState = new PageState();
 
+/**
+ * Handles postMessage events for the "popup" presentation mode.
+ * @param {MessageEvent} event - The postMessage event.
+ */
 function popupPresentationModePostMessageHandler(event) {
   const { eventName, data } = event.data;
   const overlay = document.getElementById("overlayContainer");
@@ -52,6 +86,10 @@ function popupPresentationModePostMessageHandler(event) {
   }
 }
 
+/**
+ * Handles postMessage events for the "modal" presentation mode.
+ * @param {MessageEvent} event - The postMessage event.
+ */
 function modalPresentationModePostMessageHandler(event) {
   const { eventName, data } = event.data;
   const iframe = document.getElementById("iframeWrapper");
@@ -67,6 +105,10 @@ function modalPresentationModePostMessageHandler(event) {
   }
 }
 
+/**
+ * Sets up a window message event listener to handle postMessage events
+ * from the child iframe, updating state and presentation as needed.
+ */
 function setupPostMessageListener() {
   window.addEventListener("message", (event) => {
     // It's very important to check that the `origin` is expected to prevent XSS attacks!
@@ -90,6 +132,9 @@ function setupPostMessageListener() {
   });
 }
 
+/**
+ * Sets up the overlay dialog and its close event listeners.
+ */
 function setupOverlay() {
   const overlay = document.getElementById("overlayContainer");
 
@@ -105,6 +150,9 @@ function setupOverlay() {
   closeBackdrop.addEventListener("click", hideOverlay);
 }
 
+/**
+ * Initializes the overlay and postMessage listener on page load.
+ */
 function onLoad() {
   if (window.setupComplete) {
     return;
@@ -116,6 +164,10 @@ function onLoad() {
   window.setupComplete = true;
 }
 
+/**
+ * Sends a postMessage to the child iframe with the given payload.
+ * @param {Object} payload - The message payload to send.
+ */
 function sendPostMessageToChild(payload) {
   const iframe = document.getElementById("iframeWrapper");
   const childOrigin = new URL(iframe.getAttribute("src")).origin;
