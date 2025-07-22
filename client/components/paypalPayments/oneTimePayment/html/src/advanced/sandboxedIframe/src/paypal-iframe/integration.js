@@ -124,7 +124,7 @@ async function setupPayPalButton(sdkInstance) {
   });
 }
 
-async function onPayPalLoaded() {
+async function onPayPalWebSdkLoaded() {
   if (window.setupComplete) {
     return;
   }

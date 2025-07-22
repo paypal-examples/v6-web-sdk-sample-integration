@@ -1,4 +1,4 @@
-async function onPayPalLoaded() {
+async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
