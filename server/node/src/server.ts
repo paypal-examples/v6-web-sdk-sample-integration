@@ -130,6 +130,16 @@ app.post(
   },
 );
 
+/**
+ * Saves the PayPal payment token to a database for future transactions.
+ * This is an example function to demonstrate storing the payment token.
+ * In a real implementation, this should persist the token securely.
+ *
+ * @async
+ * @function
+ * @param {PaymentTokenResponse} paymentTokenResponse - The payment token response object to save.
+ * @returns {Promise<void>} A promise that resolves when the token is saved.
+ */
 async function savePaymentTokenToDatabase(
   paymentTokenResponse: PaymentTokenResponse,
 ) {

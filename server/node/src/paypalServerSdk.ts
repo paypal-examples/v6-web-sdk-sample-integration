@@ -62,6 +62,13 @@ const vaultController = new VaultController(client);
  * Token generation helpers
  * ###################################################################### */
 
+/**
+ * Generates a browser-safe client token for PayPal SDK initialization.
+ *
+ * @async
+ * @function
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The client token response and HTTP status code.
+ */
 export async function getBrowserSafeClientToken() {
   try {
     const auth = Buffer.from(
@@ -82,8 +89,9 @@ export async function getBrowserSafeClientToken() {
         fieldParameters,
       );
 
-    // the OAuthToken interface is too general
-    // this interface is specific to the "client_token" response type
+    /**
+     * Interface for the client token response.
+     */
     interface ClientToken {
       accessToken: string;
       expiresIn: number;
@@ -125,6 +133,16 @@ export async function getBrowserSafeClientToken() {
  * Process orders
  * ###################################################################### */
 
+/**
+ * Creates a PayPal order using the provided order request body.
+ *
+ * @async
+ * @function
+ * @param {Object} params - The parameters object.
+ * @param {OrderRequest} params.orderRequestBody - The order request body.
+ * @param {string} [params.paypalRequestId] - Optional PayPal request ID for idempotency.
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The order creation response and HTTP status code.
+ */
 export async function createOrder({
   orderRequestBody,
   paypalRequestId,
@@ -156,6 +174,13 @@ export async function createOrder({
   }
 }
 
+/**
+ * Creates a PayPal order with sample data for demonstration purposes.
+ *
+ * @async
+ * @function
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The order creation response and HTTP status code.
+ */
 export async function createOrderWithSampleData() {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -171,6 +196,14 @@ export async function createOrderWithSampleData() {
   return createOrder({ orderRequestBody });
 }
 
+/**
+ * Captures a PayPal order by order ID.
+ *
+ * @async
+ * @function
+ * @param {string} orderId - The PayPal order ID to capture.
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The capture response and HTTP status code.
+ */
 export async function captureOrder(orderId: string) {
   try {
     const { result, statusCode } = await ordersController.captureOrder({
@@ -199,6 +232,15 @@ export async function captureOrder(orderId: string) {
  * Save payment methods
  * ###################################################################### */
 
+/**
+ * Creates a PayPal setup token for saving a payment method.
+ *
+ * @async
+ * @function
+ * @param {SetupTokenRequest} setupTokenRequestBody - The setup token request body.
+ * @param {string} [paypalRequestId] - Optional PayPal request ID for idempotency.
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The setup token response and HTTP status code.
+ */
 export async function createSetupToken(
   setupTokenRequestBody: SetupTokenRequest,
   paypalRequestId?: string,
@@ -227,6 +269,13 @@ export async function createSetupToken(
   }
 }
 
+/**
+ * Creates a PayPal setup token with sample data for PayPal payment method.
+ *
+ * @async
+ * @function
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The setup token response and HTTP status code.
+ */
 export async function createSetupTokenWithSampleDataForPayPal() {
   const defaultSetupTokenRequestBody = {
     paymentSource: {
@@ -244,6 +293,15 @@ export async function createSetupTokenWithSampleDataForPayPal() {
   return createSetupToken(defaultSetupTokenRequestBody, Date.now().toString());
 }
 
+/**
+ * Creates a PayPal payment token using a vault setup token.
+ *
+ * @async
+ * @function
+ * @param {string} vaultSetupToken - The vault setup token.
+ * @param {string} [paypalRequestId] - Optional PayPal request ID for idempotency.
+ * @returns {Promise<{ jsonResponse: object; httpStatusCode: number }>} The payment token response and HTTP status code.
+ */
 export async function createPaymentToken(
   vaultSetupToken: string,
   paypalRequestId?: string,

@@ -1,3 +1,10 @@
+/**
+ * Initializes the PayPal Web SDK, creates a PayPal Payments instance,
+ * and sets up the PayPal button.
+ * @async
+ * @function
+ * @returns {Promise<void>}
+ */
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
@@ -13,6 +20,14 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
+/**
+ * Sets up the PayPal button, handles payment session events,
+ * and manages presentation modes for the payment flow.
+ * @async
+ * @function
+ * @param {Object} sdkInstance - The PayPal SDK instance.
+ * @returns {Promise<void>}
+ */
 async function setupPayPalButton(sdkInstance) {
   const paymentSessionOptions = {
     async onApprove(data) {
@@ -76,6 +91,12 @@ async function setupPayPalButton(sdkInstance) {
   });
 }
 
+/**
+ * Fetches a browser-safe client token from the server for PayPal SDK initialization.
+ * @async
+ * @function
+ * @returns {Promise<string>} The browser-safe client access token.
+ */
 async function getBrowserSafeClientToken() {
   const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
     method: "GET",
@@ -88,6 +109,12 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
+/**
+ * Creates a PayPal order by sending a request to the server.
+ * @async
+ * @function
+ * @returns {Promise<Object>} The created order object containing the order ID.
+ */
 async function createOrder() {
   const response = await fetch(
     "/paypal-api/checkout/orders/create-with-sample-data",
@@ -103,6 +130,14 @@ async function createOrder() {
   return { orderId: id };
 }
 
+/**
+ * Captures a PayPal order by order ID.
+ * @async
+ * @function
+ * @param {Object} params - The parameters object.
+ * @param {string} params.orderId - The PayPal order ID.
+ * @returns {Promise<Object>} The capture order response data.
+ */
 async function captureOrder({ orderId }) {
   const response = await fetch(
     `/paypal-api/checkout/orders/${orderId}/capture`,

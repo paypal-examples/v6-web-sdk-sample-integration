@@ -1,3 +1,10 @@
+/**
+ * Initializes the Fastlane SDK, sets up event listeners for email submission,
+ * handles authentication flow, and renders the appropriate user experience.
+ * @async
+ * @function
+ * @returns {Promise<void>}
+ */
 async function setupFastlaneSdk() {
   fastlane.setLocale("en_us");
 
@@ -41,6 +48,17 @@ async function setupFastlaneSdk() {
   });
 }
 
+/**
+ * Displays the shipping address information in the UI.
+ * @param {Object} shippingAddress - The shipping address object.
+ * @param {Object} shippingAddress.name - Name object containing fullName.
+ * @param {string} shippingAddress.name.fullName - Full name of the recipient.
+ * @param {Object} shippingAddress.address - Address object.
+ * @param {string} shippingAddress.address.addressLine1 - Street address.
+ * @param {string} shippingAddress.address.adminArea2 - City or locality.
+ * @param {string} shippingAddress.address.adminArea1 - State or region.
+ * @param {string} shippingAddress.address.postalCode - Postal or ZIP code.
+ */
 function setShippingAddressDisplay(shippingAddress) {
   const {
     name: { fullName },
@@ -53,6 +71,15 @@ function setShippingAddressDisplay(shippingAddress) {
   shippingDisplayContainer.innerHTML = `<b>${fullName}</b><br><b>${adminArea2}</b><br><b>${adminArea1}</b><br><b>${postalCode}</b>`;
 }
 
+/**
+ * Renders the Fastlane member checkout experience, including shipping address,
+ * payment component, and order submission.
+ * @async
+ * @function
+ * @param {Object} profileData - The user's profile data.
+ * @param {Object} profileData.shippingAddress - The user's shipping address.
+ * @returns {Promise<void>}
+ */
 async function renderFastlaneMemberExperience(profileData) {
   if (profileData.shippingAddress) {
     setShippingAddressDisplay(profileData.shippingAddress);
@@ -97,6 +124,13 @@ async function renderFastlaneMemberExperience(profileData) {
   }
 }
 
+/**
+ * Renders the Fastlane guest checkout experience, including payment component
+ * and order submission.
+ * @async
+ * @function
+ * @returns {Promise<void>}
+ */
 async function renderFastlaneGuestExperience() {
   const cardTestingInfo = document.getElementById("card-testing-info");
   cardTestingInfo.removeAttribute("hidden");
@@ -119,6 +153,13 @@ async function renderFastlaneGuestExperience() {
   });
 }
 
+/**
+ * Creates an order by sending a request to the server with the payment token.
+ * @async
+ * @function
+ * @param {string} paymentToken - The payment token from Fastlane.
+ * @returns {Promise<Object>} The response from the order creation API.
+ */
 async function createOrder(paymentToken) {
   const response = await fetch("/paypal-api/checkout/orders/create", {
     method: "POST",

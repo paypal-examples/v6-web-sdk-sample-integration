@@ -11,15 +11,24 @@ import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 
-// Types
+/**
+ * ModalType defines the possible modal states for payment feedback.
+ */
 type ModalType = "success" | "cancel" | "error" | null;
 
+/**
+ * ModalContent describes the content displayed in the modal dialog.
+ */
 interface ModalContent {
+  /** The modal title text. */
   title: string;
+  /** The modal message text. */
   message: string;
 }
 
-// Constants
+/**
+ * Product details for the World Cup Ball.
+ */
 const PRODUCT = {
   name: "World Cup Ball",
   icon: "⚽️",
@@ -28,12 +37,24 @@ const PRODUCT = {
   imageAlt: "Official World Cup Soccer Ball",
 } as const;
 
+/**
+ * SoccerBall section component displays the product, handles PayPal and Venmo payments,
+ * and shows a modal dialog for payment status feedback.
+ *
+ * @returns {JSX.Element} The rendered SoccerBall section.
+ */
 const SoccerBall: React.FC = () => {
   const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
   const [modalState, setModalState] = useState<ModalType>(null);
 
-  // Payment handlers
+  /**
+   * Payment session event handlers for PayPal and Venmo buttons.
+   */
   const handlePaymentCallbacks: PaymentSessionOptions = {
+    /**
+     * Called when the payment is approved.
+     * @param {OnApproveData} data - The approval data.
+     */
     onApprove: async (data: OnApproveData) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
@@ -41,17 +62,30 @@ const SoccerBall: React.FC = () => {
       setModalState("success");
     },
 
+    /**
+     * Called when the payment is cancelled.
+     */
     onCancel: () => {
       console.log("Payment cancelled");
       setModalState("cancel");
     },
 
+    /**
+     * Called when an error occurs during payment.
+     * @param {Error} error - The error object.
+     */
     onError: (error: Error) => {
       console.error("Payment error:", error);
       setModalState("error");
     },
   };
 
+  /**
+   * Returns the modal content based on the current modal state.
+   *
+   * @param {ModalType} state - The current modal state.
+   * @returns {ModalContent | null} The content to display in the modal.
+   */
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
       switch (state) {
