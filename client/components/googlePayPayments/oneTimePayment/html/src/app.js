@@ -1,4 +1,4 @@
-async function onPayPalLoaded() {
+async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
@@ -13,7 +13,7 @@ async function onPayPalLoaded() {
   }
 }
 
-function getPayPalOrder(purchaseAmount) {
+function getPayPalOrderPayload(purchaseAmount) {
   return {
     intent: "CAPTURE",
     purchaseUnits: [
@@ -101,7 +101,7 @@ async function onPaymentAuthorized(
   googlePaySession,
 ) {
   try {
-    const orderPayload = getPayPalOrder(purchaseAmount);
+    const orderPayload = getPayPalOrderPayload(purchaseAmount);
     const id = await createOrder(orderPayload);
 
     const { status } = await googlePaySession.confirmOrder({
@@ -126,7 +126,11 @@ async function onPaymentAuthorized(
   }
 }
 
-async function onClick(purchaseAmount, paymentsClient, googlePayConfig) {
+async function onGooglePayButtonClick(
+  purchaseAmount,
+  paymentsClient,
+  googlePayConfig,
+) {
   try {
     const paymentDataRequest = await getGooglePaymentDataRequest(
       purchaseAmount,
@@ -162,7 +166,12 @@ async function setupGooglePayButton(sdkInstance) {
 
     if (isReadyToPay.result) {
       const button = paymentsClient.createButton({
-        onClick: () => onClick(purchaseAmount, paymentsClient, googlePayConfig),
+        onClick: () =>
+          onGooglePayButtonClick(
+            purchaseAmount,
+            paymentsClient,
+            googlePayConfig,
+          ),
       });
 
       document.getElementById("googlepay-button-container").appendChild(button);
