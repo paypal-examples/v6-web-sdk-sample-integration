@@ -20,6 +20,8 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
 
    Once you've setup a PayPal account, [create a sandbox application](https://developer.paypal.com/dashboard/applications/sandbox/create) to obtain a **Client ID** and **Secret**.
 
+3. [Optional] To be able to complete one-time payments with Google Pay, [make sure that your sandbox account has Google Pay enabled](https://developer.paypal.com/docs/checkout/apm/google-pay/#set-up-your-sandbox-account-to-accept-google-pay).
+
 ## How to Run Locally
 
 1. Clone the repository by running the following command in your terminal:
