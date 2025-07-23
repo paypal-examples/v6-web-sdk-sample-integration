@@ -13,6 +13,7 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
+    "ngrok": "^5.0.0-beta.2",
     "prettier": "^3.6.2",
     "vite": "^7.0.4"
   }
