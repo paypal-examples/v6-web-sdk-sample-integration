@@ -7,10 +7,8 @@ export default defineConfig({
   root: "src",
   server: {
     port: 3000,
-      https: {
-        key: fs.readFileSync("./localhost+2-key.pem"),
-        cert: fs.readFileSync("./localhost+2.pem"),
-      },
+    host: true,
+    allowedHosts: ["example.ngrok-free.app"],
     proxy: {
       "/paypal-api": {
         target: "http://localhost:8080",
