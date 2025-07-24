@@ -71,6 +71,7 @@ async function setupApplePayButton(sdkInstance) {
         session.completePaymentMethodSelection({
           newTotal: paymentRequest.total,
         });
+        console.log("Completed payment method selection");
       };
 
       session.onpaymentauthorized = async (event) => {
