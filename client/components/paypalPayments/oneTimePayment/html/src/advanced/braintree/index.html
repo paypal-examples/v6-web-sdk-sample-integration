@@ -1,0 +1,26 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      One-Time Payment - Advanced Braintree Integration - PayPal Web SDK
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <h1>One-Time Payment Advanced Braintree Integration</h1>
+
+    <div>
+      <paypal-button id="paypal-button" hidden></paypal-button>
+    </div>
+    <script src="app.js"></script>
+
+    <script src="https://js.braintreegateway.com/web/3.103.0/js/client.min.js"></script>
+    <script src="https://js.braintreegateway.com/web/3.103.0/js/paypal-checkout.min.js"></script>
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+  </body>
+</html>
