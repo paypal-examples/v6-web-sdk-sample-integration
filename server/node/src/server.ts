@@ -12,6 +12,11 @@ import {
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
+import {
+  getBraintreeBrowserSafeClientToken,
+  completeTransactionSale,
+} from "./braintreeServerSdk";
+
 const app = express();
 
 app.use(cors());
@@ -126,6 +131,48 @@ app.post(
     } catch (error) {
       console.error("Failed to create payment token:", error);
       res.status(500).json({ error: "Failed to create payment token." });
+    }
+  },
+);
+
+/* ######################################################################
+ * API Endpoints for Braintree Integration
+ * ###################################################################### */
+
+app.get(
+  "/braintree-api/auth/browser-safe-client-token",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await getBraintreeBrowserSafeClientToken();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error(
+        "Failed to create braintree browser safe client token:",
+        error,
+      );
+      res
+        .status(500)
+        .json({ error: "Failed to create browser safe access token." });
+    }
+  },
+);
+
+app.post(
+  "/braintree-api/checkout/transaction/sale",
+  async (req: Request, res: Response) => {
+    try {
+      const { amount, paymentMethodNonce } = req.body;
+      const { jsonResponse, httpStatusCode } = await completeTransactionSale({
+        amount,
+        paymentMethodNonce,
+      });
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to complete braintree transaction:", error);
+      res.status(500).json({
+        error: "Failed to complete braintree transaction.",
+      });
     }
   },
 );

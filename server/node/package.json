@@ -17,6 +17,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@paypal/paypal-server-sdk": "^1.1.0",
+    "braintree": "^3.32.0",
     "cors": "^2.8.5",
     "dotenv": "^17.2.0",
     "express": "^5.1.0"

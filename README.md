@@ -24,6 +24,16 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
 
    To be able to complete one-time payments with Google Pay, [make sure that your sandbox account has Google Pay enabled](https://developer.paypal.com/docs/checkout/apm/google-pay/#set-up-your-sandbox-account-to-accept-google-pay). This step is needed if you're running the [Google Pay payments integration](./client/components/googlePayPayments/oneTimePayment/html).
 
+4. _(Optional)_ **Setup Braintree Credentials**
+
+   If you want to run the [Braintree payments integration](./client/components/paypalPayments/oneTimePayment/html/src/advanced/braintree), you'll need to create a Braintree sandbox account and add the following environment variables to your `.env` file:
+
+   - `BRAINTREE_SANDBOX_MERCHANT_ID`
+   - `BRAINTREE_SANDBOX_MERCHANT_PUBLIC_KEY`
+   - `BRAINTREE_SANDBOX_MERCHANT_PRIVATE_KEY`
+
+   [Create a Braintree sandbox account](https://apply.braintreegateway.com/signup/sandbox) to obtain these credentials.
+
 ## How to Run Locally
 
 1. Clone the repository by running the following command in your terminal:
