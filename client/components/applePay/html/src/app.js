@@ -42,7 +42,7 @@ async function setupApplePayButton(sdkInstance) {
         requiredShippingContactFields: [],
         total: {
           label: "Demo (Card is not charged)",
-          amount: "10.00",
+          amount: "100.00",
           type: "final",
         },
       };
@@ -83,7 +83,7 @@ async function setupApplePayButton(sdkInstance) {
           );
 
           await paypalSdkApplePayPaymentSession.confirmOrder({
-            orderId: createdOrder,
+            orderId: createdOrder.orderId,
             token: event.payment.token,
             billingContact: event.payment.billingContact,
             shippingContact: event.payment.shippingContact,
