@@ -89,9 +89,11 @@ async function setupApplePayButton(sdkInstance) {
             shippingContact: event.payment.shippingContact,
           });
 
-          console.log(`Capturing order ${createdOrder}...`);
+          console.log(
+            `Capturing order ${JSON.stringify(createdOrder, null, 2)}...`,
+          );
           const orderData = await captureOrder({
-            orderId: createdOrder,
+            orderId: createdOrder.orderId,
             fundingSource: "applepay",
             headers: { "X-CSRF-TOKEN": "<%= csrfToken %>" },
           });
