@@ -32,7 +32,14 @@ Before running this demo, you'll need to set up accounts and configure your deve
    ![Screenshot](images/enable-apple-pay.jpg)
 
 ### 2. Apple Developer Account Setup
-TO-DO
+
+You are required to sign up for the Apple Developer Program in order to process payments. If you opt out of this step, you will be able to click the button and open the payment handler, but will be unable to process payments. Please see [these instructions](https://developer.apple.com/help/account/membership/program-enrollment/) for signing up.
+
+1. **Create a Sandbox Tester Account**
+   - After receiving approval from Apple for the Apple Developer Program, please follow the "Create a Sandbox Tester Account" instructions located [here](https://developer.apple.com/apple-pay/sandbox-testing/)
+   - Do not enable two-factor authentication
+   - Sign into the sandbox iCloud account on your Apple device, and be sure to verify your email address
+   - Add a test credit card number to your Apple Pay Wallet from the sandbox testing link above, located under "Test Cards for Apps and the Web"
 
 ### 3. ngrok Account Setup
 
@@ -148,7 +155,22 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
    The demo will be available at `http://localhost:3000`
 
 ## 🧪 Testing the Integration
-TO-DO
+
+1. **Open Safari Browser**
+   - Navigate to your ngrok https domain
+   - click Visit Site
+
+2. **Initiate Apple Pay**
+   - Click the Apple Pay button
+   - The Apple Pay sheet will appear with your test payment method
+
+3. **Complete Payment**
+   - Select the test credit card you added to your sandbox iCloud wallet
+   - Authenticate with Touch ID, Face ID, or device passcode
+   - The payment should process successfully
+
+4. **Verify Results**
+   - Check the browser console logs for order capture details
 
 ## 🔧 Code Structure
 
