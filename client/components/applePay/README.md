@@ -208,7 +208,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 
 1. **Apple Pay Button Not Appearing**
    - Verify you're using Safari browser
-   - Check that you're signed into your sandbox iCloud account
+   - Verify Apple Pay is enabled in your PayPal application
    - Ensure Apple Pay is enabled in Safari **Settings** -> **Advanced** -> `Allow websites to check for Apple Pay and Apple Card`
    - Ensure your `ngrok` domain is added to `vite.config.js` -> `defineConfig` -> `server` -> `allowedHosts`
 
@@ -219,4 +219,3 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 3. **Payment Authorization Fails**
    - Check that you're signed into your sandbox iCloud account
    - Ensure you're using an [Apple test credit card](https://developer.apple.com/apple-pay/sandbox-testing/)
-   - Verify Apple Pay is enabled in your PayPal application
