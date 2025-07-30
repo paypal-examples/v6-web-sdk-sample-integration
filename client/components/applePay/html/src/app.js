@@ -48,33 +48,38 @@ async function setupApplePayButton(sdkInstance) {
       };
 
       console.log("Creating Apple Pay SDK session...");
-      let session = new ApplePaySession(4, paymentRequest);
+      let appleSdkApplePayPaymentSession = new ApplePaySession(
+        4,
+        paymentRequest,
+      );
 
-      session.onvalidatemerchant = (event) => {
+      appleSdkApplePayPaymentSession.onvalidatemerchant = (event) => {
         console.log("Validating Apple Pay merchant & domain...");
         paypalSdkApplePayPaymentSession
           .validateMerchant({
             validationUrl: event.validationURL,
           })
           .then((payload) => {
-            session.completeMerchantValidation(payload.merchantSession);
+            appleSdkApplePayPaymentSession.completeMerchantValidation(
+              payload.merchantSession,
+            );
             console.log("Completed merchant validation");
           })
           .catch((err) => {
             console.log("Paypal validatemerchant error", err);
             console.error(err);
-            session.abort();
+            appleSdkApplePayPaymentSession.abort();
           });
       };
 
-      session.onpaymentmethodselected = () => {
-        session.completePaymentMethodSelection({
+      appleSdkApplePayPaymentSession.onpaymentmethodselected = () => {
+        appleSdkApplePayPaymentSession.completePaymentMethodSelection({
           newTotal: paymentRequest.total,
         });
         console.log("Completed payment method selection");
       };
 
-      session.onpaymentauthorized = async (event) => {
+      appleSdkApplePayPaymentSession.onpaymentauthorized = async (event) => {
         try {
           console.log("Apple Pay authorized... \nCreating PayPal order...");
           const createdOrder = await createOrder();
@@ -99,22 +104,22 @@ async function setupApplePayButton(sdkInstance) {
           });
           console.log(JSON.stringify(orderData, null, 2));
           console.log("Completed Apple Pay SDK session with STATUS_SUCCESS...");
-          session.completePayment({
+          appleSdkApplePayPaymentSession.completePayment({
             status: window.ApplePaySession.STATUS_SUCCESS,
           });
         } catch (err) {
           console.error(err);
-          session.completePayment({
+          appleSdkApplePayPaymentSession.completePayment({
             status: window.ApplePaySession.STATUS_FAILURE,
           });
         }
       };
 
-      session.oncancel = () => {
+      appleSdkApplePayPaymentSession.oncancel = () => {
         console.log("Apple Pay Canceled!");
       };
 
-      session.begin();
+      appleSdkApplePayPaymentSession.begin();
     }
   } catch (error) {
     console.error(error);
