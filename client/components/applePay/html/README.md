@@ -5,6 +5,7 @@ This demo showcases how to integrate Apple Pay as a payment method using PayPal'
 ## 🏗️ Architecture Overview
 
 This sample demonstrates a complete Apple Pay integration flow:
+
 1. Initialize PayPal Web SDK with the Apple Pay component
 2. Configure Apple Pay payment request
 3. Handle Apple Pay merchant validation and payment authorization
@@ -28,7 +29,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
    - Click **Create App** at the bottom of the modal
    - Enable **Features** -> **Accept payments** -> **Apple Pay** (be sure to click **Save Changes** below)
    - Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
-   
+
    ![Screenshot](images/enable-apple-pay.jpg)
 
 ### 2. Apple Developer Account Setup
@@ -61,51 +62,56 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 ### `ngrok` Setup
 
 1. **Install ngrok globally:**
+
    ```bash
    npm install -g ngrok
    ```
 
-3. **Authenticate ngrok:**
+2. **Authenticate ngrok:**
    - Copy your authtoken and run:
+
    ```bash
    ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
    ```
 
-4. **Start ngrok tunnel:**
+3. **Start ngrok tunnel:**
+
    ```bash
    ngrok http 3000
    ```
 
-5. **Note your HTTPS URL:**
+4. **Note your HTTPS URL:**
    - ngrok will display output similar to:
+
    ```
    Forwarding  https://example.ngrok-free.app -> http://localhost:3000
    ```
+
    - Copy the domain (e.g. `example.ngrok-free.app`)
    - This is the domain that needs to be added to the vite server config and registered for Apple Pay in your PayPal developer account
 
-6. **Update Vite configuration:**
+5. **Update Vite configuration:**
    - Open `applePay/html/vite.config.js`
    - Add your ngrok domain to the allowed hosts:
+
    ```javascript
    export default defineConfig({
      server: {
-       allowedHosts: [
-         'example.ngrok-free.app',
-       ],
+       allowedHosts: ["example.ngrok-free.app"],
      },
    });
    ```
 
-7. **Register ngrok domain with PayPal:**
+6. **Register ngrok domain with PayPal:**
    - In your PayPal developer dashboard, navigate to your app's Apple Pay settings under **Features** -> **Accept payments** -> **Apple Pay** -> **Manage**
    - Add your ngrok domain (e.g. `example.ngrok-free.app`) to the approved domains list
    - Before clicking **Register Domain**, download and save the domain association file to `applePay/html/.well-known/apple-developer-merchantid-domain-association`
-  
-  ![Screenshot](images/manage-apple-pay.jpg)
-  ![Screenshot](images/domain-registration-with-paypal.jpg)
+
+![Screenshot](images/manage-apple-pay.jpg)
+![Screenshot](images/domain-registration-with-paypal.jpg)
 
 **Important Notes:**
+
 - Free ngrok accounts get a new random domain each time you restart ngrok
 - Each new domain needs to be registered for Apple Pay with PayPal
 - The tunnel will stay active as long as the ngrok process is running
@@ -114,17 +120,20 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 ### Server Setup
 
 1. **Navigate to the server directory:**
+
    ```bash
    cd server/node
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
 
 3. **Configure environment variables:**
    Create a `.env` file in the root directory:
+
    ```env
    PAYPAL_SANDBOX_CLIENT_ID=your_paypal_sandbox_client_id
    PAYPAL_SANDBOX_CLIENT_SECRET=your_paypal_sandbox_client_secret
@@ -139,11 +148,13 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 ### Client Setup
 
 1. **Navigate to the Apple Pay demo directory:**
+
    ```bash
    cd client/components/applePay/html
    ```
 
 2. **Install dependencies:**
+
    ```bash
    npm install
    ```
