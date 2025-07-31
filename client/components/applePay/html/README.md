@@ -34,7 +34,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 ### 2. Apple Developer Account Setup
 
-You are required to sign up for the Apple Developer Program in order to process payments. If you opt out of this step, you will be able to click the button and open the payment handler, but will be unable to process payments. Please see [these instructions](https://developer.apple.com/help/account/membership/program-enrollment/) for signing up.
+You are required to sign up for the Apple Developer Program in order to process payments. If you opt out of this step, you will be able to click the button and open the pay sheet, but will be unable to process payments. Please see [these instructions](https://developer.apple.com/help/account/membership/program-enrollment/) for signing up.
 
 1. **Create a Sandbox Tester Account**
    - After receiving approval from Apple for the Apple Developer Program, please follow the "Create a Sandbox Tester Account" instructions located [here](https://developer.apple.com/apple-pay/sandbox-testing/)
@@ -55,7 +55,8 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 2. **Why ngrok is needed:**
    - Apple Pay only works over HTTPS connections
    - ngrok creates a secure tunnel from a public HTTPS URL to your local development server
-   - This allows you to test Apple Pay integration locally without deploying to a production server
+   - The public URL can be registered for Apple Pay with PayPal
+   - This allows you to test the Apple Pay integration locally without deploying to a production server
 
 ## 🚀 Running the Demo
 
