@@ -1,7 +1,7 @@
 async function onV6PayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
-    const sdkInstance = await window.paypal.createInstance({
+    const sdkInstance = await window.paypal.v6.createInstance({
       clientToken,
       components: ["paypal-payments"],
       pageType: "checkout",
@@ -17,9 +17,27 @@ async function onV6PayPalWebSdkLoaded() {
     paypalButton.addEventListener("click", async () => {
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        paymentSessionOptions.createOrder(),
+        createOrder(),
       );
     });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function onV5PayPalWebSdkLoaded() {
+  try {
+    const fundingSource = paypal.FUNDING.BANCONTACT;
+    const standaloneButton = paypal.Buttons({
+      fundingSource,
+      ...paymentSessionOptions,
+    });
+
+    if (standaloneButton.isEligible()) {
+      standaloneButton.render(`#v5-${fundingSource}-button`);
+    } else {
+      console.log(`${fundingSource} is not eligible`);
+    }
   } catch (error) {
     console.error(error);
   }
@@ -32,20 +50,6 @@ const paymentSessionOptions = {
       orderId: data.orderId,
     });
     console.log("Capture result", orderData);
-  },
-  async createOrder() {
-    const response = await fetch(
-      "/paypal-api/checkout/orders/create-with-sample-data",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
-    );
-    const { id } = await response.json();
-
-    return { orderId: id };
   },
   onCancel(data) {
     console.log("onCancel", data);
@@ -65,6 +69,21 @@ async function getBrowserSafeClientToken() {
   const { accessToken } = await response.json();
 
   return accessToken;
+}
+
+async function createOrder() {
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-with-sample-data",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const { id } = await response.json();
+
+  return { orderId: id };
 }
 
 async function captureOrder({ orderId }) {
