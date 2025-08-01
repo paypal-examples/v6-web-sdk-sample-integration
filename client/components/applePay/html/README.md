@@ -183,6 +183,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 
 4. **Verify Results**
    - Check the browser console logs for order capture details
+   - Check Event Logs -> API Calls at [developer.paypal.com](https://developer.paypal.com)
 
 ## 🔧 Code Structure
 
