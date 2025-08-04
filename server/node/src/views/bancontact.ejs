@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>One-Time Payment - v5 Bancontact - v6 PayPal</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      #v6-paypal-button {
+        width: 100%;
+        max-width: 250px;
+        min-width: 150px;
+        height: 35px;
+        margin-bottom: 6.5px;
+      }
+
+      @media only screen and (max-width: 215px) {
+        #v6-paypal-button {
+          height: 25px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <h1>v5 Bancontact + v6 PayPal Recommended Integration</h1>
+
+    <paypal-button id="v6-paypal-button" hidden></paypal-button>
+    <script>
+      window.clientToken = "<%- clientToken %>";
+    </script>
+    <script src="/js/bancontact.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onV6PayPalWebSdkLoaded()"
+    ></script>
+    
+    <div id="v5-bancontact-button" style="max-width: 250px"></div>
+    <script
+      async
+      src="https://www.sandbox.paypal.com/sdk/js?client-id=test&components=buttons,funding-eligibility&enable-funding=bancontact&currency=EUR"
+      onload="onV5PayPalWebSdkLoaded()"
+    ></script>
+  </body>
+</html>

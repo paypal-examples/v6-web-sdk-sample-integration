@@ -1,5 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import path from "path";
 
 import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
@@ -13,9 +14,38 @@ import {
 } from "./paypalServerSdk";
 
 const app = express();
+app.set("view engine", "ejs");
+app.set("views", path.join(__dirname, "views"));
+app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
 app.use(express.json());
+
+/* ######################################################################
+ * Alternative payment method route for server side client token creation
+ * ###################################################################### */
+
+app.get("/bancontact", async (req: Request, res: Response) => {
+  try {
+    const { jsonResponse, httpStatusCode } = await getBrowserSafeClientToken();
+    if (httpStatusCode === 200 && "accessToken" in jsonResponse) {
+      res.render("bancontact", {
+        clientToken: jsonResponse.accessToken,
+      });
+    } else {
+      console.error(
+        "Failed to get client token:",
+        JSON.stringify(jsonResponse, null, 2),
+      );
+      res
+        .status(httpStatusCode)
+        .render("error", { message: "Failed to get client token" });
+    }
+  } catch (error) {
+    console.error("Error getting client token:", error);
+    res.status(500).render("error", { message: "Server error" });
+  }
+});
 
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
@@ -141,5 +171,5 @@ async function savePaymentTokenToDatabase(
 const port = process.env.PORT ?? 8080;
 
 app.listen(port, () => {
-  console.log(`API server listening at https://localhost:${port}`);
+  console.log(`API server listening at http://localhost:${port}`);
 });

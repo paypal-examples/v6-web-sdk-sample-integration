@@ -1,0 +1,89 @@
+async function onV6PayPalWebSdkLoaded() {
+  try {
+    const sdkInstance = await window.paypal.createInstance({
+      clientToken: window.clientToken,
+      components: ["paypal-payments"],
+      pageType: "checkout",
+    });
+
+    const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
+      paymentSessionOptions,
+    );
+
+    const paypalButton = document.querySelector("#v6-paypal-button");
+    paypalButton.removeAttribute("hidden");
+
+    paypalButton.addEventListener("click", async () => {
+      await paypalPaymentSession.start(
+        { presentationMode: "auto" },
+        createOrder(),
+      );
+    });
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function onV5PayPalWebSdkLoaded() {
+  try {
+    const fundingSource = paypal.FUNDING.BANCONTACT;
+    const standaloneButton = paypal.Buttons({
+      fundingSource,
+      ...paymentSessionOptions,
+    });
+
+    if (standaloneButton.isEligible()) {
+      standaloneButton.render(`#v5-${fundingSource}-button`);
+    } else {
+      console.log(`${fundingSource} is not eligible`);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+const paymentSessionOptions = {
+  async onApprove(data) {
+    console.log("onApprove", data);
+    const orderData = await captureOrder({
+      orderId: data.orderId,
+    });
+    console.log("Capture result", orderData);
+  },
+  onCancel(data) {
+    console.log("onCancel", data);
+  },
+  onError(error) {
+    console.log("onError", error);
+  },
+};
+
+async function createOrder() {
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-with-sample-data",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const { id } = await response.json();
+
+  return { orderId: id };
+}
+
+async function captureOrder({ orderId }) {
+  const response = await fetch(
+    `/paypal-api/checkout/orders/${orderId}/capture`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  const data = await response.json();
+
+  return data;
+}
