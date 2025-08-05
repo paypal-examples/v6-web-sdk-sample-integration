@@ -48,7 +48,7 @@ async function onV5PayPalWebSdkLoaded() {
     });
 
     if (standaloneButton.isEligible()) {
-      await standaloneButton.render(v5Button);
+      standaloneButton.render(v5Button);
       showV5Button = () => v5Button.removeAttribute("hidden");
       showButtons();
     } else {
