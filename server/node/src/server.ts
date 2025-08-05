@@ -28,22 +28,14 @@ app.use(express.json());
 app.get("/bancontact", async (req: Request, res: Response) => {
   try {
     const { jsonResponse, httpStatusCode } = await getBrowserSafeClientToken();
-    if (httpStatusCode === 200 && "accessToken" in jsonResponse) {
-      res.render("bancontact", {
+    if ("accessToken" in jsonResponse) {
+      res.status(httpStatusCode).render("bancontact", {
         clientToken: jsonResponse.accessToken,
         clientId: process.env.PAYPAL_SANDBOX_CLIENT_ID,
       });
-    } else {
-      console.error(
-        "Failed to get client token:",
-        JSON.stringify(jsonResponse, null, 2),
-      );
-      res
-        .status(httpStatusCode)
-        .render("error", { message: "Failed to get client token" });
     }
   } catch (error) {
-    console.error("Error getting client token:", error);
+    console.error("Failed to create browser safe access token:", error);
     res.status(500).render("error", { message: "Server error" });
   }
 });
