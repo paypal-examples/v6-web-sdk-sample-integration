@@ -25,21 +25,18 @@
 
     <paypal-button id="v6-paypal-button" hidden></paypal-button>
     <div id="v5-bancontact-button" style="max-width: 250px" hidden></div>
-    <script>
-      window.clientToken = "<%- clientToken %>";
-    </script>
-    <script src="/js/bancontact.js"></script>
+    <script src="/js/bancontact.js" data-client-token="<%- clientToken %>"></script>
 
     <script
-      async
+      defer
+      src="https://www.sandbox.paypal.com/sdk/js?client-id=<%- clientId %>&components=buttons,funding-eligibility&enable-funding=bancontact&currency=EUR"
+      onload="onV5PayPalWebSdkLoaded()"
+    ></script>
+
+    <script
+      defer
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onV6PayPalWebSdkLoaded()"
-    ></script>
-    
-    <script
-      async
-      src="https://www.sandbox.paypal.com/sdk/js?client-id=test&components=buttons,funding-eligibility&enable-funding=bancontact&currency=EUR"
-      onload="onV5PayPalWebSdkLoaded()"
     ></script>
   </body>
 </html>

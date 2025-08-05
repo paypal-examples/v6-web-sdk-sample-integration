@@ -12,8 +12,11 @@ function showButtons() {
 
 async function onV6PayPalWebSdkLoaded() {
   try {
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken: window.clientToken,
+    const clientToken = document.querySelector(
+      'script[src="/js/bancontact.js"]',
+    )?.dataset?.clientToken;
+    const sdkInstance = await window.paypal.v6.createInstance({
+      clientToken,
       components: ["paypal-payments"],
       pageType: "checkout",
     });

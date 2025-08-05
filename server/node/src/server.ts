@@ -31,6 +31,7 @@ app.get("/bancontact", async (req: Request, res: Response) => {
     if (httpStatusCode === 200 && "accessToken" in jsonResponse) {
       res.render("bancontact", {
         clientToken: jsonResponse.accessToken,
+        clientId: process.env.PAYPAL_SANDBOX_CLIENT_ID,
       });
     } else {
       console.error(
