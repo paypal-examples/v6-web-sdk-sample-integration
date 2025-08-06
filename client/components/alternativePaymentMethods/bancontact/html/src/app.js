@@ -1,5 +1,5 @@
 const v6Button = document.querySelector("#v6-paypal-button");
-const v5Button = document.querySelector("#v5-bancontact-button");
+const v5ButtonContainer = document.querySelector("#v5-bancontact-button");
 let showV6Button;
 let showV5Button;
 
@@ -46,8 +46,8 @@ async function onV5PayPalWebSdkLoaded() {
     });
 
     if (standaloneButton.isEligible()) {
-      standaloneButton.render(v5Button);
-      showV5Button = () => v5Button.removeAttribute("hidden");
+      standaloneButton.render(v5ButtonContainer);
+      showV5Button = () => v5ButtonContainer.removeAttribute("hidden");
       showButtons();
     } else {
       console.log(`${fundingSource} is not eligible`);
