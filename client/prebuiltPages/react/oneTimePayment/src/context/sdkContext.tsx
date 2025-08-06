@@ -9,6 +9,13 @@ import type {
   SdkInstance,
 } from "../types/paypal";
 
+/**
+ * Initializes the PayPal SDK instance and fetches eligible payment methods.
+ *
+ * @param {CreateInstanceOptions} options - Options for creating the PayPal SDK instance.
+ * @returns {Promise<{ sdkInstance: SdkInstance; eligiblePaymentMethods: EligiblePaymentMethods }>} 
+ * An object containing the SDK instance and eligible payment methods.
+ */
 async function initSdkInstance({
   clientToken,
   components,
@@ -30,27 +37,49 @@ async function initSdkInstance({
   };
 }
 
+/**
+ * Context properties for PayPal SDK.
+ */
 interface PayPalSDKContextProps {
+  /** Eligible payment methods returned by the SDK. */
   eligiblePaymentMethods: EligiblePaymentMethods | null;
+  /** The PayPal SDK instance. */
   sdkInstance: SdkInstance | null;
 }
 
+/** Initial context values for PayPalSDKContext. */
 const initialContext: PayPalSDKContextProps = {
   eligiblePaymentMethods: null,
   sdkInstance: null,
 };
 
+/**
+ * Props for the PayPalSDKProvider component.
+ */
 interface PayPalSDKProviderProps {
+  /** List of PayPal SDK components to load. */
   components: Component[];
+  /** React children nodes. */
   children: React.ReactNode;
+  /** The page type for the SDK instance. */
   pageType: PageType;
+  /** Optional client token for SDK initialization. */
   clientToken?: string;
 }
 
-// eslint-disable-next-line react-refresh/only-export-components
+/**
+ * React context for sharing PayPal SDK instance and eligible payment methods.
+ */
 export const PayPalSDKContext =
   createContext<PayPalSDKContextProps>(initialContext);
 
+/**
+ * PayPalSDKProvider component initializes the PayPal SDK and provides
+ * the SDK instance and eligible payment methods to its children via context.
+ *
+ * @param {PayPalSDKProviderProps} props - The provider props.
+ * @returns {JSX.Element} The context provider with SDK values.
+ */
 export const PayPalSDKProvider: React.FC<PayPalSDKProviderProps> = ({
   clientToken,
   components,

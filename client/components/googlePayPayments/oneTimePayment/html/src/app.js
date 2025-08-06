@@ -1,3 +1,10 @@
+/**
+ * Initializes the PayPal Web SDK, creates a Google Pay Payments instance,
+ * and sets up the Google Pay button.
+ * @async
+ * @function
+ * @returns {Promise<void>}
+ */
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
@@ -13,6 +20,12 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
+/**
+ * Generates the PayPal order payload for a given purchase amount.
+ * @function
+ * @param {string} purchaseAmount - The total purchase amount.
+ * @returns {Object} The PayPal order payload.
+ */
 function getPayPalOrderPayload(purchaseAmount) {
   return {
     intent: "CAPTURE",
@@ -42,6 +55,13 @@ function getPayPalOrderPayload(purchaseAmount) {
   };
 }
 
+/**
+ * Generates the Google Pay transaction info object.
+ * @function
+ * @param {string} purchaseAmount - The total purchase amount.
+ * @param {string} countryCode - The country code (e.g., "US").
+ * @returns {Object} The Google Pay transaction info.
+ */
 function getGoogleTransactionInfo(purchaseAmount, countryCode) {
   const totalAmount = parseFloat(purchaseAmount);
   const subtotal = (totalAmount * 0.9).toFixed(2);
@@ -68,6 +88,14 @@ function getGoogleTransactionInfo(purchaseAmount, countryCode) {
   };
 }
 
+/**
+ * Builds the Google PaymentDataRequest object for Google Pay API.
+ * @async
+ * @function
+ * @param {string} purchaseAmount - The total purchase amount.
+ * @param {Object} googlePayConfig - The Google Pay configuration object.
+ * @returns {Promise<Object>} The PaymentDataRequest object.
+ */
 async function getGooglePaymentDataRequest(purchaseAmount, googlePayConfig) {
   const {
     allowedPaymentMethods,
@@ -95,6 +123,16 @@ async function getGooglePaymentDataRequest(purchaseAmount, googlePayConfig) {
   return paymentDataRequest;
 }
 
+/**
+ * Handles the payment authorization callback from Google Pay.
+ * Creates and confirms the PayPal order, and captures it if possible.
+ * @async
+ * @function
+ * @param {string} purchaseAmount - The total purchase amount.
+ * @param {Object} paymentData - The payment data from Google Pay.
+ * @param {Object} googlePaySession - The Google Pay session instance.
+ * @returns {Promise<Object>} The transaction state result.
+ */
 async function onPaymentAuthorized(
   purchaseAmount,
   paymentData,
@@ -126,6 +164,16 @@ async function onPaymentAuthorized(
   }
 }
 
+/**
+ * Handles the Google Pay button click event.
+ * Loads the payment data request using the PaymentsClient.
+ * @async
+ * @function
+ * @param {string} purchaseAmount - The total purchase amount.
+ * @param {Object} paymentsClient - The Google PaymentsClient instance.
+ * @param {Object} googlePayConfig - The Google Pay configuration object.
+ * @returns {Promise<void>}
+ */
 async function onGooglePayButtonClick(
   purchaseAmount,
   paymentsClient,
@@ -143,6 +191,13 @@ async function onGooglePayButtonClick(
   }
 }
 
+/**
+ * Sets up the Google Pay button and session, and appends the button to the DOM if ready.
+ * @async
+ * @function
+ * @param {Object} sdkInstance - The PayPal SDK instance.
+ * @returns {Promise<void>}
+ */
 async function setupGooglePayButton(sdkInstance) {
   const googlePaySession = sdkInstance.createGooglePayOneTimePaymentSession();
   const purchaseAmount = "10.00";
@@ -181,6 +236,12 @@ async function setupGooglePayButton(sdkInstance) {
   }
 }
 
+/**
+ * Fetches a browser-safe client token from the server for PayPal SDK initialization.
+ * @async
+ * @function
+ * @returns {Promise<string>} The browser-safe client access token.
+ */
 async function getBrowserSafeClientToken() {
   const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
     method: "GET",
@@ -193,6 +254,13 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
+/**
+ * Creates a PayPal order by sending the order payload to the server.
+ * @async
+ * @function
+ * @param {Object} orderPayload - The PayPal order payload.
+ * @returns {Promise<string>} The created order ID.
+ */
 async function createOrder(orderPayload) {
   const response = await fetch("/paypal-api/checkout/orders/create", {
     method: "POST",
@@ -206,6 +274,14 @@ async function createOrder(orderPayload) {
   return id;
 }
 
+/**
+ * Captures a PayPal order by order ID.
+ * @async
+ * @function
+ * @param {Object} params - The parameters object.
+ * @param {string} params.orderId - The PayPal order ID.
+ * @returns {Promise<Object>} The capture order response data.
+ */
 async function captureOrder({ orderId }) {
   const response = await fetch(
     `/paypal-api/checkout/orders/${orderId}/capture`,

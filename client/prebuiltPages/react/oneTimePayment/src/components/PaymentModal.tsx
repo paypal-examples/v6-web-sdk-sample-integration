@@ -1,15 +1,31 @@
 import React from "react";
 
+/**
+ * Interface for the content displayed in the modal.
+ */
 interface ModalContent {
+  /** The modal title text. */
   title: string;
+  /** The modal message text. */
   message: string;
 }
 
+/**
+ * Props for the PaymentModal component.
+ */
 interface PaymentModalProps {
+  /** Content to display in the modal. */
   content: ModalContent;
+  /** Callback fired when the modal is closed. */
   onClose: () => void;
 }
 
+/**
+ * PaymentModal component displays a modal dialog with a title, message, and close button.
+ *
+ * @param {PaymentModalProps} props - The props for the PaymentModal component.
+ * @returns {JSX.Element} The rendered modal component.
+ */
 const PaymentModal: React.FC<PaymentModalProps> = ({ content, onClose }) => {
   return (
     <div

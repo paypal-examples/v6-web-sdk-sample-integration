@@ -1,3 +1,10 @@
+/**
+ * Initializes the PayPal Web SDK, creates a PayPal Payments instance,
+ * and sets up the PayPal button or resumes the payment session if returning from redirect.
+ * @async
+ * @function
+ * @returns {Promise<void>}
+ */
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
@@ -20,6 +27,14 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
+/**
+ * Options object for PayPal payment session event handlers.
+ * @typedef {Object} PaymentSessionOptions
+ * @property {function(Object): Promise<void>} onApprove - Called when the payment is approved.
+ * @property {function(Object): void} onCancel - Called when the payment is cancelled.
+ * @property {function(Error): void} onError - Called when an error occurs.
+ */
+
 const paymentSessionOptions = {
   async onApprove(data) {
     console.log("onApprove", data);
@@ -36,6 +51,13 @@ const paymentSessionOptions = {
   },
 };
 
+/**
+ * Sets up the PayPal button, handles click events, and manages redirect flow.
+ * @async
+ * @function
+ * @param {Object} paypalPaymentSession - The PayPal payment session instance.
+ * @returns {Promise<void>}
+ */
 async function setupPayPalButton(paypalPaymentSession) {
   const enableAutoRedirect = document.querySelector("#enable-auto-redirect");
   const paypalButton = document.querySelector("#paypal-button");
@@ -64,6 +86,12 @@ async function setupPayPalButton(paypalPaymentSession) {
   });
 }
 
+/**
+ * Fetches a browser-safe client token from the server for PayPal SDK initialization.
+ * @async
+ * @function
+ * @returns {Promise<string>} The browser-safe client access token.
+ */
 async function getBrowserSafeClientToken() {
   const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
     method: "GET",
@@ -76,6 +104,12 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
+/**
+ * Creates a PayPal order for redirect flow by sending a request to the server.
+ * @async
+ * @function
+ * @returns {Promise<Object>} The created order object containing the order ID.
+ */
 async function createRedirectOrder() {
   const orderPayload = {
     intent: "CAPTURE",
@@ -116,6 +150,14 @@ async function createRedirectOrder() {
   return { orderId: id };
 }
 
+/**
+ * Captures a PayPal order by order ID.
+ * @async
+ * @function
+ * @param {Object} params - The parameters object.
+ * @param {string} params.orderId - The PayPal order ID.
+ * @returns {Promise<Object>} The capture order response data.
+ */
 async function captureOrder({ orderId }) {
   const response = await fetch(
     `/paypal-api/checkout/orders/${orderId}/capture`,

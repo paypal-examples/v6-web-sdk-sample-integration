@@ -4,6 +4,12 @@ import { createOrder } from "../utils";
 import { PaymentSessionOptions, SessionOutput } from "../types/paypal";
 import { useErrorBoundary } from "react-error-boundary";
 
+/**
+ * VenmoButton component renders a Venmo button and manages the Venmo payment session.
+ *
+ * @param {PaymentSessionOptions} paymentSessionOptions - The options for the Venmo payment session, including event handlers.
+ * @returns {JSX.Element} The rendered Venmo button component.
+ */
 const VenmoButton: React.FC<PaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
@@ -19,6 +25,10 @@ const VenmoButton: React.FC<PaymentSessionOptions> = (
     }
   }, [sdkInstance, paymentSessionOptions]);
 
+  /**
+   * Handles the Venmo button click event, starts the payment session,
+   * and triggers error boundaries on failure.
+   */
   const venmoOnClickHandler = async () => {
     if (!venmoSession.current) return;
 
