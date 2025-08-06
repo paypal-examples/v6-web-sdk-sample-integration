@@ -13,7 +13,7 @@ function showButtons() {
 async function onV6PayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
-    const sdkInstance = await window.paypal.v6.createInstance({
+    const sdkInstance = await window.paypal.createInstance({
       clientToken,
       components: ["paypal-payments"],
       pageType: "checkout",
@@ -39,8 +39,8 @@ async function onV6PayPalWebSdkLoaded() {
 
 async function onV5PayPalWebSdkLoaded() {
   try {
-    const fundingSource = paypal.FUNDING.BANCONTACT;
-    const standaloneButton = paypal.Buttons({
+    const fundingSource = v5Paypal.FUNDING.BANCONTACT;
+    const standaloneButton = v5Paypal.Buttons({
       fundingSource,
       ...paymentSessionOptions,
     });

@@ -28,15 +28,16 @@
     <script src="app.js"></script>
 
     <script
-      defer
-      src="https://www.sandbox.paypal.com/sdk/js?client-id=test&components=buttons,funding-eligibility&enable-funding=bancontact&currency=EUR"
+      async
+      data-namespace="v5Paypal"
       onload="onV5PayPalWebSdkLoaded()"
+      src="https://www.sandbox.paypal.com/sdk/js?client-id=test&components=buttons,funding-eligibility&enable-funding=bancontact&currency=EUR"
     ></script>
 
     <script
-      defer
-      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      async
       onload="onV6PayPalWebSdkLoaded()"
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
     ></script>
   </body>
 </html>
