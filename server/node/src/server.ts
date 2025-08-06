@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import path from "path";
 
 import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
@@ -14,31 +13,9 @@ import {
 } from "./paypalServerSdk";
 
 const app = express();
-app.set("view engine", "ejs");
-app.set("views", path.join(__dirname, "views"));
-app.use(express.static(path.join(__dirname, "public")));
 
 app.use(cors());
 app.use(express.json());
-
-/* ######################################################################
- * Alternative payment method route for server side client token creation
- * ###################################################################### */
-
-app.get("/bancontact", async (req: Request, res: Response) => {
-  try {
-    const { jsonResponse, httpStatusCode } = await getBrowserSafeClientToken();
-    if ("accessToken" in jsonResponse) {
-      res.status(httpStatusCode).render("bancontact", {
-        clientToken: jsonResponse.accessToken,
-        clientId: process.env.PAYPAL_SANDBOX_CLIENT_ID,
-      });
-    }
-  } catch (error) {
-    console.error("Failed to create browser safe access token:", error);
-    res.status(500).render("error", { message: "Server error" });
-  }
-});
 
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
