@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>One-Time Payment - Recommended Integration - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>One-Time Payment Recommended Integration - Card Fields</h1>
+
+    <div class="card-fields-container">
+      <div class="card-field" id="paypal-card-fields-number"></div>
+      <div class="card-field" id="paypal-card-fields-cvv"></div>
+      <div class="card-field" id="paypal-card-fields-expiry"></div>
+    </div>
+    <button id="pay-button" class="pay-button">Pay</button>
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+  </body>
+</html>
