@@ -1,0 +1,19 @@
+{
+  "name": "v6-web-sdk-sample-integration-client",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "vite build",
+    "preview": "vite preview",
+    "start": "vite",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "lint": "echo \"eslint is not set up\""
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "prettier": "^3.6.2",
+    "vite": "^7.0.4"
+  }
+}
