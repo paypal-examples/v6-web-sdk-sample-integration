@@ -1,12 +1,12 @@
 const v6Button = document.querySelector("#v6-paypal-button");
 const v5ButtonContainer = document.querySelector("#v5-bancontact-button");
-let showV6Button;
-let showV5Button;
+let shouldShowV6Button = false;
+let shouldShowV5Button = false;
 
 function showButtons() {
-  if (showV6Button && showV5Button) {
-    showV6Button();
-    showV5Button();
+  if (shouldShowV6Button && shouldShowV5Button) {
+    v6Button.removeAttribute("hidden");
+    v5ButtonContainer.removeAttribute("hidden");
   }
 }
 
@@ -29,8 +29,7 @@ async function onV6PayPalWebSdkLoaded() {
         createOrder(),
       );
     });
-
-    showV6Button = () => v6Button.removeAttribute("hidden");
+    shouldShowV6Button = true;
     showButtons();
   } catch (error) {
     console.error(error);
@@ -47,7 +46,7 @@ async function onV5PayPalWebSdkLoaded() {
 
     if (standaloneButton.isEligible()) {
       standaloneButton.render(v5ButtonContainer);
-      showV5Button = () => v5ButtonContainer.removeAttribute("hidden");
+      shouldShowV5Button = true;
       showButtons();
     } else {
       console.log(`${fundingSource} is not eligible`);
