@@ -1,0 +1,37 @@
+{
+  "name": "@paypal-v6/react",
+  "version": "0.1.0",
+  "description": "React hooks and components for PayPal v6 Web SDK",
+  "main": "dist/index.js",
+  "module": "dist/index.esm.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsup",
+    "dev": "tsup --watch",
+    "test": "vitest",
+    "typecheck": "tsc --noEmit",
+    "clean": "rm -rf dist"
+  },
+  "dependencies": {
+    "@paypal-v6/core": "workspace:*",
+    "@paypal-v6/types": "workspace:*"
+  },
+  "devDependencies": {
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "tsup": "^8.3.5",
+    "vitest": "^2.1.8",
+    "typescript": "^5.8.3"
+  },
+  "peerDependencies": {
+    "react": ">=16.8.0",
+    "react-dom": ">=16.8.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "license": "MIT"
+}
