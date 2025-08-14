@@ -67,7 +67,7 @@ Bancontact is primarily used in Belgium and requires EUR currency. Ensure your P
 1. **Navigate to the Bancontact demo directory:**
 
    ```bash
-   cd client/components/alternativePaymentMethods/bancontact/html
+   cd client/temp/v5AlternativePaymentMethods/bancontact/html
    ```
 
 2. **Install dependencies:**
