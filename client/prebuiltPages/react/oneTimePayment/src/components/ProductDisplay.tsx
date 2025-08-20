@@ -1,17 +1,35 @@
 import React from "react";
 
+/**
+ * Product interface describing the product details.
+ */
 interface Product {
+  /** The product name. */
   name: string;
+  /** The product icon (emoji or string). */
   icon: string;
+  /** The product price. */
   price: number;
+  /** The image source URL for the product. */
   imageSrc: string;
+  /** The alt text for the product image. */
   imageAlt: string;
 }
 
+/**
+ * Props for the ProductDisplay component.
+ */
 interface ProductDisplayProps {
+  /** The product to display. */
   product: Product;
 }
 
+/**
+ * ProductDisplay component renders product details, image, and summary.
+ *
+ * @param {ProductDisplayProps} props - The props for the ProductDisplay component.
+ * @returns {JSX.Element} The rendered product display component.
+ */
 const ProductDisplay: React.FC<ProductDisplayProps> = ({ product }) => {
   return (
     <>
