@@ -14,14 +14,14 @@ async function onPayPalWebSdkLoaded() {
 
 async function setupBcdcButton(sdkInstance) {
   try {
-		// TODO update these callbacks
     const paypalCheckout =
 			await sdkInstance.createPayPalGuestOneTimePaymentSession({
 				onApprove,
-				onCancel: () => console.log('ON CANCEL'),
-				onComplete: () => console.log('ON COMPLETE'),
-				onError: () => console.log('ON ERROR'),
-				// TODO shipping callbacks
+				onCancel,
+				onComplete,
+				onError,
+				onShippingAddressChange,
+				onShippingOptionsChange,
 			});
 
 		document
@@ -43,8 +43,30 @@ async function setupBcdcButton(sdkInstance) {
   }
 }
 
+// TODO fill in more details for callbacks? What about shipping?
+
 function onApprove(...args) {
 	console.log('ON APPROVE', args);
+}
+
+function onCancel(...args) {
+	console.log('ON CANCEL', args);
+}
+
+function onComplete(...args) {
+	console.log('ON COMPLETE', args);
+}
+
+function onError(...args) {
+	console.log('ON ERROR', args);
+}
+
+function onShippingAddressChange(data) {
+	console.log("ON SHIPPING ADDRESS CHANGE", data);
+}
+
+function onShippingOptionsChange(data) {
+	console.log("ON SHIPPING OPTIONS CHANGE", data);
 }
 
 async function getBrowserSafeClientToken() {

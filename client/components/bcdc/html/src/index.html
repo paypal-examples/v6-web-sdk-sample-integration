@@ -2,32 +2,25 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>Basic Credit and Debit - PayPal Web SDK</title>
+    <title>Basic Credit and Debit Sample Integrations - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      .buttons-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-    </style>
   </head>
   <body>
-    <h1>Basic Credit and Debit Integration</h1>
+    <h1>PayPal Basic Credit and Debit Sample Integrations</h1>
 
-		<paypal-basic-card-container>
-			<paypal-basic-card-button
-				id="paypal-basic-card-button"
-				buyer-country="US"
-			></paypal-basic-card-button>
-		</paypal-basic-card-container>
-
-    <script src="app.js"></script>
-
-    <script
-      async
-      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
-      onload="onPayPalWebSdkLoaded()"
-    ></script>
+    <ul>
+      <li>
+        <a href="/recommended/index.html">Recommended integration</a> - Recommended basic credit and debit card button configuration.
+      </li>
+      <li>
+				<a href="/shipping/index.html">Shipping callbacks integration</a> - Configuration with button and shipping callbacks.
+      </li>
+      <li>
+        <a href="/onload/index.html">On page load integration</a> - Configuration with basic credit and debit button that auto opens on page load.
+      </li>
+      <li>
+        <a href="/server-eligibility/index.html">Server-side eligibility check integration</a> - Configuration with a server-side eligibility check. This requires running the example server code that checks eligibilty.
+      </li>
+    </ul>
   </body>
 </html>

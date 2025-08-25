@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Basic Credit and Debit w/ Shipping - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .buttons-container {
+	display: flex;
+	flex-direction: column;
+	gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Basic Credit and Debit w/ Shipping Callbacks Integration</h1>
+
+    <paypal-basic-card-container>
+      <paypal-basic-card-button
+	  id="paypal-basic-card-button"
+	  buyer-country="US"
+	  ></paypal-basic-card-button>
+    </paypal-basic-card-container>
+
+    <script src="app.js"></script>
+    <script
+	async
+	src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+	onload="onPayPalWebSdkLoaded()"
+	></script>
+  </body>
+</html>
