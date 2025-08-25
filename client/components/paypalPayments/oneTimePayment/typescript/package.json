@@ -3,13 +3,12 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
-    "dev": "tsc --watch",
-    "serve": "npx http-server dist -p 8080",
-    "start": "npm run build && npm run serve",
-    "dev:vite": "vite",
-    "build:vite": "vite build",
-    "preview": "vite preview"
+    "start": "vite",
+    "build": "tsc --build && vite build",
+    "preview": "vite preview",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "typecheck": "tsc --build --noEmit"
   },
   "author": "",
   "license": "MIT",
@@ -20,6 +19,7 @@
   "devDependencies": {
     "@types/node": "^20.5.0",
     "typescript": "^5.2.2",
-    "vite": "^7.1.3"
+    "vite": "^7.1.3",
+    "prettier": "^3.6.2"
   }
 }
