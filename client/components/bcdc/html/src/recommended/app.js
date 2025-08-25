@@ -15,58 +15,49 @@ async function onPayPalWebSdkLoaded() {
 async function setupBcdcButton(sdkInstance) {
   try {
     const paypalCheckout =
-      await sdkInstance.createPayPalGuestOneTimePaymentSession({
-	onApprove,
-	onCancel,
-	onComplete,
-	onError,
-	onShippingAddressChange,
-	onShippingOptionsChange,
-      });
+			await sdkInstance.createPayPalGuestOneTimePaymentSession({
+				onApprove,
+				onCancel,
+				onComplete,
+				onError,
+			});
 
-    document
+		document
       .getElementById("paypal-basic-card-button")
       .addEventListener("click", onClick);
 
-    async function onClick() {
-      try {
-	const startOptions = {
-	  presentationMode: "auto",
-	  };
-	await paypalCheckout.start(startOptions, createOrder());
-	} catch (error) {
-	  console.error(error);
-	  }
-      }
+		async function onClick() {
+			try {
+				const startOptions = {
+					presentationMode: "auto",
+				};
+				await paypalCheckout.start(startOptions, createOrder());
+			} catch (error) {
+				console.error(error);
+			}
+		}
   } catch (error) {
     console.error(error);
   }
 }
 
-// TODO fill in more details for callbacks? What about shipping?
+// TODO fill in more details for callbacks?
+// TODO call eligibility client side
 
 function onApprove(...args) {
-  console.log('ON APPROVE', args);
+	console.log('ON APPROVE', args);
 }
 
 function onCancel(...args) {
-  console.log('ON CANCEL', args);
+	console.log('ON CANCEL', args);
 }
 
 function onComplete(...args) {
-  console.log('ON COMPLETE', args);
+	console.log('ON COMPLETE', args);
 }
 
 function onError(...args) {
-  console.log('ON ERROR', args);
-}
-
-function onShippingAddressChange(data) {
-  console.log("ON SHIPPING ADDRESS CHANGE", data);
-}
-
-function onShippingOptionsChange(data) {
-  console.log("ON SHIPPING OPTIONS CHANGE", data);
+	console.log('ON ERROR', args);
 }
 
 async function getBrowserSafeClientToken() {
@@ -87,7 +78,7 @@ async function createOrder() {
     {
       method: "POST",
       headers: {
-	"Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
     },
   );
@@ -102,7 +93,7 @@ async function captureOrder({ orderId }) {
     {
       method: "POST",
       headers: {
-	"Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
     },
   );
