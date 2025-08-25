@@ -1,11 +1,5 @@
-import { loadCustomScript } from "@paypal/paypal-js/sdk-v6";
-import type { SdkInstance, OnApproveDataOneTimePayments, OneTimePaymentSession } from "@paypal/paypal-js/sdk-v6"
+import type { SdkInstance, OnApproveDataOneTimePayments, OneTimePaymentSession, FindEligibleMethodsGetDetailsReturnType } from "@paypal/paypal-js/sdk-v6"
 
-loadCustomScript({
-  url: "https://www.sandbox.paypal.com/web-sdk/v6/core?debug=true"
-}).then(() => {
-  onPayPalWebSdkLoaded();
-})
 
 async function onPayPalWebSdkLoaded() {
   try {
