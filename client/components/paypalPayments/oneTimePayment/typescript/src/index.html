@@ -1,0 +1,37 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vanilla Typescript Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+  </head>
+  <body>
+    <div class="payment-form">
+        <div class="form-group">
+          <label for="amount">Amount (USD):</label>
+          <input type="number" id="amount" value="10.00" min="0.01" step="0.01">
+        </div>
+        
+        <div class="form-group">
+          <label for="currency">Currency:</label>
+          <select id="currency">
+            <option value="USD">USD</option>
+            <option value="EUR">EUR</option>
+            <option value="GBP">GBP</option>
+          </select>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description:</label>
+          <input type="text" id="description" value="Test Payment" placeholder="Enter payment description">
+        </div>
+      </div>
+      
+      <div id="paypal-button-container"></div>
+      
+      <div id="status" class="status"></div>
+    </div>
+
+    <script type="module" src="./paypal-integration.js"></script>
+  </body>
+</html>

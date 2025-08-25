@@ -1,0 +1,25 @@
+{
+  "name": "paypal-vanilla-typescript-example",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "serve": "npx http-server dist -p 8080",
+    "start": "npm run build && npm run serve",
+    "dev:vite": "vite",
+    "build:vite": "vite build",
+    "preview": "vite preview"
+  },
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "@paypal/paypal-js": "^8.0.4"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "typescript": "^5.2.2",
+    "vite": "^7.1.3"
+  }
+}
