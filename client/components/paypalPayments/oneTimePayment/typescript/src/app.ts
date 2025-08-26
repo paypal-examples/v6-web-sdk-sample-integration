@@ -1,5 +1,9 @@
-import type { SdkInstance, OnApproveDataOneTimePayments, OneTimePaymentSession, FindEligibleMethodsGetDetailsReturnType } from "@paypal/paypal-js/sdk-v6"
-
+import type {
+  SdkInstance,
+  OnApproveDataOneTimePayments,
+  OneTimePaymentSession,
+  FindEligibleMethodsGetDetailsReturnType,
+} from "@paypal/paypal-js/sdk-v6";
 
 async function onPayPalWebSdkLoaded() {
   try {
@@ -29,7 +33,6 @@ async function onPayPalWebSdkLoaded() {
         paymentMethods.getDetails("credit");
       setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
     }
-
   } catch (error) {
     console.error(error);
   }
@@ -43,13 +46,15 @@ async function onApproveCallback(data: OnApproveDataOneTimePayments) {
   console.log("Capture result", orderData);
 }
 
-async function setupPayPalButton(sdkInstance: SdkInstance<["paypal-payments"]>) {
+async function setupPayPalButton(
+  sdkInstance: SdkInstance<["paypal-payments"]>,
+) {
   let paypalPaymentSession: OneTimePaymentSession;
 
-  if (sdkInstance && sdkInstance.createPayPalOneTimePaymentSession) {
-    paypalPaymentSession = sdkInstance?.createPayPalOneTimePaymentSession(
-      { onApprove: onApproveCallback },
-    );
+  if (sdkInstance) {
+    paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
+      onApprove: onApproveCallback,
+    });
   }
 
   const paypalButton = document.querySelector("#paypal-button");
@@ -69,14 +74,14 @@ async function setupPayPalButton(sdkInstance: SdkInstance<["paypal-payments"]>) 
 
 async function setupPayLaterButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
-  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType
+  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType,
 ) {
   let paylaterPaymentSession: OneTimePaymentSession;
 
-  if (sdkInstance && sdkInstance.createPayLaterOneTimePaymentSession) {
-    paylaterPaymentSession = sdkInstance.createPayLaterOneTimePaymentSession(
-      { onApprove: onApproveCallback },
-    );
+  if (sdkInstance) {
+    paylaterPaymentSession = sdkInstance.createPayLaterOneTimePaymentSession({
+      onApprove: onApproveCallback,
+    });
   }
 
   const { productCode, countryCode } = paylaterPaymentMethodDetails;
@@ -106,9 +111,10 @@ async function setupPayPalCreditButton(
 ) {
   let paypalCreditPaymentSession: OneTimePaymentSession;
 
-  if (sdkInstance && sdkInstance.createPayPalCreditOneTimePaymentSession) {
-    paypalCreditPaymentSession = sdkInstance.createPayPalCreditOneTimePaymentSession({ onApprove: onApproveCallback },);
-  }
+  paypalCreditPaymentSession =
+    sdkInstance.createPayPalCreditOneTimePaymentSession({
+      onApprove: onApproveCallback,
+    });
 
   const { countryCode } = paypalCreditPaymentMethodDetails;
   const paypalCreditButton = document.querySelector("#paypal-credit-button");
