@@ -1,1 +1,0 @@
-# BCDC HTML Sample Integration

@@ -1,3 +1,15 @@
+async function startCheckout(checkoutButton, paypalCheckout) {
+    try {
+      const startOptions = {
+        targetElement: checkoutButton,
+        presentationMode: "auto",
+      };
+      await paypalCheckout.start(startOptions, createOrder());
+    } catch (error) {
+        console.error(error);
+    }
+}
+
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
@@ -6,40 +18,35 @@ async function onPayPalWebSdkLoaded() {
       components: ["paypal-guest-payments"],
     });
 
-    setupBcdcButton(sdkInstance);
-  } catch (error) {
-    console.error(error);
-  }
-}
+    const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
 
-async function setupBcdcButton(sdkInstance) {
-  try {
     const paypalCheckout =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
         onApprove,
         onCancel,
         onComplete,
         onError,
-        onShippingAddressChange,
-        onShippingOptionsChange,
       });
 
-    document
-      .getElementById("paypal-basic-card-button")
-      .addEventListener("click", onClick);
+    const checkoutButton = document.getElementById("paypal-basic-card-button");
 
-    async function onClick() {
-      try {
-        const startOptions = {
-          presentationMode: "auto",
-        };
-        await paypalCheckout.start(startOptions, createOrder());
-        } catch (error) {
-          console.error(error);
-          }
-      }
+    // start checkout immediately on load
+    startCheckout(checkoutButton, paypalCheckout);
+
+    // also setup the button to start checkout on click
+    setupGuestPaymentButton(checkoutButton, paypalCheckout);
   } catch (error) {
     console.error(error);
+  }
+}
+
+async function setupGuestPaymentButton(checkoutButton, paypalCheckout) {
+  checkoutButton.addEventListener("click", onClick);
+
+  async function onClick() {
+    startCheckout(checkoutButton, paypalCheckout);
   }
 }
 
@@ -47,7 +54,7 @@ async function onApprove(data) {
   console.log("onApprove", data);
   const orderData = await captureOrder({
     orderId: data.orderId,
-    });
+  });
   console.log("Capture result", orderData);
 }
 
@@ -61,20 +68,6 @@ function onComplete(data) {
 
 function onError(data) {
   console.log("onError", data);
-}
-
-function onShippingAddressChange(data) {
-  console.log("onShippingAddressChange", data);
-
-  // example where an error is thrown if the buyer is not in the US
-  const countryCode = data?.shippingAddress?.countryCode ?? "US";
-  if (countryCode !== "US") {
-    throw new Error(data?.errors?.COUNTRY_ERROR);
-  }
-}
-
-function onShippingOptionsChange(data) {
-  console.log("onShippingOptionsChange", data);
 }
 
 async function getBrowserSafeClientToken() {

@@ -1,15 +1,3 @@
-async function startCheckout(checkoutButton, paypalCheckout) {
-    try {
-      const startOptions = {
-        targetElement: checkoutButton,
-        presentationMode: "auto",
-      };
-      await paypalCheckout.start(startOptions, createOrder());
-    } catch (error) {
-        console.error(error);
-    }
-}
-
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
@@ -18,6 +6,14 @@ async function onPayPalWebSdkLoaded() {
       components: ["paypal-guest-payments"],
     });
 
+    setupGuestPaymentButton(sdkInstance);
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+async function setupGuestPaymentButton(sdkInstance) {
+  try {
     const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
     });
@@ -30,44 +26,43 @@ async function onPayPalWebSdkLoaded() {
         onError,
       });
 
-    const checkoutButton = document.getElementById("paypal-basic-card-button");
+    document
+      .getElementById("paypal-basic-card-button")
+      .addEventListener("click", onClick);
 
-    // start checkout immediately on load
-    startCheckout(checkoutButton, paypalCheckout);
-
-    // also setup the button to start checkout on click
-    setupBcdcButton(checkoutButton, paypalCheckout);
+    async function onClick() {
+      try {
+        const startOptions = {
+          presentationMode: "auto",
+          };
+        await paypalCheckout.start(startOptions, createOrder());
+        } catch (error) {
+          console.error(error);
+          }
+    }
   } catch (error) {
     console.error(error);
   }
 }
 
-async function setupBcdcButton(checkoutButton, paypalCheckout) {
-  checkoutButton.addEventListener("click", onClick);
-
-  async function onClick() {
-    startCheckout(checkoutButton, paypalCheckout);
-  }
-}
-
 async function onApprove(data) {
-  console.log("onApprove", data);
-  const orderData = await captureOrder({
-    orderId: data.orderId,
-  });
-  console.log("Capture result", orderData);
+        console.log("onApprove", data);
+        const orderData = await captureOrder({
+                orderId: data.orderId,
+        });
+        console.log("Capture result", orderData);
 }
 
 function onCancel(data) {
-  console.log("onCancel", data);
+        console.log("onCancel", data);
 }
 
 function onComplete(data) {
-  console.log("onComplete", data);
+        console.log("onComplete", data);
 }
 
 function onError(data) {
-  console.log("onError", data);
+        console.log("onError", data);
 }
 
 async function getBrowserSafeClientToken() {
