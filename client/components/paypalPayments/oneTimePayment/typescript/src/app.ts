@@ -18,6 +18,18 @@ async function onPayPalWebSdkLoaded() {
       setupPayPalButton(sdkInstance);
     }
 
+    if (paymentMethods.isEligible("paylater")) {
+      const paylaterPaymentMethodDetails =
+        paymentMethods.getDetails("paylater");
+      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+    }
+
+    if (paymentMethods.isEligible("credit")) {
+      const paypalCreditPaymentMethodDetails =
+        paymentMethods.getDetails("credit");
+      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+    }
+
   } catch (error) {
     console.error(error);
   }
@@ -53,6 +65,69 @@ async function setupPayPalButton(sdkInstance: SdkInstance) {
       console.error(error);
     }
   });
+}
+
+async function setupPayLaterButton(
+  sdkInstance: SdkInstance,
+  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType
+) {
+  let paylaterPaymentSession: OneTimePaymentSession;
+
+  if (sdkInstance && sdkInstance.createPayLaterOneTimePaymentSession) {
+    paylaterPaymentSession = sdkInstance.createPayLaterOneTimePaymentSession(
+      { onApprove: onApproveCallback },
+    );
+  }
+
+  const { productCode, countryCode } = paylaterPaymentMethodDetails;
+  const paylaterButton = document.querySelector("#paylater-button");
+
+  if (paylaterButton) {
+    paylaterButton.productCode = productCode;
+    paylaterButton.countryCode = countryCode;
+    paylaterButton?.removeAttribute("hidden");
+
+    paylaterButton?.addEventListener("click", async () => {
+      try {
+        await paylaterPaymentSession.start(
+          { presentationMode: "auto" },
+          createOrder(),
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }
+}
+
+async function setupPayPalCreditButton(
+  sdkInstance: SdkInstance,
+  paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType,
+) {
+  let paypalCreditPaymentSession: OneTimePaymentSession;
+
+  if (sdkInstance && sdkInstance.createPayPalCreditOneTimePaymentSession) {
+    paypalCreditPaymentSession = sdkInstance.createPayPalCreditOneTimePaymentSession({ onApprove: onApproveCallback },);
+  }
+
+  const { countryCode } = paypalCreditPaymentMethodDetails;
+  const paypalCreditButton = document.querySelector("#paypal-credit-button");
+
+  if (paypalCreditButton) {
+    paypalCreditButton.countryCode = countryCode;
+    paypalCreditButton.removeAttribute("hidden");
+
+    paypalCreditButton.addEventListener("click", async () => {
+      try {
+        await paypalCreditPaymentSession.start(
+          { presentationMode: "auto" },
+          createOrder(),
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    });
+  }
 }
 
 async function getBrowserSafeClientToken() {
