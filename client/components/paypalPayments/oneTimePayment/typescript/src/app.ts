@@ -43,7 +43,7 @@ async function onApproveCallback(data: OnApproveDataOneTimePayments) {
   console.log("Capture result", orderData);
 }
 
-async function setupPayPalButton(sdkInstance: SdkInstance) {
+async function setupPayPalButton(sdkInstance: SdkInstance<["paypal-payments"]>) {
   let paypalPaymentSession: OneTimePaymentSession;
 
   if (sdkInstance && sdkInstance.createPayPalOneTimePaymentSession) {
@@ -68,7 +68,7 @@ async function setupPayPalButton(sdkInstance: SdkInstance) {
 }
 
 async function setupPayLaterButton(
-  sdkInstance: SdkInstance,
+  sdkInstance: SdkInstance<["paypal-payments"]>,
   paylaterPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType
 ) {
   let paylaterPaymentSession: OneTimePaymentSession;
@@ -82,9 +82,9 @@ async function setupPayLaterButton(
   const { productCode, countryCode } = paylaterPaymentMethodDetails;
   const paylaterButton = document.querySelector("#paylater-button");
 
-  if (paylaterButton) {
-    paylaterButton.productCode = productCode;
-    paylaterButton.countryCode = countryCode;
+  if (paylaterButton && productCode && countryCode) {
+    paylaterButton.setAttribute("productCode", productCode);
+    paylaterButton.setAttribute("countryCode", countryCode);
     paylaterButton?.removeAttribute("hidden");
 
     paylaterButton?.addEventListener("click", async () => {
@@ -101,7 +101,7 @@ async function setupPayLaterButton(
 }
 
 async function setupPayPalCreditButton(
-  sdkInstance: SdkInstance,
+  sdkInstance: SdkInstance<["paypal-payments"]>,
   paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType,
 ) {
   let paypalCreditPaymentSession: OneTimePaymentSession;
@@ -113,8 +113,8 @@ async function setupPayPalCreditButton(
   const { countryCode } = paypalCreditPaymentMethodDetails;
   const paypalCreditButton = document.querySelector("#paypal-credit-button");
 
-  if (paypalCreditButton) {
-    paypalCreditButton.countryCode = countryCode;
+  if (paypalCreditButton && countryCode) {
+    paypalCreditButton.setAttribute("countryCode", countryCode);
     paypalCreditButton.removeAttribute("hidden");
 
     paypalCreditButton.addEventListener("click", async () => {
