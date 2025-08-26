@@ -20,11 +20,11 @@ async function setupBcdcButton(sdkInstance) {
 
     const paypalCheckout =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
-	onApprove,
-	onCancel,
-	onComplete,
-	onError,
-	});
+        onApprove,
+        onCancel,
+        onComplete,
+        onError,
+      });
 
     document
       .getElementById("paypal-basic-card-button")
@@ -32,35 +32,37 @@ async function setupBcdcButton(sdkInstance) {
 
     async function onClick() {
       try {
-	const startOptions = {
-	  presentationMode: "auto",
-	};
-	await paypalCheckout.start(startOptions, createOrder());
-	} catch (error) {
-	  console.error(error);
-	  }
-      }
+        const startOptions = {
+          presentationMode: "auto",
+          };
+        await paypalCheckout.start(startOptions, createOrder());
+        } catch (error) {
+          console.error(error);
+          }
+    }
   } catch (error) {
     console.error(error);
   }
 }
 
-// TODO fill in more details for callbacks?
-
-function onApprove(...args) {
-	console.log('ON APPROVE', args);
+function onApprove(data) {
+        console.log("onApprove", data);
+        const orderData = await captureOrder({
+                orderId: data.orderId,
+        });
+        console.log("Capture result", orderData);
 }
 
-function onCancel(...args) {
-	console.log('ON CANCEL', args);
+function onCancel(data) {
+        console.log("onCancel", data);
 }
 
-function onComplete(...args) {
-	console.log('ON COMPLETE', args);
+function onComplete(data) {
+        console.log("onComplete", data);
 }
 
-function onError(...args) {
-	console.log('ON ERROR', args);
+function onError(data) {
+        console.log("onError", data);
 }
 
 async function getBrowserSafeClientToken() {

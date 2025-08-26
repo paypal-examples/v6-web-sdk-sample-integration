@@ -16,12 +16,12 @@ async function setupBcdcButton(sdkInstance) {
   try {
     const paypalCheckout =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
-	onApprove,
-	onCancel,
-	onComplete,
-	onError,
-	onShippingAddressChange,
-	onShippingOptionsChange,
+        onApprove,
+        onCancel,
+        onComplete,
+        onError,
+        onShippingAddressChange,
+        onShippingOptionsChange,
       });
 
     document
@@ -30,43 +30,47 @@ async function setupBcdcButton(sdkInstance) {
 
     async function onClick() {
       try {
-	const startOptions = {
-	  presentationMode: "auto",
-	};
-	await paypalCheckout.start(startOptions, createOrder());
-	} catch (error) {
-	  console.error(error);
-	  }
+        const startOptions = {
+          presentationMode: "auto",
+        };
+        await paypalCheckout.start(startOptions, createOrder());
+        } catch (error) {
+          console.error(error);
+          }
       }
   } catch (error) {
     console.error(error);
   }
 }
 
-// TODO fill in more details for callbacks? What about shipping?
+// TODO fill in shipping callbacks logic
 
-function onApprove(...args) {
-  console.log('ON APPROVE', args);
+function onApprove(data) {
+  console.log("onApprove", data);
+  const orderData = await captureOrder({
+    orderId: data.orderId,
+    });
+  console.log("Capture result", orderData);
 }
 
-function onCancel(...args) {
-  console.log('ON CANCEL', args);
+function onCancel(data) {
+  console.log("onCancel", data);
 }
 
-function onComplete(...args) {
-  console.log('ON COMPLETE', args);
+function onComplete(data) {
+  console.log("onComplete", data);
 }
 
-function onError(...args) {
-  console.log('ON ERROR', args);
+function onError(data) {
+  console.log("onError", data);
 }
 
 function onShippingAddressChange(data) {
-  console.log("ON SHIPPING ADDRESS CHANGE", data);
+  console.log("onShippingAddressChange", data);
 }
 
 function onShippingOptionsChange(data) {
-  console.log("ON SHIPPING OPTIONS CHANGE", data);
+  console.log("onShippingOptionsChange", data);
 }
 
 async function getBrowserSafeClientToken() {
@@ -87,7 +91,7 @@ async function createOrder() {
     {
       method: "POST",
       headers: {
-	"Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
     },
   );
@@ -102,7 +106,7 @@ async function captureOrder({ orderId }) {
     {
       method: "POST",
       headers: {
-	"Content-Type": "application/json",
+        "Content-Type": "application/json",
       },
     },
   );
