@@ -32,7 +32,7 @@ async function setupBcdcButton(sdkInstance) {
       try {
 	const startOptions = {
 	  presentationMode: "auto",
-	  };
+	};
 	await paypalCheckout.start(startOptions, createOrder());
 	} catch (error) {
 	  console.error(error);

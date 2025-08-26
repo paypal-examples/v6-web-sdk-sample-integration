@@ -1,3 +1,15 @@
+async function startCheckout(checkoutButton, paypalCheckout) {
+		try {
+			const startOptions = {
+				targetElement: checkoutButton,
+				presentationMode: "auto",
+			};
+			await paypalCheckout.start(startOptions, createOrder());
+		} catch (error) {
+				console.error(error);
+		}
+}
+
 async function onPayPalWebSdkLoaded() {
 	try {
 		const clientToken = await getBrowserSafeClientToken();
@@ -6,14 +18,10 @@ async function onPayPalWebSdkLoaded() {
 			components: ["paypal-guest-payments"],
 		});
 
-		setupBcdcButton(sdkInstance);
-	} catch (error) {
-		console.error(error);
-	}
-}
+    const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
 
-async function setupBcdcButton(sdkInstance) {
-	try {
 		const paypalCheckout =
 			await sdkInstance.createPayPalGuestOneTimePaymentSession({
 				onApprove,
@@ -22,27 +30,27 @@ async function setupBcdcButton(sdkInstance) {
 				onError,
 			});
 
-		document
-			.getElementById("paypal-basic-card-button")
-			.addEventListener("click", onClick);
+		const checkoutButton = document.getElementById("paypal-basic-card-button");
 
-		async function onClick() {
-			try {
-				const startOptions = {
-					presentationMode: "auto",
-					};
-				await paypalCheckout.start(startOptions, createOrder());
-				} catch (error) {
-					console.error(error);
-					}
-		}
+		// start checkout immediately on load
+		startCheckout(checkoutButton, paypalCheckout);
+
+		// also setup the button to start checkout on click
+		setupBcdcButton(checkoutButton, paypalCheckout);
 	} catch (error) {
 		console.error(error);
 	}
 }
 
+async function setupBcdcButton(checkoutButton, paypalCheckout) {
+	checkoutButton.addEventListener("click", onClick);
+
+	async function onClick() {
+		startCheckout(checkoutButton, paypalCheckout);
+	}
+}
+
 // TODO fill in more details for callbacks?
-// TODO use on page load setup
 
 function onApprove(...args) {
 	console.log('ON APPROVE', args);

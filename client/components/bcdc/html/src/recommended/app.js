@@ -14,35 +14,38 @@ async function onPayPalWebSdkLoaded() {
 
 async function setupBcdcButton(sdkInstance) {
   try {
-    const paypalCheckout =
-			await sdkInstance.createPayPalGuestOneTimePaymentSession({
-				onApprove,
-				onCancel,
-				onComplete,
-				onError,
-			});
+    const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
 
-		document
+    const paypalCheckout =
+      await sdkInstance.createPayPalGuestOneTimePaymentSession({
+	onApprove,
+	onCancel,
+	onComplete,
+	onError,
+	});
+
+    document
       .getElementById("paypal-basic-card-button")
       .addEventListener("click", onClick);
 
-		async function onClick() {
-			try {
-				const startOptions = {
-					presentationMode: "auto",
-				};
-				await paypalCheckout.start(startOptions, createOrder());
-			} catch (error) {
-				console.error(error);
-			}
-		}
+    async function onClick() {
+      try {
+	const startOptions = {
+	  presentationMode: "auto",
+	};
+	await paypalCheckout.start(startOptions, createOrder());
+	} catch (error) {
+	  console.error(error);
+	  }
+      }
   } catch (error) {
     console.error(error);
   }
 }
 
 // TODO fill in more details for callbacks?
-// TODO call eligibility client side
 
 function onApprove(...args) {
 	console.log('ON APPROVE', args);
