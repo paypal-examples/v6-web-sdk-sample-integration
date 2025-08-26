@@ -45,7 +45,7 @@ async function setupBcdcButton(sdkInstance) {
   }
 }
 
-function onApprove(data) {
+async function onApprove(data) {
         console.log("onApprove", data);
         const orderData = await captureOrder({
                 orderId: data.orderId,

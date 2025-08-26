@@ -43,9 +43,7 @@ async function setupBcdcButton(sdkInstance) {
   }
 }
 
-// TODO fill in shipping callbacks logic
-
-function onApprove(data) {
+async function onApprove(data) {
   console.log("onApprove", data);
   const orderData = await captureOrder({
     orderId: data.orderId,
@@ -67,6 +65,12 @@ function onError(data) {
 
 function onShippingAddressChange(data) {
   console.log("onShippingAddressChange", data);
+
+  // example where an error is thrown if the buyer is not in the US
+  const countryCode = data?.shippingAddress?.countryCode ?? "US";
+  if (countryCode !== "US") {
+    throw new Error(data?.errors?.COUNTRY_ERROR);
+  }
 }
 
 function onShippingOptionsChange(data) {
