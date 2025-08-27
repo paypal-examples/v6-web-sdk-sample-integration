@@ -1,3 +1,6 @@
+/**
+  * In this example, checkout `start` is in its own function so it can be reused for page load and button click.
+  */
 async function startCheckout(checkoutButton, paypalCheckout) {
     try {
       const startOptions = {
@@ -10,6 +13,10 @@ async function startCheckout(checkoutButton, paypalCheckout) {
     }
 }
 
+/**
+  * In addition to the typical setup on script load, this function will automatically open the guest checkout form if the buyer
+  * is eligible, then setup the guest checkout button as usual.
+  */
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
@@ -32,7 +39,7 @@ async function onPayPalWebSdkLoaded() {
 
     const checkoutButton = document.getElementById("paypal-basic-card-button");
 
-    // start checkout immediately on load
+    // start checkout immediately on script load
     startCheckout(checkoutButton, paypalCheckout);
 
     // also setup the button to start checkout on click
