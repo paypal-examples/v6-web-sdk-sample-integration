@@ -38,10 +38,10 @@ async function setupGuestPaymentButton(sdkInstance) {
           presentationMode: "auto",
         };
         await paypalCheckout.start(startOptions, createOrder());
-        } catch (error) {
-          console.error(error);
-          }
+      } catch (error) {
+        console.error(error);
       }
+    }
   } catch (error) {
     console.error(error);
   }
