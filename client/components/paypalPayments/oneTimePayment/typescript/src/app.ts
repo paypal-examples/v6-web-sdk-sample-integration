@@ -2,7 +2,7 @@ import type {
   SdkInstance,
   OnApproveDataOneTimePayments,
   OneTimePaymentSession,
-  FindEligibleMethodsGetDetailsReturnType,
+  FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
 
 async function onPayPalWebSdkLoaded() {
@@ -74,7 +74,7 @@ async function setupPayPalButton(
 
 async function setupPayLaterButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
-  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType,
+  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">,
 ) {
   let paylaterPaymentSession: OneTimePaymentSession;
 
@@ -107,7 +107,7 @@ async function setupPayLaterButton(
 
 async function setupPayPalCreditButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
-  paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetailsReturnType,
+  paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">,
 ) {
   let paypalCreditPaymentSession: OneTimePaymentSession;
 
