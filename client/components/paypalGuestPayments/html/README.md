@@ -31,7 +31,6 @@ Before running this demo, you'll need to set up a PayPal Developer account.
    - Select **Merchant** under **Type**
    - Choose the **Sandbox** account for testing
    - Click **Create App** at the bottom of the modal
-   - Enable **Features** -> **Accept payments** -> **Apple Pay** (be sure to click **Save Changes** below)
    - Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
 
 ## 🚀 Running the Demo
