@@ -51,7 +51,7 @@ async function onApprove(data) {
   console.log("onApprove", data);
   const orderData = await captureOrder({
     orderId: data.orderId,
-    });
+  });
   console.log("Capture result", orderData);
 }
 
@@ -67,16 +67,23 @@ function onError(data) {
   console.log("onError", data);
 }
 
+/**
+  * In this example shipping address change callback, an error will be thrown if the buyer changes their
+  * address to a location outside of the US.
+  */
 function onShippingAddressChange(data) {
   console.log("onShippingAddressChange", data);
 
-  // example where an error is thrown if the buyer is not in the US
   const countryCode = data?.shippingAddress?.countryCode ?? "US";
   if (countryCode !== "US") {
     throw new Error(data?.errors?.COUNTRY_ERROR);
   }
 }
 
+/**
+  * In this shipping options change callback, you could react to the buyer changing shipping options like recalculating
+  * the cart total or taxes.
+  */
 function onShippingOptionsChange(data) {
   console.log("onShippingOptionsChange", data);
 }
