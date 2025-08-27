@@ -68,9 +68,9 @@ function onError(data) {
 }
 
 /**
-  * In this example shipping address change callback, an error will be thrown if the buyer changes their
-  * address to a location outside of the US.
-  */
+ * In this example shipping address change callback, an error will be thrown if the buyer changes their
+ * address to a location outside of the US.
+ */
 function onShippingAddressChange(data) {
   console.log("onShippingAddressChange", data);
 
@@ -81,9 +81,9 @@ function onShippingAddressChange(data) {
 }
 
 /**
-  * In this shipping options change callback, you could react to the buyer changing shipping options like recalculating
-  * the cart total or taxes.
-  */
+ * In this shipping options change callback, you could react to the buyer changing shipping options like recalculating
+ * the cart total or taxes.
+ */
 function onShippingOptionsChange(data) {
   console.log("onShippingOptionsChange", data);
 }

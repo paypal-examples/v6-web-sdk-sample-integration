@@ -34,11 +34,11 @@ async function setupGuestPaymentButton(sdkInstance) {
       try {
         const startOptions = {
           presentationMode: "auto",
-          };
+        };
         await paypalCheckout.start(startOptions, createOrder());
-        } catch (error) {
-          console.error(error);
-          }
+      } catch (error) {
+        console.error(error);
+      }
     }
   } catch (error) {
     console.error(error);
@@ -46,23 +46,23 @@ async function setupGuestPaymentButton(sdkInstance) {
 }
 
 async function onApprove(data) {
-        console.log("onApprove", data);
-        const orderData = await captureOrder({
-                orderId: data.orderId,
-        });
-        console.log("Capture result", orderData);
+  console.log("onApprove", data);
+  const orderData = await captureOrder({
+    orderId: data.orderId,
+  });
+  console.log("Capture result", orderData);
 }
 
 function onCancel(data) {
-        console.log("onCancel", data);
+  console.log("onCancel", data);
 }
 
 function onComplete(data) {
-        console.log("onComplete", data);
+  console.log("onComplete", data);
 }
 
 function onError(data) {
-        console.log("onError", data);
+  console.log("onError", data);
 }
 
 async function getBrowserSafeClientToken() {

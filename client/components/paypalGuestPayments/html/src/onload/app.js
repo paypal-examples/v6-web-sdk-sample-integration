@@ -1,22 +1,22 @@
 /**
-  * In this example, checkout `start` is in its own function so it can be reused for page load and button click.
-  */
+ * In this example, checkout `start` is in its own function so it can be reused for page load and button click.
+ */
 async function startCheckout(checkoutButton, paypalCheckout) {
-    try {
-      const startOptions = {
-        targetElement: checkoutButton,
-        presentationMode: "auto",
-      };
-      await paypalCheckout.start(startOptions, createOrder());
-    } catch (error) {
-        console.error(error);
-    }
+  try {
+    const startOptions = {
+      targetElement: checkoutButton,
+      presentationMode: "auto",
+    };
+    await paypalCheckout.start(startOptions, createOrder());
+  } catch (error) {
+    console.error(error);
+  }
 }
 
 /**
-  * In addition to the typical setup on script load, this function will automatically open the guest checkout form if the buyer
-  * is eligible, then setup the guest checkout button as usual.
-  */
+ * In addition to the typical setup on script load, this function will automatically open the guest checkout form if the buyer
+ * is eligible, then setup the guest checkout button as usual.
+ */
 async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
