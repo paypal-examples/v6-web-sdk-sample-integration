@@ -31,7 +31,7 @@ Before running this demo, you'll need to set up a PayPal Developer account.
    3. Select **Merchant** under **Type**
    4. Choose the **Sandbox** account for testing
    5. Click **Create App** at the bottom of the modal
-   6. Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
+   6. Note your **Client ID** and **Secret Key** under **API credentials** for later configuration of the `.env` file
 
 ## 🚀 Running the Demo
 
@@ -61,7 +61,8 @@ Before running this demo, you'll need to set up a PayPal Developer account.
    ```bash
    npm start
    ```
-   The server will run on `https://localhost:8080`
+
+The server will run on `https://localhost:8080`
 
 ### Client Setup
 
@@ -81,4 +82,5 @@ Before running this demo, you'll need to set up a PayPal Developer account.
    ```bash
    npm start
    ```
-   The demo will be available at `http://localhost:3000`
+
+The demo will be available at [http://localhost:3000]().
