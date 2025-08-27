@@ -21,17 +21,17 @@ The general structure of a Guest Payment integration is as follows:
 Before running this demo, you'll need to set up a PayPal Developer account.
 
 1. **PayPal Developer Account**
-   - Visit [developer.paypal.com](https://developer.paypal.com)
-   - Sign up for a developer account or log in with existing credentials
-   - Navigate to the **Apps & Credentials** section in your dashboard
+   1. Visit [developer.paypal.com](https://developer.paypal.com)
+   2. Sign up for a developer account or log in with existing credentials
+   3. Navigate to the **Apps & Credentials** section in your dashboard
 
 2. **Create a PayPal Application** (or configure the default application)
-   - Click **Create App**
-   - Name your app
-   - Select **Merchant** under **Type**
-   - Choose the **Sandbox** account for testing
-   - Click **Create App** at the bottom of the modal
-   - Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
+   1. Click **Create App**
+   2. Name your app
+   3. Select **Merchant** under **Type**
+   4. Choose the **Sandbox** account for testing
+   5. Click **Create App** at the bottom of the modal
+   6. Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
 
 ## 🚀 Running the Demo
 
