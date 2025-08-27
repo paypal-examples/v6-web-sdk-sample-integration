@@ -8,7 +8,8 @@
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "typecheck": "tsc --build --noEmit"
+    "typecheck": "tsc --build --noEmit",
+    "lint": "echo \"eslint is not set up\""
   },
   "author": "",
   "license": "MIT",
