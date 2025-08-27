@@ -14,6 +14,10 @@ async function onPayPalWebSdkLoaded() {
 
 async function setupGuestPaymentButton(sdkInstance) {
   try {
+    const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
+
     const paypalCheckout =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
         onApprove,
