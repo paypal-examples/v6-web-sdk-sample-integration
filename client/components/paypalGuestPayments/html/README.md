@@ -50,7 +50,7 @@ Before running this demo, you'll need to set up a PayPal Developer account.
    ```
 
 3. **Configure environment variables:**
-   Create a `.env` file in the root directory:
+   Create a `.env` file in the root directory using your client credentials from the previous Create Application step:
 
    ```env
    PAYPAL_SANDBOX_CLIENT_ID=your_paypal_sandbox_client_id
@@ -83,4 +83,4 @@ The server will run on `https://localhost:8080`
    npm start
    ```
 
-The demo will be available at [http://localhost:3000]().
+The demo will be available at [http://localhost:3000](http://localhost:3000).
