@@ -48,7 +48,7 @@ async function setupPayPalButton(sdkInstance) {
     try {
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createSetupToken(),
+        createVaultSetupToken(),
       );
     } catch (error) {
       console.error(error);
@@ -68,7 +68,7 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
-async function createSetupToken() {
+async function createVaultSetupToken() {
   const response = await fetch("/paypal-api/vault/setup-token/create", {
     method: "POST",
     headers: {
@@ -77,7 +77,7 @@ async function createSetupToken() {
   });
   const { id } = await response.json();
 
-  return { setupToken: id };
+  return { vaultSetupToken: id };
 }
 
 async function createPaymentToken(vaultSetupToken) {
