@@ -1,13 +1,13 @@
 /**
  * In this example, checkout `start` is in its own function so it can be reused for page load and button click.
  */
-async function startCheckout(checkoutButton, paypalCheckout) {
+async function startGuestPaymentSession(checkoutButton, paypalGuestPaymentSession) {
   try {
     const startOptions = {
       targetElement: checkoutButton,
       presentationMode: "auto",
     };
-    await paypalCheckout.start(startOptions, createOrder());
+    await paypalGuestPaymentSession.start(startOptions, createOrder());
   } catch (error) {
     console.error(error);
   }
@@ -29,7 +29,7 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: "USD",
     });
 
-    const paypalCheckout =
+    const paypalGuestPaymentSession =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
         onApprove,
         onCancel,
@@ -40,20 +40,20 @@ async function onPayPalWebSdkLoaded() {
     const checkoutButton = document.getElementById("paypal-basic-card-button");
 
     // start checkout immediately on script load
-    startCheckout(checkoutButton, paypalCheckout);
+    startGuestPaymentSession(checkoutButton, paypalGuestPaymentSession);
 
     // also setup the button to start checkout on click
-    setupGuestPaymentButton(checkoutButton, paypalCheckout);
+    setupGuestPaymentButton(checkoutButton, paypalGuestPaymentSession);
   } catch (error) {
     console.error(error);
   }
 }
 
-async function setupGuestPaymentButton(checkoutButton, paypalCheckout) {
+async function setupGuestPaymentButton(checkoutButton, paypalGuestPaymentSession) {
   checkoutButton.addEventListener("click", onClick);
 
   async function onClick() {
-    startCheckout(checkoutButton, paypalCheckout);
+    startGuestPaymentSession(checkoutButton, paypalGuestPaymentSession);
   }
 }
 

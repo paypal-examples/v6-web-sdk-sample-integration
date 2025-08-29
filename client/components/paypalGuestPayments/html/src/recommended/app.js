@@ -18,7 +18,7 @@ async function setupGuestPaymentButton(sdkInstance) {
       currencyCode: "USD",
     });
 
-    const paypalCheckout =
+    const paypalGuestPaymentSession =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
         onApprove,
         onCancel,
@@ -35,7 +35,7 @@ async function setupGuestPaymentButton(sdkInstance) {
         const startOptions = {
           presentationMode: "auto",
         };
-        await paypalCheckout.start(startOptions, createOrder());
+        await paypalGuestPaymentSession.start(startOptions, createOrder());
       } catch (error) {
         console.error(error);
       }

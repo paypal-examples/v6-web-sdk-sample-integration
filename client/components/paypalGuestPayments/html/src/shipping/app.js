@@ -18,7 +18,7 @@ async function setupGuestPaymentButton(sdkInstance) {
       currencyCode: "USD",
     });
 
-    const paypalCheckout =
+    const paypalGuestPaymentSession =
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
         onApprove,
         onCancel,
@@ -37,7 +37,7 @@ async function setupGuestPaymentButton(sdkInstance) {
         const startOptions = {
           presentationMode: "auto",
         };
-        await paypalCheckout.start(startOptions, createOrder());
+        await paypalGuestPaymentSession.start(startOptions, createOrder());
       } catch (error) {
         console.error(error);
       }
@@ -68,8 +68,8 @@ function onError(data) {
 }
 
 /**
- * In this example shipping address change callback, an error will be thrown if the buyer changes their
- * address to a location outside of the US.
+ * The shipping address change callback can be used to validate the buyer address, recalculate taxes, recalculate
+ * shipping costs, and so on. In this example, we are displaying an error if the user selects a non-US address.
  */
 function onShippingAddressChange(data) {
   console.log("onShippingAddressChange", data);
@@ -81,11 +81,16 @@ function onShippingAddressChange(data) {
 }
 
 /**
- * In this shipping options change callback, you could react to the buyer changing shipping options like recalculating
- * the cart total or taxes.
+ * The shipping options change callback can be used to recalculate taxes, recalculate shipping costs, and so on. In
+ * this example, we are displaying an error if the user selects the unavailable shipping method.
  */
 function onShippingOptionsChange(data) {
   console.log("onShippingOptionsChange", data);
+
+  const selectedShippingOption = data?.selectedShippingOption?.id;
+  if (selectedShippingOption === "SHIP_UNV") {
+    throw new Error(data?.errors?.METHOD_UNAVAILABLE);
+  }
 }
 
 async function getBrowserSafeClientToken() {
@@ -101,13 +106,66 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createOrder() {
+  const orderPayload = {
+    intent: "CAPTURE",
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode: "USD",
+          value: "10.00",
+          breakdown: {
+            itemTotal: {
+              currencyCode: "USD",
+              value: "10.00",
+            },
+          },
+        },
+        shipping: {
+          options: [
+            {
+              id: "SHIP_FRE",
+              label: "Free",
+              type: "SHIPPING",
+              selected: true,
+              amount: {
+                value: "0.00",
+                currencyCode: "USD",
+              },
+            },
+            {
+              id: "SHIP_EXP",
+              label: "Expedited",
+              type: "SHIPPING",
+              selected: false,
+              amount: {
+                value: "5.00",
+                currencyCode: "USD",
+              },
+            },
+            {
+              id: "SHIP_UNV",
+              label: "Unavailable",
+              type: "SHIPPING",
+              selected: false,
+              amount: {
+                value: "1000",
+                currencyCode: "USD",
+              },
+            },
+          ],
+        },
+      },
+    ],
+  };
+
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-with-sample-data",
+    "/paypal-api/checkout/orders/create",
     {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify(orderPayload)
     },
   );
   const { id } = await response.json();

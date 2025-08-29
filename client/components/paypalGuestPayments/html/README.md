@@ -25,7 +25,7 @@ Before running this demo, you'll need to set up a PayPal Developer account.
    2. Sign up for a developer account or log in with existing credentials
    3. Navigate to the **Apps & Credentials** section in your dashboard
 
-2. **Create a PayPal Application** (or configure the default application)
+2. **Create a PayPal Application**
    1. Click **Create App**
    2. Name your app
    3. Select **Merchant** under **Type**
