@@ -1,3 +1,7 @@
+import {
+  loadCoreSdkScript
+} from "@paypal/paypal-js/sdk-v6";
+
 import type {
   PayPalV6Namespace,
   SdkInstance,
@@ -12,37 +16,37 @@ declare global {
   }
 }
 
-window.onPayPalWebSdkLoaded = async function onPayPalWebSdkLoaded() {
-  try {
-    const clientToken = await getBrowserSafeClientToken();
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken,
-      components: ["paypal-payments"],
-      pageType: "checkout",
-    });
+await loadCoreSdkScript({ environemt: "sandbox", debug: true });
 
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currencyCode: "USD",
-    });
+try {
+  const clientToken = await getBrowserSafeClientToken();
+  const sdkInstance = await window.paypal.createInstance({
+    clientToken,
+    components: ["paypal-payments"],
+    pageType: "checkout",
+  });
 
-    if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
-    }
+  const paymentMethods = await sdkInstance.findEligibleMethods({
+    currencyCode: "USD",
+  });
 
-    if (paymentMethods.isEligible("paylater")) {
-      const paylaterPaymentMethodDetails =
-        paymentMethods.getDetails("paylater");
-      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
-    }
-
-    if (paymentMethods.isEligible("credit")) {
-      const paypalCreditPaymentMethodDetails =
-        paymentMethods.getDetails("credit");
-      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
-    }
-  } catch (error) {
-    console.error(error);
+  if (paymentMethods.isEligible("paypal")) {
+    setupPayPalButton(sdkInstance);
   }
+
+  if (paymentMethods.isEligible("paylater")) {
+    const paylaterPaymentMethodDetails =
+      paymentMethods.getDetails("paylater");
+    setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+  }
+
+  if (paymentMethods.isEligible("credit")) {
+    const paypalCreditPaymentMethodDetails =
+      paymentMethods.getDetails("credit");
+    setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+  }
+} catch (error) {
+  console.error(error);
 }
 
 async function onApproveCallback(data: OnApproveDataOneTimePayments) {
