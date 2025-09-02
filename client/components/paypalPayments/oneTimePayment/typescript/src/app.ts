@@ -1,9 +1,15 @@
 import type {
+  PayPalV6Namespace,
   SdkInstance,
   OnApproveDataOneTimePayments,
-  OneTimePaymentSession,
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
+
+declare global {
+  interface Window {
+    paypal: PayPalV6Namespace;
+  }
+}
 
 async function onPayPalWebSdkLoaded() {
   try {
@@ -49,13 +55,9 @@ async function onApproveCallback(data: OnApproveDataOneTimePayments) {
 async function setupPayPalButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
 ) {
-  let paypalPaymentSession: OneTimePaymentSession;
-
-  if (sdkInstance) {
-    paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
-      onApprove: onApproveCallback,
-    });
-  }
+  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
+    onApprove: onApproveCallback,
+  });
 
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton?.removeAttribute("hidden");
@@ -76,13 +78,10 @@ async function setupPayLaterButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
   paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">,
 ) {
-  let paylaterPaymentSession: OneTimePaymentSession;
-
-  if (sdkInstance) {
-    paylaterPaymentSession = sdkInstance.createPayLaterOneTimePaymentSession({
+  const paylaterPaymentSession =
+    sdkInstance.createPayLaterOneTimePaymentSession({
       onApprove: onApproveCallback,
     });
-  }
 
   const { productCode, countryCode } = paylaterPaymentMethodDetails;
   const paylaterButton = document.querySelector("#paylater-button");
@@ -109,9 +108,7 @@ async function setupPayPalCreditButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
   paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">,
 ) {
-  let paypalCreditPaymentSession: OneTimePaymentSession;
-
-  paypalCreditPaymentSession =
+  const paypalCreditPaymentSession =
     sdkInstance.createPayPalCreditOneTimePaymentSession({
       onApprove: onApproveCallback,
     });
@@ -143,10 +140,28 @@ async function getBrowserSafeClientToken() {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+
+  type ClientTokenReponse = {
+    accessToken: string;
+    expiresIn: number;
+    scope: string;
+    tokenType: string;
+  };
+
+  const { accessToken }: ClientTokenReponse = await response.json();
 
   return accessToken;
 }
+
+type OrderResponseMinimal = {
+  id: string;
+  status: string;
+  links: {
+    href: string;
+    rel: string;
+    method: string;
+  }[];
+};
 
 async function createOrder() {
   const response = await fetch(
@@ -158,7 +173,7 @@ async function createOrder() {
       },
     },
   );
-  const { id } = await response.json();
+  const { id }: OrderResponseMinimal = await response.json();
 
   return { orderId: id };
 }
@@ -173,7 +188,13 @@ async function captureOrder({ orderId }: { orderId: string }) {
       },
     },
   );
-  const data = await response.json();
+  type OrderResponse = OrderResponseMinimal & {
+    payer: Record<string, any>;
+    paymentSource: Record<string, any>;
+    purchaseUnits: Record<string, any>[];
+  };
+
+  const data: OrderResponse = await response.json();
 
   return data;
 }
