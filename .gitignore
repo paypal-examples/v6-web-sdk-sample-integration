@@ -9,6 +9,7 @@ dist-ssr
 ### Node.js ###
 node_modules/
 package-lock.json
+tsconfig.tsbuildinfo
 
 ### Devcontainer ###
 .vscode/settings.json

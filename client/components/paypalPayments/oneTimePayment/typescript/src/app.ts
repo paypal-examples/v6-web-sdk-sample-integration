@@ -8,10 +8,11 @@ import type {
 declare global {
   interface Window {
     paypal: PayPalV6Namespace;
+    onPayPalWebSdkLoaded: () => void;
   }
 }
 
-async function onPayPalWebSdkLoaded() {
+window.onPayPalWebSdkLoaded = async function onPayPalWebSdkLoaded() {
   try {
     const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
