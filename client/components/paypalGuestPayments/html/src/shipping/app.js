@@ -158,16 +158,13 @@ async function createOrder() {
     ],
   };
 
-  const response = await fetch(
-    "/paypal-api/checkout/orders/create",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify(orderPayload)
+  const response = await fetch("/paypal-api/checkout/orders/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify(orderPayload),
+  });
   const { id } = await response.json();
 
   return { orderId: id };

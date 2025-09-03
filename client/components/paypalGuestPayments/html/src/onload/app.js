@@ -1,7 +1,10 @@
 /**
  * In this example, checkout `start` is in its own function so it can be reused for page load and button click.
  */
-async function startGuestPaymentSession(checkoutButton, paypalGuestPaymentSession) {
+async function startGuestPaymentSession(
+  checkoutButton,
+  paypalGuestPaymentSession,
+) {
   try {
     const startOptions = {
       targetElement: checkoutButton,
@@ -49,7 +52,10 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-async function setupGuestPaymentButton(checkoutButton, paypalGuestPaymentSession) {
+async function setupGuestPaymentButton(
+  checkoutButton,
+  paypalGuestPaymentSession,
+) {
   checkoutButton.addEventListener("click", onClick);
 
   async function onClick() {
