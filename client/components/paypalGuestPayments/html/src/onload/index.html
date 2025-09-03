@@ -1,0 +1,39 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Open Guest Payments on Page Load - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <a href="/">&lt; Back</a>
+    <h1>Open Guest Payments on Page Load Integration</h1>
+    <p>
+      In his example, if the buyer is eligible to see the inline form, the
+      <code>inline</code> presenation mode will display immediately on page
+      load. If the form is closed, or the buyer was ineligible for the
+      <code>inline</code> form, they can still click the button to begin the
+      Guest Payment flow.
+    </p>
+
+    <paypal-basic-card-container>
+      <paypal-basic-card-button
+        id="paypal-basic-card-button"
+      ></paypal-basic-card-button>
+    </paypal-basic-card-container>
+
+    <script src="app.js"></script>
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+  </body>
+</html>
