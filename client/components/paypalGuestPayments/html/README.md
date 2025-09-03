@@ -1,6 +1,6 @@
 # PayPal Guest Payments HTML Sample Integration
 
-This demo showcases how to integrate PayPal Guest Payments as a payment method using PayPayl's v6 Web SDK. This integration allows merchants to offer guest payments for their customers without logging in to PayPal.
+This demo showcases how to integrate PayPal Guest Payments as a payment method using PayPal's v6 Web SDK. This integration allows merchants to offer guest payments for their customers without logging in to PayPal.
 
 ## 🏗️ Architecture Overview
 
