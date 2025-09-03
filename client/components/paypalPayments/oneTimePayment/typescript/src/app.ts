@@ -3,24 +3,16 @@ import {
 } from "@paypal/paypal-js/sdk-v6";
 
 import type {
-  PayPalV6Namespace,
   SdkInstance,
   OnApproveDataOneTimePayments,
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
 
-declare global {
-  interface Window {
-    paypal: PayPalV6Namespace;
-    onPayPalWebSdkLoaded: () => void;
-  }
-}
-
-await loadCoreSdkScript({ environemt: "sandbox", debug: true });
+const paypalGlobalNamespace = await loadCoreSdkScript({ environment: "sandbox" });
 
 try {
   const clientToken = await getBrowserSafeClientToken();
-  const sdkInstance = await window.paypal.createInstance({
+  const sdkInstance = await paypalGlobalNamespace.createInstance({
     clientToken,
     components: ["paypal-payments"],
     pageType: "checkout",
