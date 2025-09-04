@@ -73,7 +73,7 @@ async function setupPayPalButton(
 }
 
 async function setupPayLaterButton(
-  sdkInstance: SdkInstance<["paypal-payments"]>,
+  sdkInstance: AppSdkInstance,
   paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">,
 ) {
   const paylaterPaymentSession =
@@ -103,7 +103,7 @@ async function setupPayLaterButton(
 }
 
 async function setupPayPalCreditButton(
-  sdkInstance: SdkInstance<["paypal-payments"]>,
+  sdkInstance: AppSdkInstance,
   paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">,
 ) {
   const paypalCreditPaymentSession =
