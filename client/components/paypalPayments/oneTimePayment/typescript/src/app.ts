@@ -1,6 +1,4 @@
-import {
-  loadCoreSdkScript
-} from "@paypal/paypal-js/sdk-v6";
+import { loadCoreSdkScript } from "@paypal/paypal-js/sdk-v6";
 
 import type {
   SdkInstance,
@@ -8,7 +6,9 @@ import type {
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
 
-const paypalGlobalNamespace = await loadCoreSdkScript({ environment: "sandbox" });
+const paypalGlobalNamespace = await loadCoreSdkScript({
+  environment: "sandbox",
+});
 
 try {
   const clientToken = await getBrowserSafeClientToken();
@@ -27,8 +27,7 @@ try {
   }
 
   if (paymentMethods.isEligible("paylater")) {
-    const paylaterPaymentMethodDetails =
-      paymentMethods.getDetails("paylater");
+    const paylaterPaymentMethodDetails = paymentMethods.getDetails("paylater");
     setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
   }
 
