@@ -6,6 +6,8 @@ import type {
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
 
+type AppSdkInstance = SdkInstance<["paypal-payments", "venmo-payments"]>;
+
 const paypalGlobalNamespace = await loadCoreSdkScript({
   environment: "sandbox",
 });
@@ -14,7 +16,7 @@ try {
   const clientToken = await getBrowserSafeClientToken();
   const sdkInstance = await paypalGlobalNamespace.createInstance({
     clientToken,
-    components: ["paypal-payments"],
+    components: ["paypal-payments", "venmo-payments"],
     pageType: "checkout",
   });
 
@@ -49,7 +51,7 @@ async function onApproveCallback(data: OnApproveDataOneTimePayments) {
 }
 
 async function setupPayPalButton(
-  sdkInstance: SdkInstance<["paypal-payments"]>,
+  sdkInstance: AppSdkInstance,
 ) {
   const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
     onApprove: onApproveCallback,
