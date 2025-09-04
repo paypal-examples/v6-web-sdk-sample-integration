@@ -1,41 +1,43 @@
+import { loadCoreSdkScript } from "@paypal/paypal-js/sdk-v6";
+
 import type {
   SdkInstance,
   OnApproveDataOneTimePayments,
-  OneTimePaymentSession,
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
 
-async function onPayPalWebSdkLoaded() {
-  try {
-    const clientToken = await getBrowserSafeClientToken();
-    const sdkInstance = await window.paypal.createInstance({
-      clientToken,
-      components: ["paypal-payments"],
-      pageType: "checkout",
-    });
+const paypalGlobalNamespace = await loadCoreSdkScript({
+  environment: "sandbox",
+});
 
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currencyCode: "USD",
-    });
+try {
+  const clientToken = await getBrowserSafeClientToken();
+  const sdkInstance = await paypalGlobalNamespace.createInstance({
+    clientToken,
+    components: ["paypal-payments"],
+    pageType: "checkout",
+  });
 
-    if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
-    }
+  const paymentMethods = await sdkInstance.findEligibleMethods({
+    currencyCode: "USD",
+  });
 
-    if (paymentMethods.isEligible("paylater")) {
-      const paylaterPaymentMethodDetails =
-        paymentMethods.getDetails("paylater");
-      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
-    }
-
-    if (paymentMethods.isEligible("credit")) {
-      const paypalCreditPaymentMethodDetails =
-        paymentMethods.getDetails("credit");
-      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
-    }
-  } catch (error) {
-    console.error(error);
+  if (paymentMethods.isEligible("paypal")) {
+    setupPayPalButton(sdkInstance);
   }
+
+  if (paymentMethods.isEligible("paylater")) {
+    const paylaterPaymentMethodDetails = paymentMethods.getDetails("paylater");
+    setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+  }
+
+  if (paymentMethods.isEligible("credit")) {
+    const paypalCreditPaymentMethodDetails =
+      paymentMethods.getDetails("credit");
+    setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+  }
+} catch (error) {
+  console.error(error);
 }
 
 async function onApproveCallback(data: OnApproveDataOneTimePayments) {
@@ -49,13 +51,9 @@ async function onApproveCallback(data: OnApproveDataOneTimePayments) {
 async function setupPayPalButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
 ) {
-  let paypalPaymentSession: OneTimePaymentSession;
-
-  if (sdkInstance) {
-    paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
-      onApprove: onApproveCallback,
-    });
-  }
+  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
+    onApprove: onApproveCallback,
+  });
 
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton?.removeAttribute("hidden");
@@ -76,13 +74,10 @@ async function setupPayLaterButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
   paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">,
 ) {
-  let paylaterPaymentSession: OneTimePaymentSession;
-
-  if (sdkInstance) {
-    paylaterPaymentSession = sdkInstance.createPayLaterOneTimePaymentSession({
+  const paylaterPaymentSession =
+    sdkInstance.createPayLaterOneTimePaymentSession({
       onApprove: onApproveCallback,
     });
-  }
 
   const { productCode, countryCode } = paylaterPaymentMethodDetails;
   const paylaterButton = document.querySelector("#paylater-button");
@@ -109,9 +104,7 @@ async function setupPayPalCreditButton(
   sdkInstance: SdkInstance<["paypal-payments"]>,
   paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">,
 ) {
-  let paypalCreditPaymentSession: OneTimePaymentSession;
-
-  paypalCreditPaymentSession =
+  const paypalCreditPaymentSession =
     sdkInstance.createPayPalCreditOneTimePaymentSession({
       onApprove: onApproveCallback,
     });
@@ -143,10 +136,28 @@ async function getBrowserSafeClientToken() {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+
+  type ClientTokenReponse = {
+    accessToken: string;
+    expiresIn: number;
+    scope: string;
+    tokenType: string;
+  };
+
+  const { accessToken }: ClientTokenReponse = await response.json();
 
   return accessToken;
 }
+
+type OrderResponseMinimal = {
+  id: string;
+  status: string;
+  links: {
+    href: string;
+    rel: string;
+    method: string;
+  }[];
+};
 
 async function createOrder() {
   const response = await fetch(
@@ -158,7 +169,7 @@ async function createOrder() {
       },
     },
   );
-  const { id } = await response.json();
+  const { id }: OrderResponseMinimal = await response.json();
 
   return { orderId: id };
 }
@@ -173,7 +184,13 @@ async function captureOrder({ orderId }: { orderId: string }) {
       },
     },
   );
-  const data = await response.json();
+  type OrderResponse = OrderResponseMinimal & {
+    payer: Record<string, any>;
+    paymentSource: Record<string, any>;
+    purchaseUnits: Record<string, any>[];
+  };
+
+  const data: OrderResponse = await response.json();
 
   return data;
 }
