@@ -50,9 +50,7 @@ async function onApproveCallback(data: OnApproveDataOneTimePayments) {
   console.log("Capture result", orderData);
 }
 
-async function setupPayPalButton(
-  sdkInstance: AppSdkInstance,
-) {
+async function setupPayPalButton(sdkInstance: AppSdkInstance) {
   const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
     onApprove: onApproveCallback,
   });
