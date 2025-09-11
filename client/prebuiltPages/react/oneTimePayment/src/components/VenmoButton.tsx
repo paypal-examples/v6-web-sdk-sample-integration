@@ -12,12 +12,22 @@ const VenmoButton: React.FC<PaymentSessionOptions> = (
   const venmoSession = useRef<SessionOutput>(null);
 
   useEffect(() => {
-    if (sdkInstance) {
+    if (sdkInstance && !venmoSession.current) {
       venmoSession.current = sdkInstance.createVenmoOneTimePaymentSession(
         paymentSessionOptions,
       );
     }
-  }, [sdkInstance, paymentSessionOptions]);
+
+    return () => {
+      if (
+        venmoSession.current &&
+        typeof venmoSession.current.destroy === "function"
+      ) {
+        venmoSession.current.destroy();
+        venmoSession.current = null;
+      }
+    };
+  }, [sdkInstance]);
 
   const venmoOnClickHandler = async () => {
     if (!venmoSession.current) return;

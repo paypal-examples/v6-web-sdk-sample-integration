@@ -1,4 +1,4 @@
-import React, { useContext, useState, useCallback } from "react";
+import React, { useContext, useState, useCallback, useMemo } from "react";
 import { PayPalSDKContext } from "../context/sdkContext";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
@@ -33,7 +33,7 @@ const SoccerBall: React.FC = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
-  const handlePaymentCallbacks: PaymentSessionOptions = {
+    const handlePaymentCallbacks: PaymentSessionOptions = useMemo(() => ({
     onApprove: async (data: OnApproveData) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
@@ -50,7 +50,7 @@ const SoccerBall: React.FC = () => {
       console.error("Payment error:", error);
       setModalState("error");
     },
-  };
+  }), [])
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {

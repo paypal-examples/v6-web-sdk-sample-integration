@@ -12,12 +12,19 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
   const paypalSession = useRef<SessionOutput>(null);
 
   useEffect(() => {
-    if (sdkInstance) {
+    if (sdkInstance && !paypalSession.current) {
       paypalSession.current = sdkInstance.createPayPalOneTimePaymentSession(
         paymentSessionOptions,
       );
     }
-  }, [sdkInstance, paymentSessionOptions]);
+
+    return () => {
+      if (paypalSession.current && typeof paypalSession.current.destroy === 'function') {
+        paypalSession.current.destroy();
+        paypalSession.current = null;
+      }
+    };
+  }, [sdkInstance]);
 
   const payPalOnClickHandler = async () => {
     if (!paypalSession.current) return;
