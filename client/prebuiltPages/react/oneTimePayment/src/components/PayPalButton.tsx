@@ -27,7 +27,7 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
         paypalSession.current = null;
       }
     };
-  }, [sdkInstance]);
+  }, [sdkInstance, paymentSessionOptions]);
 
   const payPalOnClickHandler = async () => {
     if (!paypalSession.current) return;
