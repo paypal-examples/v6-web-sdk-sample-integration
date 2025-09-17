@@ -19,7 +19,10 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
     }
 
     return () => {
-      if (paypalSession.current && typeof paypalSession.current.destroy === 'function') {
+      if (
+        paypalSession.current &&
+        typeof paypalSession.current.destroy === "function"
+      ) {
         paypalSession.current.destroy();
         paypalSession.current = null;
       }

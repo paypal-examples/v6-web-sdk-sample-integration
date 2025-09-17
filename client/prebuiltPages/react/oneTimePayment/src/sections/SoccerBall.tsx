@@ -33,24 +33,27 @@ const SoccerBall: React.FC = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
-    const handlePaymentCallbacks: PaymentSessionOptions = useMemo(() => ({
-    onApprove: async (data: OnApproveData) => {
-      console.log("Payment approved:", data);
-      const captureResult = await captureOrder({ orderId: data.orderId });
-      console.log("Payment capture result:", captureResult);
-      setModalState("success");
-    },
+  const handlePaymentCallbacks: PaymentSessionOptions = useMemo(
+    () => ({
+      onApprove: async (data: OnApproveData) => {
+        console.log("Payment approved:", data);
+        const captureResult = await captureOrder({ orderId: data.orderId });
+        console.log("Payment capture result:", captureResult);
+        setModalState("success");
+      },
 
-    onCancel: () => {
-      console.log("Payment cancelled");
-      setModalState("cancel");
-    },
+      onCancel: () => {
+        console.log("Payment cancelled");
+        setModalState("cancel");
+      },
 
-    onError: (error: Error) => {
-      console.error("Payment error:", error);
-      setModalState("error");
-    },
-  }), [])
+      onError: (error: Error) => {
+        console.error("Payment error:", error);
+        setModalState("error");
+      },
+    }),
+    [],
+  );
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
