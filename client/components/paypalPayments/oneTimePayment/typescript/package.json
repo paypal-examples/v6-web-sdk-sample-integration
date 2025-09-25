@@ -1,0 +1,26 @@
+{
+  "name": "paypal-vanilla-typescript-example",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "scripts": {
+    "start": "vite",
+    "build": "tsc --build && vite build",
+    "preview": "vite preview",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check",
+    "typecheck": "tsc --build --noEmit",
+    "lint": "echo \"eslint is not set up\""
+  },
+  "author": "",
+  "license": "MIT",
+  "description": "",
+  "dependencies": {
+    "@paypal/paypal-js": "^8.4.2"
+  },
+  "devDependencies": {
+    "@types/node": "^20.5.0",
+    "prettier": "^3.6.2",
+    "typescript": "^5.2.2",
+    "vite": "^7.1.3"
+  }
+}
