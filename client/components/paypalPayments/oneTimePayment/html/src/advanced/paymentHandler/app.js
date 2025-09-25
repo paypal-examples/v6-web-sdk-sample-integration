@@ -39,25 +39,9 @@ async function setupPayPalButton(sdkInstance) {
 
   paypalButton.addEventListener("click", async () => {
     const createOrderPromiseReference = createOrder();
+    const presentationModesToTry = ["payment-handler", "popup", "modal"];
 
-    const presentationModesToTry = [
-      {
-        presentationMode: "payment-handler",
-        recoverableErrorCode: "ERR_FLOW_PAYMENT_HANDLER_BROWSER_INCOMPATIBLE",
-      },
-      {
-        presentationMode: "popup",
-        recoverableErrorCode: "ERR_DEV_UNABLE_TO_OPEN_POPUP",
-      },
-      {
-        presentationMode: "modal",
-      },
-    ];
-
-    for (const {
-      presentationMode,
-      recoverableErrorCode,
-    } of presentationModesToTry) {
+    for (const presentationMode of presentationModesToTry) {
       try {
         await paypalPaymentSession.start(
           { presentationMode },
@@ -67,7 +51,7 @@ async function setupPayPalButton(sdkInstance) {
         break;
       } catch (error) {
         // try another presentationMode for a recoverable error
-        if (error.code === recoverableErrorCode) {
+        if (error.isRecoverable) {
           continue;
         }
         throw error;
