@@ -34,7 +34,7 @@ const PRODUCT = {
 const SoccerBall: React.FC = () => {
   const { sdkInstance, eligiblePaymentMethods } = usePayPalInstance();
   const [modalState, setModalState] = useState<ModalType>(null);
-  console.log(sdkInstance, eligiblePaymentMethods);
+
   // Payment handlers
   const handlePaymentCallbacks: PayPalOneTimePaymentSessionOptions = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -88,7 +88,7 @@ const SoccerBall: React.FC = () => {
     sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
 
   const modalContent = getModalContent(modalState);
-  console.log(isPayPalEligible);
+
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
       {modalContent && (
