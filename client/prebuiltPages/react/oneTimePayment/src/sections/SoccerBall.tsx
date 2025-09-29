@@ -1,8 +1,6 @@
-import React, { useContext, useState, useCallback } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useState, useCallback } from "react";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
-import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
@@ -10,6 +8,11 @@ import soccerBallImage from "../static/images/world-cup.jpg";
 import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
+import { usePayPalInstance } from "@paypal/react-paypal-js/sdk-v6";
+import type {
+  OnApproveDataOneTimePayments,
+  PayPalOneTimePaymentSessionOptions,
+} from "@paypal/react-paypal-js/sdk-v6";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -29,12 +32,12 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
+  const { sdkInstance, eligiblePaymentMethods } = usePayPalInstance();
   const [modalState, setModalState] = useState<ModalType>(null);
-
+  console.log(sdkInstance, eligiblePaymentMethods);
   // Payment handlers
-  const handlePaymentCallbacks: PaymentSessionOptions = {
-    onApprove: async (data: OnApproveData) => {
+  const handlePaymentCallbacks: PayPalOneTimePaymentSessionOptions = {
+    onApprove: async (data: OnApproveDataOneTimePayments) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
       console.log("Payment capture result:", captureResult);
@@ -85,7 +88,7 @@ const SoccerBall: React.FC = () => {
     sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
 
   const modalContent = getModalContent(modalState);
-
+  console.log(isPayPalEligible);
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
       {modalContent && (

@@ -1,15 +1,18 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useEffect, useRef } from "react";
 import { createOrder } from "../utils";
-import { PaymentSessionOptions, SessionOutput } from "../types/paypal";
 import { useErrorBoundary } from "react-error-boundary";
+import { usePayPalInstance } from "@paypal/react-paypal-js/sdk-v6";
+import type {
+  VenmoPaymentSessionOptions,
+  OneTimePaymentSession,
+} from "@paypal/react-paypal-js/sdk-v6";
 
-const VenmoButton: React.FC<PaymentSessionOptions> = (
+const VenmoButton: React.FC<VenmoPaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  const { sdkInstance } = useContext(PayPalSDKContext);
+  const { sdkInstance } = usePayPalInstance();
   const { showBoundary } = useErrorBoundary();
-  const venmoSession = useRef<SessionOutput>(null);
+  const venmoSession = useRef<OneTimePaymentSession>(null);
 
   useEffect(() => {
     if (sdkInstance) {

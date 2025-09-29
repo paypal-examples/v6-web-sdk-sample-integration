@@ -1,6 +1,8 @@
-import { useEffect, useState } from "react";
-
-import { PayPalSDKProvider } from "./context/sdkContext";
+import { useEffect, useMemo, useState } from "react";
+import {
+  CreateInstanceOptions,
+  PayPalSdkInstanceProvider,
+} from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
@@ -36,16 +38,28 @@ function App() {
     getClientToken();
   }, []);
 
-  return (
+  const createInstanceOptions: CreateInstanceOptions<
+    ["paypal-payments", "venmo-payments"]
+  > = useMemo(
+    () => ({
+      clientToken,
+      components: ["paypal-payments", "venmo-payments"],
+      pageType: "checkout",
+    }),
+    [clientToken],
+  );
+
+  return !clientToken ? (
+    <div>Loading...</div>
+  ) : (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <PayPalSDKProvider
-        clientToken={clientToken}
-        components={["paypal-payments", "venmo-payments"]}
-        pageType="checkout"
+      <PayPalSdkInstanceProvider
+        createInstanceOptions={createInstanceOptions}
+        scriptOptions={{ environment: "sandbox" }}
       >
         <h1>React One-Time Payment Recommended Integration</h1>
         <SoccerBall />
-      </PayPalSDKProvider>
+      </PayPalSdkInstanceProvider>
     </ErrorBoundary>
   );
 }
