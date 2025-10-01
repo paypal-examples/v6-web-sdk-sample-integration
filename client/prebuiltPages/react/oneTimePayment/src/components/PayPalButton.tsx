@@ -1,4 +1,4 @@
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useMemo } from "react";
 
 import { createOrder } from "../utils";
 import { useErrorBoundary } from "react-error-boundary";
@@ -15,13 +15,23 @@ const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
   const { showBoundary } = useErrorBoundary();
   const paypalSession = useRef<OneTimePaymentSession>(null);
 
+  // Memoize the payment session options to prevent unnecessary re-creation
+  const memoizedOptions = useMemo(
+    () => paymentSessionOptions,
+    [
+      // Add specific dependencies here based on what properties of paymentSessionOptions should trigger re-creation
+      // For example: paymentSessionOptions.amount, paymentSessionOptions.currency, etc.
+      JSON.stringify(paymentSessionOptions),
+    ],
+  );
+
   useEffect(() => {
     if (sdkInstance) {
       paypalSession.current = sdkInstance.createPayPalOneTimePaymentSession(
-        paymentSessionOptions,
+        memoizedOptions,
       );
     }
-  }, [sdkInstance, paymentSessionOptions]);
+  }, [sdkInstance, memoizedOptions]);
 
   const payPalOnClickHandler = async () => {
     if (!paypalSession.current) return;

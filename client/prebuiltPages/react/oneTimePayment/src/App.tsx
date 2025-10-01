@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import {
   CreateInstanceOptions,
   PayPalSdkInstanceProvider,
@@ -40,18 +40,13 @@ function App() {
 
   const createInstanceOptions: CreateInstanceOptions<
     ["paypal-payments", "venmo-payments"]
-  > = useMemo(
-    () => ({
-      clientToken,
-      components: ["paypal-payments", "venmo-payments"],
-      pageType: "checkout",
-    }),
-    [clientToken],
-  );
+  > = {
+    clientToken,
+    components: ["paypal-payments", "venmo-payments"],
+    pageType: "checkout",
+  };
 
-  return !clientToken ? (
-    <div>Loading...</div>
-  ) : (
+  return clientToken ? (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <PayPalSdkInstanceProvider
         createInstanceOptions={createInstanceOptions}
@@ -61,7 +56,7 @@ function App() {
         <SoccerBall />
       </PayPalSdkInstanceProvider>
     </ErrorBoundary>
-  );
+  ) : null;
 }
 
 export default App;
