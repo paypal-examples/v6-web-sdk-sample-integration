@@ -12,6 +12,8 @@ import {
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
+import { findEligibleMethods } from "./paymentsFindEligibleMethods";
+
 const app = express();
 
 app.use(cors());
@@ -89,6 +91,24 @@ app.post(
       const { jsonResponse, httpStatusCode } =
         await createSetupTokenWithSampleDataForPayPal();
       res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create setup token:", error);
+      res.status(500).json({ error: "Failed to create setup token." });
+    }
+  },
+);
+
+app.get(
+  "/paypal-api/payments/find-eligible-methods",
+  async (_req: Request, res: Response) => {
+    const testData = {
+      preferences: { payment_flow: "ONE_TIME_PAYMENT" },
+      purchase_units: [{ amount: { currency_code: "USD" } }],
+    };
+
+    try {
+      const responseData = await findEligibleMethods({ body: testData });
+      res.status(200).json(responseData);
     } catch (error) {
       console.error("Failed to create setup token:", error);
       res.status(500).json({ error: "Failed to create setup token." });
