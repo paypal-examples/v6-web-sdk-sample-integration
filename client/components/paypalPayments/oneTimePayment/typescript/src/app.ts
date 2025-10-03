@@ -185,9 +185,9 @@ async function captureOrder({ orderId }: { orderId: string }) {
     },
   );
   type OrderResponse = OrderResponseMinimal & {
-    payer: Record<string, any>;
-    paymentSource: Record<string, any>;
-    purchaseUnits: Record<string, any>[];
+    payer: Record<string, unknown>;
+    paymentSource: Record<string, unknown>;
+    purchaseUnits: Record<string, unknown>[];
   };
 
   const data: OrderResponse = await response.json();
