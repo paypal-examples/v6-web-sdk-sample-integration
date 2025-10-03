@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
-
-import { PayPalSDKProvider } from "./context/sdkContext";
+import {
+  CreateInstanceOptions,
+  PayPalSdkInstanceProvider,
+} from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
@@ -36,18 +38,25 @@ function App() {
     getClientToken();
   }, []);
 
-  return (
+  const createInstanceOptions: CreateInstanceOptions<
+    ["paypal-payments", "venmo-payments"]
+  > = {
+    clientToken,
+    components: ["paypal-payments", "venmo-payments"],
+    pageType: "checkout",
+  };
+
+  return clientToken ? (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <PayPalSDKProvider
-        clientToken={clientToken}
-        components={["paypal-payments", "venmo-payments"]}
-        pageType="checkout"
+      <PayPalSdkInstanceProvider
+        createInstanceOptions={createInstanceOptions}
+        scriptOptions={{ environment: "sandbox" }}
       >
         <h1>React One-Time Payment Recommended Integration</h1>
         <SoccerBall />
-      </PayPalSDKProvider>
+      </PayPalSdkInstanceProvider>
     </ErrorBoundary>
-  );
+  ) : null;
 }
 
 export default App;
