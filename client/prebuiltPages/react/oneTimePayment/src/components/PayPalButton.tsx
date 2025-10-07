@@ -2,7 +2,7 @@ import React, { useRef, useEffect, useMemo } from "react";
 
 import { createOrder } from "../utils";
 import { useErrorBoundary } from "react-error-boundary";
-import { usePayPalInstance } from "@paypal/react-paypal-js/sdk-v6";
+import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
 import type {
   PayPalOneTimePaymentSessionOptions,
   OneTimePaymentSession,
@@ -11,7 +11,7 @@ import type {
 const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  const { sdkInstance } = usePayPalInstance();
+  const { sdkInstance } = usePayPal();
   const { showBoundary } = useErrorBoundary();
   const paypalSession = useRef<OneTimePaymentSession>(null);
 

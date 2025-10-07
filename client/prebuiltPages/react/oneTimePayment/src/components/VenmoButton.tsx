@@ -1,18 +1,18 @@
 import React, { useEffect, useMemo, useRef } from "react";
 import { createOrder } from "../utils";
 import { useErrorBoundary } from "react-error-boundary";
-import { usePayPalInstance } from "@paypal/react-paypal-js/sdk-v6";
+import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
 import type {
-  VenmoPaymentSessionOptions,
-  OneTimePaymentSession,
+  VenmoOneTimePaymentSession,
+  VenmoOneTimePaymentSessionOptions,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const VenmoButton: React.FC<VenmoPaymentSessionOptions> = (
+const VenmoButton: React.FC<VenmoOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  const { sdkInstance } = usePayPalInstance();
+  const { sdkInstance } = usePayPal();
   const { showBoundary } = useErrorBoundary();
-  const venmoSession = useRef<OneTimePaymentSession>(null);
+  const venmoSession = useRef<VenmoOneTimePaymentSession>(null);
 
   // Memoize the payment session options to prevent unnecessary re-creation
   const memoizedOptions = useMemo(

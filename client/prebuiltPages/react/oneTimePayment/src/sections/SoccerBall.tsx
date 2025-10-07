@@ -8,9 +8,8 @@ import soccerBallImage from "../static/images/world-cup.jpg";
 import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
-import { usePayPalInstance } from "@paypal/react-paypal-js/sdk-v6";
+import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
 import type {
-  OnApproveDataOneTimePayments,
   PayPalOneTimePaymentSessionOptions,
 } from "@paypal/react-paypal-js/sdk-v6";
 
@@ -32,12 +31,12 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = usePayPalInstance();
+  const { sdkInstance, eligiblePaymentMethods } = usePayPal();
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
   const handlePaymentCallbacks: PayPalOneTimePaymentSessionOptions = {
-    onApprove: async (data: OnApproveDataOneTimePayments) => {
+    onApprove: async (data) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
       console.log("Payment capture result:", captureResult);
