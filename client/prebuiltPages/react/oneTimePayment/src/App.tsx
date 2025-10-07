@@ -1,7 +1,5 @@
 import { useEffect, useState } from "react";
-import {
-  PayPalProvider,
-} from "@paypal/react-paypal-js/sdk-v6";
+import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";

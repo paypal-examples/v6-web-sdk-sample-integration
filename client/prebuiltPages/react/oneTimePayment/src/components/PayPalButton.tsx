@@ -27,9 +27,8 @@ const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
 
   useEffect(() => {
     if (sdkInstance) {
-      paypalSession.current = sdkInstance.createPayPalOneTimePaymentSession(
-        memoizedOptions,
-      );
+      paypalSession.current =
+        sdkInstance.createPayPalOneTimePaymentSession(memoizedOptions);
     }
   }, [sdkInstance, memoizedOptions]);
 

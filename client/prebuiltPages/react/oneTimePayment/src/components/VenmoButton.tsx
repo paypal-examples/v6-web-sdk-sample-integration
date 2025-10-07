@@ -25,9 +25,8 @@ const VenmoButton: React.FC<VenmoOneTimePaymentSessionOptions> = (
 
   useEffect(() => {
     if (sdkInstance) {
-      venmoSession.current = sdkInstance.createVenmoOneTimePaymentSession(
-        memoizedOptions,
-      );
+      venmoSession.current =
+        sdkInstance.createVenmoOneTimePaymentSession(memoizedOptions);
     }
   }, [sdkInstance, memoizedOptions]);
 

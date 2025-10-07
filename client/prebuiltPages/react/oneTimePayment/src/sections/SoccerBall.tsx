@@ -9,9 +9,7 @@ import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
-import type {
-  PayPalOneTimePaymentSessionOptions,
-} from "@paypal/react-paypal-js/sdk-v6";
+import type { PayPalOneTimePaymentSessionOptions } from "@paypal/react-paypal-js/sdk-v6";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
