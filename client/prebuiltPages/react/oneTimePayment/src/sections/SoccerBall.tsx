@@ -1,5 +1,4 @@
-import React, { useContext, useState, useCallback } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useState, useCallback } from "react";
 import PayLaterButton from "../components/PayLaterButton";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
@@ -91,7 +90,7 @@ const SoccerBall: React.FC = () => {
   let paylaterPaymentMethodDetails;
   if (isPayLaterEligible) {
     paylaterPaymentMethodDetails =
-      eligiblePaymentMethods.getDetails("paylater");
+      eligiblePaymentMethods?.getDetails("paylater");
   }
 
   const modalContent = getModalContent(modalState);
@@ -111,7 +110,7 @@ const SoccerBall: React.FC = () => {
         {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
         {/* TODO credit */}
         {/* TODO is unpacking the props */}
-        {isPayLaterEligible && (
+        {isPayLaterEligible && paylaterPaymentMethodDetails && (
           <PayLaterButton
             {...paylaterPaymentMethodDetails}
             {...handlePaymentCallbacks}
