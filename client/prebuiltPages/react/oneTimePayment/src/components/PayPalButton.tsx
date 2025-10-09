@@ -1,42 +1,23 @@
-import React, { useRef, useEffect, useMemo } from "react";
+import React from "react";
 
 import { createOrder } from "../utils";
 import { useErrorBoundary } from "react-error-boundary";
-import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
+import { usePayPalOneTimePaymentSession } from "@paypal/react-paypal-js/sdk-v6";
 import type {
   PayPalOneTimePaymentSessionOptions,
-  OneTimePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
 
 const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  const { sdkInstance } = usePayPal();
   const { showBoundary } = useErrorBoundary();
-  const paypalSession = useRef<OneTimePaymentSession>(null);
-
-  // Memoize the payment session options to prevent unnecessary re-creation
-  const memoizedOptions = useMemo(
-    () => paymentSessionOptions,
-    [
-      // Add specific dependencies here based on what properties of paymentSessionOptions should trigger re-creation
-      // For example: paymentSessionOptions.amount, paymentSessionOptions.currency, etc.
-      JSON.stringify(paymentSessionOptions),
-    ],
-  );
-
-  useEffect(() => {
-    if (sdkInstance) {
-      paypalSession.current =
-        sdkInstance.createPayPalOneTimePaymentSession(memoizedOptions);
-    }
-  }, [sdkInstance, memoizedOptions]);
-
+  const paypalSession = usePayPalOneTimePaymentSession(paymentSessionOptions)
+console.log(paypalSession)
   const payPalOnClickHandler = async () => {
-    if (!paypalSession.current) return;
+    if (!paypalSession) return;
 
     try {
-      await paypalSession.current.start(
+      await paypalSession.start(
         { presentationMode: "auto" },
         createOrder(),
       );

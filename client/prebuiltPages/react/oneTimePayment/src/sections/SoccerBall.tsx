@@ -99,7 +99,6 @@ const SoccerBall: React.FC = () => {
 
       <div className="payment-options">
         {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
-
         {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
       </div>
     </div>
