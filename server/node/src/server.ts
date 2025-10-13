@@ -5,12 +5,15 @@ import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
 import {
   getBrowserSafeClientToken,
+  getClientToken,
   createOrder,
   createOrderWithSampleData,
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
+
+const { PAYPAL_MERCHANT_ID} = process.env;
 
 const app = express();
 
@@ -25,9 +28,14 @@ app.get(
   "/paypal-api/auth/browser-safe-client-token",
   async (_req: Request, res: Response) => {
     try {
-      const { jsonResponse, httpStatusCode } =
-        await getBrowserSafeClientToken();
-      res.status(httpStatusCode).json(jsonResponse);
+      if (PAYPAL_MERCHANT_ID) {
+        const token = await getClientToken();
+        res.status(200).json({ accessToken: token });
+      } else {
+        const { jsonResponse, httpStatusCode } =
+          await getBrowserSafeClientToken();
+        res.status(httpStatusCode).json(jsonResponse);
+      }
     } catch (error) {
       console.error("Failed to create browser safe access token:", error);
       res

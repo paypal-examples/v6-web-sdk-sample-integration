@@ -29,8 +29,14 @@ import type {
  * Set up PayPal controllers
  * ###################################################################### */
 
-const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
-  process.env;
+const {
+  DOMAINS,
+  PAYPAL_API_BASE_URL = "https://api-m.sandbox.paypal.com", // use https://api-m.paypal.com for production environment
+  PAYPAL_SANDBOX_CLIENT_ID,
+  PAYPAL_SANDBOX_CLIENT_SECRET,
+  PAYPAL_MERCHANT_ID,
+  PAYPAL_BN_CODE
+} = process.env;
 
 if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
@@ -61,6 +67,73 @@ const vaultController = new VaultController(client);
 /* ######################################################################
  * Token generation helpers
  * ###################################################################### */
+
+function getAuthAssertionToken(clientId: string, merchantId: string) {
+  const header = {
+    alg: 'none',
+  };
+  const body = {
+    iss: clientId,
+    payer_id: merchantId,
+  };
+  const signature = '';
+  const jwtParts = [header, body, signature];
+
+  const authAssertion = jwtParts
+    .map((part) => part && btoa(JSON.stringify(part)))
+    .join('.');
+
+  return authAssertion;
+}
+
+export async function getClientToken() {
+  try {
+    if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
+      throw new Error('Missing API credentials');
+    }
+
+    const url = `${PAYPAL_API_BASE_URL}/v1/oauth2/token`;
+
+    const headers = new Headers();
+
+    const auth = Buffer.from(
+      `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
+    ).toString('base64');
+
+    headers.append('Authorization', `Basic ${auth}`);
+    headers.append('Content-Type', 'application/x-www-form-urlencoded');
+
+    if (PAYPAL_MERCHANT_ID) {
+      headers.append(
+        'PayPal-Auth-Assertion',
+        getAuthAssertionToken(PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_MERCHANT_ID),
+      );
+    }
+
+    const searchParams = new URLSearchParams();
+    searchParams.append('grant_type', 'client_credentials');
+    searchParams.append('response_type', 'client_token');
+    searchParams.append('intent', 'sdk_init');
+    if (DOMAINS) {
+      searchParams.append('domains[]', DOMAINS);
+    }
+
+    const options = {
+      method: 'POST',
+      headers,
+      body: searchParams,
+    };
+
+    const response = await fetch(url, options);
+    const data = await response.json();
+
+    return data.access_token;
+  } catch (error) {
+    console.error(error);
+
+    return '';
+  }
+}
 
 export async function getBrowserSafeClientToken() {
   try {
@@ -133,11 +206,23 @@ export async function createOrder({
   paypalRequestId?: string;
 }) {
   try {
-    const { result, statusCode } = await ordersController.createOrder({
+    type CreateOrderOptions = {
+      body: OrderRequest;
+      paypalRequestId?: string;
+      prefer?: string;
+      paypalAuthAssertion?: string;
+      paypalPartnerAttributionId?: string;
+    }
+    const options: CreateOrderOptions = {
       body: orderRequestBody,
       paypalRequestId,
       prefer: "return=minimal",
-    });
+    };
+    if (PAYPAL_SANDBOX_CLIENT_ID && PAYPAL_MERCHANT_ID) {
+      options.paypalAuthAssertion = getAuthAssertionToken(PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_MERCHANT_ID);
+      options.paypalPartnerAttributionId = PAYPAL_BN_CODE
+    }
+    const { result, statusCode } = await ordersController.createOrder(options);
 
     return {
       jsonResponse: result,
@@ -173,10 +258,19 @@ export async function createOrderWithSampleData() {
 
 export async function captureOrder(orderId: string) {
   try {
-    const { result, statusCode } = await ordersController.captureOrder({
+    type CaptureOrderOptions = {
+      id: string;
+      prefer?: string;
+      paypalAuthAssertion?: string;
+    }
+    const options: CaptureOrderOptions = {
       id: orderId,
       prefer: "return=minimal",
-    });
+    };
+    if (PAYPAL_SANDBOX_CLIENT_ID && PAYPAL_MERCHANT_ID) {
+      options.paypalAuthAssertion = getAuthAssertionToken(PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_MERCHANT_ID);
+    }
+    const { result, statusCode } = await ordersController.captureOrder(options);
 
     return {
       jsonResponse: result,
