@@ -17,18 +17,18 @@ async function onPayPalWebSdkLoaded() {
     if (isIdealEligible) {
       setupIdealPayment(sdkInstance);
     } else {
-      showMessage(
-        "iDEAL is not eligible. Please ensure your buyer country is Netherlands.",
-        "error",
-      );
+      showMessage({
+        text: "iDEAL is not eligible. Please ensure your buyer country is Netherlands.",
+        type: "error",
+      });
       console.error("iDEAL is not eligible");
     }
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
-    showMessage(
-      "Failed to initialize payment system. Please try again.",
-      "error",
-    );
+    showMessage({
+      text: "Failed to initialize payment system. Please try again.",
+      type: "error",
+    });
   }
 }
 
@@ -48,7 +48,10 @@ function setupIdealPayment(sdkInstance) {
     setupButtonHandler(idealCheckout);
   } catch (error) {
     console.error("Error setting up iDEAL payment:", error);
-    showMessage("Failed to setup payment. Please refresh the page.", "error");
+    showMessage({
+      text: "Failed to setup payment. Please refresh the page.",
+      type: "error",
+    });
   }
 }
 
@@ -89,14 +92,17 @@ function setupButtonHandler(idealCheckout) {
         await idealCheckout.start({ presentationMode: "popup" }, createOrder());
       } else {
         console.error("Validation failed");
-        showMessage("Please fill in all required fields correctly.", "error");
+        showMessage({
+          text: "Please fill in all required fields correctly.",
+          type: "error",
+        });
       }
     } catch (error) {
       console.error("Payment error:", error);
-      showMessage(
-        "An error occurred during payment. Please try again.",
-        "error",
-      );
+      showMessage({
+        text: "An error occurred during payment. Please try again.",
+        type: "error",
+      });
     }
   });
 }
@@ -134,7 +140,10 @@ async function createOrder() {
     return { orderId: id };
   } catch (error) {
     console.error("Error creating order:", error);
-    showMessage("Failed to create order. Please try again.", "error");
+    showMessage({
+      text: "Failed to create order. Please try again.",
+      type: "error",
+    });
     throw error;
   }
 }
@@ -174,29 +183,35 @@ async function handleApprove(data) {
     const result = await captureOrder(data.orderId);
     console.log("Capture successful:", result);
 
-    showMessage(
-      `Payment successful! Order ID: ${data.orderId}. Check console for details.`,
-      "success",
-    );
+    showMessage({
+      text: `Payment successful! Order ID: ${data.orderId}. Check console for details.`,
+      type: "success",
+    });
   } catch (error) {
     console.error("Capture failed:", error);
-    showMessage("Payment approved but capture failed.", "error");
+    showMessage({
+      text: "Payment approved but capture failed.",
+      type: "error",
+    });
   }
 }
 
 // Handle payment cancellation
 function handleCancel(data) {
   console.log("Payment cancelled:", data);
-  showMessage("Payment was cancelled. You can try again.", "error");
+  showMessage({
+    text: "Payment was cancelled. You can try again.",
+    type: "error",
+  });
 }
 
 // Handle payment errors
 function handleError(error) {
   console.error("Payment error:", error);
-  showMessage(
-    "An error occurred during payment. Please try again or contact support.",
-    "error",
-  );
+  showMessage({
+    text: "An error occurred during payment. Please try again or contact support.",
+    type: "error",
+  });
 }
 
 // Get client token from server
@@ -222,7 +237,7 @@ async function getBrowserSafeClientToken() {
 }
 
 // Utility function to show messages to user
-function showMessage(text, type) {
+function showMessage({ text, type }) {
   const messageEl = document.getElementById("message");
   messageEl.textContent = text;
   messageEl.className = `message ${type} show`;
