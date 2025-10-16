@@ -180,10 +180,7 @@ async function handleApprove(data) {
     );
   } catch (error) {
     console.error("Capture failed:", error);
-    showMessage(
-      "Payment approved but capture failed.",
-      "error",
-    );
+    showMessage("Payment approved but capture failed.", "error");
   }
 }
 

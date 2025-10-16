@@ -150,5 +150,6 @@ The integration requires these endpoints (provided by the API server):
 - Validate order payload format
 
 ## Documentation
+
 - [PayPal Developer Documentation](https://developer.paypal.com/docs/)
 - [PayPal Developer Community](https://developer.paypal.com/community/)
