@@ -10,6 +10,7 @@ import {
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
+  createSetupTokenWithSampleDataForAch,
 } from "./paypalServerSdk";
 
 const app = express();
@@ -92,6 +93,20 @@ app.post(
     } catch (error) {
       console.error("Failed to create setup token:", error);
       res.status(500).json({ error: "Failed to create setup token." });
+    }
+  },
+);
+
+app.post(
+  "/paypal-api/vault/setup-token/create-ach",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await createSetupTokenWithSampleDataForAch();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create ACH setup token:", error);
+      res.status(500).json({ error: "Failed to create ACH setup token." });
     }
   },
 );

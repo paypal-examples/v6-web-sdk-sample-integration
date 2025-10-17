@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>One-Time Payment - Recommended Integration - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      #ach-button-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+      #merchant-id-input { 
+        margin-top: 12px;
+        padding: 8px;
+        font-size: 16px;
+        width: 300px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>One-Time Payment Recommended Integration</h1>
+
+    <div id="ach-button-container">
+      <button id="ach-button" hidden>Pay with Bank Account</button>
+    </div>
+
+    <label for="merchant-id-input">Merchant ID:</label>
+    <input type="text" id="merchant-id-input" placeholder="Enter your merchant ID" />
+
+    <script src="app.js"></script>
+
+    <script type="module">
+      const script = document.createElement('script');
+      script.async = true;
+      script.src = 'https://www.sandbox.paypal.com/web-sdk/v6/core';
+      script.onload = () => window.onPayPalWebSdkLoaded();
+      document.head.appendChild(script);
+    </script>
+  </body>
+</html>
