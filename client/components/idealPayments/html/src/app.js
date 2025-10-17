@@ -77,6 +77,7 @@ function setupPaymentFields(idealCheckout) {
 
 function setupButtonHandler(idealCheckout) {
   const idealButton = document.querySelector("#ideal-button");
+  idealButton.removeAttribute("hidden");
 
   idealButton.addEventListener("click", async () => {
     try {

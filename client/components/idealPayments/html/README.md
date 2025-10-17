@@ -32,6 +32,13 @@ Before running this demo, you'll need to set up accounts and configure your deve
    - Click **Create App** at the bottom of the modal
    - Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
 
+3. **Enable iDEAL Payment**
+   - Visit [sandbox.paypal.com](https://www.sandbox.paypal.com)
+   - Log in with your **Sandbox** merchant account credentials
+   - Navigate to **Account Settings** by clicking the profile icon in the top right corner
+   - Select **Payment methods** from the left sidebar
+   - Find **iDEAL** in the payment methods and enable it
+
 ### 2. System Requirements
 
 - Node.js version 20 or higher
@@ -80,7 +87,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
 1. **Navigate to the iDEAL demo directory:**
 
    ```bash
-   cd client/components/ideal/html
+   cd client/components/idealPayments/html
    ```
 
 2. **Install dependencies:**
@@ -128,7 +135,7 @@ The integration requires these endpoints (provided by the API server):
 ### iDEAL not eligible
 
 - Verify `testBuyerCountry` is set to "NL"
-- Check that iDEAL is enabled in PayPal account settings
+- Check that iDEAL is enabled for the merchant in PayPal account settings
 
 ### Validation fails
 
