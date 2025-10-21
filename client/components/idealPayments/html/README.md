@@ -13,6 +13,14 @@ This sample demonstrates a complete iDEAL integration flow:
 5. Process payment through iDEAL popup flow with bank selection
 6. Handle payment approval, cancellation, and errors
 
+## Features
+
+- iDEAL one-time payment integration
+- Full name field validation
+- Popup payment flow
+- Eligibility checking for iDEAL
+- Error handling and user feedback
+
 ## 📋 Prerequisites
 
 Before running this demo, you'll need to set up accounts and configure your development environment.
@@ -43,14 +51,6 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 - Node.js version 20 or higher
 - Server running on port 8080 (see `server/node/` directory)
-
-## Features
-
-- iDEAL one-time payment integration
-- Full name field validation
-- Popup payment flow
-- Eligibility checking for iDEAL
-- Error handling and user feedback
 
 ## 🚀 Running the Demo
 
@@ -106,13 +106,13 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 ### Client-Side Flow
 
-1. **SDK Initialization**: Loads PayPal Web SDK with iDEAL components
-2. **Eligibility Check**: Verifies iDEAL is eligible
-3. **Session Creation**: Creates iDEAL payment session with event callbacks
+1. **SDK Initialization**: Loads PayPal Web SDK with iDEAL components using a client token fetched from the server's `/paypal-api/auth/browser-safe-client-token` endpoint
+2. **Eligibility Check**: Verifies iDEAL is eligible for the merchant
+3. **Session Creation**: Creates iDEAL payment session with event callbacks for handling payment lifecycle events
 4. **Field Setup**: Mounts the required full name field
-5. **Validation**: Validates fields before starting payment
-6. **Payment Flow**: Opens popup for bank selection and payment authorization
-7. **Completion**: Handles approval, cancellation, or errors
+5. **Validation**: Validates fields before initiating the payment flow
+6. **Payment Flow**: Opens a popup window where customers select their bank and authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
+7. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
 
 ### Server-Side Requirements
 
