@@ -6,27 +6,9 @@ This is a demo of how to integration Bank ACH One-time payment via PayPal Web SD
 
 This sample demonstrates a complete Bank ACH integration flow: 
 
-1. Initialize PayPal Web SDK with Bank ACH component
-2. Create an order and authenticate payer's bank account
-3. Handle bank ACH validation and order completion
-
-### Prerequisites
-Before running this demo, you'll need to set up accounts and configure your development environmnet
-
-1. **PayPal Developer Account**
-   - Visit [developer.paypal.com](https://developer.paypal.com)
-   - Sign up for a developer account or log in with existing credentials
-   - Navigate to the **Apps & Credentials** section in your dashboard
-
-2. **Create a PayPal Application** (or configure the default application)
-   - Click **Create App**
-   - Name your app
-   - Select **Merchant** under **Type**
-   - Choose the **Sandbox** account for testing
-   - Click **Create App** at the bottom of the modal
-   - Enable **Features** -> **Accept payments** -> **Bank ACH** (be sure to click **Save Changes** below)
-   - Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
-
+1. Initialize PayPal Web SDK with Bank ACH component with a sample order creation.
+2. Opens popup for payer bank authentication and account selection when Bank ACH button is clicked.
+3. OnSuccess callback passed to SDK initialization captures order with returned order ID. 
 
 ### Server Setup
 
@@ -61,7 +43,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
 1. **Navigate to the Apple Pay demo directory:**
 
    ```bash
-   cd client/components/applePay/html
+   cd client/components/bank/oneTimePayment/html
    ```
 
 2. **Install dependencies:**
