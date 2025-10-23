@@ -20,7 +20,6 @@ This sample demonstrates a complete EPS integration flow:
 - Popup payment flow with bank selection
 - Eligibility checking for EPS
 - Error handling and user feedback
-- EUR currency support
 
 ## 📋 Prerequisites
 
@@ -47,7 +46,6 @@ Before running this demo, you'll need to set up accounts and configure your deve
    - Navigate to **Account Settings** by clicking the profile icon in the top right corner
    - Select **Payment methods** from the left sidebar
    - Find **EPS** in the payment methods and enable it
-   - Ensure your account is configured to accept **EUR (Euro)** currency
 
 ### 2. System Requirements
 
@@ -109,29 +107,18 @@ Before running this demo, you'll need to set up accounts and configure your deve
 ### Client-Side Flow
 
 1. **SDK Initialization**: Loads PayPal Web SDK with EPS components using a client token fetched from the server's `/paypal-api/auth/browser-safe-client-token` endpoint
-2. **Eligibility Check**: Verifies EPS is eligible for the merchant with EUR currency
-3. **Session Creation**: Creates EPS payment session with event callbacks for handling payment lifecycle events
-4. **Field Setup**: Mounts the required full name field
-5. **Validation**: Validates the field before initiating the payment flow
-6. **Payment Flow**: Opens a popup window where customers select their Austrian bank and authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
-7. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
-
-### EPS Payment Process
-
-1. Customer enters full name on merchant website
-2. Customer validates the field and clicks EPS button
-3. Popup opens showing EPS payment interface
-4. Customer selects their Austrian bank from the list
-5. Customer is redirected to their bank's online banking login
-6. Customer authorizes the payment through their bank
-7. Transaction is completed and customer returns to merchant site
+2. **Session Creation**: Creates EPS payment session with event callbacks for handling payment lifecycle events
+3. **Field Setup**: Mounts the required full name field
+4. **Validation**: Validates the field before initiating the payment flow
+5. **Payment Flow**: Opens a popup window where customers select their bank and authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
+6. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
 
 ### Server-Side Requirements
 
 The integration requires these endpoints (provided by the API server):
 
 - `GET /paypal-api/auth/browser-safe-client-token` - Generate client token
-- `POST /paypal-api/checkout/orders/create` - Create order (must use EUR currency)
+- `POST /paypal-api/checkout/orders/create` - Create order
 - `POST /paypal-api/checkout/orders/:orderId/capture` - Capture order
 
 ## Available Scripts
@@ -147,9 +134,7 @@ The integration requires these endpoints (provided by the API server):
 ### EPS not eligible
 
 - Verify `testBuyerCountry` is set to "AT" (Austria)
-- Check that `currencyCode` is set to "EUR" (Euro)
 - Ensure EPS is enabled for the merchant in PayPal account settings
-- Verify your PayPal account is configured to accept EUR currency
 
 ### Validation fails
 
@@ -163,27 +148,17 @@ The integration requires these endpoints (provided by the API server):
 - Verify order creation returns valid orderId
 - Ensure proper event handler setup
 - Check browser console for errors
-- Verify order is created with EUR currency
 
 ### Order creation fails
 
 - Verify API server is running on port 8080
 - Check server logs for errors
 - Validate order payload format
-- **Ensure currency_code is set to "EUR"** - this is required for EPS
-
-### Bank selection issues
-
-- Ensure customer selects a valid Austrian bank
-- Verify customer has active online banking credentials
-- Check that the bank supports EPS payments
 
 ## Important Notes
 
-- **Currency**: EPS payments **must** use EUR (Euro) currency
 - **Geographic Availability**: EPS is primarily available in Austria
 - **Required Fields**: EPS requires a full name field for the payer
-- **Bank Support**: Customers must have online banking access with an EPS-supporting Austrian bank
 - **Presentation Mode**: This implementation uses popup mode for the payment flow
 
 ## Documentation
