@@ -1,23 +1,7 @@
-const MERCHANT_ID = "7NU2UD5KWFN6U" // Sandbox testing merchant ID
-
 const getOrderAmount = () => { 
   return document.getElementById('order-amount-input').value || "100.00"
 }
 
-const orderPayload = {
-  intent: 'CAPTURE',
-  purchaseUnits: [
-    {
-      amount: {
-        currencyCode: "USD",
-        value: getOrderAmount(),
-      },
-      payee: { 
-        merchantId: MERCHANT_ID
-      } 
-    },
-  ]
-}
 
 async function onPayPalWebSdkLoaded() {
   try {
@@ -31,7 +15,6 @@ async function onPayPalWebSdkLoaded() {
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
       paymentFlow: "ONE_TIME_PAYMENT",
-      merchantId: MERCHANT_ID,
       amount: getOrderAmount()
     });
 
@@ -71,7 +54,7 @@ async function setupAchButton(sdkInstance) {
       presentationMode: "popup",
     }
     
-    const checkoutOptionsPromise = createOrder(orderPayload).then((orderId) => {
+    const checkoutOptionsPromise = createOrder().then((orderId) => {
       console.log("Created order", orderId);
       return orderId
     });
@@ -99,7 +82,18 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
-async function createOrder(orderPayload) {
+async function createOrder() {
+  const orderPayload = {
+    intent: 'CAPTURE',
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode: "USD",
+          value: getOrderAmount(),
+        },
+      },
+    ]
+  }
   const response = await fetch("/paypal-api/checkout/orders/create", {
     method: "POST",
     headers: {
