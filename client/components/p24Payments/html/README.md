@@ -167,7 +167,6 @@ The integration requires these endpoints (provided by the API server):
 - **Required Fields**: P24 requires both name and email fields for the payer
 - **Geographic Availability**: P24 is primarily available in Poland
 - **Presentation Mode**: This implementation uses popup mode for the payment flow
-- **Popular in Poland**: Przelewy24 is one of the most widely used payment methods in Poland
 
 ## Documentation
 
