@@ -10,7 +10,7 @@ This sample demonstrates a complete BLIK integration flow:
 2. Check eligibility for BLIK payment method
 3. Create BLIK payment session with required payment fields
 4. Validate customer information before initiating payment
-5. Authorize the payment through BLIK popup flow 
+5. Authorize the payment through BLIK popup flow
 6. Handle payment approval, cancellation, and errors
 
 ## Features
