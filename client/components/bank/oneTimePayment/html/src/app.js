@@ -14,7 +14,6 @@ async function onPayPalWebSdkLoaded() {
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
       paymentFlow: "ONE_TIME_PAYMENT",
-      paymentMethods: ["ACH"],
       merchantId: getMerchantId(),
     });
 
