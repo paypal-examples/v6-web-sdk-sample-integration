@@ -1,0 +1,67 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>P24 (Przelewy24) - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #p24-full-name,
+      #p24-email {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      p24-button {
+        max-width: 225px;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+        max-width: 700px;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .message.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>P24 (Przelewy24) One-Time Payment Integration</h1>
+
+    <div class="payment-container">
+      <div id="p24-full-name"></div>
+      <div id="p24-email"></div>
+      <p24-button id="p24-button" hidden></p24-button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
