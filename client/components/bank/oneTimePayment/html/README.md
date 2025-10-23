@@ -2,7 +2,7 @@
 
 This is a demo of how to integration Bank ACH One-time payment via PayPal Web SDK v6. Paypal SDK lets merchants provide Bank ACH as a payment method via plain HTML and javascript. 
 
-## 🏗️ Architecture Overview
+## ️Architecture Overview
 
 This sample demonstrates a complete Bank ACH integration flow: 
 
@@ -40,7 +40,7 @@ This sample demonstrates a complete Bank ACH integration flow:
 
 ### Client Setup
 
-1. **Navigate to the Apple Pay demo directory:**
+1. **Navigate to the Bank ACH One Time Payment demo directory:**
 
    ```bash
    cd client/components/bank/oneTimePayment/html
