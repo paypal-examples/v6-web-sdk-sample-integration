@@ -62,7 +62,6 @@ This sample demonstrates a complete Bank ACH integration flow:
 ## 🧪 Testing the Integration
 
 1. **Visit http://localhost:3000**
-    - Enter your Merchant ID
     - Click the Bank Payment button
     - The bank login popup will be displayed
 
