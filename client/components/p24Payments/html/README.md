@@ -20,7 +20,6 @@ This sample demonstrates a complete P24 integration flow:
 - Popup payment flow with online banking redirect
 - Eligibility checking for P24
 - Error handling and user feedback
-- PLN (Polish Złoty) currency support
 
 ## 📋 Prerequisites
 
@@ -47,7 +46,6 @@ Before running this demo, you'll need to set up accounts and configure your deve
    - Navigate to **Account Settings** by clicking the profile icon in the top right corner
    - Select **Payment methods** from the left sidebar
    - Find **Przelewy24 (P24)** in the payment methods and enable it
-   - Ensure your account is configured to accept **PLN (Polish Złoty)** currency
 
 ### 2. System Requirements
 
@@ -109,22 +107,11 @@ Before running this demo, you'll need to set up accounts and configure your deve
 ### Client-Side Flow
 
 1. **SDK Initialization**: Loads PayPal Web SDK with P24 components using a client token fetched from the server's `/paypal-api/auth/browser-safe-client-token` endpoint
-2. **Eligibility Check**: Verifies P24 is eligible for the merchant with PLN currency
-3. **Session Creation**: Creates P24 payment session with event callbacks for handling payment lifecycle events
-4. **Field Setup**: Mounts the required full name and email fields
-5. **Validation**: Validates both fields before initiating the payment flow
-6. **Payment Flow**: Opens a popup window where customers select their bank and complete payment through online banking. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
-7. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
-
-### P24 Payment Process
-
-1. Customer enters full name and email on merchant website
-2. Customer validates both fields and clicks P24 button
-3. Popup opens showing P24 payment interface
-4. Customer selects their bank from the list of Polish banks
-5. Customer is redirected to their bank's online banking system
-6. Customer authorizes the payment through their bank
-7. Transaction is completed and customer returns to merchant site
+2. **Session Creation**: Creates P24 payment session with event callbacks for handling payment lifecycle events
+3. **Field Setup**: Mounts the required full name and email fields
+4. **Validation**: Validates both fields before initiating the payment flow
+5. **Payment Flow**: Opens a popup window where customers select their bank and complete payment through online banking. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
+6. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
 
 ### Server-Side Requirements
 
@@ -147,9 +134,7 @@ The integration requires these endpoints (provided by the API server):
 ### P24 not eligible
 
 - Verify `testBuyerCountry` is set to "PL" (Poland)
-- Check that `currencyCode` is set to "PLN" (Polish Złoty)
 - Ensure P24 (Przelewy24) is enabled for the merchant in PayPal account settings
-- Verify your PayPal account is configured to accept PLN currency
 
 ### Validation fails
 
@@ -164,21 +149,12 @@ The integration requires these endpoints (provided by the API server):
 - Verify order creation returns valid orderId
 - Ensure proper event handler setup
 - Check browser console for errors
-- Verify order is created with PLN currency
 
 ### Order creation fails
 
 - Verify API server is running on port 8080
 - Check server logs for errors
 - Validate order payload format
-- **Ensure currency_code is set to "PLN"** - this is critical for P24
-
-### Bank selection issues
-
-- Ensure customer selects a valid Polish bank
-- Verify customer has active online banking credentials
-- Check that the bank supports Przelewy24 payments
-- Ensure customer completes the authorization in their bank's system
 
 ### Merchant not eligible
 
@@ -188,10 +164,8 @@ The integration requires these endpoints (provided by the API server):
 
 ## Important Notes
 
-- **Currency**: P24 payments **must** use PLN (Polish Złoty) currency
 - **Required Fields**: P24 requires both name and email fields for the payer
 - **Geographic Availability**: P24 is primarily available in Poland
-- **Bank Support**: Customers must have online banking access with a Przelewy24-supporting Polish bank
 - **Presentation Mode**: This implementation uses popup mode for the payment flow
 - **Popular in Poland**: Przelewy24 is one of the most widely used payment methods in Poland
 
