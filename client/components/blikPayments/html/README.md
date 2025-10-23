@@ -1,6 +1,6 @@
 # BLIK One-Time Payment Integration
 
-This example demonstrates how to integrate BLIK payments using PayPal's v6 Web SDK. BLIK is a popular mobile payment method in Poland that allows customers to make instant payments using a 6-digit code generated in their mobile banking app.
+This example demonstrates how to integrate BLIK payments using PayPal's v6 Web SDK. BLIK is a popular mobile payment method in Poland that allows customers to make instant payments in their mobile banking app.
 
 ## 🏗️ Architecture Overview
 
@@ -10,7 +10,7 @@ This sample demonstrates a complete BLIK integration flow:
 2. Check eligibility for BLIK payment method
 3. Create BLIK payment session with required payment fields
 4. Validate customer information before initiating payment
-5. Process payment through BLIK popup flow with 6-digit code entry
+5. Authorize the payment through BLIK popup flow 
 6. Handle payment approval, cancellation, and errors
 
 ## Features
@@ -113,19 +113,8 @@ Before running this demo, you'll need to set up accounts and configure your deve
 3. **Session Creation**: Creates BLIK payment session with event callbacks for handling payment lifecycle events
 4. **Field Setup**: Mounts the required full name and email fields
 5. **Validation**: Validates both fields before initiating the payment flow
-6. **Payment Flow**: Opens a popup window where customers enter their 6-digit BLIK code generated from their mobile banking app. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
+6. **Payment Flow**: Opens a popup window where customers select their bank and authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
 7. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
-
-### BLIK Payment Process
-
-1. Customer enters full name and email on merchant website
-2. Customer validates both fields and clicks BLIK button
-3. Popup opens showing BLIK payment interface
-4. Customer opens their mobile banking app
-5. Customer generates a 6-digit BLIK code in the app
-6. Customer enters the code in the payment interface
-7. Customer confirms the payment in their banking app
-8. Transaction is completed and customer returns to merchant site
 
 ### Server-Side Requirements
 
@@ -174,19 +163,11 @@ The integration requires these endpoints (provided by the API server):
 - Validate order payload format
 - **Ensure currency_code is set to "PLN"** - this is critical for BLIK
 
-### BLIK code entry issues
-
-- Ensure customer has access to their mobile banking app
-- Verify customer's bank supports BLIK
-- Check that the generated code is entered within the time limit (typically 2 minutes)
-- Ensure customer confirms the payment in their banking app
-
 ## Important Notes
 
 - **Currency**: BLIK payments **must** use PLN (Polish Złoty) currency
-- **Required Fields**: BLIK requires both name and email fields (unlike some other payment methods that only require name)
+- **Required Fields**: BLIK requires both name and email fields
 - **Geographic Availability**: BLIK is available in Poland
-- **Code Expiration**: BLIK codes generated in mobile banking apps typically expire after 2 minutes
 
 ## Documentation
 
