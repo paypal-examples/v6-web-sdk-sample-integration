@@ -8,7 +8,7 @@ This sample demonstrates a complete Bank ACH integration flow:
 
 1. Initialize PayPal Web SDK with Bank ACH component with a sample order creation.
 2. Opens popup for payer bank authentication and account selection when Bank ACH button is clicked.
-3. OnSuccess callback passed to SDK initialization captures order with returned order ID. 
+3. `onApprove` callback passed to SDK initialization for capturing the order with the returned order ID. 
 
 ### Server Setup
 

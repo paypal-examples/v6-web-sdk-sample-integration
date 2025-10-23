@@ -1,6 +1,4 @@
-const getMerchantId = () => { 
-  return document.getElementById('merchant-id-input').value || "7NU2UD5KWFN6U" // placeholder value. only for SB testing
-}
+const MERCHANT_ID = "7NU2UD5KWFN6U" // Sandbox testing merchant ID
 
 const getOrderAmount = () => { 
   return document.getElementById('order-amount-input').value || "100.00"
@@ -15,7 +13,7 @@ const orderPayload = {
         value: getOrderAmount(),
       },
       payee: { 
-        merchantId: getMerchantId()
+        merchantId: MERCHANT_ID
       } 
     },
   ]
@@ -33,7 +31,7 @@ async function onPayPalWebSdkLoaded() {
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
       paymentFlow: "ONE_TIME_PAYMENT",
-      merchantId: getMerchantId(),
+      merchantId: MERCHANT_ID,
       amount: getOrderAmount()
     });
 
