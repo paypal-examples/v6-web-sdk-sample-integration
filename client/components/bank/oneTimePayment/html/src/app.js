@@ -12,8 +12,6 @@ async function onPayPalWebSdkLoaded() {
     });
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
-      apiCode: "restApi",
-      countryCode: "US",
       currencyCode: "USD",
       paymentFlow: "ONE_TIME_PAYMENT",
       paymentMethods: ["ACH"],
