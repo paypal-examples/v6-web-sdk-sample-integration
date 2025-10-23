@@ -1,5 +1,24 @@
 const getMerchantId = () => { 
-  return document.getElementById('merchant-id-input').value
+  return document.getElementById('merchant-id-input').value || "7NU2UD5KWFN6U" // placeholder value. only for SB testing
+}
+
+const getOrderAmount = () => { 
+  return document.getElementById('order-amount-input').value || "100.00"
+}
+
+const orderPayload = {
+  intent: 'CAPTURE',
+  purchaseUnits: [
+    {
+      amount: {
+        currencyCode: "USD",
+        value: getOrderAmount(),
+      },
+      payee: { 
+        merchantId: getMerchantId()
+      } 
+    },
+  ]
 }
 
 async function onPayPalWebSdkLoaded() {
@@ -15,6 +34,7 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: "USD",
       paymentFlow: "ONE_TIME_PAYMENT",
       merchantId: getMerchantId(),
+      amount: getOrderAmount()
     });
 
     if (paymentMethods.isEligible("ach")) {
@@ -52,27 +72,11 @@ async function setupAchButton(sdkInstance) {
     const startOptions = {
       presentationMode: "popup",
     }
-
-    const orderPayload ={
-      intent: 'CAPTURE',
-      purchaseUnits: [
-        {
-          amount: {
-            currencyCode: "USD",
-            value: "100.00",
-          },
-          payee: { 
-            merchantId: getMerchantId()
-          } 
-        },
-      ]
-    }; 
+    
     const checkoutOptionsPromise = createOrder(orderPayload).then((orderId) => {
       console.log("Created order", orderId);
-
-      return orderId  
-    }
-    )
+      return orderId
+    });
     try { 
       await achPaymentSession.start(startOptions, checkoutOptionsPromise)
     } catch(e) { 
