@@ -10,7 +10,7 @@ This sample demonstrates a complete Bancontact integration flow:
 2. Check eligibility for Bancontact payment method
 3. Create Bancontact payment session with required payment fields
 4. Validate customer information before initiating payment
-5. Process payment through Bancontact popup flow with bank selection
+5. Process payment through Bancontact popup flow
 6. Handle payment approval, cancellation, and errors
 
 ## Features
@@ -111,7 +111,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
 3. **Session Creation**: Creates Bancontact payment session with event callbacks for handling payment lifecycle events
 4. **Field Setup**: Mounts the required full name field
 5. **Validation**: Validates fields before initiating the payment flow
-6. **Payment Flow**: Opens a popup window where customers select their bank and authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
+6. **Payment Flow**: Opens a popup window where customers authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
 7. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
 
 ### Server-Side Requirements
@@ -139,7 +139,7 @@ The integration requires these endpoints (provided by the API server):
 
 ### Validation fails
 
-- Ensure full name field is properly mounted
+- Ensure full name field is properly mounted with javascript
 - Check that field has valid input
 - Verify field is visible in the DOM
 
@@ -156,15 +156,7 @@ The integration requires these endpoints (provided by the API server):
 - Check server logs for errors
 - Validate order payload format
 
-## Key Differences from Other Payment Methods
-
-- **Currency**: Bancontact requires EUR (Euro) as the currency
-- **Country**: Primarily used in Belgium (set `testBuyerCountry: "BE"`)
-- **Required Field**: Full name field is mandatory for Bancontact payments
-- **Presentation Mode**: Supports popup mode for the payment flow
-
 ## Documentation
 
 - [PayPal Developer Documentation](https://developer.paypal.com/docs/)
 - [PayPal Developer Community](https://developer.paypal.com/community/)
-- [Bancontact Integration Guide](../../../BANCONTACT_INTEGRATION_GUIDE.md)
