@@ -104,6 +104,10 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 ## How It Works
 
+### Geographic Availability
+
+P24 is primarily available in Poland
+
 ### Client-Side Flow
 
 1. **SDK Initialization**: Loads PayPal Web SDK with P24 components using a client token fetched from the server's `/paypal-api/auth/browser-safe-client-token` endpoint
@@ -138,7 +142,7 @@ The integration requires these endpoints (provided by the API server):
 
 ### Validation fails
 
-- Ensure both full name and email fields are properly mounted
+- Ensure both full name and email fields are properly mounted with javascript
 - Check that both fields have valid input
 - Verify email format is correct
 - Ensure fields are visible in the DOM
@@ -161,12 +165,6 @@ The integration requires these endpoints (provided by the API server):
 - Verify your merchant account has P24 enabled
 - Check if merchant country is supported
 - Contact PayPal support for merchant account eligibility
-
-## Important Notes
-
-- **Required Fields**: P24 requires both name and email fields for the payer
-- **Geographic Availability**: P24 is primarily available in Poland
-- **Presentation Mode**: This implementation uses popup mode for the payment flow
 
 ## Documentation
 
