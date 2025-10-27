@@ -106,7 +106,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 ### Geographic Availability
 
-   EPS is primarily available in Austria
+EPS is primarily available in Austria
 
 ### Client-Side Flow
 
