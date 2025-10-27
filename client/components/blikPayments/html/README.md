@@ -106,6 +106,10 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 ## How It Works
 
+### Geographic Availability
+
+BLIK is available in Poland
+
 ### Client-Side Flow
 
 1. **SDK Initialization**: Loads PayPal Web SDK with BLIK components using a client token fetched from the server's `/paypal-api/auth/browser-safe-client-token` endpoint
@@ -143,7 +147,7 @@ The integration requires these endpoints (provided by the API server):
 
 ### Validation fails
 
-- Ensure both full name and email fields are properly mounted
+- Ensure both full name and email fields are properly mounted with javascript
 - Check that both fields have valid input
 - Verify email format is correct
 - Ensure fields are visible in the DOM
@@ -162,12 +166,6 @@ The integration requires these endpoints (provided by the API server):
 - Check server logs for errors
 - Validate order payload format
 - **Ensure currency_code is set to "PLN"** - this is critical for BLIK
-
-## Important Notes
-
-- **Currency**: BLIK payments **must** use PLN (Polish Złoty) currency
-- **Required Fields**: BLIK requires both name and email fields
-- **Geographic Availability**: BLIK is available in Poland
 
 ## Documentation
 
