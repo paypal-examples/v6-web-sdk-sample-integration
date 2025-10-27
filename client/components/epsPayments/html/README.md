@@ -10,7 +10,7 @@ This sample demonstrates a complete EPS integration flow:
 2. Check eligibility for EPS payment method
 3. Create EPS payment session with required payment fields
 4. Validate customer information before initiating payment
-5. Process payment through EPS popup flow with bank selection
+5. Process payment through EPS popup flow
 6. Handle payment approval, cancellation, and errors
 
 ## Features
@@ -104,13 +104,17 @@ Before running this demo, you'll need to set up accounts and configure your deve
 
 ## How It Works
 
+### Geographic Availability
+
+   EPS is primarily available in Austria
+
 ### Client-Side Flow
 
 1. **SDK Initialization**: Loads PayPal Web SDK with EPS components using a client token fetched from the server's `/paypal-api/auth/browser-safe-client-token` endpoint
 2. **Session Creation**: Creates EPS payment session with event callbacks for handling payment lifecycle events
 3. **Field Setup**: Mounts the required full name field
 4. **Validation**: Validates the field before initiating the payment flow
-5. **Payment Flow**: Opens a popup window where customers select their bank and authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
+5. **Payment Flow**: Opens a popup window where customers authorize the payment. The order is created server-side via `/paypal-api/checkout/orders/create` before displaying the popup
 6. **Completion**: Processes the payment result by capturing the approved order via `/paypal-api/checkout/orders/:orderId/capture`, or handles cancellation and error scenarios appropriately
 
 ### Server-Side Requirements
@@ -138,7 +142,7 @@ The integration requires these endpoints (provided by the API server):
 
 ### Validation fails
 
-- Ensure full name field is properly mounted
+- Ensure full name field is properly mounted with javascript
 - Check that the field has valid input
 - Verify field is visible in the DOM
 
@@ -154,12 +158,6 @@ The integration requires these endpoints (provided by the API server):
 - Verify API server is running on port 8080
 - Check server logs for errors
 - Validate order payload format
-
-## Important Notes
-
-- **Geographic Availability**: EPS is primarily available in Austria
-- **Required Fields**: EPS requires a full name field for the payer
-- **Presentation Mode**: This implementation uses popup mode for the payment flow
 
 ## Documentation
 
