@@ -40,3 +40,16 @@ export const captureOrder = async ({ orderId }: { orderId: string }) => {
 
   return data;
 };
+
+// POST /paypal-api/vault/setup-token/create
+export const createSetupToken = async () => {
+  const response = await fetch("/paypal-api/vault/setup-token/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const { id } = await response.json();
+  
+  return { vaultSetupToken: id };
+}
