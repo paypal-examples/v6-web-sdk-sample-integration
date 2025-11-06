@@ -9,10 +9,14 @@ const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
   // const { showBoundary } = useErrorBoundary();
+  const { onApprove, onCancel, onError } = paymentSessionOptions;
+
   const { handleClick } = usePayPalOneTimePaymentSession({
-    presentationMode: "auto",
+    presentationMode: "modal",
     createOrder,
-    ...paymentSessionOptions,
+    onApprove,
+    onCancel,
+    onError,
   });
 
   return (
