@@ -8,7 +8,6 @@ import type { PayPalOneTimePaymentSessionOptions } from "@paypal/react-paypal-js
 const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  // const { showBoundary } = useErrorBoundary();
   const { onApprove, onCancel, onError } = paymentSessionOptions;
 
   const { handleClick } = usePayPalOneTimePaymentSession({
