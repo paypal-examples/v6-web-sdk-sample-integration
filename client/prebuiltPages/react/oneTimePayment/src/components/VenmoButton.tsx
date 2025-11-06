@@ -11,7 +11,7 @@ const VenmoButton: React.FC<VenmoOneTimePaymentSessionOptions> = (
   const { onApprove, onCancel, onError } = paymentSessionOptions;
   
     const { handleClick } = useVenmoOneTimePaymentSession({
-      presentationMode: "modal",
+      presentationMode: "popup",
       createOrder,
       onApprove,
       onCancel,

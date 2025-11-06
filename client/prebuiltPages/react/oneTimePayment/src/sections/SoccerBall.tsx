@@ -9,7 +9,8 @@ import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
-import type { PayPalOneTimePaymentSessionOptions } from "@paypal/react-paypal-js/sdk-v6";
+import type { PayPalOneTimePaymentSessionOptions, SavePaymentSessionOptions } from "@paypal/react-paypal-js/sdk-v6";
+import { PayPalSavePaymentButton } from "../components/PayPalSavePaymentButton";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -51,6 +52,25 @@ const SoccerBall: React.FC = () => {
       setModalState("error");
     },
   };
+
+  const handleSavePaymentCallbacks: SavePaymentSessionOptions = {
+    onApprove: async (data) => {
+      console.log("Payment approved:", data);
+      // const captureResult = await captureOrder({ orderId: data.orderId });
+      // console.log("Payment capture result:", captureResult);
+      setModalState("success");
+    },
+
+    onCancel: () => {
+      console.log("Payment cancelled");
+      setModalState("cancel");
+    },
+
+    onError: (error: Error) => {
+      console.error("Payment error:", error);
+      setModalState("error");
+    },
+  }
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
@@ -99,6 +119,7 @@ const SoccerBall: React.FC = () => {
 
       <div className="payment-options">
         {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        {isPayPalEligible && <PayPalSavePaymentButton {...handleSavePaymentCallbacks} />}
         {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
       </div>
     </div>
