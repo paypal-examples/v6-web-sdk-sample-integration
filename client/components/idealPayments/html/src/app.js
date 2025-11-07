@@ -92,7 +92,10 @@ function setupButtonHandler(idealCheckout) {
         const createOrderPromise = createOrder();
 
         // Start payment flow with popup mode
-        await idealCheckout.start({ presentationMode: "popup" }, createOrderPromise);
+        await idealCheckout.start(
+          { presentationMode: "popup" },
+          createOrderPromise,
+        );
       } else {
         console.error("Validation failed");
         showMessage({
