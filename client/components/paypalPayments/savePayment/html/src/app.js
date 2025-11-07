@@ -46,9 +46,10 @@ async function setupPayPalButton(sdkInstance) {
 
   paypalButton.addEventListener("click", async () => {
     try {
+      const createVaultSetupTokenPromise = createVaultSetupToken();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createVaultSetupToken(),
+        createVaultSetupTokenPromise,
       );
     } catch (error) {
       console.error(error);

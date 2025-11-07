@@ -23,9 +23,10 @@ const VenmoButton: React.FC<PaymentSessionOptions> = (
     if (!venmoSession.current) return;
 
     try {
+      const createOrderPromise = createOrder();
       await venmoSession.current.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (e) {
       console.error(e);

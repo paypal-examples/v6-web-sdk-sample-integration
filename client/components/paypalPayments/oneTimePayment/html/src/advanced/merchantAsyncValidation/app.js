@@ -59,12 +59,13 @@ async function setupPayPalButton(sdkInstance) {
     hideError();
 
     try {
+      const createOrderPromise = validateAndCreateOrder();
       await paypalPaymentSession.start(
         {
           presentationMode: "auto",
           loadingScreen: { label: "connecting" },
         },
-        validateAndCreateOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);

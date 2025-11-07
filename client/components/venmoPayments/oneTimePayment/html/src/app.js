@@ -44,9 +44,10 @@ async function setupVenmoButton(sdkInstance) {
 
   venmoButton.addEventListener("click", async () => {
     try {
+      const createOrderPromise = createOrder();
       await venmoPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);

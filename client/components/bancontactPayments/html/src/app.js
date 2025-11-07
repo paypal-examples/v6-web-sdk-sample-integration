@@ -90,10 +90,12 @@ function setupButtonHandler(bancontactCheckout) {
       if (isValid) {
         console.log("Validation successful, starting payment flow...");
 
+        const createOrderPromise = createOrder();
+
         // Start payment flow with popup mode
         await bancontactCheckout.start(
           { presentationMode: "popup" },
-          createOrder(),
+          createOrderPromise,
         );
       } else {
         console.error("Validation failed");

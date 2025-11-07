@@ -24,9 +24,10 @@ async function onV6PayPalWebSdkLoaded() {
     );
 
     v6Button.addEventListener("click", async () => {
+      const createOrderPromise = createOrder();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     });
     shouldShowV6Button = true;

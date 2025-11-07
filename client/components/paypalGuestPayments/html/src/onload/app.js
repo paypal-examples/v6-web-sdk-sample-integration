@@ -10,7 +10,8 @@ async function startGuestPaymentSession(
       targetElement: checkoutButton,
       presentationMode: "auto",
     };
-    await paypalGuestPaymentSession.start(startOptions, createOrder());
+    const createOrderPromise = createOrder();
+    await paypalGuestPaymentSession.start(startOptions, createOrderPromise);
   } catch (error) {
     console.error(error);
   }

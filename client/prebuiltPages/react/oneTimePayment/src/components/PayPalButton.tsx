@@ -23,9 +23,10 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
     if (!paypalSession.current) return;
 
     try {
+      const createOrderPromise = createOrder();
       await paypalSession.current.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (e) {
       console.error(e);

@@ -38,14 +38,14 @@ async function setupPayPalButton(sdkInstance) {
   paypalButton.removeAttribute("hidden");
 
   paypalButton.addEventListener("click", async () => {
-    const createOrderPromiseReference = createOrder();
+    const createOrderPromise = createOrder();
     const presentationModesToTry = ["payment-handler", "popup", "modal"];
 
     for (const presentationMode of presentationModesToTry) {
       try {
         await paypalPaymentSession.start(
           { presentationMode },
-          createOrderPromiseReference,
+          createOrderPromise,
         );
         // exit early when start() successfully resolves
         break;
