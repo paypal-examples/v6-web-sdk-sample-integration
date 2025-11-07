@@ -23,9 +23,6 @@ jobs:
         with:
           node-version: ${{ env.NVMRC }}
 
-      # - name: 📦 Install patch-package globally
-      #   run: npm install -g patch-package
-
       - name: 📥 Download deps
         run: >
           find . -name package.json -maxdepth 10 -type f -not -path "*/node_modules/*" | while read -r file; do
