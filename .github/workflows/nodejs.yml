@@ -23,8 +23,8 @@ jobs:
         with:
           node-version: ${{ env.NVMRC }}
 
-      - name: 📦 Install patch-package globally
-        run: npm install -g patch-package
+      # - name: 📦 Install patch-package globally
+      #   run: npm install -g patch-package
 
       - name: 📥 Download deps
         run: >
