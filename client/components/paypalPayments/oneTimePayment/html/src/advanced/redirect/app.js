@@ -42,7 +42,7 @@ async function setupPayPalButton(paypalPaymentSession) {
   paypalButton.removeAttribute("hidden");
 
   paypalButton.addEventListener("click", async () => {
-    const createOrderPromise = createRedirectOrder();
+    const createRedirectOrderPromise = createRedirectOrder();
 
     try {
       const { redirectURL } = await paypalPaymentSession.start(
@@ -52,7 +52,7 @@ async function setupPayPalButton(paypalPaymentSession) {
             enabled: enableAutoRedirect.checked,
           },
         },
-        createOrderPromise,
+        createRedirectOrderPromise,
       );
       if (redirectURL) {
         console.log(`redirectURL: ${redirectURL}`);
