@@ -42,6 +42,8 @@ async function setupPayPalButton(paypalPaymentSession) {
   paypalButton.removeAttribute("hidden");
 
   paypalButton.addEventListener("click", async () => {
+    // get the promise reference by invoking createRedirectOrder()
+    // do not await this async function since it can cause transient activation issues
     const createRedirectOrderPromise = createRedirectOrder();
 
     try {

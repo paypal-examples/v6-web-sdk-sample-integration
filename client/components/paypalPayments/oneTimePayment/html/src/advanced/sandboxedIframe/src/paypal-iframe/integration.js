@@ -117,6 +117,8 @@ async function setupPayPalButton(sdkInstance) {
     });
 
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
       const createOrderPromise = createOrder();
       await pageState.paymentSession.start(
         paymentFlowConfig,

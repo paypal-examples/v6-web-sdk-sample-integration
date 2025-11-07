@@ -46,6 +46,8 @@ async function setupPayPalButton(sdkInstance) {
 
   paypalButton.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createVaultSetupToken()
+      // do not await this async function since it can cause transient activation issues
       const createVaultSetupTokenPromise = createVaultSetupToken();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
