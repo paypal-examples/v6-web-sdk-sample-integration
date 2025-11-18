@@ -89,8 +89,15 @@ function setupButtonHandler(idealCheckout) {
       if (isValid) {
         console.log("Validation successful, starting payment flow...");
 
+        // get the promise reference by invoking createOrder()
+        // do not await this async function since it can cause transient activation issues
+        const createOrderPromise = createOrder();
+
         // Start payment flow with popup mode
-        await idealCheckout.start({ presentationMode: "popup" }, createOrder());
+        await idealCheckout.start(
+          { presentationMode: "popup" },
+          createOrderPromise,
+        );
       } else {
         console.error("Validation failed");
         showMessage({

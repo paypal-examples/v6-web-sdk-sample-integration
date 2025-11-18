@@ -57,9 +57,12 @@ async function setupPayPalButton(sdkInstance) {
 
   paypalButton.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);
@@ -80,9 +83,12 @@ async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
 
   paylaterButton.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await paylaterPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);
@@ -105,9 +111,12 @@ async function setupPayPalCreditButton(
 
   paypalCreditButton.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await paypalCreditPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);

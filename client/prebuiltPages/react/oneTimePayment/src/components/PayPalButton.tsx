@@ -23,9 +23,12 @@ const PayPalButton: React.FC<PaymentSessionOptions> = (
     if (!paypalSession.current) return;
 
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await paypalSession.current.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (e) {
       console.error(e);

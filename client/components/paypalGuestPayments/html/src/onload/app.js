@@ -10,7 +10,10 @@ async function startGuestPaymentSession(
       targetElement: checkoutButton,
       presentationMode: "auto",
     };
-    await paypalGuestPaymentSession.start(startOptions, createOrder());
+    // get the promise reference by invoking createOrder()
+    // do not await this async function since it can cause transient activation issues
+    const createOrderPromise = createOrder();
+    await paypalGuestPaymentSession.start(startOptions, createOrderPromise);
   } catch (error) {
     console.error(error);
   }

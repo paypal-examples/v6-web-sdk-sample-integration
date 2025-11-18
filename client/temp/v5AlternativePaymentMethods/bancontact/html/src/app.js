@@ -24,9 +24,12 @@ async function onV6PayPalWebSdkLoaded() {
     );
 
     v6Button.addEventListener("click", async () => {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     });
     shouldShowV6Button = true;
