@@ -29,7 +29,7 @@ const CardField: React.FC<CardFieldProps> = ({
     return () => {
       field.remove();
     };
-  }, [cardFieldsSession]);
+  }, [cardFieldsSession, type, placeholder]);
 
   return cardFieldsSession ? <div style={style} ref={containerRef} /> : null;
 };
