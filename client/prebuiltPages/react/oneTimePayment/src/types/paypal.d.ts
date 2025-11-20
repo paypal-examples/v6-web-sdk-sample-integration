@@ -86,8 +86,8 @@ type SessionOutput = {
 
 type CardFieldsSessionOutput = {
   createCardFieldsComponent: (config: {
-    type: "number" | "expiry" | "cvv",
-    placeholder: string,
+    type: "number" | "expiry" | "cvv";
+    placeholder: string;
   }) => HTMLElement;
 };
 

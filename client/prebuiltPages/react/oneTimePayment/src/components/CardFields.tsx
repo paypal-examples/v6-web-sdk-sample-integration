@@ -9,36 +9,41 @@ type CardFieldProps = {
   style: React.CSSProperties;
 };
 
-const CardField: React.FC<CardFieldProps> = ({ style, cardFieldsSession, type, placeholder }) => {
+const CardField: React.FC<CardFieldProps> = ({
+  style,
+  cardFieldsSession,
+  type,
+  placeholder,
+}) => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!cardFieldsSession) return;
-    
+
     const field = cardFieldsSession.createCardFieldsComponent({
       type,
       placeholder,
     });
     containerRef.current?.appendChild(field);
 
-    return () => { field.remove(); };
+    return () => {
+      field.remove();
+    };
   }, [cardFieldsSession]);
-  
-  return cardFieldsSession ? (
-    <div style={style} ref={containerRef} />
-   ) : (
-    null
-  );
+
+  return cardFieldsSession ? <div style={style} ref={containerRef} /> : null;
 };
 
 const CardFields: React.FC = () => {
   const { sdkInstance } = useContext(PayPalSDKContext);
   const cardFieldsSessionRef = useRef<CardFieldsSessionOutput | null>(null);
-  const [ isCardFieldSessionReady, setIsCardFieldSessionReady ] = useState<boolean>(false);
-  
+  const [isCardFieldSessionReady, setIsCardFieldSessionReady] =
+    useState<boolean>(false);
+
   useEffect(() => {
     if (sdkInstance) {
-      cardFieldsSessionRef.current = sdkInstance.createCardFieldsOneTimePaymentSession();
+      cardFieldsSessionRef.current =
+        sdkInstance.createCardFieldsOneTimePaymentSession();
       setIsCardFieldSessionReady(true);
     }
 
@@ -49,13 +54,16 @@ const CardFields: React.FC = () => {
   }, [sdkInstance]);
 
   return isCardFieldSessionReady ? (
-    <div style={{
-      width: "100%",
-    }}>
+    <div
+      style={{
+        width: "100%",
+      }}
+    >
       <CardField
         style={{ height: "3rem", marginBottom: "1rem" }}
         cardFieldsSession={cardFieldsSessionRef.current}
-        type="number" placeholder="Card Number"
+        type="number"
+        placeholder="Card Number"
       />
       <CardField
         style={{ height: "3rem", marginBottom: "1rem" }}
