@@ -33,41 +33,44 @@ const CardField: React.FC<CardFieldProps> = ({ style, cardFieldsSession, type, p
 
 const CardFields: React.FC = () => {
   const { sdkInstance } = useContext(PayPalSDKContext);
-  const [ cardFieldsSession, setCardFieldsSession] = useState<CardFieldsSessionOutput | null>(null);
-
+  const cardFieldsSessionRef = useRef<CardFieldsSessionOutput | null>(null);
+  const [ isCardFieldSessionReady, setIsCardFieldSessionReady ] = useState<boolean>(false);
+  
   useEffect(() => {
     if (sdkInstance) {
-      setCardFieldsSession(sdkInstance.createCardFieldsOneTimePaymentSession());
+      cardFieldsSessionRef.current = sdkInstance.createCardFieldsOneTimePaymentSession();
+      setIsCardFieldSessionReady(true);
     }
 
     return () => {
-      setCardFieldsSession(null);
+      cardFieldsSessionRef.current = null;
+      setIsCardFieldSessionReady(false);
     };
   }, [sdkInstance]);
 
-  return (
+  return isCardFieldSessionReady ? (
     <div style={{
       width: "100%",
     }}>
       <CardField
         style={{ height: "3rem", marginBottom: "1rem" }}
-        cardFieldsSession={cardFieldsSession}
+        cardFieldsSession={cardFieldsSessionRef.current}
         type="number" placeholder="Card Number"
       />
       <CardField
         style={{ height: "3rem", marginBottom: "1rem" }}
-        cardFieldsSession={cardFieldsSession}
+        cardFieldsSession={cardFieldsSessionRef.current}
         type="expiry"
         placeholder="MM/YY"
       />
       <CardField
         style={{ height: "3rem", marginBottom: "1rem" }}
-        cardFieldsSession={cardFieldsSession}
+        cardFieldsSession={cardFieldsSessionRef.current}
         type="cvv"
         placeholder="CVV"
       />
     </div>
-  );
+  ) : null;
 };
 
 export default CardFields;
