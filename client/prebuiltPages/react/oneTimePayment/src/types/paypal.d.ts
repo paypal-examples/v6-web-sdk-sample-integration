@@ -18,7 +18,7 @@ declare module "react" {
   }
 }
 
-export type Component = "paypal-payments" | "venmo-payments";
+export type Component = "paypal-payments" | "venmo-payments" | "card-fields";
 export type PageType =
   | "cart"
   | "checkout"
@@ -64,6 +64,8 @@ export type SdkInstance = {
   createVenmoOneTimePaymentSession: (
     paymentSessionOptions: PaymentSessionOptions,
   ) => SessionOutput;
+  // "card-fields" component
+  createCardFieldsOneTimePaymentSession: () => CardFieldsSessionOutput;
   findEligibleMethods: (
     findEligibleMethodsOptions: FindEligibleMethodsOptions,
   ) => Promise<EligiblePaymentMethods>;
@@ -80,6 +82,13 @@ type SessionOutput = {
   ) => Promise<void>;
   destroy: () => void;
   cancel: () => void;
+};
+
+type CardFieldsSessionOutput = {
+  createCardFieldsComponent: (config: {
+    type: "number" | "expiry" | "cvv",
+    placeholder: string,
+  }) => HTMLElement;
 };
 
 type StartSessionInput = {
