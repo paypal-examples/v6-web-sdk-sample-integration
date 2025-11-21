@@ -40,7 +40,7 @@ function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <PayPalSDKProvider
         clientToken={clientToken}
-        components={["paypal-payments", "venmo-payments"]}
+        components={["card-fields"]}
         pageType="checkout"
       >
         <h1>React One-Time Payment Recommended Integration</h1>
