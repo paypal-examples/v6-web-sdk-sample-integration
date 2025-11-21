@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef, useState } from "react";
+import { JSX, useContext, useEffect, useRef, useState } from "react";
 import { CardFieldsSessionOutput } from "../types/paypal";
 import { PayPalSDKContext } from "../context/sdkContext";
 
@@ -9,12 +9,12 @@ type CardFieldProps = {
   style: React.CSSProperties;
 };
 
-const CardField: React.FC<CardFieldProps> = ({
+const CardField = ({
   style,
   cardFieldsSession,
   type,
   placeholder,
-}) => {
+}: CardFieldProps): JSX.Element | null => {
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -34,7 +34,7 @@ const CardField: React.FC<CardFieldProps> = ({
   return cardFieldsSession ? <div style={style} ref={containerRef} /> : null;
 };
 
-const CardFields: React.FC = () => {
+const CardFields = (): JSX.Element | null => {
   const { sdkInstance } = useContext(PayPalSDKContext);
   const cardFieldsSessionRef = useRef<CardFieldsSessionOutput | null>(null);
   const [isCardFieldSessionReady, setIsCardFieldSessionReady] =
