@@ -1,8 +1,6 @@
-import React, { useContext, useState, useCallback } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useState, useCallback } from "react";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
-import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
@@ -10,6 +8,8 @@ import soccerBallImage from "../static/images/world-cup.jpg";
 import { captureOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
+import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
+import type { PayPalOneTimePaymentSessionOptions } from "@paypal/react-paypal-js/sdk-v6";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -29,12 +29,12 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
+  const { sdkInstance, eligiblePaymentMethods } = usePayPal();
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
-  const handlePaymentCallbacks: PaymentSessionOptions = {
-    onApprove: async (data: OnApproveData) => {
+  const handlePaymentCallbacks: PayPalOneTimePaymentSessionOptions = {
+    onApprove: async (data) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
       console.log("Payment capture result:", captureResult);
