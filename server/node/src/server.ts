@@ -1,6 +1,5 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { config } from "dotenv";
 import { join, resolve } from "path";
 
 import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
@@ -13,9 +12,6 @@ import {
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
-
-const envFilePath = join(__dirname, "../../../", ".env");
-config({ path: envFilePath });
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY ??
