@@ -18,7 +18,8 @@ const envFilePath = join(__dirname, "../../../", ".env");
 config({ path: envFilePath });
 
 const CLIENT_STATIC_DIRECTORY =
-  process.env.CLIENT_STATIC_DIRECTORY ?? join(__dirname, "../../../client/components");
+  process.env.CLIENT_STATIC_DIRECTORY ??
+  join(__dirname, "../../../client/components");
 
 const app = express();
 
