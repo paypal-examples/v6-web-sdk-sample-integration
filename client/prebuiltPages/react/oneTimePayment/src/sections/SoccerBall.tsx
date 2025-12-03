@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from "react";
+import PayLaterButton from "../components/PayLaterButton";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
 import ProductDisplay from "../components/ProductDisplay";
@@ -81,8 +82,16 @@ const SoccerBall: React.FC = () => {
   // Check payment method eligibility
   const isPayPalEligible =
     sdkInstance && eligiblePaymentMethods?.isEligible("paypal");
+  const isPayLaterEligible =
+    sdkInstance && eligiblePaymentMethods?.isEligible("paylater");
   const isVenmoEligible =
     sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
+
+  let paylaterPaymentMethodDetails;
+  if (isPayLaterEligible) {
+    paylaterPaymentMethodDetails =
+      eligiblePaymentMethods?.getDetails("paylater");
+  }
 
   const modalContent = getModalContent(modalState);
 
@@ -99,7 +108,14 @@ const SoccerBall: React.FC = () => {
 
       <div className="payment-options">
         {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
-
+        {/* TODO credit */}
+        {/* TODO is unpacking the props */}
+        {isPayLaterEligible && paylaterPaymentMethodDetails && (
+          <PayLaterButton
+            {...paylaterPaymentMethodDetails}
+            {...handlePaymentCallbacks}
+          />
+        )}
         {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
       </div>
     </div>

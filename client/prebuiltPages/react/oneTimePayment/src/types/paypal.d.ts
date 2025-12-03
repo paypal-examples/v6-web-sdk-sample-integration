@@ -2,6 +2,8 @@
 
 import type {
   CreateInstanceOptions,
+  PayLaterCountryCodes,
+  PayLaterProductCodes,
   SdkInstance,
 } from "@paypal/react-paypal-js/sdk-v6";
 
@@ -19,6 +21,7 @@ declare module "react" {
   namespace JSX {
     interface IntrinsicElements {
       "paypal-button": ButtonProps;
+      "paypal-pay-later-button": PayLaterButtonProps;
       "venmo-button": ButtonProps;
     }
   }
@@ -26,4 +29,9 @@ declare module "react" {
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
   type: string;
+}
+
+export interface PayLaterButtonProps extends ButtonProps {
+  countryCode: PayLaterCountryCodes;
+  productCode: PayLaterProductCodes;
 }
