@@ -1,6 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
 import { join, resolve } from "path";
+import ngrok from "@ngrok/ngrok";
 
 import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
@@ -155,6 +156,16 @@ async function savePaymentTokenToDatabase(
 
 const port = process.env.PORT ?? 8080;
 
-app.listen(port, () => {
+app.listen(port, async () => {
   console.log(`API server listening at http://localhost:${port}`);
+  try {
+    const url = await ngrok.connect({
+      addr: port,
+      authtoken: process.env.NGROK_AUTHTOKEN,
+      domain: process.env.NGROK_DOMAIN,
+    });
+    console.log(`ngrok tunnel established at: ${url}`);
+  } catch (err) {
+    console.error("Error connecting to ngrok:", err);
+  }
 });
