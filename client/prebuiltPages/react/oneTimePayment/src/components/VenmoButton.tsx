@@ -2,7 +2,7 @@ import React from "react";
 import { createOrder } from "../utils";
 import { useVenmoOneTimePaymentSession } from "@paypal/react-paypal-js/sdk-v6";
 import type {
-  VenmoOneTimePaymentSessionOptions,
+  VenmoOneTimePaymentSessionOptions
 } from "@paypal/react-paypal-js/sdk-v6";
 
 const VenmoButton: React.FC<VenmoOneTimePaymentSessionOptions> = (

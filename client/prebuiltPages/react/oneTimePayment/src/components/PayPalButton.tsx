@@ -2,18 +2,20 @@ import React from "react";
 
 import { createOrder } from "../utils";
 // import { useErrorBoundary } from "react-error-boundary";
-import { usePayPalOneTimePaymentSession } from "@paypal/react-paypal-js/sdk-v6";
+import {
+  usePayPalOneTimePaymentSession,
+} from "@paypal/react-paypal-js/sdk-v6";
 import type { PayPalOneTimePaymentSessionOptions } from "@paypal/react-paypal-js/sdk-v6";
 
 const PayPalButton: React.FC<PayPalOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  const { onApprove, onCancel, onError } = paymentSessionOptions;
-
+  const { onApprove, onCancel, onError, onComplete } = paymentSessionOptions;
   const { handleClick } = usePayPalOneTimePaymentSession({
     presentationMode: "modal",
     createOrder,
     onApprove,
+    onComplete,
     onCancel,
     onError,
   });

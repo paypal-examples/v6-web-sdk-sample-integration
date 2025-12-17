@@ -53,3 +53,35 @@
   gap: 12px;
   width: 100%;
 }
+
+.quantity-selector {
+  margin: 20px 0;
+  padding: 15px;
+  border: 1px solid #e0e0e0;
+  border-radius: 8px;
+  background-color: #f9f9f9;
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.quantity-selector label {
+  font-weight: 600;
+  font-size: 16px;
+}
+
+.quantity-selector input {
+  width: 80px;
+  padding: 8px 12px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  font-size: 16px;
+}
+
+.quantity-selector .total-amount {
+  margin: 0;
+  font-size: 18px;
+  font-weight: bold;
+  color: #0070ba;
+  margin-left: auto;
+}

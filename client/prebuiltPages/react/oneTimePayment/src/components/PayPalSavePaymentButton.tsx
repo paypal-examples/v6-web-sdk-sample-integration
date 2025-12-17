@@ -21,7 +21,7 @@ export const PayPalSavePaymentButton: React.FC<SavePaymentSessionOptions> = (
   return (
     <paypal-button
       onClick={handleClick}
-      type="pay"
+      type='donate'
       id="paypal-button"
     ></paypal-button>
   );

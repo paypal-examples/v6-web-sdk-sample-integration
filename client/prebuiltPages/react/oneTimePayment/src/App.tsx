@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
+import { FindEligiblePaymentMethodsRequestPayload, PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
@@ -23,9 +23,38 @@ function ErrorFallback({ error }: { error: Error }) {
   );
 }
 
+  const eligibleMethodsPayload: FindEligiblePaymentMethodsRequestPayload = {
+    preferences: {
+      payment_flow: "ONE_TIME_PAYMENT",
+      payment_source_constraint: {
+        constraint_type: "INCLUDE",
+        payment_sources: [
+          "PAYPAL_CREDIT",
+          "PAYPAL_PAY_LATER",
+          "PAYPAL",
+          "VENMO",
+        ] as const,
+      },
+    },
+    purchase_units: [
+      {
+        amount: {
+          currency_code: "USD",
+          value: "100.00",
+        },
+      },
+    ],
+  };
+
 function App() {
   const [clientToken, setClientToken] = useState<string>("");
   const [locale, setLocale] = useState<string>("en-US");
+
+   console.log("📱 App render", {
+      clientToken: clientToken?.substring(0, 10),
+      locale,
+      timestamp: Date.now()
+  });
 
   useEffect(() => {
     const getClientToken = async () => {
@@ -57,11 +86,12 @@ function App() {
         </select>
       </div>
       <PayPalProvider
-        components={["paypal-payments", "venmo-payments"]}
+        components={["paypal-payments", "venmo-payments", "paypal-guest-payments", "paypal-messages"]}
         clientToken={clientToken}
         pageType="checkout"
         environment="sandbox"
         locale={locale}
+        eligibleMethodsPayload={eligibleMethodsPayload}
       >
         <h1>React One-Time Payment Recommended Integration</h1>
         <SoccerBall />

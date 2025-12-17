@@ -5,12 +5,26 @@ import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
 import soccerBallImage from "../static/images/world-cup.jpg";
-import { captureOrder } from "../utils";
+import { captureOrder, createOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
-import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
-import type { PayPalOneTimePaymentSessionOptions, SavePaymentSessionOptions } from "@paypal/react-paypal-js/sdk-v6";
+import {
+  usePayPal,
+  PayPalOneTimePaymentButton,
+  VenmoOneTimePaymentButton,
+} from "@paypal/react-paypal-js/sdk-v6";
+import type {
+  PayPalOneTimePaymentSessionOptions,
+  SavePaymentSessionOptions,
+} from "@paypal/react-paypal-js/sdk-v6";
 import { PayPalSavePaymentButton } from "../components/PayPalSavePaymentButton";
+import PayLaterButton from "../components/PayLaterButton";
+// import GuestPaymentButton from "../components/GuestPaymentButton";
+import {
+  PayPalMessages,
+  ManualMessagingComponent,
+  PayPalMessagesLearnMore,
+} from "../components/PayPalMessages";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -30,8 +44,10 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = usePayPal();
+  const { eligiblePaymentMethods } = usePayPal();
   const [modalState, setModalState] = useState<ModalType>(null);
+  const [quantity, setQuantity] = useState<number>(1);
+  const totalAmount = (PRODUCT.price * quantity).toFixed(2);
 
   // Payment handlers
   const handlePaymentCallbacks: PayPalOneTimePaymentSessionOptions = {
@@ -45,6 +61,11 @@ const SoccerBall: React.FC = () => {
     onCancel: () => {
       console.log("Payment cancelled");
       setModalState("cancel");
+    },
+
+    onComplete: (data) => {
+      console.log("On Complete Called");
+      console.log("On Complete data:", data);
     },
 
     onError: (error: Error) => {
@@ -70,7 +91,7 @@ const SoccerBall: React.FC = () => {
       console.error("Payment error:", error);
       setModalState("error");
     },
-  }
+  };
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
@@ -99,10 +120,10 @@ const SoccerBall: React.FC = () => {
   );
 
   // Check payment method eligibility
-  const isPayPalEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("paypal");
-  const isVenmoEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
+  const isPayPalEligible = eligiblePaymentMethods?.eligible_methods.paypal;
+  const isVenmoEligible = eligiblePaymentMethods?.eligible_methods.venmo;
+  const isPayLaterEligible =
+    eligiblePaymentMethods?.eligible_methods.paypal_pay_later;
 
   const modalContent = getModalContent(modalState);
 
@@ -117,10 +138,42 @@ const SoccerBall: React.FC = () => {
 
       <ProductDisplay product={PRODUCT} />
 
+      <div className="quantity-selector">
+        <label htmlFor="quantity-input">Quantity:</label>
+        <input
+          type="number"
+          id="quantity-input"
+          min="1"
+          max="10"
+          value={quantity}
+          onChange={(e) => setQuantity(Math.max(1, Number(e.target.value)))}
+        />
+        <p className="total-amount">Total: ${totalAmount}</p>
+      </div>
+
       <div className="payment-options">
-        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
-        {isPayPalEligible && <PayPalSavePaymentButton {...handleSavePaymentCallbacks} />}
-        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
+        {/* {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        {isPayLaterEligible && <PayLaterButton {...handlePaymentCallbacks} />}
+        {isPayPalEligible && (
+          <PayPalSavePaymentButton {...handleSavePaymentCallbacks} />
+        )}
+        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />} */}
+        {/* <GuestPaymentButton {...handlePaymentCallbacks} /> */}
+        {/* <PayPalMessages amount={totalAmount} />
+        <ManualMessagingComponent amount={totalAmount}/> */}
+        <PayPalMessagesLearnMore initialAmount={totalAmount} />
+        {/* <PayPalOneTimePaymentButton
+          createOrder={createOrder}
+          onApprove={(data: Record<string, unknown>) => {
+            console.log("on approve", data);
+          }}
+        />
+        <VenmoOneTimePaymentButton
+          createOrder={createOrder}
+          onApprove={(data: Record<string, unknown>) => {
+            console.log("on approve", data);
+          }}
+        /> */}
       </div>
     </div>
   );
