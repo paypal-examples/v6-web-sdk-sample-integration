@@ -92,7 +92,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
    - This is the domain that needs to be added to the vite server config and registered for Apple Pay in your PayPal developer account
 
 5. **Update Vite configuration:**
-   - Open `applePay/html/vite.config.js`
+   - Open `client/components/applepayPayments/html/vite.config.js`
    - Add your ngrok domain to the allowed hosts:
 
    ```javascript
@@ -151,7 +151,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 1. **Navigate to the Apple Pay demo directory:**
 
    ```bash
-   cd client/components/applePay/html
+   cd client/components/applepayPayments/html
    ```
 
 2. **Install dependencies:**

@@ -59,12 +59,15 @@ async function setupPayPalButton(sdkInstance) {
     hideError();
 
     try {
+      // get the promise reference by invoking validateAndCreateOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = validateAndCreateOrder();
       await paypalPaymentSession.start(
         {
           presentationMode: "auto",
           loadingScreen: { label: "connecting" },
         },
-        validateAndCreateOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);

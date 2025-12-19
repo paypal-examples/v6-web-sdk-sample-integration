@@ -23,9 +23,12 @@ const VenmoButton: React.FC<PaymentSessionOptions> = (
     if (!venmoSession.current) return;
 
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await venmoSession.current.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (e) {
       console.error(e);

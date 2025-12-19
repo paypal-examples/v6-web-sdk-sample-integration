@@ -60,9 +60,12 @@ async function setupPayPalButton(sdkInstance: AppSdkInstance) {
 
   paypalButton?.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);
@@ -89,9 +92,12 @@ async function setupPayLaterButton(
 
     paylaterButton?.addEventListener("click", async () => {
       try {
+        // get the promise reference by invoking createOrder()
+        // do not await this async function since it can cause transient activation issues
+        const createOrderPromise = createOrder();
         await paylaterPaymentSession.start(
           { presentationMode: "auto" },
-          createOrder(),
+          createOrderPromise,
         );
       } catch (error) {
         console.error(error);
@@ -118,9 +124,12 @@ async function setupPayPalCreditButton(
 
     paypalCreditButton.addEventListener("click", async () => {
       try {
+        // get the promise reference by invoking createOrder()
+        // do not await this async function since it can cause transient activation issues
+        const createOrderPromise = createOrder();
         await paypalCreditPaymentSession.start(
           { presentationMode: "auto" },
-          createOrder(),
+          createOrderPromise,
         );
       } catch (error) {
         console.error(error);
@@ -185,9 +194,9 @@ async function captureOrder({ orderId }: { orderId: string }) {
     },
   );
   type OrderResponse = OrderResponseMinimal & {
-    payer: Record<string, any>;
-    paymentSource: Record<string, any>;
-    purchaseUnits: Record<string, any>[];
+    payer: Record<string, unknown>;
+    paymentSource: Record<string, unknown>;
+    purchaseUnits: Record<string, unknown>[];
   };
 
   const data: OrderResponse = await response.json();
