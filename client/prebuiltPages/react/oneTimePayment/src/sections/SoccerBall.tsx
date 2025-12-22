@@ -25,6 +25,7 @@ import {
   ManualMessagingComponent,
   PayPalMessagesLearnMore,
 } from "../components/PayPalMessages";
+import PayPalCreditButton from "../components/PayPalCreditButton";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -152,16 +153,17 @@ const SoccerBall: React.FC = () => {
       </div>
 
       <div className="payment-options">
-        {/* {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
         {isPayLaterEligible && <PayLaterButton {...handlePaymentCallbacks} />}
         {isPayPalEligible && (
           <PayPalSavePaymentButton {...handleSavePaymentCallbacks} />
         )}
-        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />} */}
+        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
+        <PayPalCreditButton {...handlePaymentCallbacks} />
         {/* <GuestPaymentButton {...handlePaymentCallbacks} /> */}
         {/* <PayPalMessages amount={totalAmount} />
         <ManualMessagingComponent amount={totalAmount}/> */}
-        <PayPalMessagesLearnMore initialAmount={totalAmount} />
+        {/* <PayPalMessagesLearnMore initialAmount={totalAmount} /> */}
         {/* <PayPalOneTimePaymentButton
           createOrder={createOrder}
           onApprove={(data: Record<string, unknown>) => {

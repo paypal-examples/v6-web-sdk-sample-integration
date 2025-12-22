@@ -20,6 +20,7 @@ declare module "react" {
     interface IntrinsicElements {
       "paypal-button": ButtonProps;
       "venmo-button": ButtonProps;
+      "paypal-credit-button": PayPalCreditButtonProps;
       "paypal-pay-later-button": PayLaterButtonProps;
       "paypal-basic-card-button": PayPalBasicCardButtonProps;
       "paypal-basic-card-container": React.HTMLAttributes<HTMLElement>;
@@ -40,6 +41,10 @@ interface PayLaterButtonProps extends React.HTMLAttributes<HTMLElement> {
 interface PayPalBasicCardButtonProps extends React.HTMLAttributes<HTMLElement> {
   buyerCountry: string;
   ref?: React.Ref<HTMLElement>;
+}
+
+interface PayPalCreditButtonProps extends React.HTMLAttributes<HTMLElement> {
+  countryCode?: string;
 }
 
 export interface PayPalMessagesElement extends React.HTMLAttributes<HTMLElement> {
