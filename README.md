@@ -42,9 +42,4 @@ This repository contains sample integrations for PayPal's v6 Web SDK. Learn how 
    npm install
    npm start
    ```
-5. To view the sample integration in your browser, choose a front-end implementation from the `client` folder at the root of this repository and follow the instructions in that folder's README. For example, for the one-time payments html example run:
-   ```bash
-   cd client/components/paypalPayments/oneTimePayment/html
-   npm install
-   npm start
-   ```
+5. After running the server, go to [http://localhost:8080](http://localhost:8080) to see the client examples.

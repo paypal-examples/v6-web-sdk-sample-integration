@@ -12,7 +12,7 @@
     "format:check": "prettier . --check",
     "lint": "echo \"eslint is not set up\"",
     "prestart": "npm run check-node-version",
-    "start": "dotenvx run -f ../../.env -- tsx --watch src/server.ts",
+    "start": "dotenvx run -f ../../.env --quiet -- tsx --watch src/server.ts",
     "start-production": "NODE_ENV=production node dist/server.js"
   },
   "license": "Apache-2.0",
