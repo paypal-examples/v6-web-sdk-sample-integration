@@ -9,12 +9,6 @@ This HTML sample integration uses HTML, JavaScript, and CSS. It does not require
 
 Before running this sample integration, ensure that Google Pay is enabled in your sandbox account. Follow the instructions in the [PayPal documentation to integrate Google Pay](https://developer.paypal.com/docs/checkout/apm/google-pay/#set-up-your-sandbox-account-to-accept-google-pay) to set up your sandbox account to accept Google Pay payments.
 
-## How to Run Locally
-
-```bash
-npm install
-npm start
-```
 
 ### Sample Integration
 
