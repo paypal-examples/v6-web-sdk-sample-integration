@@ -151,29 +151,28 @@ async function savePaymentTokenToDatabase(
   return Promise.resolve();
 }
 
-async function setupNgrokForHTTPS() {
-  const { NGROK_AUTHTOKEN, NGROK_DOMAIN } = process.env;
+async function setupNgrokForHTTPS(port: number) {
+  const { NGROK_AUTHTOKEN } = process.env;
 
-  if (!NGROK_AUTHTOKEN || !NGROK_DOMAIN) {
+  if (!NGROK_AUTHTOKEN) {
     return;
   }
 
   try {
-    const url = await ngrok.connect({
+    const listener = await ngrok.connect({
       addr: port,
-      authtoken: process.env.NGROK_AUTHTOKEN,
-      domain: process.env.NGROK_DOMAIN,
+      authtoken: NGROK_AUTHTOKEN,
     });
 
-    console.log(`ngrok tunnel established at: ${url}`);
+    console.log(`Ingress secure tunnel established at: ${listener.url()}`);
   } catch (error) {
     console.error("error connecting to ngrok: ", error);
   }
 }
 
-const port = process.env.PORT ?? 8080;
+const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 
 app.listen(port, async () => {
-  console.log(`server listening at http://localhost:${port}`);
-  await setupNgrokForHTTPS();
+  console.log(`Node.js web server listening at: http://localhost:${port}`);
+  await setupNgrokForHTTPS(port);
 });

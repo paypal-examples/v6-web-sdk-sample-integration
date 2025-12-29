@@ -62,11 +62,10 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 
 ### `ngrok` Setup
 
-1. **Add ngrok auth token and domain to .env file:**
+1. **Add ngrok auth token to .env file:**
 
    ```bash
-   NGROK_AUTHTOKEN=YOUR_AUTHTOKEN_HERE
-   NGROK_DOMAIN=example.ngrok-free.app
+   NGROK_AUTHTOKEN=your_ngrok_authtoken
    ```
 
 2. **Register ngrok domain with PayPal:**
@@ -104,6 +103,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
    ```env
    PAYPAL_SANDBOX_CLIENT_ID=your_paypal_sandbox_client_id
    PAYPAL_SANDBOX_CLIENT_SECRET=your_paypal_sandbox_client_secret
+   NGROK_AUTHTOKEN=your_ngrok_authtoken
    ```
 
 4. **Start the server:**
@@ -169,7 +169,6 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
    - Verify you're using Safari browser
    - Verify Apple Pay is enabled in your PayPal application
    - Ensure Apple Pay is enabled in Safari **Settings** -> **Advanced** -> `Allow websites to check for Apple Pay and Apple Card`
-   - Ensure your `ngrok` domain is added to `vite.config.js` -> `defineConfig` -> `server` -> `allowedHosts`
 
 2. **Merchant Validation Fails**
    - Verify your domain is registered with Apple Pay at [developer.paypal.com](https://developer.paypal.com)
