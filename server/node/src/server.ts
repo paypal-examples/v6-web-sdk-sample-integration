@@ -1,6 +1,6 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
-import { join, resolve } from "path";
+import { join } from "path";
 import ngrok from "@ngrok/ngrok";
 
 import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
@@ -14,24 +14,13 @@ import {
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
-const CLIENT_STATIC_DIRECTORY =
-  process.env.CLIENT_STATIC_DIRECTORY ??
-  join(__dirname, "../../../client/components");
+const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client/components");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use(express.static(CLIENT_STATIC_DIRECTORY));
-
-/* ######################################################################
- * Entry point for client examples containing HTML, JS, and CSS
- * ###################################################################### */
-
-app.get("/", (_req: Request, res: Response) => {
-  const path = resolve(CLIENT_STATIC_DIRECTORY + "/index.html");
-  res.sendFile(path);
-});
 
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
@@ -169,7 +158,7 @@ async function setupNgrokForHTTPS() {
     });
 
     console.log(`ngrok tunnel established at: ${url}`);
-  } catch(error) {
+  } catch (error) {
     console.error("error connecting to ngrok: ", error);
   }
 }
