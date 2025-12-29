@@ -62,48 +62,14 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 
 ### `ngrok` Setup
 
-1. **Install ngrok globally:**
+1. **Add ngrok auth token and domain to .env file:**
 
    ```bash
-   npm install -g ngrok
+   NGROK_AUTHTOKEN=YOUR_AUTHTOKEN_HERE
+   NGROK_DOMAIN=example.ngrok-free.app
    ```
 
-2. **Authenticate ngrok:**
-   - Copy your authtoken and run:
-
-   ```bash
-   ngrok config add-authtoken YOUR_AUTHTOKEN_HERE
-   ```
-
-3. **Start ngrok tunnel:**
-
-   ```bash
-   ngrok http 3000
-   ```
-
-4. **Note your HTTPS URL:**
-   - ngrok will display output similar to:
-
-   ```
-   Forwarding  https://example.ngrok-free.app -> http://localhost:3000
-   ```
-
-   - Copy the domain (e.g. `example.ngrok-free.app`)
-   - This is the domain that needs to be added to the vite server config and registered for Apple Pay in your PayPal developer account
-
-5. **Update Vite configuration:**
-   - Open `client/components/applepayPayments/html/vite.config.js`
-   - Add your ngrok domain to the allowed hosts:
-
-   ```javascript
-   export default defineConfig({
-     server: {
-       allowedHosts: ["example.ngrok-free.app"],
-     },
-   });
-   ```
-
-6. **Register ngrok domain with PayPal:**
+2. **Register ngrok domain with PayPal:**
    - In your PayPal developer dashboard, navigate to your app's Apple Pay settings under **Features** -> **Accept payments** -> **Apple Pay** -> **Manage**
    - Add your ngrok domain (e.g. `example.ngrok-free.app`) to the approved domains list
    - Before clicking **Register Domain**, download and save the domain association file to `applePay/html/.well-known/apple-developer-merchantid-domain-association`
@@ -118,7 +84,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 - The tunnel will stay active as long as the ngrok process is running
 - Always use the HTTPS URL provided by ngrok for Apple Pay testing
 
-### Server Setup
+### Starting the server
 
 1. **Navigate to the server directory:**
 
@@ -145,26 +111,6 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
    npm start
    ```
    The server will run on `https://localhost:8080`
-
-### Client Setup
-
-1. **Navigate to the Apple Pay demo directory:**
-
-   ```bash
-   cd client/components/applepayPayments/html
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm start
-   ```
-   The demo will be available at `http://localhost:3000`
 
 ## 🧪 Testing the Integration
 

@@ -154,18 +154,29 @@ async function savePaymentTokenToDatabase(
   return Promise.resolve();
 }
 
-const port = process.env.PORT ?? 8080;
+async function setupNgrokForHTTPS() {
+  const { NGROK_AUTHTOKEN, NGROK_DOMAIN } = process.env;
 
-app.listen(port, async () => {
-  console.log(`API server listening at http://localhost:${port}`);
+  if (!NGROK_AUTHTOKEN || !NGROK_DOMAIN) {
+    return;
+  }
+
   try {
     const url = await ngrok.connect({
       addr: port,
       authtoken: process.env.NGROK_AUTHTOKEN,
       domain: process.env.NGROK_DOMAIN,
     });
+
     console.log(`ngrok tunnel established at: ${url}`);
-  } catch (err) {
-    console.error("Error connecting to ngrok:", err);
+  } catch(error) {
+    console.error("error connecting to ngrok: ", error);
   }
+}
+
+const port = process.env.PORT ?? 8080;
+
+app.listen(port, async () => {
+  console.log(`server listening at http://localhost:${port}`);
+  await setupNgrokForHTTPS();
 });
