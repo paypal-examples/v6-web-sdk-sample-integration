@@ -12,6 +12,10 @@ const paypalGlobalNamespace = await loadCoreSdkScript({
   environment: "sandbox",
 });
 
+if (!paypalGlobalNamespace) {
+  throw new Error("PayPal Core SDK script failed to load");
+}
+
 try {
   const clientToken = await getBrowserSafeClientToken();
   const sdkInstance = await paypalGlobalNamespace.createInstance({
