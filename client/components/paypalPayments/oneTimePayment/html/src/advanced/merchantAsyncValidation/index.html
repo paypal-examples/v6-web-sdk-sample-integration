@@ -2,15 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>One-Time Payment - Merchant Async Validation - PayPal Web SDK</title>
+    <title>Merchant Async Validation - One-Time Payment - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
     <style>
-      .buttons-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-
       .validation-controls {
         width: fit-content;
         background: #f5f5f5;
@@ -45,24 +40,18 @@
         margin-right: 8px;
       }
 
-      .error-display {
-        background: #ffebee;
-        color: #c62828;
-        padding: 15px;
-        border-radius: 4px;
-        margin-bottom: 20px;
-        display: none;
-      }
-
-      .error-display.show {
-        display: block;
+      .alert-container {
+        max-width: 50rem;
+        margin-top: 4rem;
       }
     </style>
   </head>
   <body>
-    <h1>One-Time Payment Merchant Async Validation</h1>
-
-    <div class="error-display"></div>
+    <h1>Merchant Async Validation</h1>
+    <p>
+      This integration teaches how to add async validation logic to the PayPal
+      button that runs on button click.
+    </p>
 
     <div class="validation-controls">
       <h3>Validation Settings</h3>
@@ -85,9 +74,9 @@
       </div>
     </div>
 
-    <div class="buttons-container">
-      <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
-    </div>
+    <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+    <div class="alert-container"></div>
+
     <script src="app.js"></script>
 
     <script
@@ -95,5 +84,7 @@
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onPayPalWebSdkLoaded()"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>

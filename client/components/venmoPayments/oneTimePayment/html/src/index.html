@@ -2,28 +2,24 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>
-      Venmo One-Time Payment - Recommended Integration - PayPal Web SDK
-    </title>
+    <title>Venmo Payments - One-time Payment Flow - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
-      .buttons-container {
-        display: flex;
-        flex-direction: column;
-        gap: 0.75rem;
-      }
       .alert-container {
         max-width: 50rem;
         margin-top: 4rem;
       }
     </style>
+    <link rel="stylesheet" href="/client/shared/styles.css" />
   </head>
   <body>
-    <h1>Venmo One-Time Payment Recommended Integration</h1>
+    <h1>Venmo Payments</h1>
+    <p>
+      This is the recommended integration pattern for the one-time payment flow
+      with the venmo-payments component.
+    </p>
 
-    <div class="buttons-container">
-      <venmo-button id="venmo-button" type="pay" hidden></venmo-button>
-    </div>
+    <venmo-button id="venmo-button" type="pay" hidden></venmo-button>
     <div class="alert-container"></div>
 
     <script src="app.js"></script>
