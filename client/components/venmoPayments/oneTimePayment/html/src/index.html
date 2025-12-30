@@ -2,22 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>One-Time Payment - Recommended Integration - PayPal Web SDK</title>
+    <title>
+      Venmo One-Time Payment - Recommended Integration - PayPal Web SDK
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <style>
       .buttons-container {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 0.75rem;
+      }
+      .alert-container {
+        max-width: 50rem;
+        margin-top: 4rem;
       }
     </style>
   </head>
   <body>
-    <h1>One-Time Payment Recommended Integration</h1>
+    <h1>Venmo One-Time Payment Recommended Integration</h1>
 
     <div class="buttons-container">
       <venmo-button id="venmo-button" type="pay" hidden></venmo-button>
     </div>
+    <div class="alert-container"></div>
+
     <script src="app.js"></script>
 
     <script
@@ -25,5 +33,7 @@
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onPayPalWebSdkLoaded()"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>
