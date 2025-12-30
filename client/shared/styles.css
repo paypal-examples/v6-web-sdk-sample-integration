@@ -1,0 +1,31 @@
+*,
+:after,
+:before {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0 auto;
+  padding: 1rem;
+  font-family:
+    PayPalOpen-Regular, Helvetica, Arial, "Liberation Sans", sans-serif;
+  font-size: 1rem;
+  font-weight: 400;
+  line-height: 1.5;
+  color: #212529;
+  background-color: #ffffff;
+  max-width: 60rem;
+}
+
+h1 {
+  font-size: 2rem;
+  font-weight: 600;
+  margin-top: 0;
+  margin-bottom: 2rem;
+  color: #000000;
+  text-wrap: balance;
+}
+
+p {
+  margin: 1rem 0;
+}

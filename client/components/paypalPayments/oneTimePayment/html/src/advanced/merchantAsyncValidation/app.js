@@ -25,12 +25,21 @@ const paymentSessionOptions = {
     const orderData = await captureOrder({
       orderId: data.orderId,
     });
+    renderAlert({
+      type: "success",
+      message: `Order successfully captured! ${JSON.stringify(data)}`,
+    });
     console.log("Capture result", orderData);
   },
   onCancel(data) {
+    renderAlert({ type: "warning", message: "onCancel() callback called" });
     console.log("onCancel", data);
   },
   onError(error) {
+    renderAlert({
+      type: "danger",
+      message: `onError() callback called: ${error}`,
+    });
     console.log("onError", error);
   },
 };
@@ -56,8 +65,6 @@ async function setupPayPalButton(sdkInstance) {
   }
 
   paypalButton.addEventListener("click", async () => {
-    hideError();
-
     try {
       // get the promise reference by invoking validateAndCreateOrder()
       // do not await this async function since it can cause transient activation issues
@@ -71,7 +78,7 @@ async function setupPayPalButton(sdkInstance) {
       );
     } catch (error) {
       console.error(error);
-      showError(error.message);
+      renderAlert({ type: "danger", message: error.message });
     }
   });
 }
@@ -84,6 +91,10 @@ async function runAsyncValidation() {
   const delay = parseInt(delayInput.value) || 0;
   const shouldPass = passCheckbox.checked;
 
+  renderAlert({
+    type: "info",
+    message: `Running async validation with ${delay}ms delay...`,
+  });
   console.log(`Running async validation with ${delay}ms delay...`);
 
   return new Promise((resolve, reject) => {
@@ -97,6 +108,7 @@ async function runAsyncValidation() {
   });
 }
 
+// TODO replace these:
 function showError(message) {
   const errorDiv = document.querySelector(".error-display");
   errorDiv.textContent = message;
@@ -131,6 +143,7 @@ async function createOrder() {
     },
   );
   const { id } = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return { orderId: id };
 }
@@ -148,4 +161,26 @@ async function captureOrder({ orderId }) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertContainer = document.querySelector(".alert-container");
+  if (!alertContainer) {
+    return;
+  }
+
+  // remove existing alert
+  const existingAlertComponent =
+    alertContainer.querySelector("alert-component");
+  existingAlertComponent?.remove();
+
+  const alertComponent = document.createElement("alert-component");
+  alertComponent.setAttribute("type", type);
+
+  const alertMessageSlot = document.createElement("span");
+  alertMessageSlot.setAttribute("slot", "alert-message");
+  alertMessageSlot.innerText = message;
+
+  alertComponent.append(alertMessageSlot);
+  alertContainer.append(alertComponent);
 }
