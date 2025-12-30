@@ -8,7 +8,11 @@
       .buttons-container {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 0.75rem;
+      }
+      .alert-container {
+        max-width: 50rem;
+        margin-top: 4rem;
       }
     </style>
   </head>
@@ -26,6 +30,8 @@
         hidden
       ></paypal-credit-button>
     </div>
+    <div class="alert-container"></div>
+
     <script src="app.js"></script>
 
     <script
@@ -33,5 +39,7 @@
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onPayPalWebSdkLoaded()"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>
