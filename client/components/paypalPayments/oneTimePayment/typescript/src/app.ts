@@ -73,7 +73,9 @@ try {
 }
 
 async function setupPayPalButton(sdkInstance: AppSdkInstance) {
-  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(paymentSessionOptions);
+  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
+    paymentSessionOptions,
+  );
 
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton?.removeAttribute("hidden");
@@ -224,7 +226,7 @@ async function captureOrder({ orderId }: { orderId: string }) {
 type RenderAlertOptions = {
   type: "success" | "info" | "warning" | "danger";
   message: string;
-}
+};
 
 function renderAlert({ type, message }: RenderAlertOptions) {
   const alertContainer = document.querySelector(".alert-container");
