@@ -4,6 +4,9 @@ import { defineConfig } from "vite";
 export default defineConfig({
   plugins: [],
   root: "src",
+  // use a relative base path for hosting dist folder from:
+  // /client/components/paypalPayments/oneTimePayment/typescript/src/dist/index.html
+  base: './',
   server: {
     port: 3000,
     proxy: {
@@ -12,6 +15,11 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
       },
+      "/client": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      }
     },
   },
 });
