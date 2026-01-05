@@ -1,25 +1,38 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>One-Time Payment - Redirect Flow - PayPal Web SDK</title>
+    <title>Redirect - One-time Payment Flow - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+    </style>
   </head>
 
   <body>
-    <h1>Paypal Redirect Flow</h1>
+    <h1>Redirect Presentation Mode</h1>
+    <p>
+      This integration uses the redirect presentation mode with the
+      paypal-payments component.
+    </p>
     <div>
       <input type="checkbox" id="enable-auto-redirect" checked />
       <label for="enable-auto-redirect"> Enable auto-redirect </label>
     </div>
-    <div id="button-container">
-      <paypal-button id="paypal-button" hidden></paypal-button>
-    </div>
+    <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+    <alert-component></alert-component>
 
     <script src="app.js"></script>
+
     <script
       async
       onload="onPayPalWebSdkLoaded()"
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>

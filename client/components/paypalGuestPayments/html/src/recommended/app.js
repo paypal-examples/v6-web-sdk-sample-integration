@@ -22,7 +22,7 @@ async function setupGuestPaymentButton(sdkInstance) {
       await sdkInstance.createPayPalGuestOneTimePaymentSession({
         onApprove,
         onCancel,
-        onComplete,
+        onWarn,
         onError,
       });
 
@@ -53,19 +53,32 @@ async function onApprove(data) {
   const orderData = await captureOrder({
     orderId: data.orderId,
   });
+  renderAlert({
+    type: "success",
+    message: `Order successfully captured! ${JSON.stringify(data)}`,
+  });
   console.log("Capture result", orderData);
 }
 
 function onCancel(data) {
+  renderAlert({ type: "warning", message: "onCancel() callback called" });
   console.log("onCancel", data);
 }
 
-function onComplete(data) {
-  console.log("onComplete", data);
+function onWarn(error) {
+  renderAlert({
+    type: "warning",
+    message: `onWarn() callback called: ${error}`,
+  });
+  console.log("onWarn", error);
 }
 
-function onError(data) {
-  console.log("onError", data);
+function onError(error) {
+  renderAlert({
+    type: "danger",
+    message: `onError() callback called: ${error}`,
+  });
+  console.log("onError", error);
 }
 
 async function getBrowserSafeClientToken() {
@@ -91,6 +104,7 @@ async function createOrder() {
     },
   );
   const { id } = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return { orderId: id };
 }
@@ -108,4 +122,14 @@ async function captureOrder({ orderId }) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }

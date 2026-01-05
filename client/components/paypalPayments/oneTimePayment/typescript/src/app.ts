@@ -3,6 +3,7 @@ import { loadCoreSdkScript } from "@paypal/paypal-js/sdk-v6";
 import type {
   SdkInstance,
   OnApproveDataOneTimePayments,
+  OnErrorData,
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
 
@@ -11,6 +12,35 @@ type AppSdkInstance = SdkInstance<["paypal-payments", "venmo-payments"]>;
 const paypalGlobalNamespace = await loadCoreSdkScript({
   environment: "sandbox",
 });
+
+if (!paypalGlobalNamespace) {
+  throw new Error("PayPal Core SDK script failed to load");
+}
+
+const paymentSessionOptions = {
+  async onApprove(data: OnApproveDataOneTimePayments) {
+    console.log("onApprove", data);
+    const orderData = await captureOrder({
+      orderId: data.orderId,
+    });
+    renderAlert({
+      type: "success",
+      message: `Order successfully captured! ${JSON.stringify(data)}`,
+    });
+    console.log("Capture result", orderData);
+  },
+  onCancel() {
+    renderAlert({ type: "warning", message: "onCancel() callback called" });
+    console.log("onCancel");
+  },
+  onError(error: OnErrorData) {
+    renderAlert({
+      type: "danger",
+      message: `onError() callback called: ${error}`,
+    });
+    console.log("onError", error);
+  },
+};
 
 try {
   const clientToken = await getBrowserSafeClientToken();
@@ -42,18 +72,10 @@ try {
   console.error(error);
 }
 
-async function onApproveCallback(data: OnApproveDataOneTimePayments) {
-  console.log("onApprove", data);
-  const orderData = await captureOrder({
-    orderId: data.orderId,
-  });
-  console.log("Capture result", orderData);
-}
-
 async function setupPayPalButton(sdkInstance: AppSdkInstance) {
-  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession({
-    onApprove: onApproveCallback,
-  });
+  const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
+    paymentSessionOptions,
+  );
 
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton?.removeAttribute("hidden");
@@ -78,9 +100,7 @@ async function setupPayLaterButton(
   paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">,
 ) {
   const paylaterPaymentSession =
-    sdkInstance.createPayLaterOneTimePaymentSession({
-      onApprove: onApproveCallback,
-    });
+    sdkInstance.createPayLaterOneTimePaymentSession(paymentSessionOptions);
 
   const { productCode, countryCode } = paylaterPaymentMethodDetails;
   const paylaterButton = document.querySelector("#paylater-button");
@@ -111,9 +131,7 @@ async function setupPayPalCreditButton(
   paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">,
 ) {
   const paypalCreditPaymentSession =
-    sdkInstance.createPayPalCreditOneTimePaymentSession({
-      onApprove: onApproveCallback,
-    });
+    sdkInstance.createPayPalCreditOneTimePaymentSession(paymentSessionOptions);
 
   const { countryCode } = paypalCreditPaymentMethodDetails;
   const paypalCreditButton = document.querySelector("#paypal-credit-button");
@@ -179,6 +197,7 @@ async function createOrder() {
     },
   );
   const { id }: OrderResponseMinimal = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return { orderId: id };
 }
@@ -202,4 +221,20 @@ async function captureOrder({ orderId }: { orderId: string }) {
   const data: OrderResponse = await response.json();
 
   return data;
+}
+
+type RenderAlertOptions = {
+  type: "success" | "info" | "warning" | "danger";
+  message: string;
+};
+
+function renderAlert({ type, message }: RenderAlertOptions) {
+  const alertComponentElement =
+    document.querySelector<HTMLElement>("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }

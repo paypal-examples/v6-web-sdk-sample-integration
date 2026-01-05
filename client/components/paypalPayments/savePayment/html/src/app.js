@@ -23,15 +23,24 @@ async function onPayPalWebSdkLoaded() {
 const paymentSessionOptions = {
   async onApprove(data) {
     console.log("onApprove", data);
+    renderAlert({
+      type: "success",
+      message: `Vault Setup Token successfully approved! ${JSON.stringify(data)}`,
+    });
     const createPaymentTokenResponse = await createPaymentToken(
       data.vaultSetupToken,
     );
     console.log("Create payment token response: ", createPaymentTokenResponse);
   },
   onCancel(data) {
+    renderAlert({ type: "warning", message: "onCancel() callback called" });
     console.log("onCancel", data);
   },
   onError(error) {
+    renderAlert({
+      type: "danger",
+      message: `onError() callback called: ${error}`,
+    });
     console.log("onError", error);
   },
 };
@@ -79,6 +88,10 @@ async function createVaultSetupToken() {
     },
   });
   const { id } = await response.json();
+  renderAlert({
+    type: "info",
+    message: `Vault Setup Token successfully created: ${id}`,
+  });
 
   return { vaultSetupToken: id };
 }
@@ -94,4 +107,14 @@ async function createPaymentToken(vaultSetupToken) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }

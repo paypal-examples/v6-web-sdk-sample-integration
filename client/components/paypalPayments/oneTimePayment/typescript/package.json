@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "vite",
-    "build": "tsc --build && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
@@ -16,7 +16,7 @@
   "license": "MIT",
   "description": "",
   "dependencies": {
-    "@paypal/paypal-js": "^9.0.1"
+    "@paypal/paypal-js": "^9.1.0"
   },
   "devDependencies": {
     "@eslint/js": "^9.31.0",

@@ -1,20 +1,10 @@
 # One-Time Payments Google Pay Sample Integration
 
-This HTML sample integration uses HTML, JavaScript, and CSS. It does not require a build process to transpile the source code. It's just static files that can be served up by any web server. [Vite](https://vite.dev/) is used for the local web server to provide the following functionality:
-
-1. Serve up the static HTML and JavaScript files.
-2. Proxy the API server so both the client and server are running on port 3000.
+This GooglePay HTML sample integration uses HTML, JavaScript, and CSS. It does not require a build process to transpile the source code. It's just static files that can be served up by any web server.
 
 ## Prerequisites
 
 Before running this sample integration, ensure that Google Pay is enabled in your sandbox account. Follow the instructions in the [PayPal documentation to integrate Google Pay](https://developer.paypal.com/docs/checkout/apm/google-pay/#set-up-your-sandbox-account-to-accept-google-pay) to set up your sandbox account to accept Google Pay payments.
-
-## How to Run Locally
-
-```bash
-npm install
-npm start
-```
 
 ### Sample Integration
 

@@ -4,16 +4,9 @@
     <meta charset="UTF-8" />
     <title>Open Guest Payments on Page Load - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <style>
-      .buttons-container {
-        display: flex;
-        flex-direction: column;
-        gap: 12px;
-      }
-    </style>
+    <link rel="stylesheet" href="/client/shared/styles.css" />
   </head>
   <body>
-    <a href="/">&lt; Back</a>
     <h1>Open Guest Payments on Page Load Integration</h1>
     <p>
       In his example, if the buyer is eligible to see the inline form, the
@@ -28,12 +21,16 @@
         id="paypal-basic-card-button"
       ></paypal-basic-card-button>
     </paypal-basic-card-container>
+    <alert-component></alert-component>
 
     <script src="app.js"></script>
+
     <script
       async
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onPayPalWebSdkLoaded()"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>
