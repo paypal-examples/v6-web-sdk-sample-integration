@@ -3,12 +3,89 @@ class AlertComponent extends HTMLElement {
     super();
 
     const shadowRoot = this.attachShadow({ mode: "open" });
-    shadowRoot.appendChild(this.#styleElement);
+
+    // styles
+    const styleElement = document.createElement("style");
+    styleElement.textContent = AlertComponent.styles;
+    shadowRoot.appendChild(styleElement);
+
+    // html
+    const alertContainerElement = document.createElement("div");
+    alertContainerElement.id = "alert-container";
+    alertContainerElement.setAttribute("role", "alert");
+    alertContainerElement.innerHTML = `
+      <div id="icon-container"></div>
+      <slot></slot>
+    `;
+
+    shadowRoot.appendChild(alertContainerElement);
   }
+
+  static observedAttributes = ["type"];
+
+  static styles = `
+    :host {
+      --success-color: #084a22;
+      --success-background-color: #d0f1dd;
+      --success-border-color: #a1e3bb;
+
+      --info-color: #003e58;
+      --info-background-color: #ccebf8;
+      --info-border-color: #99d7f1;
+
+      --warning-color: #60410c;
+      --warning-background-color: #fcedd2;
+      --warning-border-color: #f9daa5;
+
+      --danger-color: #651717;
+      --danger-background-color: #fed7d7;
+      --danger-border-color: #feb0b0;
+
+      display: block;
+      margin: 1rem 0;
+    }
+    #alert-container {
+      display: flex;
+      align-items: center;
+      text-align: left;
+      border-radius: 0.5rem;
+      padding: 1rem;
+      border-width: 1px;
+    }
+    #alert-container svg {
+      width: 1.5rem;
+      height: 1.5rem;
+      margin-right: 0.5rem;
+      flex-shrink: 0;
+    }
+    .alert-success {
+      color: var(--success-color);
+      background-color: var(--success-background-color);
+      border-color: var(--success-border-color);
+    }
+    .alert-info {
+      color: var(--info-color);
+      background-color: var(--info-background-color);
+      border-color: var(--info-border-color);
+    }
+    .alert-warning {
+      color: var(--warning-color);
+      background-color: var(--warning-background-color);
+      border-color: var(--warning-border-color);
+    }
+    .alert-danger {
+      color: var(--danger-color);
+      background-color: var(--danger-background-color);
+      border-color: var(--danger-border-color);
+    }
+    .alert-unknown {
+      display: none !important;
+    }
+  `;
 
   get #alertType() {
     const type = this.getAttribute("type");
-    return type ?? "info";
+    return type ?? "unknown";
   }
 
   get #icon() {
@@ -45,6 +122,9 @@ class AlertComponent extends HTMLElement {
           </svg>
         `;
         break;
+      case "unknown":
+        svgIcon = "";
+        break;
 
       default:
         throw new Error("Invalid alert type");
@@ -53,83 +133,26 @@ class AlertComponent extends HTMLElement {
     return svgIcon;
   }
 
-  get #templateElement() {
-    const templateElement = document.createElement("template");
-    templateElement.innerHTML = `
-      <div role="alert" class="alert-container alert-${this.#alertType}">
-        ${this.#icon}
-        <slot name="alert-message">ALERT MESSAGE MISSING</slot>
-      </div>
-    `;
+  render() {
+    const alertContainerElement =
+      this.shadowRoot.querySelector("#alert-container");
+    if (!alertContainerElement) {
+      return;
+    }
 
-    return templateElement;
-  }
+    const iconContainerElement =
+      alertContainerElement.querySelector("#icon-container");
+    iconContainerElement.innerHTML = this.#icon;
 
-  get #styleElement() {
-    const styleElement = document.createElement("style");
-    const css = `
-      :host {
-        --success-color: #084a22;
-        --success-background-color: #d0f1dd;
-        --success-border-color: #a1e3bb;
-
-        --info-color: #003e58;
-        --info-background-color: #ccebf8;
-        --info-border-color: #99d7f1;
-
-        --warning-color: #60410c;
-        --warning-background-color: #fcedd2;
-        --warning-border-color: #f9daa5;
-
-        --danger-color: #651717;
-        --danger-background-color: #fed7d7;
-        --danger-border-color: #feb0b0;
-
-        display: block;
-        margin: 1rem 0;
-      }
-      .alert-container {
-        display: flex;
-        align-items: center;
-        text-align: left;
-        border-radius: 0.5rem;
-        padding: 1rem;
-        border: 1px solid var(--info-border-color);
-      }
-      .alert-container svg {
-        width: 1.5rem;
-        height: 1.5rem;
-        margin-right: 0.5rem;
-        flex-shrink: 0;
-      }
-      .alert-success {
-        color: var(--success-color);
-        background-color: var(--success-background-color);
-        border-color: var(--success-border-color);
-      }
-      .alert-info {
-        color: var(--info-color);
-        background-color: var(--info-background-color);
-        border-color: var(--info-border-color);
-      }
-      .alert-warning {
-        color: var(--warning-color);
-        background-color: var(--warning-background-color);
-        border-color: var(--warning-border-color);
-      }
-      .alert-danger {
-        color: var(--danger-color);
-        background-color: var(--danger-background-color);
-        border-color: var(--danger-border-color);
-      }
-    `;
-    styleElement.textContent = css;
-    return styleElement;
+    alertContainerElement.className = `alert-${this.#alertType}`;
   }
 
   connectedCallback() {
-    const templateContent = this.#templateElement.content;
-    this.shadowRoot.appendChild(templateContent.cloneNode(true));
+    this.render();
+  }
+
+  attributeChangedCallback() {
+    this.render();
   }
 }
 
