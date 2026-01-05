@@ -7,19 +7,26 @@ async function onPayPalWebSdkLoaded() {
       pageType: "checkout",
     });
 
-    setupApplePayButton(sdkInstance);
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
+
+    if (paymentMethods.isEligible("applepay")) {
+      const applePayPaymentMethodDetails =
+        paymentMethods.getDetails("applepay");
+      setupApplePayButton(sdkInstance, applePayPaymentMethodDetails);
+    } else {
+      renderAlert({ type: "warning", message: "ApplePay is not eligible" });
+    }
   } catch (error) {
     console.error(error);
   }
 }
 
-async function setupApplePayButton(sdkInstance) {
+async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
   try {
-    const paypalSdkApplePayPaymentSession =
-      await sdkInstance.createApplePayOneTimePaymentSession();
-
-    const { merchantCapabilities, supportedNetworks } =
-      await paypalSdkApplePayPaymentSession.config();
+    const paypalSdkApplePayPaymentSession = sdkInstance.createApplePayOneTimePaymentSession();
+    const { merchantCapabilities, supportedNetworks } = applePayPaymentMethodDetails;
 
     document.getElementById("apple-pay-button-container").innerHTML =
       '<apple-pay-button id="apple-pay-button" buttonstyle="black" type="buy" locale="en">';
@@ -100,12 +107,15 @@ async function setupApplePayButton(sdkInstance) {
           const orderData = await captureOrder({
             orderId: createdOrder.orderId,
             fundingSource: "applepay",
-            headers: { "X-CSRF-TOKEN": "<%= csrfToken %>" },
           });
           console.log(JSON.stringify(orderData, null, 2));
           console.log("Completed Apple Pay SDK session with STATUS_SUCCESS...");
           appleSdkApplePayPaymentSession.completePayment({
             status: window.ApplePaySession.STATUS_SUCCESS,
+          });
+          renderAlert({
+            type: "success",
+            message: "Completed Apple Pay SDK session with STATUS_SUCCESS",
           });
         } catch (err) {
           console.error(err);
@@ -149,6 +159,7 @@ async function createOrder() {
     },
   );
   const { id } = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return { orderId: id };
 }
@@ -166,4 +177,14 @@ async function captureOrder({ orderId }) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }
