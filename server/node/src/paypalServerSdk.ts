@@ -1,9 +1,3 @@
-import { config } from "dotenv";
-import { join } from "path";
-
-const envFilePath = join(__dirname, "../../../", ".env");
-config({ path: envFilePath });
-
 import {
   ApiError,
   CheckoutPaymentIntent,

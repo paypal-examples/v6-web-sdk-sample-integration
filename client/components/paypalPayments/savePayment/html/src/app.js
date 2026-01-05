@@ -23,15 +23,24 @@ async function onPayPalWebSdkLoaded() {
 const paymentSessionOptions = {
   async onApprove(data) {
     console.log("onApprove", data);
+    renderAlert({
+      type: "success",
+      message: `Vault Setup Token successfully approved! ${JSON.stringify(data)}`,
+    });
     const createPaymentTokenResponse = await createPaymentToken(
       data.vaultSetupToken,
     );
     console.log("Create payment token response: ", createPaymentTokenResponse);
   },
   onCancel(data) {
+    renderAlert({ type: "warning", message: "onCancel() callback called" });
     console.log("onCancel", data);
   },
   onError(error) {
+    renderAlert({
+      type: "danger",
+      message: `onError() callback called: ${error}`,
+    });
     console.log("onError", error);
   },
 };
@@ -46,9 +55,12 @@ async function setupPayPalButton(sdkInstance) {
 
   paypalButton.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createVaultSetupToken()
+      // do not await this async function since it can cause transient activation issues
+      const createVaultSetupTokenPromise = createVaultSetupToken();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
-        createVaultSetupToken(),
+        createVaultSetupTokenPromise,
       );
     } catch (error) {
       console.error(error);
@@ -76,6 +88,10 @@ async function createVaultSetupToken() {
     },
   });
   const { id } = await response.json();
+  renderAlert({
+    type: "info",
+    message: `Vault Setup Token successfully created: ${id}`,
+  });
 
   return { vaultSetupToken: id };
 }
@@ -91,4 +107,26 @@ async function createPaymentToken(vaultSetupToken) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertContainer = document.querySelector(".alert-container");
+  if (!alertContainer) {
+    return;
+  }
+
+  // remove existing alert
+  const existingAlertComponent =
+    alertContainer.querySelector("alert-component");
+  existingAlertComponent?.remove();
+
+  const alertComponent = document.createElement("alert-component");
+  alertComponent.setAttribute("type", type);
+
+  const alertMessageSlot = document.createElement("span");
+  alertMessageSlot.setAttribute("slot", "alert-message");
+  alertMessageSlot.innerText = message;
+
+  alertComponent.append(alertMessageSlot);
+  alertContainer.append(alertComponent);
 }

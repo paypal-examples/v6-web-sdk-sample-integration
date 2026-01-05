@@ -1,14 +1,21 @@
 # Node.js Express Server
 
-Node.js [Express](https://expressjs.com/) server that provides several endpoints that wrap the [PayPal Sever SDK](https://developer.paypal.com/community/blog/paypal-server-side-sdk/).
+Node.js [Express](https://expressjs.com/) server for running the PayPal Web SDK samples integrations. It proides the following functionality:
 
-Start the server by running:
+1. serves up API endpoints that wrap the [PayPal Sever SDK](https://developer.paypal.com/serversdk/typescript/getting-started/how-to-get-started) for authorization, order management, and more.
+2. serves up the html examples from the client directory.
+
+Quick start:
 
 ```bash
+npm install
 npm start
+# go to http://localhost:8080
 ```
 
 ---
+
+## API Endpoints
 
 ### `GET /paypal-api/auth/browser-safe-client-token`
 

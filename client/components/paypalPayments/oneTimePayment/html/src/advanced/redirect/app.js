@@ -26,12 +26,21 @@ const paymentSessionOptions = {
     const orderData = await captureOrder({
       orderId: data.orderId,
     });
+    renderAlert({
+      type: "success",
+      message: `Order successfully captured! ${JSON.stringify(data)}`,
+    });
     console.log("Capture result", orderData);
   },
   onCancel(data) {
+    renderAlert({ type: "warning", message: "onCancel() callback called" });
     console.log("onCancel", data);
   },
   onError(error) {
+    renderAlert({
+      type: "danger",
+      message: `onError() callback called: ${error}`,
+    });
     console.log("onError", error);
   },
 };
@@ -42,7 +51,9 @@ async function setupPayPalButton(paypalPaymentSession) {
   paypalButton.removeAttribute("hidden");
 
   paypalButton.addEventListener("click", async () => {
-    const createOrderPromiseReference = createRedirectOrder();
+    // get the promise reference by invoking createRedirectOrder()
+    // do not await this async function since it can cause transient activation issues
+    const createRedirectOrderPromise = createRedirectOrder();
 
     try {
       const { redirectURL } = await paypalPaymentSession.start(
@@ -52,7 +63,7 @@ async function setupPayPalButton(paypalPaymentSession) {
             enabled: enableAutoRedirect.checked,
           },
         },
-        createOrderPromiseReference,
+        createRedirectOrderPromise,
       );
       if (redirectURL) {
         console.log(`redirectURL: ${redirectURL}`);
@@ -113,6 +124,8 @@ async function createRedirectOrder() {
     body: JSON.stringify(orderPayload),
   });
   const { id } = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
+
   return { orderId: id };
 }
 
@@ -128,4 +141,26 @@ async function captureOrder({ orderId }) {
   );
   const data = await response.json();
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertContainer = document.querySelector(".alert-container");
+  if (!alertContainer) {
+    return;
+  }
+
+  // remove existing alert
+  const existingAlertComponent =
+    alertContainer.querySelector("alert-component");
+  existingAlertComponent?.remove();
+
+  const alertComponent = document.createElement("alert-component");
+  alertComponent.setAttribute("type", type);
+
+  const alertMessageSlot = document.createElement("span");
+  alertMessageSlot.setAttribute("slot", "alert-message");
+  alertMessageSlot.innerText = message;
+
+  alertComponent.append(alertMessageSlot);
+  alertContainer.append(alertComponent);
 }

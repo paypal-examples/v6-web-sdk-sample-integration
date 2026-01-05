@@ -1,5 +1,7 @@
 import express, { Request, Response } from "express";
 import cors from "cors";
+import { join } from "path";
+import ngrok from "@ngrok/ngrok";
 
 import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
@@ -12,10 +14,21 @@ import {
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
+const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
+
 const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
+
+/* ######################################################################
+ * Entry point for client examples containing HTML, JS, and CSS
+ * ###################################################################### */
+
+app.get("/", (_req: Request, res: Response) => {
+  res.redirect("/client/index.html");
+});
 
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
@@ -138,8 +151,28 @@ async function savePaymentTokenToDatabase(
   return Promise.resolve();
 }
 
-const port = process.env.PORT ?? 8080;
+async function setupNgrokForHTTPS(port: number) {
+  const { NGROK_AUTHTOKEN } = process.env;
 
-app.listen(port, () => {
-  console.log(`API server listening at http://localhost:${port}`);
+  if (!NGROK_AUTHTOKEN) {
+    return;
+  }
+
+  try {
+    const listener = await ngrok.connect({
+      addr: port,
+      authtoken: NGROK_AUTHTOKEN,
+    });
+
+    console.log(`Ingress secure tunnel established at: ${listener.url()}`);
+  } catch (error) {
+    console.error("error connecting to ngrok: ", error);
+  }
+}
+
+const port = process.env.PORT ? Number(process.env.PORT) : 8080;
+
+app.listen(port, async () => {
+  console.log(`Node.js web server listening at: http://localhost:${port}`);
+  await setupNgrokForHTTPS(port);
 });

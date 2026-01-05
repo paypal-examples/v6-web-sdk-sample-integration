@@ -2,18 +2,34 @@
 <html>
   <head>
     <meta charset="UTF-8" />
-    <title>One-Time Payment - TypeScript - PayPal Web SDK</title>
+    <title>
+      PayPal Payments with TypeScript - One-time Payment Flow - PayPal Web SDK
+    </title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
     <style>
       .buttons-container {
         display: flex;
         flex-direction: column;
-        gap: 12px;
+        gap: 0.75rem;
+      }
+      .alert-container {
+        max-width: 50rem;
+        margin-top: 4rem;
       }
     </style>
   </head>
   <body>
-    <h1>One-Time Payment TypeScript Integration</h1>
+    <h1>PayPal Payments with TypeScript</h1>
+    <p>
+      This is the recommended integration pattern for the one-time payment flow
+      with the paypal-payments component. The
+      <a href="https://www.npmjs.com/package/@paypal/paypal-js" target="_blank"
+        >paypal-js</a
+      >
+      npm package is used for TypeScript type definitions for the PayPal Web
+      SDK.
+    </p>
 
     <div class="buttons-container">
       <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
@@ -26,6 +42,10 @@
         hidden
       ></paypal-credit-button>
     </div>
+    <div class="alert-container"></div>
+
     <script type="module" src="./app.ts"></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>

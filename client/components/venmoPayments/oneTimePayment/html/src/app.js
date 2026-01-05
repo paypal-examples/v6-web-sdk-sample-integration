@@ -13,6 +13,8 @@ async function onPayPalWebSdkLoaded() {
 
     if (paymentMethods.isEligible("venmo")) {
       setupVenmoButton(sdkInstance);
+    } else {
+      renderAlert({ type: "danger", message: "Venmo is not eligible" });
     }
   } catch (error) {
     console.error(error);
@@ -25,12 +27,21 @@ const paymentSessionOptions = {
     const orderData = await captureOrder({
       orderId: data.orderId,
     });
+    renderAlert({
+      type: "success",
+      message: `Order successfully captured! ${JSON.stringify(data)}`,
+    });
     console.log("Capture result", orderData);
   },
   onCancel(data) {
+    renderAlert({ type: "warning", message: "onCancel() callback called" });
     console.log("onCancel", data);
   },
   onError(error) {
+    renderAlert({
+      type: "danger",
+      message: `onError() callback called: ${error}`,
+    });
     console.log("onError", error);
   },
 };
@@ -44,9 +55,12 @@ async function setupVenmoButton(sdkInstance) {
 
   venmoButton.addEventListener("click", async () => {
     try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrder();
       await venmoPaymentSession.start(
         { presentationMode: "auto" },
-        createOrder(),
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);
@@ -77,6 +91,7 @@ async function createOrder() {
     },
   );
   const { id } = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return { orderId: id };
 }
@@ -94,4 +109,26 @@ async function captureOrder({ orderId }) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertContainer = document.querySelector(".alert-container");
+  if (!alertContainer) {
+    return;
+  }
+
+  // remove existing alert
+  const existingAlertComponent =
+    alertContainer.querySelector("alert-component");
+  existingAlertComponent?.remove();
+
+  const alertComponent = document.createElement("alert-component");
+  alertComponent.setAttribute("type", type);
+
+  const alertMessageSlot = document.createElement("span");
+  alertMessageSlot.setAttribute("slot", "alert-message");
+  alertMessageSlot.innerText = message;
+
+  alertComponent.append(alertMessageSlot);
+  alertContainer.append(alertComponent);
 }
