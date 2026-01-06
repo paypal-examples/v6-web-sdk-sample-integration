@@ -46,7 +46,6 @@ const paymentSessionOptions = {
 };
 
 async function setupPayPalButton(paypalPaymentSession) {
-  const enableAutoRedirect = document.querySelector("#enable-auto-redirect");
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton.removeAttribute("hidden");
 
@@ -54,23 +53,28 @@ async function setupPayPalButton(paypalPaymentSession) {
     // get the promise reference by invoking createRedirectOrder()
     // do not await this async function since it can cause transient activation issues
     const createRedirectOrderPromise = createRedirectOrder();
+    const presentationModesToTry = ["direct-app-switch", "popup", "modal"];
 
-    try {
-      const { redirectURL } = await paypalPaymentSession.start(
-        {
-          presentationMode: "direct-app-switch",
-          autoRedirect: {
-            enabled: enableAutoRedirect.checked,
-          },
-        },
-        createRedirectOrderPromise,
-      );
-      if (redirectURL) {
-        console.log(`redirectURL: ${redirectURL}`);
-        window.location.assign(redirectURL);
+    for (const presentationMode of presentationModesToTry) {
+      try {
+        await paypalPaymentSession.start(
+          { presentationMode },
+          createRedirectOrderPromise,
+        );
+        // exit early when start() successfully resolves
+        break;
+      } catch (error) {
+        console.log(
+          `Error with presentation mode "${presentationMode}":`,
+          error,
+        );
+
+        // try another presentationMode for a recoverable error
+        if (error.isRecoverable) {
+          continue;
+        }
+        throw error;
       }
-    } catch (error) {
-      console.error(error);
     }
   });
 }
