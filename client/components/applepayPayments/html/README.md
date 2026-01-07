@@ -140,8 +140,6 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
   - PayPal SDK initialization
   - Apple Pay session management
   - Order creation and capture
-- **`package.json`**: Dependencies and build scripts
-- **`vite.config.js`**: Vite development server configuration
 
 ### Integration Flow
 
