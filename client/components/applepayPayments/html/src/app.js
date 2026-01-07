@@ -11,7 +11,10 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: "USD",
     });
 
-    if (paymentMethods.isEligible("applepay")) {
+    const isApplePaySDKAvailable =
+      window.ApplePaySession && ApplePaySession.canMakePayments();
+
+    if (isApplePaySDKAvailable && paymentMethods.isEligible("applepay")) {
       const applePayPaymentMethodDetails =
         paymentMethods.getDetails("applepay");
       setupApplePayButton(sdkInstance, applePayPaymentMethodDetails);
@@ -25,8 +28,10 @@ async function onPayPalWebSdkLoaded() {
 
 async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
   try {
-    const paypalSdkApplePayPaymentSession = sdkInstance.createApplePayOneTimePaymentSession();
-    const { merchantCapabilities, supportedNetworks } = applePayPaymentMethodDetails;
+    const paypalSdkApplePayPaymentSession =
+      sdkInstance.createApplePayOneTimePaymentSession();
+    const { merchantCapabilities, supportedNetworks } =
+      applePayPaymentMethodDetails;
 
     document.getElementById("apple-pay-button-container").innerHTML =
       '<apple-pay-button id="apple-pay-button" buttonstyle="black" type="buy" locale="en">';
