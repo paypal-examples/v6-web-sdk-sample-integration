@@ -7,14 +7,21 @@ async function onPayPalWebSdkLoaded() {
       pageType: "checkout",
     });
 
+    const isApplePaySDKAvailable =
+      window.ApplePaySession && ApplePaySession.canMakePayments();
+
+    if (!isApplePaySDKAvailable) {
+      return renderAlert({
+        type: "warning",
+        message: "ApplePay SDK is not available",
+      });
+    }
+
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
     });
 
-    const isApplePaySDKAvailable =
-      window.ApplePaySession && ApplePaySession.canMakePayments();
-
-    if (isApplePaySDKAvailable && paymentMethods.isEligible("applepay")) {
+    if (paymentMethods.isEligible("applepay")) {
       const applePayPaymentMethodDetails =
         paymentMethods.getDetails("applepay");
       setupApplePayButton(sdkInstance, applePayPaymentMethodDetails);
@@ -30,8 +37,6 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
   try {
     const paypalSdkApplePayPaymentSession =
       sdkInstance.createApplePayOneTimePaymentSession();
-    const { merchantCapabilities, supportedNetworks } =
-      applePayPaymentMethodDetails;
 
     document.getElementById("apple-pay-button-container").innerHTML =
       '<apple-pay-button id="apple-pay-button" buttonstyle="black" type="buy" locale="en">';
@@ -41,10 +46,11 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
 
     async function onClick() {
       const paymentRequest = {
+        ...paypalSdkApplePayPaymentSession.formatConfigForPaymentRequest(
+          applePayPaymentMethodDetails.config,
+        ),
         countryCode: "US",
         currencyCode: "USD",
-        merchantCapabilities,
-        supportedNetworks,
         requiredBillingContactFields: [
           "name",
           "phone",
