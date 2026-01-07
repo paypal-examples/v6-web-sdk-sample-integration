@@ -50,6 +50,19 @@ app.get(
   },
 );
 
+app.get(
+  "/paypal-api/auth/browser-safe-client-id",
+  (_req: Request, res: Response) => {
+    const { PAYPAL_SANDBOX_CLIENT_ID } = process.env;
+
+    if (PAYPAL_SANDBOX_CLIENT_ID) {
+      res.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
+    } else {
+      res.status(500).json({ error: "Missing client id" });
+    }
+  },
+);
+
 app.post(
   "/paypal-api/checkout/orders/create",
   async (req: Request, res: Response) => {

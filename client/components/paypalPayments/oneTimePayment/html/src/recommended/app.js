@@ -1,31 +1,31 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["paypal-payments"],
       pageType: "checkout",
     });
 
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currencyCode: "USD",
-    });
+    // const paymentMethods = await sdkInstance.findEligibleMethods({
+    //   currencyCode: "USD",
+    // });
 
-    if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
-    }
+    // if (paymentMethods.isEligible("paypal")) {
+    setupPayPalButton(sdkInstance);
+    // }
 
-    if (paymentMethods.isEligible("paylater")) {
-      const paylaterPaymentMethodDetails =
-        paymentMethods.getDetails("paylater");
-      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
-    }
+    // if (paymentMethods.isEligible("paylater")) {
+    //   const paylaterPaymentMethodDetails =
+    //     paymentMethods.getDetails("paylater");
+    //   setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+    // }
 
-    if (paymentMethods.isEligible("credit")) {
-      const paypalCreditPaymentMethodDetails =
-        paymentMethods.getDetails("credit");
-      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
-    }
+    // if (paymentMethods.isEligible("credit")) {
+    //   const paypalCreditPaymentMethodDetails =
+    //     paymentMethods.getDetails("credit");
+    //   setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+    // }
   } catch (error) {
     console.error(error);
   }
@@ -148,16 +148,16 @@ async function setupPayPalCreditButton(
   });
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
+  return clientId;
 }
 
 async function createOrder() {
