@@ -84,8 +84,12 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
             console.log("Completed merchant validation");
           })
           .catch((err) => {
-            console.log("Paypal validatemerchant error", err);
-            console.error(err);
+            console.error("PayPal validatemerchant error", err);
+            renderAlert({
+              type: "danger",
+              message: "PayPal merchant validation failed",
+            });
+
             appleSdkApplePayPaymentSession.abort();
           });
       };
