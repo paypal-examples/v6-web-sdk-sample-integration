@@ -63,7 +63,7 @@ async function onPayClick(cardFieldsInstance) {
         const orderData = await captureOrder({
           orderId: data.orderId,
         });
-        // TODO: show succdess UI, redirect, etc.
+        // TODO: show success UI, redirect, etc.
         break;
       }
       case "canceled": {
