@@ -7,26 +7,30 @@ async function onPayPalWebSdkLoaded() {
       pageType: "checkout",
     });
 
-    // const paymentMethods = await sdkInstance.findEligibleMethods({
-    //   currencyCode: "USD",
-    // });
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
 
-    // if (paymentMethods.isEligible("paypal")) {
-    setupPayPalButton(sdkInstance);
-    // }
+    if (paymentMethods.isEligible("paypal")) {
+      setupPayPalButton(sdkInstance);
+    }
 
-    // if (paymentMethods.isEligible("paylater")) {
-    //   const paylaterPaymentMethodDetails =
-    //     paymentMethods.getDetails("paylater");
-    //   setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
-    // }
+    if (paymentMethods.isEligible("paylater")) {
+      const paylaterPaymentMethodDetails =
+        paymentMethods.getDetails("paylater");
+      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+    }
 
-    // if (paymentMethods.isEligible("credit")) {
-    //   const paypalCreditPaymentMethodDetails =
-    //     paymentMethods.getDetails("credit");
-    //   setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
-    // }
+    if (paymentMethods.isEligible("credit")) {
+      const paypalCreditPaymentMethodDetails =
+        paymentMethods.getDetails("credit");
+      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+    }
   } catch (error) {
+    renderAlert({
+      type: "danger",
+      message: "Failed to initialize the PayPal SDK",
+    });
     console.error(error);
   }
 }
