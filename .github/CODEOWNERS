@@ -9,5 +9,5 @@
 ###############
 * @paypal-examples/web-sdk
 
-# Changes to this has to be approved by the below folks
-/.github/ @gregjopa @wsbrunson @bdellis
+# Changes to this file have to be approved by the below folks
+/.github/CODEOWNERS @gregjopa @wsbrunson @bdellis @imbrian
