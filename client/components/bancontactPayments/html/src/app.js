@@ -17,18 +17,19 @@ async function onPayPalWebSdkLoaded() {
     if (isBancontactEligible) {
       setupBancontactPayment(sdkInstance);
     } else {
-      showMessage({
-        text: "Bancontact is not eligible. Please ensure your buyer country is Belgium.",
-        type: "error",
+      renderAlert({
+        type: "warning",
+        message:
+          "Bancontact is not eligible. Please ensure your buyer country is Belgium.",
       });
       console.error("Bancontact is not eligible");
     }
   } catch (error) {
-    console.error("Error initializing PayPal SDK:", error);
-    showMessage({
-      text: "Failed to initialize payment system. Please try again.",
-      type: "error",
+    renderAlert({
+      type: "danger",
+      message: "Failed to initialize the PayPal Web SDK",
     });
+    console.error("Error initializing PayPal SDK:", error);
   }
 }
 
@@ -48,11 +49,11 @@ function setupBancontactPayment(sdkInstance) {
     // Setup button click handler
     setupButtonHandler(bancontactCheckout);
   } catch (error) {
-    console.error("Error setting up Bancontact payment:", error);
-    showMessage({
-      text: "Failed to setup payment. Please refresh the page.",
-      type: "error",
+    renderAlert({
+      type: "danger",
+      message: "Failed to set up Bancontact Payment Session",
     });
+    console.error("Error setting up Bancontact payment:", error);
   }
 }
 
@@ -88,6 +89,11 @@ function setupButtonHandler(bancontactCheckout) {
       const isValid = await bancontactCheckout.validate();
 
       if (isValid) {
+        renderAlert({
+          type: "info",
+          message: "Validation successful, starting payment flow...",
+        });
+
         console.log("Validation successful, starting payment flow...");
 
         // get the promise reference by invoking createOrder()
@@ -100,18 +106,18 @@ function setupButtonHandler(bancontactCheckout) {
           createOrderPromise,
         );
       } else {
-        console.error("Validation failed");
-        showMessage({
-          text: "Please fill in all required fields correctly.",
-          type: "error",
+        renderAlert({
+          type: "danger",
+          message: "Please fill in all required fields correctly",
         });
+        console.error("Validation failed");
       }
     } catch (error) {
-      console.error("Payment error:", error);
-      showMessage({
-        text: "An error occurred during payment. Please try again.",
-        type: "error",
+      renderAlert({
+        type: "danger",
+        message: "An error occurred during payment",
       });
+      console.error("Payment error:", error);
     }
   });
 }
@@ -144,15 +150,18 @@ async function createOrder() {
     }
 
     const { id } = await response.json();
+    renderAlert({ type: "info", message: `Order successfully created: ${id}` });
+
     console.log("Order created with ID:", id);
 
     return { orderId: id };
   } catch (error) {
     console.error("Error creating order:", error);
-    showMessage({
-      text: "Failed to create order. Please try again.",
-      type: "error",
+    renderAlert({
+      type: "danger",
+      message: "Failed to create order. Please try again.",
     });
+
     throw error;
   }
 }
@@ -191,16 +200,15 @@ async function handleApprove(data) {
   try {
     const result = await captureOrder(data.orderId);
     console.log("Capture successful:", result);
-
-    showMessage({
-      text: `Payment successful! Order ID: ${data.orderId}. Check console for details.`,
+    renderAlert({
       type: "success",
+      message: `Payment successful! Order ID: ${data.orderId}. Check console for details.`,
     });
   } catch (error) {
     console.error("Capture failed:", error);
-    showMessage({
-      text: "Payment approved but capture failed.",
-      type: "error",
+    renderAlert({
+      type: "danger",
+      message: `Payment approved but capture failed.`,
     });
   }
 }
@@ -208,18 +216,19 @@ async function handleApprove(data) {
 // Handle payment cancellation
 function handleCancel(data) {
   console.log("Payment cancelled:", data);
-  showMessage({
-    text: "Payment was cancelled. You can try again.",
-    type: "error",
+  renderAlert({
+    type: "warning",
+    message: "Payment was cancelled. You can try again.",
   });
 }
 
 // Handle payment errors
 function handleError(error) {
   console.error("Payment error:", error);
-  showMessage({
-    text: "An error occurred during payment. Please try again or contact support.",
-    type: "error",
+  renderAlert({
+    type: "danger",
+    message:
+      "An error occurred during payment. Please try again or contact support.",
   });
 }
 
@@ -245,9 +254,12 @@ async function getBrowserSafeClientToken() {
   }
 }
 
-// Utility function to show messages to user
-function showMessage({ text, type }) {
-  const messageEl = document.getElementById("message");
-  messageEl.textContent = text;
-  messageEl.className = `message ${type} show`;
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }
