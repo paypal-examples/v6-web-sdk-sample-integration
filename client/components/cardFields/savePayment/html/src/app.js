@@ -4,80 +4,90 @@ async function onPayPalWebSdkLoaded() {
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
       components: ["card-fields"],
-      pageType: "checkout",
     });
 
-    // const paymentMethods = await sdkInstance.findEligibleMethods({
-    //   currencyCode: "USD",
-    //   paymentFlow: "VAULT_WITHOUT_PAYMENT",
-    // });
+    const paymentMethods = await sdkInstance.findEligibleMethods();
 
-    // NOTE: Eligibility does not currently return card
-    // if (paymentMethods.isEligible("card")) {
-    //   setupCardFields(sdkInstance);
-    // }
-    setupCardFields(sdkInstance);
-  } catch (error) {
-    console.error(error);
+    const isCardFieldsEligible = paymentMethods.isEligible("advanced_cards");
+    if (isCardFieldsEligible) {
+      setupCardFields(sdkInstance);
+    }
+  } catch (err) {
+    console.error("SDK init failed", err);
   }
 }
+
 async function setupCardFields(sdkInstance) {
   const cardFieldsInstance = sdkInstance.createCardFieldsSavePaymentSession();
 
   const numberField = cardFieldsInstance.createCardFieldsComponent({
     type: "number",
-    placeholder: "Enter a number:",
-    ariaDescription: "card-number-field",
-    ariaLabel: "some-values",
-    style: {
-      input: {
-        color: "green",
-      },
-    },
+    placeholder: "Card Number",
   });
-  const cvvField = cardFieldsInstance.createCardFieldsComponent({
-    type: "cvv",
-    placeholder: "Enter CVV:",
-  });
+
   const expiryField = cardFieldsInstance.createCardFieldsComponent({
     type: "expiry",
-    placeholder: "Enter Expiry:",
+    placeholder: "MM/YY",
+  });
+
+  const cvvField = cardFieldsInstance.createCardFieldsComponent({
+    type: "cvv",
+    placeholder: "CVV",
   });
 
   document.querySelector("#paypal-card-fields-number").appendChild(numberField);
   document.querySelector("#paypal-card-fields-cvv").appendChild(cvvField);
   document.querySelector("#paypal-card-fields-expiry").appendChild(expiryField);
 
-  const payButton = document.querySelector("#pay-button");
-  payButton.addEventListener("click", async () => {
-    try {
-      const vaultSetupToken = await createVaultSetupToken();
-      const { data, state } = await cardFieldsInstance.submit(vaultSetupToken, {
-        billingAddress: {
-          postalCode: "95131",
-        },
-      });
+  const payButton = document.querySelector("#save-payment-method-button");
+  payButton.addEventListener("click", () => onPayClick(cardFieldsInstance));
+}
 
-      switch (state) {
-        case "succeeded": {
-          const { vaultSetupToken, ...liabilityShift } = data;
-          const paymentToken = await createPaymentToken({
-            vaultSetupToken: data.vaultSetupToken,
-            headers: { "X-CSRF-TOKEN": "<%= csrfToken %>" },
-          });
-        }
-        case "canceled": {
-          // specifically for if buyer cancels 3DS modal
-          const { orderId } = data;
-        }
-        case "failed": {
-          const { orderId, message } = data;
-        }
+async function onPayClick(cardFieldsInstance) {
+  try {
+    const vaultSetupToken = await createVaultSetupToken();
+
+    const { data, state } = await cardFieldsInstance.submit(vaultSetupToken, {
+      billingAddress: {
+        postalCode: "95131",
+      },
+    });
+
+    switch (state) {
+      case "succeeded": {
+        const { vaultSetupToken, ...liabilityShift } = data;
+        // 3DS may or may not have occurred; Use liabilityShift
+        // to determine if the payment should be captured
+
+        const paymentToken = await createPaymentToken({
+          vaultSetupToken,
+        });
+        console.log("Payment method saved", paymentToken);
+        console.log("vault setup token:", vaultSetupToken);
+
+        // TODO: show success UI, redirect, etc.
+        break;
       }
-    } catch (error) {
-      console.error(error);
+      case "canceled": {
+        // Buyer dismissed 3DS modal or canceled the flow
+        // TODO: show non-blocking message & allow retry
+        break;
+      }
+      case "failed": {
+        // Validation or processing failure. data.message may be present
+        console.error("Card submission failed", data);
+        // TODO: surface error to buyer, allow retry
+        break;
+      }
+      default: {
+        // Future-proof for other states (e.g., pending)
+        console.warn("Unhandled submit state", state, data);
+      }
     }
-  });
+  } catch (err) {
+    console.error("Payment flow error", err);
+    // TODO: Show generic error and allow retry
+  }
 }
 
 async function getBrowserSafeClientToken() {
