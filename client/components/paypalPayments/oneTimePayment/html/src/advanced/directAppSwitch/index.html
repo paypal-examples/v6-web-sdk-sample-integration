@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/client/shared/styles.css" />
     <style>
-      .alert-container {
+      alert-component {
         max-width: 50rem;
         margin-top: 4rem;
       }
@@ -18,12 +18,9 @@
       This integration uses the direct app switch presentation mode with the
       paypal-payments component.
     </p>
-    <div>
-      <input type="checkbox" id="enable-auto-redirect" checked />
-      <label for="enable-auto-redirect"> Enable auto-redirect </label>
-    </div>
-    <paypal-button id="paypal-button" hidden></paypal-button>
-    <div class="alert-container"></div>
+
+    <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+    <alert-component></alert-component>
 
     <script src="app.js"></script>
 
