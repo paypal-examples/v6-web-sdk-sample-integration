@@ -61,6 +61,11 @@ async function setupPayPalButton(sdkInstance) {
         // exit early when start() successfully resolves
         break;
       } catch (error) {
+        console.log(
+          `Error with presentation mode "${presentationMode}":`,
+          error,
+        );
+
         // try another presentationMode for a recoverable error
         if (error.isRecoverable) {
           continue;

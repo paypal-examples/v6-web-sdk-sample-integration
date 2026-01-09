@@ -52,7 +52,10 @@ class AlertComponent extends HTMLElement {
       padding: 1rem;
       border-width: 1px;
     }
-    #alert-container svg {
+    #icon-container {
+      line-height: 0;
+    }
+    #icon-container svg {
       width: 1.5rem;
       height: 1.5rem;
       margin-right: 0.5rem;
