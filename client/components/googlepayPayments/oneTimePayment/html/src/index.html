@@ -5,13 +5,21 @@
     <title>One-Time Payment - Google Pay - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+    </style>
   </head>
   <body>
     <h1>One-Time Payment Google Pay Integration</h1>
 
     <div id="googlepay-button-container"></div>
+    <alert-component></alert-component>
 
     <script src="https://pay.google.com/gp/p/js/pay.js"></script>
+
     <script src="app.js"></script>
 
     <script
@@ -19,5 +27,7 @@
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onPayPalWebSdkLoaded()"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>

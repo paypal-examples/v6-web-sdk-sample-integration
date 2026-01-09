@@ -7,7 +7,27 @@ async function onPayPalWebSdkLoaded() {
       pageType: "checkout",
     });
 
-    setupGooglePayButton(sdkInstance);
+    const isGooglePaySDKAvailable =
+      window.google && google.payments.api.PaymentsClient;
+
+    if (!isGooglePaySDKAvailable) {
+      return renderAlert({
+        type: "warning",
+        message: "GooglePay SDK is not available",
+      });
+    }
+
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
+
+    if (paymentMethods.isEligible("googlepay")) {
+      const googlePayPaymentMethodDetails =
+        paymentMethods.getDetails("googlepay");
+      setupGooglePayButton(sdkInstance, googlePayPaymentMethodDetails);
+    } else {
+      renderAlert({ type: "warning", message: "GooglePay is not eligible" });
+    }
   } catch (error) {
     console.error(error);
   }
@@ -114,9 +134,19 @@ async function onPaymentAuthorized(
       console.log(JSON.stringify(orderData, null, 2));
     }
 
+    renderAlert({
+      type: "success",
+      message: "Completed order with GooglePay",
+    });
+
     return { transactionState: "SUCCESS" };
   } catch (err) {
     console.error("Payment authorization error:", err);
+    renderAlert({
+      type: "danger",
+      message: "Payment authorization error",
+    });
+
     return {
       transactionState: "ERROR",
       error: {
@@ -137,13 +167,20 @@ async function onGooglePayButtonClick(
       googlePayConfig,
     );
 
-    paymentsClient.loadPaymentData(paymentDataRequest);
+    await paymentsClient.loadPaymentData(paymentDataRequest);
   } catch (error) {
     console.error(error);
+    renderAlert({
+      type: "danger",
+      message: "GooglePay failed to load payment data",
+    });
   }
 }
 
-async function setupGooglePayButton(sdkInstance) {
+async function setupGooglePayButton(
+  sdkInstance,
+  googlePayPaymentMethodDetails,
+) {
   const googlePaySession = sdkInstance.createGooglePayOneTimePaymentSession();
   const purchaseAmount = "10.00";
 
@@ -156,7 +193,9 @@ async function setupGooglePayButton(sdkInstance) {
       },
     });
 
-    const googlePayConfig = await googlePaySession.getGooglePayConfig();
+    const googlePayConfig = googlePaySession.formatConfigForPaymentRequest(
+      googlePayPaymentMethodDetails.config,
+    );
 
     const isReadyToPay = await paymentsClient.isReadyToPay({
       allowedPaymentMethods: googlePayConfig.allowedPaymentMethods,
@@ -178,6 +217,7 @@ async function setupGooglePayButton(sdkInstance) {
     }
   } catch (error) {
     console.error("Setup error:", error);
+    renderAlert({ type: "danger", message: "GooglePay setup error" });
   }
 }
 
@@ -202,6 +242,7 @@ async function createOrder(orderPayload) {
     body: JSON.stringify(orderPayload),
   });
   const { id } = await response.json();
+  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return id;
 }
@@ -219,4 +260,14 @@ async function captureOrder({ orderId }) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }
