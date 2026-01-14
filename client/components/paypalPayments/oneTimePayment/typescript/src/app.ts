@@ -3,6 +3,7 @@ import { loadCoreSdkScript } from "@paypal/paypal-js/sdk-v6";
 import type {
   SdkInstance,
   OnApproveDataOneTimePayments,
+  OnCancelDataOneTimePayments,
   OnErrorData,
   FindEligibleMethodsGetDetails,
 } from "@paypal/paypal-js/sdk-v6";
@@ -29,8 +30,11 @@ const paymentSessionOptions = {
     });
     console.log("Capture result", orderData);
   },
-  onCancel() {
-    renderAlert({ type: "warning", message: "onCancel() callback called" });
+  onCancel(data: OnCancelDataOneTimePayments) {
+    renderAlert({
+      type: "warning",
+      message: `onCancel() callback called ${data.orderId ?? ""}`,
+    });
     console.log("onCancel");
   },
   onError(error: OnErrorData) {
