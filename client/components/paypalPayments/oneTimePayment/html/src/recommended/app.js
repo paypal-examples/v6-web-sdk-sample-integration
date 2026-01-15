@@ -165,10 +165,15 @@ async function createOrder() {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(`Order creation failed ${data ? JSON.stringify(data) : ""}`);
+    throw new Error(
+      `Order creation failed ${data ? JSON.stringify(data) : ""}`,
+    );
   }
 
-  renderAlert({ type: "info", message: `Order successfully created: ${data.id}` });
+  renderAlert({
+    type: "info",
+    message: `Order successfully created: ${data.id}`,
+  });
 
   return { orderId: data.id };
 }
