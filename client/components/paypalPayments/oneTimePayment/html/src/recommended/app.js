@@ -79,7 +79,7 @@ async function setupPayPalButton(sdkInstance) {
     } catch (error) {
       renderAlert({
         type: "danger",
-        message: `An error occurred on button click: ${error.message}`,
+        message: `PayPal Button click failure: ${error.message}`,
       });
       console.error(error);
     }
@@ -107,6 +107,10 @@ async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
         createOrderPromise,
       );
     } catch (error) {
+      renderAlert({
+        type: "danger",
+        message: `PayLater Button click failure: ${error.message}`,
+      });
       console.error(error);
     }
   });
@@ -135,6 +139,10 @@ async function setupPayPalCreditButton(
         createOrderPromise,
       );
     } catch (error) {
+      renderAlert({
+        type: "danger",
+        message: `Credit Button click failure: ${error.message}`,
+      });
       console.error(error);
     }
   });
