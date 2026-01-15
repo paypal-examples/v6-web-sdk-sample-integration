@@ -170,6 +170,10 @@ export async function captureOrder(orderId: string) {
     const { result, statusCode } = await ordersController.captureOrder({
       id: orderId,
       prefer: "return=minimal",
+      // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
+      // https://developer.paypal.com/tools/sandbox/negative-testing/request-headers/
+      // paypalMockResponse: '{"mock_application_codes": "INSTRUMENT_DECLINED"}'
+      // paypalMockResponse: '{"mock_application_codes": "TRANSACTION_REFUSED"}'
     });
 
     return {
