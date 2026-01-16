@@ -16,8 +16,8 @@ const PayLaterButton: React.FC<PaymentSessionOptions> = (props) => {
   const { eligiblePaymentMethods } = usePayPal();
   // TODO: Remove this type assertion once @paypal/react-paypal-js@9.0.0-alpha.4+ properly exports
   // EligiblePaymentMethodsOutput and types eligiblePaymentMethods correctly after hydration
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const payLaterDetails = (
+     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     eligiblePaymentMethods as unknown as any
   )?.getDetails?.("paylater");
   const countryCode = payLaterDetails?.countryCode;
