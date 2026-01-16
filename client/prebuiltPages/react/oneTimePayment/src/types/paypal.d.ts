@@ -14,6 +14,12 @@ declare module "react" {
     interface IntrinsicElements {
       "paypal-button": ButtonProps;
       "venmo-button": ButtonProps;
+      "paypal-pay-later-button": ButtonProps;
+      "paypal-basic-card-button": ButtonProps;
+      "paypal-basic-card-container": React.DetailedHTMLProps<
+        React.HTMLAttributes<HTMLElement>,
+        HTMLElement
+      >;
     }
   }
 }
@@ -41,7 +47,9 @@ export interface EligiblePaymentMethods {
 }
 
 export interface ButtonProps extends React.HTMLAttributes<HTMLElement> {
-  type: string;
+  type?: string;
+  countryCode?: string;
+  productCode?: string;
 }
 
 export type PaymentSessionOptions = {

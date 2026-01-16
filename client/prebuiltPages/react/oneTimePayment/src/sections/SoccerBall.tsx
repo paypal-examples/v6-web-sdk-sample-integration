@@ -1,7 +1,8 @@
-import React, { useContext, useState, useCallback } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useState, useCallback } from "react";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
+import PayLaterButton from "../components/PayLaterButton";
+import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
@@ -29,7 +30,6 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
   const [modalState, setModalState] = useState<ModalType>(null);
 
   // Payment handlers
@@ -78,12 +78,6 @@ const SoccerBall: React.FC = () => {
     [],
   );
 
-  // Check payment method eligibility
-  const isPayPalEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("paypal");
-  const isVenmoEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
-
   const modalContent = getModalContent(modalState);
 
   return (
@@ -98,9 +92,13 @@ const SoccerBall: React.FC = () => {
       <ProductDisplay product={PRODUCT} />
 
       <div className="payment-options">
-        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        <PayPalButton {...handlePaymentCallbacks} />
 
-        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
+        <VenmoButton {...handlePaymentCallbacks} />
+
+        <PayLaterButton {...handlePaymentCallbacks} />
+
+        <PayPalBasicCardButton {...handlePaymentCallbacks} />
       </div>
     </div>
   );
