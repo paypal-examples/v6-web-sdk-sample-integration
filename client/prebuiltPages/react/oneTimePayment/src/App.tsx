@@ -25,9 +25,7 @@ function ErrorFallback({ error }: { error: Error }) {
 }
 
 function App() {
-  const [clientToken, setClientToken] = useState<string | undefined>(
-    undefined,
-  );
+  const [clientToken, setClientToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const getClientToken = async () => {

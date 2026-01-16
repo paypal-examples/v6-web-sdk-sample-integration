@@ -88,8 +88,7 @@ const SoccerBall: React.FC = () => {
   // Check if SDK is still loading OR eligibility hasn't been fetched yet
   // This ensures all buttons (including PayLater which needs eligibility data) appear together
   const isSDKLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING ||
-    !eligiblePaymentMethods;
+    loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
 
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
