@@ -1,4 +1,8 @@
 import React, { useState, useCallback } from "react";
+import {
+  usePayPal,
+  INSTANCE_LOADING_STATE,
+} from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
 import PayLaterButton from "../components/PayLaterButton";
@@ -31,6 +35,7 @@ const PRODUCT = {
 
 const SoccerBall: React.FC = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus, eligiblePaymentMethods } = usePayPal();
 
   // Payment handlers
   const handlePaymentCallbacks: PaymentSessionOptions = {
@@ -80,6 +85,12 @@ const SoccerBall: React.FC = () => {
 
   const modalContent = getModalContent(modalState);
 
+  // Check if SDK is still loading OR eligibility hasn't been fetched yet
+  // This ensures all buttons (including PayLater which needs eligibility data) appear together
+  const isSDKLoading =
+    loadingStatus === INSTANCE_LOADING_STATE.PENDING ||
+    !eligiblePaymentMethods;
+
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
       {modalContent && (
@@ -92,13 +103,21 @@ const SoccerBall: React.FC = () => {
       <ProductDisplay product={PRODUCT} />
 
       <div className="payment-options">
-        <PayPalButton {...handlePaymentCallbacks} />
+        {isSDKLoading ? (
+          <div style={{ padding: "1rem", textAlign: "center" }}>
+            Loading payment methods...
+          </div>
+        ) : (
+          <>
+            <PayPalButton {...handlePaymentCallbacks} />
 
-        <VenmoButton {...handlePaymentCallbacks} />
+            <VenmoButton {...handlePaymentCallbacks} />
 
-        <PayLaterButton {...handlePaymentCallbacks} />
+            <PayLaterButton {...handlePaymentCallbacks} />
 
-        <PayPalBasicCardButton {...handlePaymentCallbacks} />
+            <PayPalBasicCardButton {...handlePaymentCallbacks} />
+          </>
+        )}
       </div>
     </div>
   );

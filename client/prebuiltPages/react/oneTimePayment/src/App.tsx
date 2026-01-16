@@ -25,7 +25,9 @@ function ErrorFallback({ error }: { error: Error }) {
 }
 
 function App() {
-  const [clientToken, setClientToken] = useState<string>("");
+  const [clientToken, setClientToken] = useState<string | undefined>(
+    undefined,
+  );
 
   useEffect(() => {
     const getClientToken = async () => {
@@ -35,11 +37,6 @@ function App() {
 
     getClientToken();
   }, []);
-
-  // Wait for clientToken to be loaded before rendering
-  if (!clientToken) {
-    return <div>Loading PayPal SDK...</div>;
-  }
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
@@ -53,18 +50,24 @@ function App() {
           ] as never
         }
         pageType="checkout"
-        eligibleMethodsPayload={{
-          purchase_units: [
-            {
-              amount: {
-                currency_code: "USD",
-                value: "100.00",
-              },
+        eligibleMethodsResponse={{
+          eligible_methods: {
+            paypal: {
+              eligible_in_paypal_network: true,
+              recommended: true,
             },
-          ],
+            paypal_pay_later: {
+              eligible_in_paypal_network: true,
+              country_code: "US",
+              product_code: "PAYLATER",
+            },
+          },
+          supplementary_data: {
+            buyer_country_code: "US",
+          },
         }}
       >
-        <h1>React One-Time Payment Recommended Integration</h1>
+        {/* Only payment-related components wait for SDK to initialize */}
         <SoccerBall />
       </PayPalProvider>
     </ErrorBoundary>
