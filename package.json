@@ -1,5 +1,12 @@
 {
+  "scripts": {
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
   "dependencies": {
     "@paypal/react-paypal-js": "^9.0.0-alpha.2"
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
   }
 }
