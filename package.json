@@ -1,7 +1,8 @@
 {
   "scripts": {
     "format": "prettier . --write",
-    "format:check": "prettier . --check"
+    "format:check": "prettier . --check",
+    "lint": "echo \"eslint is not set up\""
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^9.0.0-alpha.2"
