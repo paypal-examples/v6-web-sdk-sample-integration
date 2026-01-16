@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bank ACH Payments - One-time Payment Flow - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bank ACH Payments</h1>
+    <p>
+      This is the recommended integration pattern for the one-time payment flow
+      with the bank-ach-payments component.
+    </p>
+
+    <bank-ach-button id="bank-ach-button" hidden></bank-ach-button>
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>
