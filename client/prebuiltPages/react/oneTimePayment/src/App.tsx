@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 
-import { PayPalSDKProvider } from "./context/sdkContext";
+import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
@@ -25,7 +25,7 @@ function ErrorFallback({ error }: { error: Error }) {
 }
 
 function App() {
-  const [clientToken, setClientToken] = useState<string>("");
+  const [clientToken, setClientToken] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     const getClientToken = async () => {
@@ -38,14 +38,36 @@ function App() {
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
-      <PayPalSDKProvider
+      <PayPalProvider
         clientToken={clientToken}
-        components={["paypal-payments", "venmo-payments"]}
+        components={
+          [
+            "paypal-payments",
+            "venmo-payments",
+            "paypal-guest-payments",
+          ] as never
+        }
         pageType="checkout"
+        eligibleMethodsResponse={{
+          eligible_methods: {
+            paypal: {
+              eligible_in_paypal_network: true,
+              recommended: true,
+            },
+            paypal_pay_later: {
+              eligible_in_paypal_network: true,
+              country_code: "US",
+              product_code: "PAYLATER",
+            },
+          },
+          supplementary_data: {
+            buyer_country_code: "US",
+          },
+        }}
       >
-        <h1>React One-Time Payment Recommended Integration</h1>
+        {/* Only payment-related components wait for SDK to initialize */}
         <SoccerBall />
-      </PayPalSDKProvider>
+      </PayPalProvider>
     </ErrorBoundary>
   );
 }

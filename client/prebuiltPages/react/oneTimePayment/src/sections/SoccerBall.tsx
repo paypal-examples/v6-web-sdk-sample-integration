@@ -1,7 +1,12 @@
-import React, { useContext, useState, useCallback } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useState, useCallback } from "react";
+import {
+  usePayPal,
+  INSTANCE_LOADING_STATE,
+} from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
+import PayLaterButton from "../components/PayLaterButton";
+import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
@@ -29,8 +34,8 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
   const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus, eligiblePaymentMethods } = usePayPal();
 
   // Payment handlers
   const handlePaymentCallbacks: PaymentSessionOptions = {
@@ -78,13 +83,12 @@ const SoccerBall: React.FC = () => {
     [],
   );
 
-  // Check payment method eligibility
-  const isPayPalEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("paypal");
-  const isVenmoEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
-
   const modalContent = getModalContent(modalState);
+
+  // Check if SDK is still loading OR eligibility hasn't been fetched yet
+  // This ensures all buttons (including PayLater which needs eligibility data) appear together
+  const isSDKLoading =
+    loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
 
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
@@ -98,9 +102,21 @@ const SoccerBall: React.FC = () => {
       <ProductDisplay product={PRODUCT} />
 
       <div className="payment-options">
-        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        {isSDKLoading ? (
+          <div style={{ padding: "1rem", textAlign: "center" }}>
+            Loading payment methods...
+          </div>
+        ) : (
+          <>
+            <PayPalButton {...handlePaymentCallbacks} />
 
-        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
+            <VenmoButton {...handlePaymentCallbacks} />
+
+            <PayLaterButton {...handlePaymentCallbacks} />
+
+            <PayPalBasicCardButton {...handlePaymentCallbacks} />
+          </>
+        )}
       </div>
     </div>
   );
