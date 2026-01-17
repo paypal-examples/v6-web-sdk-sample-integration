@@ -1,23 +1,34 @@
-import React, { useContext, useEffect, useRef } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useEffect, useMemo, useRef } from "react";
 import { createOrder } from "../utils";
-import { PaymentSessionOptions, SessionOutput } from "../types/paypal";
 import { useErrorBoundary } from "react-error-boundary";
+import { usePayPal } from "@paypal/react-paypal-js/sdk-v6";
+import type {
+  VenmoOneTimePaymentSession,
+  VenmoOneTimePaymentSessionOptions,
+} from "@paypal/react-paypal-js/sdk-v6";
 
-const VenmoButton: React.FC<PaymentSessionOptions> = (
+const VenmoButton: React.FC<VenmoOneTimePaymentSessionOptions> = (
   paymentSessionOptions,
 ) => {
-  const { sdkInstance } = useContext(PayPalSDKContext);
+  const { sdkInstance } = usePayPal();
   const { showBoundary } = useErrorBoundary();
-  const venmoSession = useRef<SessionOutput>(null);
+  const venmoSession = useRef<VenmoOneTimePaymentSession>(null);
+
+  // Memoize the payment session options to prevent unnecessary re-creation
+  const memoizedOptions = useMemo(
+    () => paymentSessionOptions,
+    [
+      // Add specific dependencies here based on what properties of paymentSessionOptions should trigger re-creation
+      JSON.stringify(paymentSessionOptions),
+    ],
+  );
 
   useEffect(() => {
     if (sdkInstance) {
-      venmoSession.current = sdkInstance.createVenmoOneTimePaymentSession(
-        paymentSessionOptions,
-      );
+      venmoSession.current =
+        sdkInstance.createVenmoOneTimePaymentSession(memoizedOptions);
     }
-  }, [sdkInstance, paymentSessionOptions]);
+  }, [sdkInstance, memoizedOptions]);
 
   const venmoOnClickHandler = async () => {
     if (!venmoSession.current) return;
