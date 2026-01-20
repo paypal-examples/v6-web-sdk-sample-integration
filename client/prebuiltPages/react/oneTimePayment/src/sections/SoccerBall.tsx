@@ -12,7 +12,7 @@ import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
 import soccerBallImage from "../static/images/world-cup.jpg";
-import { captureOrder } from "../utils";
+import { captureOrder, createOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 
@@ -107,13 +107,28 @@ const SoccerBall: React.FC = () => {
           </div>
         ) : (
           <>
-            <PayPalButton {...handlePaymentCallbacks} />
+            <PayPalButton 
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks} 
+            />
 
-            <VenmoButton {...handlePaymentCallbacks} />
+            <VenmoButton 
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks} 
+            />
 
-            <PayLaterButton {...handlePaymentCallbacks} />
+            <PayLaterButton 
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks} 
+            />
 
-            <PayPalBasicCardButton {...handlePaymentCallbacks} />
+            <PayPalBasicCardButton 
+              createOrder={createOrder}
+              {...handlePaymentCallbacks} 
+            />
           </>
         )}
       </div>
