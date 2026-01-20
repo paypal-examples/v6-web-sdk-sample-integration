@@ -12,7 +12,7 @@ const PayPalButton: React.FC<
     presentationMode: "auto",
     createOrder,
     ...props,
-  } as never);
+  });
 
   return (
     <paypal-button

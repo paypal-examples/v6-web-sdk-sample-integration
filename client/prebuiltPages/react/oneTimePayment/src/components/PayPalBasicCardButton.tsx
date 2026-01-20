@@ -9,10 +9,9 @@ const PayPalBasicCardButton: React.FC<
   Omit<PayPalGuestOneTimePaymentSessionOptions, "orderId" | "createOrder">
 > = (props) => {
   const { handleClick } = usePayPalGuestPaymentSession({
-    presentationMode: "auto",
     createOrder,
     ...props,
-  } as never);
+  });
 
   return (
     <paypal-basic-card-container>

@@ -13,7 +13,7 @@ const PayLaterButton: React.FC<
     presentationMode: "auto",
     createOrder,
     ...props,
-  } as never);
+  });
 
   const { eligiblePaymentMethods } = usePayPal();
   const payLaterDetails = eligiblePaymentMethods?.getDetails?.("paylater");

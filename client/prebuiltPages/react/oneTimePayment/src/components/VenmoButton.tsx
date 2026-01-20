@@ -12,7 +12,7 @@ const VenmoButton: React.FC<
     presentationMode: "auto",
     createOrder,
     ...props,
-  } as never);
+  });
 
   return (
     <venmo-button
