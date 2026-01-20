@@ -1,9 +1,13 @@
 import React from "react";
-import { usePayPalOneTimePaymentSession } from "@paypal/react-paypal-js/sdk-v6";
+import {
+  usePayPalOneTimePaymentSession,
+  type PayPalOneTimePaymentSessionOptions,
+} from "@paypal/react-paypal-js/sdk-v6";
 import { createOrder } from "../utils";
-import type { PaymentSessionOptions } from "../types/paypal";
 
-const PayPalButton: React.FC<PaymentSessionOptions> = (props) => {
+const PayPalButton: React.FC<
+  Omit<PayPalOneTimePaymentSessionOptions, "orderId" | "createOrder">
+> = (props) => {
   const { handleClick } = usePayPalOneTimePaymentSession({
     presentationMode: "auto",
     createOrder,

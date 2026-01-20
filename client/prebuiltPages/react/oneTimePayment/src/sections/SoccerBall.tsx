@@ -2,12 +2,12 @@ import React, { useState, useCallback } from "react";
 import {
   usePayPal,
   INSTANCE_LOADING_STATE,
+  type OnApproveDataOneTimePayments,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
 import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
-import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
@@ -37,9 +37,8 @@ const SoccerBall: React.FC = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus, eligiblePaymentMethods } = usePayPal();
 
-  // Payment handlers
-  const handlePaymentCallbacks: PaymentSessionOptions = {
-    onApprove: async (data: OnApproveData) => {
+  const handlePaymentCallbacks = {
+    onApprove: async (data: OnApproveDataOneTimePayments) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
       console.log("Payment capture result:", captureResult);
