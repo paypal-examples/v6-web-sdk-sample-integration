@@ -54,6 +54,10 @@ const SoccerBall: React.FC = () => {
       console.error("Payment error:", error);
       setModalState("error");
     },
+
+    onComplete: () => {
+      console.log("Payment session completed");
+    },
   };
 
   const getModalContent = useCallback(
