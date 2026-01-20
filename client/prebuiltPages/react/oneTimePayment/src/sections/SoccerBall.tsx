@@ -121,10 +121,10 @@ const SoccerBall: React.FC = () => {
   );
 
   // Check payment method eligibility
-  const isPayPalEligible = eligiblePaymentMethods?.eligible_methods.paypal;
-  const isVenmoEligible = eligiblePaymentMethods?.eligible_methods.venmo;
+  const isPayPalEligible = eligiblePaymentMethods?.isEligible("paypal")
+  const isVenmoEligible = eligiblePaymentMethods?.isEligible("venmo");
   const isPayLaterEligible =
-    eligiblePaymentMethods?.eligible_methods.paypal_pay_later;
+    eligiblePaymentMethods?.isEligible("paylater");
 
   const modalContent = getModalContent(modalState);
 
