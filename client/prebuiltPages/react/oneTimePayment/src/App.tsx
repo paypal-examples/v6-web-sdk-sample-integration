@@ -40,30 +40,12 @@ function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <PayPalProvider
         clientToken={clientToken}
-        components={
-          [
-            "paypal-payments",
-            "venmo-payments",
-            "paypal-guest-payments",
-          ] as never
-        }
+        components={[
+          "paypal-payments",
+          "venmo-payments",
+          "paypal-guest-payments",
+        ]}
         pageType="checkout"
-        eligibleMethodsResponse={{
-          eligible_methods: {
-            paypal: {
-              eligible_in_paypal_network: true,
-              recommended: true,
-            },
-            paypal_pay_later: {
-              eligible_in_paypal_network: true,
-              country_code: "US",
-              product_code: "PAYLATER",
-            },
-          },
-          supplementary_data: {
-            buyer_country_code: "US",
-          },
-        }}
       >
         {/* Only payment-related components wait for SDK to initialize */}
         <SoccerBall />
