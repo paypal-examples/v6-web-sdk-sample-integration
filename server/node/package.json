@@ -23,6 +23,7 @@
     "express": "^5.2.1"
   },
   "devDependencies": {
+    "@flydotio/dockerfile": "^0.7.10",
     "@ngrok/ngrok": "^1.7.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
