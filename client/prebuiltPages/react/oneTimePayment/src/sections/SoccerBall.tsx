@@ -113,27 +113,27 @@ const SoccerBall: React.FC = () => {
           </div>
         ) : (
           <>
-            <PayPalButton 
+            <PayPalButton
               createOrder={createOrder}
               presentationMode="auto"
-              {...handlePaymentCallbacks} 
+              {...handlePaymentCallbacks}
             />
 
-            <VenmoButton 
+            <VenmoButton
               createOrder={createOrder}
               presentationMode="auto"
-              {...handlePaymentCallbacks} 
+              {...handlePaymentCallbacks}
             />
 
-            <PayLaterButton 
+            <PayLaterButton
               createOrder={createOrder}
               presentationMode="auto"
-              {...handlePaymentCallbacks} 
+              {...handlePaymentCallbacks}
             />
 
-            <PayPalBasicCardButton 
+            <PayPalBasicCardButton
               createOrder={createOrder}
-              {...handlePaymentCallbacks} 
+              {...handlePaymentCallbacks}
             />
           </>
         )}
