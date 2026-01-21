@@ -14,16 +14,13 @@ import {
   createSetupTokenWithSampleDataForPayPal,
 } from "./paypalServerSdk";
 
-const clientStaticDirectory = process.env.CLIENT_STATIC_DIRECTORY
-  ? join(__dirname, process.env.CLIENT_STATIC_DIRECTORY)
-  : join(__dirname, "../../../client");
+const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
-
-app.use("/client", express.static(clientStaticDirectory));
+app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
 
 /* ######################################################################
  * Entry point for client examples containing HTML, JS, and CSS

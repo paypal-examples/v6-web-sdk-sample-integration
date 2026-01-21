@@ -20,14 +20,20 @@ FROM base AS build
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
+# Copy server package files
+COPY server/node/.npmrc server/node/package.json server/node/package-lock.json* ./server/node/
+
 # Install node modules
-COPY .npmrc package.json ./
+WORKDIR /app/server/node
 RUN npm install --include=dev
 
 # Copy application code
-COPY . .
+WORKDIR /app
+COPY server/node ./server/node
+COPY client ./client
 
 # Build application
+WORKDIR /app/server/node
 RUN npm run build
 
 # Remove development dependencies
@@ -39,6 +45,9 @@ FROM base
 
 # Copy built application
 COPY --from=build /app /app
+
+# Set working directory to server
+WORKDIR /app/server/node
 
 # Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
