@@ -11,6 +11,7 @@ primary_region = 'ord'
 [env]
   HOSTNAME = '0.0.0.0'
   PORT = '3000'
+  CLIENT_STATIC_DIRECTORY = "../client"
 
 [http_service]
   internal_port = 3000

@@ -15,7 +15,7 @@ import {
 } from "./paypalServerSdk";
 
 const clientStaticDirectory = process.env.CLIENT_STATIC_DIRECTORY
-  ? process.env.CLIENT_STATIC_DIRECTORY
+  ? join(__dirname, process.env.CLIENT_STATIC_DIRECTORY)
   : join(__dirname, "../../../client");
 
 const app = express();
