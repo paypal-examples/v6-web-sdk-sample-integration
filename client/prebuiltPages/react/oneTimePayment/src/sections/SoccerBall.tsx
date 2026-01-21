@@ -1,13 +1,19 @@
-import React, { useContext, useState, useCallback } from "react";
-import { PayPalSDKContext } from "../context/sdkContext";
+import React, { useState, useCallback } from "react";
+import {
+  usePayPal,
+  INSTANCE_LOADING_STATE,
+  type OnApproveDataOneTimePayments,
+  type OnCompleteData,
+} from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
-import { PaymentSessionOptions, OnApproveData } from "../types/paypal";
+import PayLaterButton from "../components/PayLaterButton";
+import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
 import soccerBallImage from "../static/images/world-cup.jpg";
-import { captureOrder } from "../utils";
+import { captureOrder, createOrder } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 
@@ -29,12 +35,11 @@ const PRODUCT = {
 } as const;
 
 const SoccerBall: React.FC = () => {
-  const { sdkInstance, eligiblePaymentMethods } = useContext(PayPalSDKContext);
   const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus, eligiblePaymentMethods } = usePayPal();
 
-  // Payment handlers
-  const handlePaymentCallbacks: PaymentSessionOptions = {
-    onApprove: async (data: OnApproveData) => {
+  const handlePaymentCallbacks = {
+    onApprove: async (data: OnApproveDataOneTimePayments) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
       console.log("Payment capture result:", captureResult);
@@ -49,6 +54,11 @@ const SoccerBall: React.FC = () => {
     onError: (error: Error) => {
       console.error("Payment error:", error);
       setModalState("error");
+    },
+
+    onComplete: (data: OnCompleteData) => {
+      console.log("Payment session completed");
+      console.log("On Complete data:", data);
     },
   };
 
@@ -78,13 +88,12 @@ const SoccerBall: React.FC = () => {
     [],
   );
 
-  // Check payment method eligibility
-  const isPayPalEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("paypal");
-  const isVenmoEligible =
-    sdkInstance && eligiblePaymentMethods?.isEligible("venmo");
-
   const modalContent = getModalContent(modalState);
+
+  // Check if SDK is still loading OR eligibility hasn't been fetched yet
+  // This ensures all buttons (including PayLater which needs eligibility data) appear together
+  const isSDKLoading =
+    loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
 
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
@@ -98,9 +107,36 @@ const SoccerBall: React.FC = () => {
       <ProductDisplay product={PRODUCT} />
 
       <div className="payment-options">
-        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        {isSDKLoading ? (
+          <div style={{ padding: "1rem", textAlign: "center" }}>
+            Loading payment methods...
+          </div>
+        ) : (
+          <>
+            <PayPalButton
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks}
+            />
 
-        {isVenmoEligible && <VenmoButton {...handlePaymentCallbacks} />}
+            <VenmoButton
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks}
+            />
+
+            <PayLaterButton
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks}
+            />
+
+            <PayPalBasicCardButton
+              createOrder={createOrder}
+              {...handlePaymentCallbacks}
+            />
+          </>
+        )}
       </div>
     </div>
   );

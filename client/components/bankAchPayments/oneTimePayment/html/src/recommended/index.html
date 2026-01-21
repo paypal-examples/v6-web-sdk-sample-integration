@@ -2,7 +2,7 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <title>One-Time Payment - Google Pay - PayPal Web SDK</title>
+    <title>Bank ACH Payments - One-time Payment Flow - PayPal Web SDK</title>
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <link rel="stylesheet" href="/client/shared/styles.css" />
     <style>
@@ -13,12 +13,14 @@
     </style>
   </head>
   <body>
-    <h1>One-Time Payment Google Pay Integration</h1>
+    <h1>Bank ACH Payments</h1>
+    <p>
+      This is the recommended integration pattern for the one-time payment flow
+      with the bank-ach-payments component.
+    </p>
 
-    <div id="googlepay-button-container"></div>
+    <bank-ach-button id="bank-ach-button" hidden></bank-ach-button>
     <alert-component></alert-component>
-
-    <script src="https://pay.google.com/gp/p/js/pay.js"></script>
 
     <script src="app.js"></script>
 
