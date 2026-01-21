@@ -3,6 +3,7 @@ import {
   usePayPal,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
+  type OnCompleteData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
@@ -55,8 +56,9 @@ const SoccerBall: React.FC = () => {
       setModalState("error");
     },
 
-    onComplete: () => {
+    onComplete: (data: OnCompleteData) => {
       console.log("Payment session completed");
+      console.log("On Complete data:", data);
     },
   };
 
