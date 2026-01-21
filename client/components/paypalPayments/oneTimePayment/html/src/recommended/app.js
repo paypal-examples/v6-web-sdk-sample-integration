@@ -29,7 +29,7 @@ async function onPayPalWebSdkLoaded() {
   } catch (error) {
     renderAlert({
       type: "danger",
-      message: "Failed to initialize the PayPal SDK",
+      message: "Failed to initialize the PayPal Web SDK",
     });
     console.error(error);
   }
