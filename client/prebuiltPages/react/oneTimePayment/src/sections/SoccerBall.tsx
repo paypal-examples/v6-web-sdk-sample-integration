@@ -14,17 +14,19 @@ import {
   VenmoOneTimePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
 import type {
-  PayPalOneTimePaymentSessionOptions,
+  OnApproveDataOneTimePayments,
+  OnCancelDataOneTimePayments,
+  OnCompleteData,
   SavePaymentSessionOptions,
 } from "@paypal/react-paypal-js/sdk-v6";
 import { PayPalSavePaymentButton } from "../components/PayPalSavePaymentButton";
 import PayLaterButton from "../components/PayLaterButton";
 // import GuestPaymentButton from "../components/GuestPaymentButton";
-import {
-  PayPalMessages,
-  ManualMessagingComponent,
-  PayPalMessagesLearnMore,
-} from "../components/PayPalMessages";
+// import {
+//   PayPalMessages,
+//   ManualMessagingComponent,
+//   PayPalMessagesLearnMore,
+// } from "../components/PayPalMessages";
 import PayPalCreditButton from "../components/PayPalCreditButton";
 
 // Types
@@ -51,20 +53,20 @@ const SoccerBall: React.FC = () => {
   const totalAmount = (PRODUCT.price * quantity).toFixed(2);
 
   // Payment handlers
-  const handlePaymentCallbacks: PayPalOneTimePaymentSessionOptions = {
-    onApprove: async (data) => {
+  const handlePaymentCallbacks = {
+    onApprove: async (data: OnApproveDataOneTimePayments) => {
       console.log("Payment approved:", data);
       const captureResult = await captureOrder({ orderId: data.orderId });
       console.log("Payment capture result:", captureResult);
       setModalState("success");
     },
 
-    onCancel: () => {
-      console.log("Payment cancelled");
+    onCancel: (data: OnCancelDataOneTimePayments) => {
+      console.log("Payment cancelled", data);
       setModalState("cancel");
     },
 
-    onComplete: (data) => {
+    onComplete: (data:OnCompleteData) => {
       console.log("On Complete Called");
       console.log("On Complete data:", data);
     },
@@ -153,7 +155,8 @@ const SoccerBall: React.FC = () => {
       </div>
 
       <div className="payment-options">
-        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} />}
+        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} orderId={'created-elsewhere'} presentationMode="auto" />}
+        {isPayPalEligible && <PayPalButton {...handlePaymentCallbacks} createOrder={createOrder} presentationMode="auto" />}
         {isPayLaterEligible && <PayLaterButton {...handlePaymentCallbacks} />}
         {isPayPalEligible && (
           <PayPalSavePaymentButton {...handleSavePaymentCallbacks} />
@@ -164,18 +167,26 @@ const SoccerBall: React.FC = () => {
         {/* <PayPalMessages amount={totalAmount} />
         <ManualMessagingComponent amount={totalAmount}/> */}
         {/* <PayPalMessagesLearnMore initialAmount={totalAmount} /> */}
-        {/* <PayPalOneTimePaymentButton
+        <PayPalOneTimePaymentButton
           createOrder={createOrder}
-          onApprove={(data: Record<string, unknown>) => {
-            console.log("on approve", data);
+          onApprove={async (data: OnApproveDataOneTimePayments) => {
+            console.log("Payment approved:", data);
+            const captureResult = await captureOrder({ orderId: data.orderId });
+            console.log("Payment capture result:", captureResult);
+            setModalState("success");
           }}
+          presentationMode="auto"
         />
         <VenmoOneTimePaymentButton
           createOrder={createOrder}
-          onApprove={(data: Record<string, unknown>) => {
-            console.log("on approve", data);
+          onApprove={async (data: OnApproveDataOneTimePayments) => {
+            console.log("Payment approved:", data);
+            const captureResult = await captureOrder({ orderId: data.orderId });
+            console.log("Payment capture result:", captureResult);
+            setModalState("success");
           }}
-        /> */}
+          presentationMode="auto"
+        />
       </div>
     </div>
   );
