@@ -88,7 +88,7 @@ app.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   async (req: Request, res: Response) => {
     try {
-      const { orderId } = req.params;
+      const orderId = req.params.orderId as string;
       const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
