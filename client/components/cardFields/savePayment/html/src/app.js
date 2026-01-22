@@ -45,19 +45,16 @@ async function setupCardFields(sdkInstance) {
 
 async function onPayClick(cardFieldsInstance) {
   try {
-    const vaultSetupToken = await createVaultSetupToken();
+    const { vaultSetupToken } = await createVaultSetupToken();
 
-    const { data, state } = await cardFieldsInstance.submit(vaultSetupToken, {
-      billingAddress: {
-        postalCode: "95131",
-      },
-    });
+    const { data, state } = await cardFieldsInstance.submit(vaultSetupToken);
 
     switch (state) {
       case "succeeded": {
         const { vaultSetupToken, ...liabilityShift } = data;
         // 3DS may or may not have occurred; Use liabilityShift
         // to determine if the payment should be captured
+        //
 
         const paymentToken = await createPaymentToken({
           vaultSetupToken,
@@ -103,12 +100,15 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createVaultSetupToken() {
-  const response = await fetch("/paypal-api/vault/setup-token/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "/paypal-api/vault/setup-token/create-for-card",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const { id } = await response.json();
 
   return { vaultSetupToken: id };
