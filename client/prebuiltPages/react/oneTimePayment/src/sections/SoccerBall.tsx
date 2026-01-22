@@ -3,12 +3,17 @@ import {
   usePayPal,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
+  type OnApproveDataSavePayments,
   type OnCompleteData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
 import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
+import PayPalSubscriptionButton from "../components/PayPalSubscriptionButton";
+import PayPalSaveButton from "../components/PayPalSaveButton";
+import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
+import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
@@ -38,6 +43,57 @@ const SoccerBall: React.FC = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus, eligiblePaymentMethods } = usePayPal();
 
+  // Function to create subscription on the server
+  const createSubscription = async () => {
+    try {
+      const response = await fetch("http://localhost:8080/api/subscription", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      });
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Subscription created:", data);
+
+      return { subscriptionId: data.id };
+    } catch (error) {
+      console.error("Error creating subscription:", error);
+      throw error;
+    }
+  };
+
+  // Function to create vault token on the server
+  const createVaultToken = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:8080/paypal-api/vault/setup-token/create",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      console.log("Vault token created:", data);
+
+      return { vaultSetupToken: data.id };
+    } catch (error) {
+      console.error("Error creating vault token:", error);
+      throw error;
+    }
+  };
+
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
       console.log("Payment approved:", data);
@@ -58,6 +114,30 @@ const SoccerBall: React.FC = () => {
 
     onComplete: (data: OnCompleteData) => {
       console.log("Payment session completed");
+      console.log("On Complete data:", data);
+    },
+  };
+
+  const handleSaveCallbacks = {
+    onApprove: async (data: OnApproveDataSavePayments) => {
+      console.log("Payment method saved:", data);
+      // In a real app, you would save the vaultSetupToken to your server
+      console.log("Vault Setup Token:", data.vaultSetupToken);
+      setModalState("success");
+    },
+
+    onCancel: () => {
+      console.log("Save payment method cancelled");
+      setModalState("cancel");
+    },
+
+    onError: (error: Error) => {
+      console.error("Save payment method error:", error);
+      setModalState("error");
+    },
+
+    onComplete: (data: OnCompleteData) => {
+      console.log("Save payment session completed");
       console.log("On Complete data:", data);
     },
   };
@@ -113,27 +193,81 @@ const SoccerBall: React.FC = () => {
           </div>
         ) : (
           <>
-            <PayPalButton
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Pay with PayPal (One-time Payment)
+              </label>
+              <PayPalButton
+                createOrder={createOrder}
+                presentationMode="auto"
+                {...handlePaymentCallbacks}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Pay with Venmo
+              </label>
+              <VenmoButton
+                createOrder={createOrder}
+                presentationMode="auto"
+                {...handlePaymentCallbacks}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Pay Later
+              </label>
+              <PayLaterButton
+                createOrder={createOrder}
+                presentationMode="auto"
+                {...handlePaymentCallbacks}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Pay with Card (Guest Checkout)
+              </label>
+              <PayPalBasicCardButton
+                createOrder={createOrder}
+                {...handlePaymentCallbacks}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Subscribe with PayPal
+              </label>
+              <PayPalSubscriptionButton
+                createSubscription={createSubscription}
+                presentationMode="auto"
+                {...handlePaymentCallbacks}
+              />
+            </div>
+
+            <div style={{ marginBottom: "1rem" }}>
+              <label style={{ display: "block", marginBottom: "0.5rem", fontWeight: "bold" }}>
+                Save PayPal Payment Method (Vault without Purchase)
+              </label>
+              <PayPalSaveButton
+                createVaultToken={createVaultToken}
+                presentationMode="auto"
+                {...handleSaveCallbacks}
+              />
+            </div>
+
+            <PayPalCreditOneTimeButton
               createOrder={createOrder}
               presentationMode="auto"
               {...handlePaymentCallbacks}
             />
 
-            <VenmoButton
-              createOrder={createOrder}
+            <PayPalCreditSaveButton
+              createVaultToken={createVaultToken}
               presentationMode="auto"
-              {...handlePaymentCallbacks}
-            />
-
-            <PayLaterButton
-              createOrder={createOrder}
-              presentationMode="auto"
-              {...handlePaymentCallbacks}
-            />
-
-            <PayPalBasicCardButton
-              createOrder={createOrder}
-              {...handlePaymentCallbacks}
+              {...handleSaveCallbacks}
             />
           </>
         )}
