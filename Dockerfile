@@ -23,8 +23,16 @@ RUN apt-get update -qq && \
 # Copy server package files
 COPY server/node/.npmrc server/node/package.json server/node/package-lock.json* ./server/node/
 
-# Install node modules
+# Install server node modules
 WORKDIR /app/server/node
+RUN npm install --include=dev
+
+# Copy React app package files
+WORKDIR /app
+COPY client/prebuiltPages/react/oneTimePayment/.npmrc client/prebuiltPages/react/oneTimePayment/package.json ./client/prebuiltPages/react/oneTimePayment/
+
+# Install React app node modules
+WORKDIR /app/client/prebuiltPages/react/oneTimePayment
 RUN npm install --include=dev
 
 # Copy application code
@@ -32,12 +40,13 @@ WORKDIR /app
 COPY server/node ./server/node
 COPY client ./client
 
-# Build application
+# Build server application
 WORKDIR /app/server/node
-RUN npm run build
+RUN npm run build && npm prune --omit=dev 
 
-# Remove development dependencies
-RUN npm prune --omit=dev
+# Build React application
+WORKDIR /app/client/prebuiltPages/react/oneTimePayment
+RUN npm run build && npm prune --omit=dev 
 
 
 # Final stage for app image

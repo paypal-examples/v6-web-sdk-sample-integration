@@ -15,12 +15,17 @@ import {
 } from "./paypalServerSdk";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
+const REACT_APP_DIRECTORY = join(
+  __dirname,
+  "../../../client/prebuiltPages/react/oneTimePayment/dist",
+);
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
+app.use("/react", express.static(REACT_APP_DIRECTORY));
 
 /* ######################################################################
  * Entry point for client examples containing HTML, JS, and CSS
