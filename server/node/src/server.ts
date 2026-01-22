@@ -85,7 +85,7 @@ app.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   async (req: Request, res: Response) => {
     try {
-      const { orderId } = req.params;
+      const orderId = req.params.orderId as string;
       const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
@@ -171,8 +171,9 @@ async function setupNgrokForHTTPS(port: number) {
 }
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
+const hostname = process.env.HOSTNAME ?? "localhost";
 
-app.listen(port, async () => {
-  console.log(`Node.js web server listening at: http://localhost:${port}`);
+app.listen({ port, hostname }, async () => {
+  console.log(`Node.js web server listening at: http://${hostname}:${port}`);
   await setupNgrokForHTTPS(port);
 });

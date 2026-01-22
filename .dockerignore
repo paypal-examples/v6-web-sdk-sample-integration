@@ -1,0 +1,10 @@
+.git
+node_modules
+.env
+.env.sample
+*.md
+.prettierrc
+.github
+.claude
+server/node/dist
+client/temp
