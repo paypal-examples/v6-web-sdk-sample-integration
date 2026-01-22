@@ -3,7 +3,7 @@
 # See https://fly.io/docs/reference/configuration/ for information about how to use this file.
 #
 
-app = 'v6-web-sdk-sample-integration-server-test'
+app = 'v6-web-sdk-sample-integration-server'
 primary_region = 'ord'
 
 [build]
