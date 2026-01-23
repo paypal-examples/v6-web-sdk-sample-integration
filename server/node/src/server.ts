@@ -12,6 +12,8 @@ import {
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
+  createSubscription,
+  createSubscriptionWithSampleData,
 } from "./paypalServerSdk";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -162,6 +164,21 @@ app.post(
     }
   },
 );
+
+app.post("/api/subscription", async (_req: Request, res: Response) => {
+  try {
+    const planId = process.env.PAYPAL_SUBSCRIPTION_PLAN_ID;
+
+    const { jsonResponse, httpStatusCode } = planId
+      ? await createSubscription(planId)
+      : await createSubscriptionWithSampleData();
+
+    res.status(httpStatusCode).json(jsonResponse);
+  } catch (error) {
+    console.error("Failed to create subscription:", error);
+    res.status(500).json({ error: "Failed to create subscription." });
+  }
+});
 
 async function savePaymentTokenToDatabase(
   paymentTokenResponse: PaymentTokenResponse,
