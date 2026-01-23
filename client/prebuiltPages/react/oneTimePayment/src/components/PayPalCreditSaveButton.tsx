@@ -11,17 +11,8 @@ const PayPalCreditSaveButton: React.FC<
   const { handleClick } = usePayPalCreditSavePaymentSession(props);
   const { eligiblePaymentMethods } = usePayPal();
 
-  // Check if credit is eligible first
-  if (!eligiblePaymentMethods?.isEligible?.("credit")) {
-    return null;
-  }
-
-  const paypalCreditDetails = eligiblePaymentMethods?.getDetails?.("credit");
-  const countryCode = paypalCreditDetails?.countryCode;
-
-  if (!countryCode) {
-    return null;
-  }
+  const payCreditDetails = eligiblePaymentMethods?.getDetails?.("credit");
+  const countryCode = payCreditDetails?.countryCode;
 
   return (
     <paypal-credit-button
