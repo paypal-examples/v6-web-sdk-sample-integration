@@ -58,11 +58,9 @@ app.get(
     if (PAYPAL_SANDBOX_CLIENT_ID) {
       res.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
     } else {
-      res
-        .status(500)
-        .json({
-          error: "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
-        });
+      res.status(500).json({
+        error: "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
+      });
     }
   },
 );
