@@ -13,7 +13,11 @@
     "typecheck": "tsc --build --noEmit"
   },
   "dependencies": {
+<<<<<<< Updated upstream
     "@paypal/react-paypal-js": "^9.0.0-alpha.5",
+=======
+    "@paypal/react-paypal-js": "file:../../../../../paypal-js/packages/react-paypal-js/paypal-react-paypal-js-8.9.2.tgz",
+>>>>>>> Stashed changes
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-error-boundary": "6.0.0"

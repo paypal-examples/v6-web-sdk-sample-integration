@@ -4,8 +4,14 @@ import type {
   LearnMore,
   LearnMoreOptions,
   MessageContent,
+<<<<<<< Updated upstream
 } from "@paypal/react-paypal-js/sdk-v6";
 import { PayPalMessagesElement } from "../types/paypal";
+=======
+  PayPalMessagesElement
+} from "@paypal/react-paypal-js/sdk-v6";
+
+>>>>>>> Stashed changes
 
 interface PayPalMessagesProps {
   amount?: string;

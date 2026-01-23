@@ -12,6 +12,8 @@ import {
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
+  createBillingPlanWithSampleData,
+  createSubscriptionWithSampleData,
 } from "./paypalServerSdk";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -139,6 +141,38 @@ app.post(
     } catch (error) {
       console.error("Failed to create payment token:", error);
       res.status(500).json({ error: "Failed to create payment token." });
+    }
+  },
+);
+
+/* ######################################################################
+  * Subscription Endpoints
+  * ###################################################################### */
+
+app.post(
+  "/paypal-api/subscriptions/plans/create",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await createBillingPlanWithSampleData();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create billing plan:", error);
+      res.status(500).json({ error: "Failed to create billing plan." });
+    }
+  },
+);
+
+app.post(
+  "/paypal-api/subscriptions/create",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await createSubscriptionWithSampleData();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create subscription:", error);
+      res.status(500).json({ error: "Failed to create subscription." });
     }
   },
 );

@@ -53,3 +53,16 @@ export const createSetupToken = async () => {
   
   return { vaultSetupToken: id };
 }
+
+// POST /paypal-api/subscriptions/create
+export const createSubscription = async () => {
+  const response = await fetch("/paypal-api/subscriptions/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  const { id } = await response.json();
+
+  return { subscriptionId: id };
+};

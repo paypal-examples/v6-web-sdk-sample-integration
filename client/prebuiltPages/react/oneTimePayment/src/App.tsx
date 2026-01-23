@@ -1,5 +1,16 @@
 import { useEffect, useState } from "react";
+<<<<<<< Updated upstream
 import { FindEligiblePaymentMethodsRequestPayload, PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
+=======
+<<<<<<< Updated upstream
+
+import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
+=======
+import {
+  PayPalProvider,
+} from "@paypal/react-paypal-js/sdk-v6";
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
@@ -47,6 +58,7 @@ function ErrorFallback({ error }: { error: Error }) {
   };
 
 function App() {
+<<<<<<< Updated upstream
   const [clientToken, setClientToken] = useState<string>("");
   const [locale, setLocale] = useState<string>("en-US");
 
@@ -55,6 +67,20 @@ function App() {
       locale,
       timestamp: Date.now()
   });
+=======
+<<<<<<< Updated upstream
+  const [clientToken, setClientToken] = useState<string | undefined>(undefined);
+=======
+  const [clientToken, setClientToken] = useState<string>("");
+  const [locale, setLocale] = useState<string>("en-US");
+
+  console.log("📱 App render", {
+    clientToken: clientToken?.substring(0, 10),
+    locale,
+    timestamp: Date.now(),
+  });
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
 
   useEffect(() => {
     const getClientToken = async () => {
@@ -86,12 +112,33 @@ function App() {
         </select>
       </div>
       <PayPalProvider
+<<<<<<< Updated upstream
         components={["paypal-payments", "venmo-payments", "paypal-guest-payments", "paypal-messages"]}
+=======
+<<<<<<< Updated upstream
+=======
+        components={[
+          "paypal-payments",
+          "venmo-payments",
+          "paypal-guest-payments",
+          "paypal-messages",
+          "paypal-subscriptions"
+        ]}
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
         clientToken={clientToken}
         pageType="checkout"
+<<<<<<< Updated upstream
         environment="sandbox"
         locale={locale}
         eligibleMethodsPayload={eligibleMethodsPayload}
+=======
+<<<<<<< Updated upstream
+=======
+        environment="sandbox"
+        locale={locale}
+>>>>>>> Stashed changes
+>>>>>>> Stashed changes
       >
         <h1>React One-Time Payment Recommended Integration</h1>
         <SoccerBall />

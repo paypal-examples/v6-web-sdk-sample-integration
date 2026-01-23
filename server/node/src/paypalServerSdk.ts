@@ -4,18 +4,25 @@ import {
   Client,
   CustomError,
   Environment,
+  IntervalUnit,
   LogLevel,
   OAuthAuthorizationController,
   OrdersController,
   PaypalPaymentTokenUsageType,
+  PlanRequestStatus,
+  SubscriptionsController,
+  TenureType,
   VaultController,
   VaultInstructionAction,
   VaultTokenRequestType,
 } from "@paypal/paypal-server-sdk";
 
 import type {
+  BillingPlan,
+  CreateSubscriptionRequest,
   OAuthProviderError,
   OrderRequest,
+  PlanRequest,
   SetupTokenRequest,
 } from "@paypal/paypal-server-sdk";
 
@@ -51,6 +58,7 @@ const client = new Client({
 const ordersController = new OrdersController(client);
 const oAuthAuthorizationController = new OAuthAuthorizationController(client);
 const vaultController = new VaultController(client);
+const subscriptionsController = new SubscriptionsController(client);
 
 /* ######################################################################
  * Token generation helpers
@@ -263,6 +271,146 @@ export async function createPaymentToken(
     if (error instanceof ApiError) {
       const { result, statusCode } = error;
 
+      return {
+        jsonResponse: result as CustomError,
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
+}
+
+/* ######################################################################
+  * Create Subscription
+* ###################################################################### */
+
+async function createProduct() {
+  const auth = Buffer.from(
+    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
+  ).toString("base64");
+
+  const response = await fetch(
+    "https://api-m.sandbox.paypal.com/v1/catalogs/products",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${auth}`,
+        "PayPal-Request-Id": `product-${Date.now()}`,
+      },
+      body: JSON.stringify({
+        name: "Sample Subscription Product",
+        description: "A sample product for subscription testing",
+        type: "SERVICE",
+        category: "SOFTWARE",
+      }),
+    },
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to create product: ${response.status}`);
+  }
+
+  return response.json();
+}
+
+export async function createBillingPlanWithSampleData() {
+  try {
+    // Create a product first
+    const product = await createProduct();
+    const productId = product.id;
+
+    const planRequestBody: PlanRequest = {
+      productId: productId,
+      name: "Sample Monthly Subscription Plan",
+      description: "A sample subscription plan - $9.99/month",
+      status: PlanRequestStatus.Active,
+      billingCycles: [
+        {
+          frequency: {
+            intervalUnit: IntervalUnit.Month,
+            intervalCount: 1,
+          },
+          tenureType: TenureType.Regular,
+          sequence: 1,
+          totalCycles: 0, // 0 = infinite
+          pricingScheme: {
+            fixedPrice: {
+              currencyCode: "USD",
+              value: "9.99",
+            },
+          },
+        },
+      ],
+      paymentPreferences: {
+        autoBillOutstanding: true,
+        setupFee: {
+          currencyCode: "USD",
+          value: "0.00",
+        },
+        paymentFailureThreshold: 3,
+      },
+    };
+
+    const { result, statusCode } =
+      await subscriptionsController.createBillingPlan({
+        body: planRequestBody,
+        prefer: "return=representation",
+        paypalRequestId: `plan-${Date.now()}`,
+      });
+
+    return {
+      jsonResponse: result,
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { result, statusCode } = error;
+      return {
+        jsonResponse: result as CustomError,
+        httpStatusCode: statusCode,
+      };
+    } else {
+      throw error;
+    }
+  }
+}
+
+export async function createSubscriptionWithSampleData() {
+  // Step 1: Create a billing plan (which creates a product)
+  const planResult = await createBillingPlanWithSampleData();
+
+  if (planResult.httpStatusCode >= 400) {
+    return planResult;
+  }
+
+  const billingPlan = planResult.jsonResponse as BillingPlan;
+
+  if (!billingPlan.id) {
+    throw new Error("Failed to create billing plan - no ID returned");
+  }
+
+  // Step 2: Create subscription with the plan
+  try {
+    const subscriptionRequestBody: CreateSubscriptionRequest = {
+      planId: billingPlan.id,
+    };
+
+    const { result, statusCode } =
+      await subscriptionsController.createSubscription({
+        body: subscriptionRequestBody,
+        prefer: "return=representation",
+        paypalRequestId: `subscription-${Date.now()}`,
+      });
+
+    return {
+      jsonResponse: result,
+      httpStatusCode: statusCode,
+    };
+  } catch (error) {
+    if (error instanceof ApiError) {
+      const { result, statusCode } = error;
       return {
         jsonResponse: result as CustomError,
         httpStatusCode: statusCode,
