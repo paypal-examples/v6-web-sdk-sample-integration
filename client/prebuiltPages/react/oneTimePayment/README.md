@@ -8,7 +8,7 @@
 > **Demo**: Product checkout flow ($100 Soccer Ball)
 > **Live Demo**: [View on fly.dev](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)
 
-This React sample application demonstrates how to integrate with PayPal's V6 Web SDK. The example simulates a product checkout flow for a World Cup Soccer Ball ($100) and supports multiple payment methods.
+This React sample application demonstrates how to integrate with PayPal's V6 Web SDK.
 
 ## Live Demo
 
