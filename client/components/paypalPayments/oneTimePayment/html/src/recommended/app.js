@@ -1,8 +1,25 @@
+/**
+ * Initializes the PayPal Web SDK, determines eligible payment methods,
+ * and sets up the appropriate payment buttons. This function is invoked
+ * by the SDK script tag's "onload" event.
+ *
+ * ```html
+ * <script
+ *   async
+ *   src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+ *   onload="onPayPalWebSdkLoaded()">
+ * </script>
+ * ```
+ *
+ * @async
+ * @function onPayPalWebSdkLoaded
+ * @returns {Promise<void>}
+ */
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["paypal-payments"],
       pageType: "checkout",
     });
@@ -27,6 +44,10 @@ async function onPayPalWebSdkLoaded() {
       setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
     }
   } catch (error) {
+    renderAlert({
+      type: "danger",
+      message: "Failed to initialize the PayPal Web SDK",
+    });
     console.error(error);
   }
 }
@@ -148,16 +169,16 @@ async function setupPayPalCreditButton(
   });
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
+  return clientId;
 }
 
 async function createOrder() {

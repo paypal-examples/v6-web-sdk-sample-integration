@@ -18,12 +18,13 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@dotenvx/dotenvx": "^1.51.4",
+    "@ngrok/ngrok": "^1.7.0",
     "@paypal/paypal-server-sdk": "^2.1.0",
     "cors": "^2.8.5",
     "express": "^5.2.1"
   },
   "devDependencies": {
-    "@ngrok/ngrok": "^1.7.0",
+    "@flydotio/dockerfile": "^0.7.10",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.0.3",
