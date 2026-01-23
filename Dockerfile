@@ -1,63 +1,57 @@
 # syntax = docker/dockerfile:1
 
-# Adjust NODE_VERSION as desired
 ARG NODE_VERSION=20.19.5
 FROM node:${NODE_VERSION}-slim AS base
 
 LABEL fly_launch_runtime="Node.js"
-
-# Node.js app lives here
 WORKDIR /app
-
-# Set production environment
 ENV NODE_ENV="production"
 
 
-# Throw-away build stage to reduce size of final image
+# Build stage - install dependencies and build all applications
 FROM base AS build
 
-# Install packages needed to build node modules
 RUN apt-get update -qq && \
     apt-get install --no-install-recommends -y build-essential node-gyp pkg-config python-is-python3
 
-# Copy server package files
+# Install dependencies for server
 COPY server/node/.npmrc server/node/package.json server/node/package-lock.json* ./server/node/
-
-# Install server node modules
 WORKDIR /app/server/node
 RUN npm install --include=dev
 
-# Copy React app package files
+# Install dependencies for React app
 WORKDIR /app
 COPY client/prebuiltPages/react/oneTimePayment/.npmrc client/prebuiltPages/react/oneTimePayment/package.json ./client/prebuiltPages/react/oneTimePayment/
-
-# Install React app node modules
 WORKDIR /app/client/prebuiltPages/react/oneTimePayment
 RUN npm install --include=dev
 
-# Copy application code
+# Install dependencies for TypeScript app
+WORKDIR /app
+COPY client/components/paypalPayments/oneTimePayment/typescript/package.json ./client/components/paypalPayments/oneTimePayment/typescript/
+WORKDIR /app/client/components/paypalPayments/oneTimePayment/typescript
+RUN npm install --include=dev
+
+# Copy all application code
 WORKDIR /app
 COPY server/node ./server/node
 COPY client ./client
 
-# Build server application
+# Build all applications and remove dev dependencies
 WORKDIR /app/server/node
-RUN npm run build && npm prune --omit=dev 
+RUN npm run build && npm prune --omit=dev
 
-# Build React application
 WORKDIR /app/client/prebuiltPages/react/oneTimePayment
-RUN npm run build && npm prune --omit=dev 
+RUN npm run build && npm prune --omit=dev
+
+WORKDIR /app/client/components/paypalPayments/oneTimePayment/typescript
+RUN npm run build && npm prune --omit=dev
 
 
-# Final stage for app image
+# Production stage - minimal runtime image
 FROM base
 
-# Copy built application
 COPY --from=build /app /app
-
-# Set working directory to server
 WORKDIR /app/server/node
 
-# Start the server by default, this can be overwritten at runtime
 EXPOSE 3000
 CMD [ "npm", "run", "start-production" ]
