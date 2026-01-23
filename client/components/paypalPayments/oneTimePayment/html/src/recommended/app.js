@@ -1,3 +1,20 @@
+/**
+ * Initializes the PayPal Web SDK, determines eligible payment methods,
+ * and sets up the appropriate payment buttons. This function is invoked
+ * by the SDK script tag's "onload" event.
+ *
+ * ```html
+ * <script
+ *   async
+ *   src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+ *   onload="onPayPalWebSdkLoaded()">
+ * </script>
+ * ```
+ *
+ * @async
+ * @function onPayPalWebSdkLoaded
+ * @returns {Promise<void>}
+ */
 async function onPayPalWebSdkLoaded() {
   try {
     const clientId = await getBrowserSafeClientId();

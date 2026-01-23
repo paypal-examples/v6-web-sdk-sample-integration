@@ -50,6 +50,11 @@ app.get(
   },
 );
 
+/*
+ * For convenience, this API endpoint returns the PayPal Client ID to the front-end.
+ * This way the .env file can be the single source of truth for the Client ID.
+ * It is safe for merchant developers to hardcode Client ID values in front-end JavaScript/HTML files.
+ */
 app.get(
   "/paypal-api/auth/browser-safe-client-id",
   (_req: Request, res: Response) => {
