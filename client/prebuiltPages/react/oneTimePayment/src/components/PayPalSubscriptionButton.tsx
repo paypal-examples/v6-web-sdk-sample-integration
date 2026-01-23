@@ -4,7 +4,9 @@ import {
   type UsePayPalSubscriptionPaymentSessionProps,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalSubscriptionButton: React.FC<UsePayPalSubscriptionPaymentSessionProps> = (props) => {
+const PayPalSubscriptionButton: React.FC<
+  UsePayPalSubscriptionPaymentSessionProps
+> = (props) => {
   const { handleClick } = usePayPalSubscriptionPaymentSession(props);
 
   return (
