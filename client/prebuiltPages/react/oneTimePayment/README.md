@@ -18,14 +18,14 @@ This React sample application demonstrates how to integrate with PayPal's V6 Web
 
 ## Technology Stack
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| React | 19.1.0 | UI framework |
-| Vite | 7.x | Development server and bundler |
-| TypeScript | 5.8.x | Type safety |
-| @paypal/react-paypal-js | 9.0.0-alpha.5 | React hooks and Context provider for PayPal V6 SDK |
-| @paypal/paypal-server-sdk | 2.1.0 | Server-side PayPal API calls |
-| react-error-boundary | 6.0.0 | Graceful error handling |
+| Technology                | Version       | Purpose                                            |
+| ------------------------- | ------------- | -------------------------------------------------- |
+| React                     | 19.1.0        | UI framework                                       |
+| Vite                      | 7.x           | Development server and bundler                     |
+| TypeScript                | 5.8.x         | Type safety                                        |
+| @paypal/react-paypal-js   | 9.0.0-alpha.5 | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
+| react-error-boundary      | 6.0.0         | Graceful error handling                            |
 
 ## Prerequisites
 
@@ -103,6 +103,7 @@ oneTimePayment/
 ```
 
 The `components` prop specifies which payment methods to load:
+
 - `paypal-payments` - PayPal and Pay Later buttons
 - `venmo-payments` - Venmo button
 - `paypal-guest-payments` - Guest card payment button
@@ -111,12 +112,12 @@ The `components` prop specifies which payment methods to load:
 
 Each payment button uses a specialized hook to create a payment session:
 
-| Hook | Button Type |
-|------|-------------|
-| `usePayPalOneTimePaymentSession` | PayPal |
-| `useVenmoOneTimePaymentSession` | Venmo |
-| `usePayLaterOneTimePaymentSession` | Pay Later |
-| `usePayPalGuestPaymentSession` | Basic Card |
+| Hook                               | Button Type |
+| ---------------------------------- | ----------- |
+| `usePayPalOneTimePaymentSession`   | PayPal      |
+| `useVenmoOneTimePaymentSession`    | Venmo       |
+| `usePayLaterOneTimePaymentSession` | Pay Later   |
+| `usePayPalGuestPaymentSession`     | Basic Card  |
 
 ### 3. Payment Flow
 
@@ -137,26 +138,26 @@ The Node.js backend handles sensitive PayPal API interactions.
 
 **SDK Controllers:**
 
-| Controller | Purpose |
-|------------|---------|
+| Controller                     | Purpose                             |
+| ------------------------------ | ----------------------------------- |
 | `OAuthAuthorizationController` | Generate browser-safe client tokens |
-| `OrdersController` | Create and capture orders |
-| `VaultController` | Store payment methods (optional) |
+| `OrdersController`             | Create and capture orders           |
+| `VaultController`              | Store payment methods (optional)    |
 
 **Key Files:**
 
-| File | Purpose |
-|------|---------|
-| `src/server.ts` | Express server entry point and route definitions |
-| `src/paypalServerSdk.ts` | PayPal SDK client configuration |
+| File                     | Purpose                                          |
+| ------------------------ | ------------------------------------------------ |
+| `src/server.ts`          | Express server entry point and route definitions |
+| `src/paypalServerSdk.ts` | PayPal SDK client configuration                  |
 
 ## Backend API Endpoints
 
-| Endpoint | Method | Description |
-|----------|--------|-------------|
-| `/paypal-api/auth/browser-safe-client-token` | GET | Fetches authentication token for SDK |
-| `/paypal-api/checkout/orders/create-with-sample-data` | POST | Creates a PayPal order with sample data |
-| `/paypal-api/checkout/orders/{orderId}/capture` | POST | Captures the approved payment |
+| Endpoint                                              | Method | Description                             |
+| ----------------------------------------------------- | ------ | --------------------------------------- |
+| `/paypal-api/auth/browser-safe-client-token`          | GET    | Fetches authentication token for SDK    |
+| `/paypal-api/checkout/orders/create-with-sample-data` | POST   | Creates a PayPal order with sample data |
+| `/paypal-api/checkout/orders/{orderId}/capture`       | POST   | Captures the approved payment           |
 
 ## Error Handling
 
@@ -179,35 +180,38 @@ This sample uses [react-error-boundary](https://github.com/bvaughn/react-error-b
 
 ### Frontend Files
 
-| File | Purpose |
-|------|---------|
-| `src/App.tsx` | SDK initialization with PayPalProvider |
-| `src/sections/SoccerBall.tsx` | Payment flow and button rendering |
-| `src/utils.ts` | Backend API calls (createOrder, captureOrder) |
-| `index.html` | HTML entry point |
+| File                          | Purpose                                       |
+| ----------------------------- | --------------------------------------------- |
+| `src/App.tsx`                 | SDK initialization with PayPalProvider        |
+| `src/sections/SoccerBall.tsx` | Payment flow and button rendering             |
+| `src/utils.ts`                | Backend API calls (createOrder, captureOrder) |
+| `index.html`                  | HTML entry point                              |
 
 ### Backend Files
 
-| File | Purpose |
-|------|---------|
-| `server/node/src/server.ts` | Express server entry point |
+| File                                 | Purpose                         |
+| ------------------------------------ | ------------------------------- |
+| `server/node/src/server.ts`          | Express server entry point      |
 | `server/node/src/paypalServerSdk.ts` | PayPal SDK client configuration |
 
 ### Common Tasks
 
-| Task | Location |
-|------|----------|
-| Configure payment methods | `App.tsx` - components array |
-| Add new button type | `src/components/` - create wrapper using session hook |
-| Modify order creation | `src/utils.ts` - createOrder function |
-| Change product data | `server/node/src/paypalServerSdk.ts` |
+| Task                      | Location                                              |
+| ------------------------- | ----------------------------------------------------- |
+| Configure payment methods | `App.tsx` - components array                          |
+| Add new button type       | `src/components/` - create wrapper using session hook |
+| Modify order creation     | `src/utils.ts` - createOrder function                 |
+| Change product data       | `server/node/src/paypalServerSdk.ts`                  |
 
 ### Import Paths
 
 ```tsx
 // SDK Provider and hooks
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
-import { usePayPal, usePayPalOneTimePaymentSession } from "@paypal/react-paypal-js/sdk-v6";
+import {
+  usePayPal,
+  usePayPalOneTimePaymentSession,
+} from "@paypal/react-paypal-js/sdk-v6";
 
 // Loading state constants
 import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
@@ -215,7 +219,7 @@ import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
 
 ### Package Dependencies
 
-| Package | Version | Purpose |
-|---------|---------|---------|
-| @paypal/react-paypal-js | 9.0.0-alpha.5 | React hooks and Context provider for PayPal V6 SDK |
-| @paypal/paypal-server-sdk | 2.1.0 | Server-side PayPal API calls |
+| Package                   | Version       | Purpose                                            |
+| ------------------------- | ------------- | -------------------------------------------------- |
+| @paypal/react-paypal-js   | 9.0.0-alpha.5 | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
