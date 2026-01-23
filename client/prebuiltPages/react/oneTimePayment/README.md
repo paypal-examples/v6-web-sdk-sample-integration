@@ -6,8 +6,19 @@
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
 > **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card
 > **Demo**: Product checkout flow ($100 Soccer Ball)
+> **Live Demo**: [View on fly.dev](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)
 
 This React sample application demonstrates how to integrate with PayPal's V6 Web SDK. The example simulates a product checkout flow for a World Cup Soccer Ball ($100) and supports multiple payment methods.
+
+## Live Demo
+
+Try the deployed example without setting up locally:
+
+**[View React One-Time Payment Demo](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)**
+
+This demo runs in PayPal sandbox mode - use [Sandbox test accounts](https://developer.paypal.com/dashboard/accounts) to complete transactions.
+
+Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-integration-server.fly.dev/).
 
 ## Supported Payment Methods
 
@@ -169,6 +180,7 @@ This sample uses [react-error-boundary](https://github.com/bvaughn/react-error-b
 - [@paypal/react-paypal-js on npm](https://www.npmjs.com/package/@paypal/react-paypal-js)
 - [@paypal/paypal-server-sdk on GitHub](https://github.com/paypal/PayPal-TypeScript-Server-SDK)
 - [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/)
+- [PayPal Sandbox Test Accounts](https://developer.paypal.com/dashboard/accounts)
 - [PayPal Sandbox Card Testing](https://developer.paypal.com/tools/sandbox/card-testing/)
 - [react-error-boundary](https://github.com/bvaughn/react-error-boundary)
 
