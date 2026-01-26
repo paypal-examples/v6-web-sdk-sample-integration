@@ -26,7 +26,7 @@ async function onPayPalWebSdkLoaded() {
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
-      paymentFlow: "VAULT_WITH_PAYMENT"
+      paymentFlow: "VAULT_WITH_PAYMENT",
     });
 
     if (paymentMethods.isEligible("paypal")) {
@@ -79,7 +79,7 @@ const paymentSessionOptions = {
     });
     console.log("onError", error);
   },
-  vault: true
+  vault: true,
 };
 
 async function setupPayPalButton(sdkInstance) {
