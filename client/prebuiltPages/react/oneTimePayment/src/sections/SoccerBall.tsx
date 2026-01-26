@@ -18,7 +18,12 @@ import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
 import soccerBallImage from "../static/images/world-cup.jpg";
-import { captureOrder, createOrder } from "../utils";
+import {
+  captureOrder,
+  createOrder,
+  createSubscription,
+  createVaultToken,
+} from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 
@@ -42,60 +47,6 @@ const PRODUCT = {
 const SoccerBall: React.FC = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus, eligiblePaymentMethods } = usePayPal();
-
-  // Function to create subscription on the server
-  const createSubscription = async () => {
-    try {
-      const response = await fetch("http://localhost:8080/api/subscription", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(
-          errorData.error || `HTTP error! status: ${response.status}`,
-        );
-      }
-
-      const data = await response.json();
-      console.log("Subscription created:", data);
-
-      return { subscriptionId: data.id };
-    } catch (error) {
-      console.error("Error creating subscription:", error);
-      throw error;
-    }
-  };
-
-  // Function to create vault token on the server
-  const createVaultToken = async () => {
-    try {
-      const response = await fetch(
-        "http://localhost:8080/paypal-api/vault/setup-token/create",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
-
-      const data = await response.json();
-      console.log("Vault token created:", data);
-
-      return { vaultSetupToken: data.id };
-    } catch (error) {
-      console.error("Error creating vault token:", error);
-      throw error;
-    }
-  };
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {

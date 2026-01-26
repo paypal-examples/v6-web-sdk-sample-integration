@@ -1,12 +1,11 @@
-import React from "react";
 import {
   usePayPalSubscriptionPaymentSession,
   type UsePayPalSubscriptionPaymentSessionProps,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalSubscriptionButton: React.FC<
-  UsePayPalSubscriptionPaymentSessionProps
-> = (props) => {
+const PayPalSubscriptionButton = (
+  props: UsePayPalSubscriptionPaymentSessionProps,
+) => {
   const { handleClick } = usePayPalSubscriptionPaymentSession(props);
 
   return (

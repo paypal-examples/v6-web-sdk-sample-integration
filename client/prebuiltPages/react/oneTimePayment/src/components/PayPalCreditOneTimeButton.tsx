@@ -1,13 +1,12 @@
-import React from "react";
 import {
   usePayPalCreditOneTimePaymentSession,
   type UsePayPalCreditOneTimePaymentSessionProps,
   usePayPal,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalCreditOneTimeButton: React.FC<
-  UsePayPalCreditOneTimePaymentSessionProps
-> = (props) => {
+const PayPalCreditOneTimeButton = (
+  props: UsePayPalCreditOneTimePaymentSessionProps,
+) => {
   const { handleClick } = usePayPalCreditOneTimePaymentSession(props);
   const { eligiblePaymentMethods } = usePayPal();
 
