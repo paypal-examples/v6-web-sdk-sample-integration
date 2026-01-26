@@ -3,9 +3,7 @@ import {
   type UsePayPalGuestPaymentSessionProps,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalBasicCardButton = (
-  props: UsePayPalGuestPaymentSessionProps,
-) => {
+const PayPalBasicCardButton = (props: UsePayPalGuestPaymentSessionProps) => {
   const { handleClick } = usePayPalGuestPaymentSession(props);
 
   return (
