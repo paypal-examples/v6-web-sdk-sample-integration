@@ -7,16 +7,12 @@ import {
 const PayPalSaveButton: React.FC<UsePayPalSavePaymentSessionProps> = (
   props,
 ) => {
-  const { handleClick, error } = usePayPalSavePaymentSession(props);
-
-  if (error) {
-    console.error("PayPalSaveButton hook error:", error);
-    return null;
-  }
+  const { handleClick } = usePayPalSavePaymentSession(props);
 
   return (
     <paypal-button
       id="paypal-save-button"
+      type="pay"
       onClick={() => handleClick()}
     ></paypal-button>
   );
