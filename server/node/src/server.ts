@@ -165,7 +165,7 @@ app.post(
   },
 );
 
-app.post("/api/subscription", async (_req: Request, res: Response) => {
+app.post("/paypal-api/subscription", async (_req: Request, res: Response) => {
   try {
     const planId = process.env.PAYPAL_SUBSCRIPTION_PLAN_ID;
 

@@ -318,6 +318,9 @@ export async function createSubscription(planId: string) {
 
 /**
  * Creates a complete subscription flow for demo/testing
+ * 1. Creates product, returns product ID
+ * 2. Creates subscription plan using product ID, returns plan ID
+ * 3. Creates subscription for buyer using plan ID
  */
 export async function createSubscriptionWithSampleData() {
   try {
