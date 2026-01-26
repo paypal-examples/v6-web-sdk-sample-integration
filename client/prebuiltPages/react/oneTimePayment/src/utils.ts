@@ -69,15 +69,12 @@ export const createSubscription = async () => {
 
 export const createVaultToken = async () => {
   try {
-    const response = await fetch(
-      "/paypal-api/vault/setup-token/create",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
+    const response = await fetch("/paypal-api/vault/setup-token/create", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    );
+    });
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
