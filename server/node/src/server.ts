@@ -8,6 +8,7 @@ import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 import {
   getBrowserSafeClientToken,
   createOrder,
+  createOrderForVaultingWithSampleData,
   createOrderWithSampleData,
   captureOrder,
   createPaymentToken,
@@ -96,6 +97,20 @@ app.post(
     try {
       const { jsonResponse, httpStatusCode } =
         await createOrderWithSampleData();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create order:", error);
+      res.status(500).json({ error: "Failed to create order." });
+    }
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-for-vaulting-with-sample-data",
+  async (req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await createOrderForVaultingWithSampleData();
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error("Failed to create order:", error);

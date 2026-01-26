@@ -51,6 +51,7 @@ class AlertComponent extends HTMLElement {
       border-radius: 0.5rem;
       padding: 1rem;
       border-width: 1px;
+      overflow-wrap: anywhere;
     }
     #icon-container {
       line-height: 0;

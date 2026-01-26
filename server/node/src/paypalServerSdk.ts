@@ -8,10 +8,12 @@ import {
   LogLevel,
   OAuthAuthorizationController,
   OrdersController,
+  PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PlanRequestStatus,
   SubscriptionsController,
   TenureType,
+  StoreInVaultInstruction,
   VaultController,
   VaultInstructionAction,
   VaultTokenRequestType,
@@ -170,6 +172,33 @@ export async function createOrderWithSampleData() {
         },
       },
     ],
+  };
+  return createOrder({ orderRequestBody });
+}
+
+export async function createOrderForVaultingWithSampleData() {
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode: "USD",
+          value: "100.00",
+        },
+      },
+    ],
+    paymentSource: {
+      paypal: {
+        attributes: {
+          vault: {
+            // TODO: investigate why store_in_vault is not working with the Server SDK
+            storeInVault: StoreInVaultInstruction.OnSuccess,
+            usageType: PaypalPaymentTokenUsageType.Merchant,
+            customerType: PaypalPaymentTokenCustomerType.Consumer,
+          },
+        },
+      },
+    },
   };
   return createOrder({ orderRequestBody });
 }
