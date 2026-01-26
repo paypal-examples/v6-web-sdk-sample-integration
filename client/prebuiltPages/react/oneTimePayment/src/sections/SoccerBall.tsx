@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import {
   usePayPal,
   INSTANCE_LOADING_STATE,
@@ -44,7 +44,7 @@ const PRODUCT = {
   imageAlt: "Official World Cup Soccer Ball",
 } as const;
 
-const SoccerBall: React.FC = () => {
+const SoccerBall = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus, eligiblePaymentMethods } = usePayPal();
 

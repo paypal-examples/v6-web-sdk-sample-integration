@@ -1,5 +1,3 @@
-import React from "react";
-
 interface ModalContent {
   title: string;
   message: string;
@@ -10,7 +8,7 @@ interface PaymentModalProps {
   onClose: () => void;
 }
 
-const PaymentModal: React.FC<PaymentModalProps> = ({ content, onClose }) => {
+const PaymentModal = ({ content, onClose }: PaymentModalProps) => {
   return (
     <div
       className="modal-overlay"
