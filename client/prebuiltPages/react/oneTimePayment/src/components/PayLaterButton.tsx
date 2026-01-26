@@ -1,12 +1,11 @@
-import React from "react";
 import {
   usePayLaterOneTimePaymentSession,
   type UsePayLaterOneTimePaymentSessionProps,
   usePayPal,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayLaterButton: React.FC<UsePayLaterOneTimePaymentSessionProps> = (
-  props,
+const PayLaterButton = (
+  props: UsePayLaterOneTimePaymentSessionProps,
 ) => {
   const { handleClick } = usePayLaterOneTimePaymentSession(props);
 

@@ -1,5 +1,3 @@
-import React from "react";
-
 interface Product {
   name: string;
   icon: string;
@@ -12,7 +10,7 @@ interface ProductDisplayProps {
   product: Product;
 }
 
-const ProductDisplay: React.FC<ProductDisplayProps> = ({ product }) => {
+const ProductDisplay = ({ product }: ProductDisplayProps) => {
   return (
     <>
       <div className="product-header">

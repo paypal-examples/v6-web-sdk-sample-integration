@@ -1,11 +1,10 @@
-import React from "react";
 import {
   usePayPalGuestPaymentSession,
   type UsePayPalGuestPaymentSessionProps,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalBasicCardButton: React.FC<UsePayPalGuestPaymentSessionProps> = (
-  props,
+const PayPalBasicCardButton = (
+  props: UsePayPalGuestPaymentSessionProps,
 ) => {
   const { handleClick } = usePayPalGuestPaymentSession(props);
 
