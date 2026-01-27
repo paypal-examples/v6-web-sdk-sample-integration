@@ -81,12 +81,15 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createVaultSetupToken() {
-  const response = await fetch("/paypal-api/vault/setup-token/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    "/paypal-api/vault/create-setup-token-for-paypal-save-payment",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   const { id } = await response.json();
   renderAlert({
     type: "info",

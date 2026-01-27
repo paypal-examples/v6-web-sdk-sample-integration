@@ -1,4 +1,4 @@
-import express, { Request, Response } from "express";
+import express, { Request, Response, NextFunction } from "express";
 import cors from "cors";
 import { join } from "path";
 import ngrok from "@ngrok/ngrok";
@@ -7,16 +7,17 @@ import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
 
 import {
   getBrowserSafeClientToken,
-  createOrder,
-  createOrderForVaultingWithSampleData,
-  createOrderWithSampleData,
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
-  createSubscription,
-  createSubscriptionWithSampleData,
-  createSetupTokenWithSampleDataForCard,
 } from "./paypalServerSdk";
+
+import {
+  createOrderForOneTimePayment,
+  createOrderForPayPalOneTimePaymentWithRedirect,
+  createOrderForPayPalOneTimePaymentWithVault,
+  createSetupTokenForPayPalSavePayment,
+} from "./paymentFlowPayloadVariations";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
 
@@ -41,16 +42,8 @@ app.get("/", (_req: Request, res: Response) => {
 app.get(
   "/paypal-api/auth/browser-safe-client-token",
   async (_req: Request, res: Response) => {
-    try {
-      const { jsonResponse, httpStatusCode } =
-        await getBrowserSafeClientToken();
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create browser safe access token:", error);
-      res
-        .status(500)
-        .json({ error: "Failed to create browser safe access token." });
-    }
+    const { jsonResponse, httpStatusCode } = await getBrowserSafeClientToken();
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
@@ -64,86 +57,65 @@ app.get(
   (_req: Request, res: Response) => {
     const { PAYPAL_SANDBOX_CLIENT_ID } = process.env;
 
-    if (PAYPAL_SANDBOX_CLIENT_ID) {
-      res.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
-    } else {
-      res.status(500).json({
-        error: "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
+    if (!PAYPAL_SANDBOX_CLIENT_ID) {
+      throw new Error(
+        "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
+      );
+    }
+    res.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } =
+      await createOrderForOneTimePayment();
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
+  async (req: Request, res: Response) => {
+    const referer = req.get("referer") as string;
+    const returnUrl = referer;
+    const cancelUrl = referer;
+    const { jsonResponse, httpStatusCode } =
+      await createOrderForPayPalOneTimePaymentWithRedirect({
+        currencyCode: "USD",
+        amountValue: "88.44",
+        returnUrl,
+        cancelUrl,
       });
-    }
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
 app.post(
-  "/paypal-api/checkout/orders/create",
-  async (req: Request, res: Response) => {
-    try {
-      const paypalRequestId = req.headers["paypal-request-id"]?.toString();
-      const { jsonResponse, httpStatusCode } = await createOrder({
-        orderRequestBody: req.body,
-        paypalRequestId,
-      });
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create order:", error);
-      res.status(500).json({ error: "Failed to create order." });
-    }
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-with-sample-data",
-  async (req: Request, res: Response) => {
-    try {
-      const { jsonResponse, httpStatusCode } =
-        await createOrderWithSampleData();
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create order:", error);
-      res.status(500).json({ error: "Failed to create order." });
-    }
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-for-vaulting-with-sample-data",
-  async (req: Request, res: Response) => {
-    try {
-      const { jsonResponse, httpStatusCode } =
-        await createOrderForVaultingWithSampleData();
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create order:", error);
-      res.status(500).json({ error: "Failed to create order." });
-    }
+  "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } =
+      await createOrderForPayPalOneTimePaymentWithVault();
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
 app.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   async (req: Request, res: Response) => {
-    try {
-      const orderId = req.params.orderId as string;
-      const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create order:", error);
-      res.status(500).json({ error: "Failed to capture order." });
-    }
+    const orderId = req.params.orderId as string;
+    const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
 app.post(
-  "/paypal-api/vault/setup-token/create",
+  "/paypal-api/vault/create-setup-token-for-paypal-save-payment",
   async (_req: Request, res: Response) => {
-    try {
-      const { jsonResponse, httpStatusCode } =
-        await createSetupTokenWithSampleDataForPayPal();
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create setup token:", error);
-      res.status(500).json({ error: "Failed to create setup token." });
-    }
+    const { jsonResponse, httpStatusCode } =
+      await createSetupTokenForPayPalSavePayment();
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
@@ -164,34 +136,42 @@ app.post(
 app.post(
   "/paypal-api/vault/payment-token/create",
   async (req: Request, res: Response) => {
-    try {
-      const { jsonResponse, httpStatusCode } = await createPaymentToken(
-        req.body.vaultSetupToken as string,
-      );
+    const { jsonResponse, httpStatusCode } = await createPaymentToken(
+      req.body.vaultSetupToken as string,
+    );
 
-      const paymentTokenResponse = jsonResponse as PaymentTokenResponse;
+    const paymentTokenResponse = jsonResponse as PaymentTokenResponse;
 
-      if (paymentTokenResponse.id) {
-        // This payment token id is a long-lived value for making
-        // future payments when the buyer is not present.
-        // PayPal recommends storing this value in your database
-        // and NOT returning it back to the browser.
-        await savePaymentTokenToDatabase(paymentTokenResponse);
-        res.status(httpStatusCode).json({
-          status: "SUCCESS",
-          description:
-            "Payment token saved to database for future transactions",
-        });
-      } else {
-        res.status(httpStatusCode).json({
-          status: "ERROR",
-          description: "Failed to create payment token",
-        });
-      }
-    } catch (error) {
-      console.error("Failed to create payment token:", error);
-      res.status(500).json({ error: "Failed to create payment token." });
+    if (paymentTokenResponse.id) {
+      // This payment token id is a long-lived value for making
+      // future payments when the buyer is not present.
+      // PayPal recommends storing this value in your database
+      // and NOT returning it back to the browser.
+      await savePaymentTokenToDatabase(paymentTokenResponse);
+      res.status(httpStatusCode).json({
+        status: "SUCCESS",
+        description: "Payment token saved to database for future transactions",
+      });
+    } else {
+      res.status(httpStatusCode).json({
+        status: "ERROR",
+        description: "Failed to create payment token",
+      });
     }
+  },
+);
+
+app.use(
+  (
+    error: Error,
+    _request: Request,
+    response: Response,
+    _next: NextFunction,
+  ) => {
+    response.status(500).json({
+      error: "Internal Server Error",
+      errorDescription: error.toString(),
+    });
   },
 );
 

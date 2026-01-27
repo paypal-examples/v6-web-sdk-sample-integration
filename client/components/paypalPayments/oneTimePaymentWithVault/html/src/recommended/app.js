@@ -185,7 +185,7 @@ async function getBrowserSafeClientId() {
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-for-vaulting-with-sample-data",
+    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
     {
       method: "POST",
       headers: {
