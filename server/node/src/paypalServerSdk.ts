@@ -19,7 +19,6 @@ import {
 
 import type {
   BillingPlan,
-  CreateSubscriptionRequest,
   OAuthProviderError,
   OrderRequest,
   PlanRequest,
@@ -36,6 +35,8 @@ const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
 if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
 }
+
+const BASE_URL = "https://api-m.sandbox.paypal.com";
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
@@ -329,23 +330,20 @@ export async function createSubscriptionWithSampleData() {
       `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
     ).toString("base64");
 
-    const productResponse = await fetch(
-      "https://api-m.sandbox.paypal.com/v1/catalogs/products",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Basic ${auth}`,
-          "PayPal-Request-Id": `product-${Date.now()}`,
-        },
-        body: JSON.stringify({
-          name: "Sample Subscription Product",
-          description: "Sample product for subscription testing",
-          type: "SERVICE",
-          category: "SOFTWARE",
-        }),
+    const productResponse = await fetch(`${BASE_URL}/v1/catalogs/products`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        Authorization: `Basic ${auth}`,
+        "PayPal-Request-Id": `product-${Date.now()}`,
       },
-    );
+      body: JSON.stringify({
+        name: "Sample Subscription Product",
+        description: "Sample product for subscription testing",
+        type: "SERVICE",
+        category: "SOFTWARE",
+      }),
+    });
 
     if (!productResponse.ok) {
       throw new Error(`Product creation failed: ${productResponse.status}`);
