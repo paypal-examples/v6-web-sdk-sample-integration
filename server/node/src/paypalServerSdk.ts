@@ -242,6 +242,22 @@ export async function createSetupTokenWithSampleDataForPayPal() {
   return createSetupToken(defaultSetupTokenRequestBody, Date.now().toString());
 }
 
+export async function createSetupTokenWithSampleDataForCard() {
+  const defaultSetupTokenRequestBody = {
+    paymentSource: {
+      card: {
+        verification_method: "SCA_WHEN_REQUIRED",
+        experienceContext: {
+          cancelUrl: "https://example.com/cancelUrl",
+          returnUrl: "https://example.com/returnUrl",
+        },
+      },
+    },
+  };
+
+  return createSetupToken(defaultSetupTokenRequestBody, Date.now().toString());
+}
+
 export async function createPaymentToken(
   vaultSetupToken: string,
   paypalRequestId?: string,

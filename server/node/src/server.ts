@@ -12,6 +12,7 @@ import {
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
+  createSetupTokenWithSampleDataForCard,
 } from "./paypalServerSdk";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -121,6 +122,20 @@ app.post(
     try {
       const { jsonResponse, httpStatusCode } =
         await createSetupTokenWithSampleDataForPayPal();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create setup token:", error);
+      res.status(500).json({ error: "Failed to create setup token." });
+    }
+  },
+);
+
+app.post(
+  "/paypal-api/vault/setup-token/create-for-card",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await createSetupTokenWithSampleDataForCard();
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
       console.error("Failed to create setup token:", error);
