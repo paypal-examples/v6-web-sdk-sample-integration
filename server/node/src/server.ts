@@ -91,6 +91,16 @@ app.post(
 );
 
 app.post(
+  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-pln",
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
+      { currencyCode: "PLN" },
+    );
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   async (req: Request, res: Response) => {
     const referer = req.get("referer") as string;
