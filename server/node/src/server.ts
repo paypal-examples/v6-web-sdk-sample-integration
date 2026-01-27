@@ -76,17 +76,23 @@ app.post(
 );
 
 app.post(
+  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur",
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
+      { currencyCode: "EUR" },
+    );
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   async (req: Request, res: Response) => {
     const referer = req.get("referer") as string;
-    const returnUrl = referer;
-    const cancelUrl = referer;
     const { jsonResponse, httpStatusCode } =
       await createOrderForPayPalOneTimePaymentWithRedirect({
-        currencyCode: "USD",
-        amountValue: "88.44",
-        returnUrl,
-        cancelUrl,
+        returnUrl: referer,
+        cancelUrl: referer,
       });
     res.status(httpStatusCode).json(jsonResponse);
   },

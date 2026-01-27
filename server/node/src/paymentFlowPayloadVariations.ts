@@ -1,3 +1,5 @@
+import { randomUUID } from "crypto";
+
 import {
   CheckoutPaymentIntent,
   PaypalExperienceUserAction,
@@ -10,22 +12,25 @@ import {
 
 import { createOrder, createSetupToken } from "./paypalServerSdk";
 
+const defaultOptions = {
+  currencyCode: "USD",
+  amountValue: "100.00",
+  returnUrl: "http://example.com",
+  cancelUrl: "http://example.com",
+  paypalRequestId: randomUUID(),
+};
+
 type CreateOrderForOneTimePaymentOptions = {
-  currencyCode: string;
-  amountValue: string;
+  currencyCode?: string;
+  amountValue?: string;
   paypalRequestId?: string;
 };
 
-export function createOrderForOneTimePayment(
-  {
-    currencyCode,
-    amountValue,
-    paypalRequestId,
-  }: CreateOrderForOneTimePaymentOptions = {
-    currencyCode: "USD",
-    amountValue: "100.00",
-  },
-) {
+export function createOrderForOneTimePayment({
+  currencyCode = defaultOptions.currencyCode,
+  amountValue = defaultOptions.amountValue,
+  paypalRequestId = defaultOptions.paypalRequestId,
+}: CreateOrderForOneTimePaymentOptions = defaultOptions) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -41,27 +46,20 @@ export function createOrderForOneTimePayment(
 }
 
 type CreateOrderForPayPalOneTimePaymentWithVaultOptions = {
-  currencyCode: string;
-  amountValue: string;
-  returnUrl: string;
-  cancelUrl: string;
+  currencyCode?: string;
+  amountValue?: string;
+  returnUrl?: string;
+  cancelUrl?: string;
   paypalRequestId?: string;
 };
 
-export async function createOrderForPayPalOneTimePaymentWithVault(
-  {
-    currencyCode,
-    amountValue,
-    returnUrl,
-    cancelUrl,
-    paypalRequestId,
-  }: CreateOrderForPayPalOneTimePaymentWithVaultOptions = {
-    currencyCode: "USD",
-    amountValue: "100.00",
-    returnUrl: "http://example.com",
-    cancelUrl: "http://example.com",
-  },
-) {
+export async function createOrderForPayPalOneTimePaymentWithVault({
+  currencyCode = defaultOptions.currencyCode,
+  amountValue = defaultOptions.amountValue,
+  paypalRequestId = defaultOptions.paypalRequestId,
+  returnUrl = defaultOptions.returnUrl,
+  cancelUrl = defaultOptions.cancelUrl,
+}: CreateOrderForPayPalOneTimePaymentWithVaultOptions = defaultOptions) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -93,27 +91,20 @@ export async function createOrderForPayPalOneTimePaymentWithVault(
 }
 
 type CreateOrderForPayPalOneTimePaymentWithRedirectOptions = {
-  currencyCode: string;
-  amountValue: string;
-  returnUrl: string;
-  cancelUrl: string;
+  currencyCode?: string;
+  amountValue?: string;
+  returnUrl?: string;
+  cancelUrl?: string;
   paypalRequestId?: string;
 };
 
-export function createOrderForPayPalOneTimePaymentWithRedirect(
-  {
-    currencyCode,
-    amountValue,
-    returnUrl,
-    cancelUrl,
-    paypalRequestId,
-  }: CreateOrderForPayPalOneTimePaymentWithRedirectOptions = {
-    currencyCode: "USD",
-    amountValue: "100.00",
-    returnUrl: "http://example.com",
-    cancelUrl: "http://example.com",
-  },
-) {
+export function createOrderForPayPalOneTimePaymentWithRedirect({
+  currencyCode = defaultOptions.currencyCode,
+  amountValue = defaultOptions.amountValue,
+  paypalRequestId = defaultOptions.paypalRequestId,
+  returnUrl = defaultOptions.returnUrl,
+  cancelUrl = defaultOptions.cancelUrl,
+}: CreateOrderForPayPalOneTimePaymentWithRedirectOptions = defaultOptions) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -139,19 +130,19 @@ export function createOrderForPayPalOneTimePaymentWithRedirect(
 }
 
 type CreateSetupTokenForPayPalSavePaymentOptions = {
-  returnUrl: string;
-  cancelUrl: string;
+  returnUrl?: string;
+  cancelUrl?: string;
   paypalRequestId?: string;
 };
 
 export function createSetupTokenForPayPalSavePayment(
   {
-    returnUrl,
-    cancelUrl,
-    paypalRequestId,
+    returnUrl = defaultOptions.returnUrl,
+    cancelUrl = defaultOptions.cancelUrl,
+    paypalRequestId = defaultOptions.paypalRequestId,
   }: CreateSetupTokenForPayPalSavePaymentOptions = {
-    returnUrl: "http://example.com",
-    cancelUrl: "http://example.com",
+    returnUrl: defaultOptions.returnUrl,
+    cancelUrl: defaultOptions.cancelUrl,
   },
 ) {
   const defaultSetupTokenRequestBody = {
