@@ -44,6 +44,7 @@ function App() {
           "paypal-payments",
           "venmo-payments",
           "paypal-guest-payments",
+          "paypal-subscriptions",
         ]}
         pageType="checkout"
       >

@@ -12,6 +12,9 @@ import {
   captureOrder,
   createPaymentToken,
   createSetupTokenWithSampleDataForPayPal,
+  createSubscription,
+  createSubscriptionWithSampleData,
+  createSetupTokenWithSampleDataForCard,
 } from "./paypalServerSdk";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -130,6 +133,20 @@ app.post(
 );
 
 app.post(
+  "/paypal-api/vault/setup-token/create-for-card",
+  async (_req: Request, res: Response) => {
+    try {
+      const { jsonResponse, httpStatusCode } =
+        await createSetupTokenWithSampleDataForCard();
+      res.status(httpStatusCode).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to create setup token:", error);
+      res.status(500).json({ error: "Failed to create setup token." });
+    }
+  },
+);
+
+app.post(
   "/paypal-api/vault/payment-token/create",
   async (req: Request, res: Response) => {
     try {
@@ -162,6 +179,21 @@ app.post(
     }
   },
 );
+
+app.post("/paypal-api/subscription", async (_req: Request, res: Response) => {
+  try {
+    const planId = process.env.PAYPAL_SUBSCRIPTION_PLAN_ID;
+
+    const { jsonResponse, httpStatusCode } = planId
+      ? await createSubscription(planId)
+      : await createSubscriptionWithSampleData();
+
+    res.status(httpStatusCode).json(jsonResponse);
+  } catch (error) {
+    console.error("Failed to create subscription:", error);
+    res.status(500).json({ error: "Failed to create subscription." });
+  }
+});
 
 async function savePaymentTokenToDatabase(
   paymentTokenResponse: PaymentTokenResponse,

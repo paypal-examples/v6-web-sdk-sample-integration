@@ -2,7 +2,7 @@
 
 Node.js [Express](https://expressjs.com/) server for running the PayPal Web SDK samples integrations. It proides the following functionality:
 
-1. serves up API endpoints that wrap the [PayPal Sever SDK](https://developer.paypal.com/serversdk/typescript/getting-started/how-to-get-started) for authorization, order management, and more.
+1. serves up API endpoints that wrap the [PayPal Server SDK](https://developer.paypal.com/serversdk/typescript/getting-started/how-to-get-started) for authorization, order management, subscriptions, vault, and more.
 2. serves up the html examples from the client directory.
 
 Quick start:
@@ -86,3 +86,93 @@ Captures an existing PayPal order and finalizes the payment.
   ```
 
   For more information on the Capture endpoint, visit PayPal's [Developer Documentation](https://developer.paypal.com/docs/api/orders/v2/#orders_capture) site.
+
+---
+
+### `POST /paypal-api/subscription`
+
+**Description:**  
+Creates a new PayPal subscription with billing plan. If the `PAYPAL_SUBSCRIPTION_PLAN_ID` environment variable is set, it uses that plan ID. Otherwise, it creates a complete subscription with sample data (product, plan, and subscription).
+
+**Request Body:**  
+No body required.
+
+**Environment Variables (Optional):**
+
+- `PAYPAL_SUBSCRIPTION_PLAN_ID` (string): Existing billing plan ID to use for subscription creation.
+
+**Responses:**
+
+- `201 Created`  
+  Returns the new subscription's details.
+
+  ```json
+  {
+    "id": "SUBSCRIPTION-ID",
+    "status": "APPROVAL_PENDING",
+    "links": [
+      {
+        "href": "https://www.paypal.com/...",
+        "rel": "approve"
+      }
+    ]
+  }
+  ```
+
+  For more information on the Subscriptions API, visit PayPal's [Developer Documentation](https://developer.paypal.com/docs/api/subscriptions/v1/) site.
+
+---
+
+### `POST /paypal-api/vault/setup-token/create`
+
+**Description:**  
+Creates a vault setup token for saving a payment method without an immediate purchase. This is used for vaulting scenarios where customers want to save their payment information for future use.
+
+**Request Body:**  
+No body required.
+
+**Responses:**
+
+- `201 Created`  
+  Returns the setup token details.
+
+  ```json
+  {
+    "id": "SETUP-TOKEN-ID",
+    "status": "CREATED",
+    "customer": {
+      "id": "CUSTOMER-ID"
+    }
+  }
+  ```
+
+  For more information on the Vault Setup Tokens API, visit PayPal's [Developer Documentation](https://developer.paypal.com/docs/api/payment-tokens/v3/) site.
+
+---
+
+### `POST /paypal-api/vault/payment-token/create`
+
+**Description:**  
+Creates a long-lived payment token from a vault setup token. This payment token can be stored in your database and used for future transactions when the buyer is not present.
+
+**Request Body:**
+
+```json
+{
+  "vaultSetupToken": "SETUP-TOKEN-ID"
+}
+```
+
+**Responses:**
+
+- `200 OK`  
+  Returns a success message indicating the payment token was saved.
+
+  ```json
+  {
+    "status": "SUCCESS",
+    "description": "Payment token saved to database for future transactions"
+  }
+  ```
+
+  For more information on the Payment Tokens API, visit PayPal's [Developer Documentation](https://developer.paypal.com/docs/api/payment-tokens/v3/) site.
