@@ -3,20 +3,25 @@ import cors from "cors";
 import { join } from "path";
 import ngrok from "@ngrok/ngrok";
 
-import type { PaymentTokenResponse } from "@paypal/paypal-server-sdk";
+import type {
+  PaymentTokenResponse,
+  BillingPlan,
+} from "@paypal/paypal-server-sdk";
 
 import {
   getBrowserSafeClientToken,
   captureOrder,
   createPaymentToken,
-  createSetupTokenWithSampleDataForPayPal,
+  createSubscription,
 } from "./paypalServerSdk";
 
 import {
+  createMonthlySubscriptionBillingPlan,
   createOrderForOneTimePayment,
   createOrderForPayPalOneTimePaymentWithRedirect,
   createOrderForPayPalOneTimePaymentWithVault,
   createSetupTokenForPayPalSavePayment,
+  createSetupTokenForCardSavePayment,
 } from "./paymentFlowPayloadVariations";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -117,6 +122,25 @@ app.post(
 );
 
 app.post(
+  "/paypal-api/create-subscription",
+  async (_req: Request, res: Response) => {
+    let planId = process.env.PAYPAL_SUBSCRIPTION_PLAN_ID;
+
+    if (!planId) {
+      const { jsonResponse } = await createMonthlySubscriptionBillingPlan();
+      const billingPlanResponse = jsonResponse as BillingPlan;
+      if (!billingPlanResponse.id) {
+        throw new Error("Failed to create subscription billing plan");
+      }
+      planId = billingPlanResponse.id;
+    }
+
+    const { jsonResponse, httpStatusCode } = await createSubscription(planId);
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
   "/paypal-api/vault/create-setup-token-for-paypal-save-payment",
   async (_req: Request, res: Response) => {
     const { jsonResponse, httpStatusCode } =
@@ -126,16 +150,11 @@ app.post(
 );
 
 app.post(
-  "/paypal-api/vault/setup-token/create-for-card",
+  "/paypal-api/vault/create-setup-token-for-card-save-payment",
   async (_req: Request, res: Response) => {
-    try {
-      const { jsonResponse, httpStatusCode } =
-        await createSetupTokenWithSampleDataForCard();
-      res.status(httpStatusCode).json(jsonResponse);
-    } catch (error) {
-      console.error("Failed to create setup token:", error);
-      res.status(500).json({ error: "Failed to create setup token." });
-    }
+    const { jsonResponse, httpStatusCode } =
+      await createSetupTokenForCardSavePayment();
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
@@ -167,35 +186,6 @@ app.post(
   },
 );
 
-app.use(
-  (
-    error: Error,
-    _request: Request,
-    response: Response,
-    _next: NextFunction,
-  ) => {
-    response.status(500).json({
-      error: "Internal Server Error",
-      errorDescription: error.toString(),
-    });
-  },
-);
-
-app.post("/paypal-api/subscription", async (_req: Request, res: Response) => {
-  try {
-    const planId = process.env.PAYPAL_SUBSCRIPTION_PLAN_ID;
-
-    const { jsonResponse, httpStatusCode } = planId
-      ? await createSubscription(planId)
-      : await createSubscriptionWithSampleData();
-
-    res.status(httpStatusCode).json(jsonResponse);
-  } catch (error) {
-    console.error("Failed to create subscription:", error);
-    res.status(500).json({ error: "Failed to create subscription." });
-  }
-});
-
 async function savePaymentTokenToDatabase(
   paymentTokenResponse: PaymentTokenResponse,
 ) {
@@ -222,6 +212,20 @@ async function setupNgrokForHTTPS(port: number) {
     console.error("error connecting to ngrok: ", error);
   }
 }
+
+app.use(
+  (
+    error: Error,
+    _request: Request,
+    response: Response,
+    _next: NextFunction,
+  ) => {
+    response.status(500).json({
+      error: "Internal Server Error",
+      errorDescription: error.toString(),
+    });
+  },
+);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 const hostname = process.env.HOSTNAME ?? "localhost";
