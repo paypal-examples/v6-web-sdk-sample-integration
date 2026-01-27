@@ -22,6 +22,7 @@ import {
   createOrderForPayPalOneTimePaymentWithVault,
   createSetupTokenForPayPalSavePayment,
   createSetupTokenForCardSavePayment,
+  createOrderForFastlane,
 } from "./paymentFlowPayloadVariations";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -127,6 +128,17 @@ app.post(
   async (req: Request, res: Response) => {
     const orderId = req.params.orderId as string;
     const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-fastlane",
+  async (req: Request, res: Response) => {
+    const { paymentToken } = req.body;
+    const { jsonResponse, httpStatusCode } = await createOrderForFastlane({
+      paymentToken,
+    });
     res.status(httpStatusCode).json(jsonResponse);
   },
 );

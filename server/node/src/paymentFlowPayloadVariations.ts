@@ -266,3 +266,41 @@ export async function createMonthlySubscriptionBillingPlan(
 
   return createSubscriptionBillingPlan(planRequestBody, paypalRequestId);
 }
+
+type CreateOrderForFastlaneOptions = {
+  paymentToken: string;
+  currencyCode?: string;
+  amountValue?: string;
+  paypalRequestId?: string;
+};
+
+export function createOrderForFastlane({
+  paymentToken,
+  currencyCode = defaultOptions.currencyCode,
+  amountValue = "10.00",
+  paypalRequestId = defaultOptions.paypalRequestId,
+}: CreateOrderForFastlaneOptions) {
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+          breakdown: {
+            itemTotal: {
+              currencyCode,
+              value: amountValue,
+            },
+          },
+        },
+      },
+    ],
+    paymentSource: {
+      card: {
+        singleUseToken: paymentToken,
+      },
+    },
+  };
+  return createOrder({ orderRequestBody, paypalRequestId });
+}
