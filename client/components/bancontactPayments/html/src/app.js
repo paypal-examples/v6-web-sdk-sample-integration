@@ -127,10 +127,13 @@ async function createOrder() {
   try {
     console.log("Creating PayPal order...");
 
-    const response = await fetch("/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    });
+    const response = await fetch(
+      "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      },
+    );
 
     if (!response.ok) {
       throw new Error("Failed to create order");
