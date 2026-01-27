@@ -3,17 +3,27 @@ import {
   usePayPal,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
+  type OnApproveDataSavePayments,
   type OnCompleteData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
 import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
+import PayPalSubscriptionButton from "../components/PayPalSubscriptionButton";
+import PayPalSaveButton from "../components/PayPalSaveButton";
+import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
+import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
 import soccerBallImage from "../static/images/world-cup.jpg";
-import { captureOrder, createOrder } from "../utils";
+import {
+  captureOrder,
+  createOrder,
+  createSubscription,
+  createVaultToken,
+} from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
 
@@ -58,6 +68,47 @@ const SoccerBall = () => {
 
     onComplete: (data: OnCompleteData) => {
       console.log("Payment session completed");
+      console.log("On Complete data:", data);
+    },
+  };
+
+  const handleSaveCallbacks = {
+    onApprove: async (data: OnApproveDataSavePayments) => {
+      console.log("Payment method saved:", data);
+      console.log("Vault Setup Token:", data.vaultSetupToken);
+      setModalState("success");
+    },
+
+    onCancel: () => {
+      console.log("Save payment method cancelled");
+      setModalState("cancel");
+    },
+
+    onError: (error: Error) => {
+      console.error("Save payment method error:", error);
+      setModalState("error");
+    },
+  };
+
+  const handleSubscriptionCallbacks = {
+    onApprove: async (data: OnApproveDataOneTimePayments) => {
+      console.log("Subscription approved:", data);
+      console.log("Payer ID:", data.payerId);
+      setModalState("success");
+    },
+
+    onCancel: () => {
+      console.log("Subscription cancelled");
+      setModalState("cancel");
+    },
+
+    onError: (error: Error) => {
+      console.error("Subscription error:", error);
+      setModalState("error");
+    },
+
+    onComplete: (data: OnCompleteData) => {
+      console.log("Subscription session completed");
       console.log("On Complete data:", data);
     },
   };
@@ -134,6 +185,30 @@ const SoccerBall = () => {
             <PayPalBasicCardButton
               createOrder={createOrder}
               {...handlePaymentCallbacks}
+            />
+
+            <PayPalSubscriptionButton
+              createSubscription={createSubscription}
+              presentationMode="auto"
+              {...handleSubscriptionCallbacks}
+            />
+
+            <PayPalSaveButton
+              createVaultToken={createVaultToken}
+              presentationMode="auto"
+              {...handleSaveCallbacks}
+            />
+
+            <PayPalCreditOneTimeButton
+              createOrder={createOrder}
+              presentationMode="auto"
+              {...handlePaymentCallbacks}
+            />
+
+            <PayPalCreditSaveButton
+              createVaultToken={createVaultToken}
+              presentationMode="auto"
+              {...handleSaveCallbacks}
             />
           </>
         )}
