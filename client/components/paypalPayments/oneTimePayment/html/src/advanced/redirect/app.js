@@ -88,41 +88,15 @@ async function getBrowserSafeClientToken() {
 }
 
 async function createRedirectOrder() {
-  const orderPayload = {
-    intent: "CAPTURE",
-    paymentSource: {
-      paypal: {
-        experienceContext: {
-          shippingPreference: "NO_SHIPPING",
-          userAction: "CONTINUE",
-          returnUrl: window.location.href,
-          cancelUrl: window.location.href,
-        },
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
     },
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode: "USD",
-          value: "10.00",
-          breakdown: {
-            itemTotal: {
-              currencyCode: "USD",
-              value: "10.00",
-            },
-          },
-        },
-      },
-    ],
-  };
-
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(orderPayload),
-  });
+  );
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 

@@ -33,35 +33,6 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function getPayPalOrderPayload(purchaseAmount) {
-  return {
-    intent: "CAPTURE",
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode: "USD",
-          value: purchaseAmount,
-          breakdown: {
-            itemTotal: {
-              currencyCode: "USD",
-              value: purchaseAmount,
-            },
-          },
-        },
-      },
-    ],
-    paymentSource: {
-      googlePay: {
-        attributes: {
-          verification: {
-            method: "SCA_WHEN_REQUIRED",
-          },
-        },
-      },
-    },
-  };
-}
-
 function getGoogleTransactionInfo(purchaseAmount, countryCode) {
   const totalAmount = parseFloat(purchaseAmount);
   const subtotal = (totalAmount * 0.9).toFixed(2);
@@ -121,8 +92,7 @@ async function onPaymentAuthorized(
   googlePaySession,
 ) {
   try {
-    const orderPayload = getPayPalOrderPayload(purchaseAmount);
-    const id = await createOrder(orderPayload);
+    const id = await createOrder();
 
     const { status } = await googlePaySession.confirmOrder({
       orderId: id,
@@ -233,14 +203,16 @@ async function getBrowserSafeClientToken() {
   return accessToken;
 }
 
-async function createOrder(orderPayload) {
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+async function createOrder() {
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-    body: JSON.stringify(orderPayload),
-  });
+  );
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 

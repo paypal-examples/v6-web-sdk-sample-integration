@@ -101,7 +101,7 @@ async function getBrowserSafeClientToken() {
 
 async function createVaultSetupToken() {
   const response = await fetch(
-    "/paypal-api/vault/setup-token/create-for-card",
+    "/paypal-api/vault/create-setup-token-for-card-save-payment",
     {
       method: "POST",
       headers: {
