@@ -349,17 +349,17 @@ export function createOrderForCardOneTimePaymentWithThreeDSecure({
   return createOrder({ orderRequestBody, paypalRequestId });
 }
 
-type CreateOrderForPayPalGuestPaymentWithShippingOptions = {
+type CreateOrderForOneTimePaymentWithShippingOptions = {
   currencyCode?: string;
   amountValue?: string;
   paypalRequestId?: string;
 };
 
-export function createOrderForPayPalGuestPaymentWithShipping({
+export function createOrderForOneTimePaymentWithShipping({
   currencyCode = defaultOptions.currencyCode,
   amountValue = "10.00",
   paypalRequestId = defaultOptions.paypalRequestId,
-}: CreateOrderForPayPalGuestPaymentWithShippingOptions = defaultOptions) {
+}: CreateOrderForOneTimePaymentWithShippingOptions = defaultOptions) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [

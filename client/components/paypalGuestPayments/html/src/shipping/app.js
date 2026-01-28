@@ -123,7 +123,7 @@ async function getBrowserSafeClientToken() {
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-paypal-guest-payment-with-shipping",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-shipping",
     {
       method: "POST",
       headers: {
