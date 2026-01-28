@@ -9,6 +9,7 @@ import {
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
   PlanRequestStatus,
+  ShippingType,
   StoreInVaultInstruction,
   TenureType,
   VaultInstructionAction,
@@ -378,7 +379,7 @@ export function createOrderForPayPalGuestPaymentWithShipping({
             {
               id: "SHIP_FRE",
               label: "Free",
-              type: "SHIPPING",
+              type: ShippingType.Shipping,
               selected: true,
               amount: {
                 value: "0.00",
@@ -388,7 +389,7 @@ export function createOrderForPayPalGuestPaymentWithShipping({
             {
               id: "SHIP_EXP",
               label: "Expedited",
-              type: "SHIPPING",
+              type: ShippingType.Shipping,
               selected: false,
               amount: {
                 value: "5.00",
@@ -398,7 +399,7 @@ export function createOrderForPayPalGuestPaymentWithShipping({
             {
               id: "SHIP_UNV",
               label: "Unavailable",
-              type: "SHIPPING",
+              type: ShippingType.Shipping,
               selected: false,
               amount: {
                 value: "1000",
