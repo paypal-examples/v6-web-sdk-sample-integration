@@ -33,7 +33,6 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-
 function getGoogleTransactionInfo(purchaseAmount, countryCode) {
   const totalAmount = parseFloat(purchaseAmount);
   const subtotal = (totalAmount * 0.9).toFixed(2);
