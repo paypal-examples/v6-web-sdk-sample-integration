@@ -23,13 +23,20 @@ import {
   createSubscriptionProduct,
 } from "./paypalServerSdk";
 
-const defaultOptions = {
-  currencyCode: "USD",
-  amountValue: "100.00",
-  returnUrl: "http://example.com",
-  cancelUrl: "http://example.com",
-  paypalRequestId: randomUUID(),
-};
+const defaultCurrencyCode = "USD";
+const defaultAmountValue = "100.00";
+const defaultReturnUrl = "http://example.com";
+const defaultCancelUrl = "http://example.com";
+
+function getDefaultOptions() {
+  return {
+    currencyCode: defaultCurrencyCode,
+    amountValue: defaultAmountValue,
+    returnUrl: defaultReturnUrl,
+    cancelUrl: defaultCancelUrl,
+    paypalRequestId: randomUUID(),
+  };
+}
 
 type CreateOrderForOneTimePaymentOptions = {
   currencyCode?: string;
@@ -37,11 +44,13 @@ type CreateOrderForOneTimePaymentOptions = {
   paypalRequestId?: string;
 };
 
-export function createOrderForOneTimePayment({
-  currencyCode = defaultOptions.currencyCode,
-  amountValue = defaultOptions.amountValue,
-  paypalRequestId = defaultOptions.paypalRequestId,
-}: CreateOrderForOneTimePaymentOptions = defaultOptions) {
+export function createOrderForOneTimePayment(
+  {
+    currencyCode = defaultCurrencyCode,
+    amountValue = defaultAmountValue,
+    paypalRequestId = randomUUID(),
+  }: CreateOrderForOneTimePaymentOptions = getDefaultOptions(),
+) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -64,13 +73,15 @@ type CreateOrderForPayPalOneTimePaymentWithVaultOptions = {
   paypalRequestId?: string;
 };
 
-export async function createOrderForPayPalOneTimePaymentWithVault({
-  currencyCode = defaultOptions.currencyCode,
-  amountValue = defaultOptions.amountValue,
-  paypalRequestId = defaultOptions.paypalRequestId,
-  returnUrl = defaultOptions.returnUrl,
-  cancelUrl = defaultOptions.cancelUrl,
-}: CreateOrderForPayPalOneTimePaymentWithVaultOptions = defaultOptions) {
+export async function createOrderForPayPalOneTimePaymentWithVault(
+  {
+    currencyCode = defaultCurrencyCode,
+    amountValue = defaultAmountValue,
+    paypalRequestId = randomUUID(),
+    returnUrl = defaultReturnUrl,
+    cancelUrl = defaultCancelUrl,
+  }: CreateOrderForPayPalOneTimePaymentWithVaultOptions = getDefaultOptions(),
+) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -109,13 +120,15 @@ type CreateOrderForPayPalOneTimePaymentWithRedirectOptions = {
   paypalRequestId?: string;
 };
 
-export function createOrderForPayPalOneTimePaymentWithRedirect({
-  currencyCode = defaultOptions.currencyCode,
-  amountValue = defaultOptions.amountValue,
-  paypalRequestId = defaultOptions.paypalRequestId,
-  returnUrl = defaultOptions.returnUrl,
-  cancelUrl = defaultOptions.cancelUrl,
-}: CreateOrderForPayPalOneTimePaymentWithRedirectOptions = defaultOptions) {
+export function createOrderForPayPalOneTimePaymentWithRedirect(
+  {
+    currencyCode = defaultCurrencyCode,
+    amountValue = defaultAmountValue,
+    paypalRequestId = randomUUID(),
+    returnUrl = defaultReturnUrl,
+    cancelUrl = defaultCancelUrl,
+  }: CreateOrderForPayPalOneTimePaymentWithRedirectOptions = getDefaultOptions(),
+) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -148,12 +161,13 @@ type CreateSetupTokenForPayPalSavePaymentOptions = {
 
 export function createSetupTokenForPayPalSavePayment(
   {
-    returnUrl = defaultOptions.returnUrl,
-    cancelUrl = defaultOptions.cancelUrl,
-    paypalRequestId = defaultOptions.paypalRequestId,
+    returnUrl = defaultReturnUrl,
+    cancelUrl = defaultCancelUrl,
+    paypalRequestId = randomUUID(),
   }: CreateSetupTokenForPayPalSavePaymentOptions = {
-    returnUrl: defaultOptions.returnUrl,
-    cancelUrl: defaultOptions.cancelUrl,
+    returnUrl: defaultReturnUrl,
+    cancelUrl: defaultCancelUrl,
+    paypalRequestId: randomUUID(),
   },
 ) {
   const setupTokenRequestBody = {
@@ -180,12 +194,13 @@ type CreateSetupTokenForCardSavePaymentOptions = {
 
 export function createSetupTokenForCardSavePayment(
   {
-    returnUrl = defaultOptions.returnUrl,
-    cancelUrl = defaultOptions.cancelUrl,
-    paypalRequestId = defaultOptions.paypalRequestId,
+    returnUrl = defaultReturnUrl,
+    cancelUrl = defaultCancelUrl,
+    paypalRequestId = randomUUID(),
   }: CreateSetupTokenForCardSavePaymentOptions = {
-    returnUrl: defaultOptions.returnUrl,
-    cancelUrl: defaultOptions.cancelUrl,
+    returnUrl: defaultReturnUrl,
+    cancelUrl: defaultCancelUrl,
+    paypalRequestId: randomUUID(),
   },
 ) {
   const setupTokenRequestBody = {
@@ -214,13 +229,13 @@ type CreateMonthlySubscriptionBillingPlanOptions = {
 export async function createMonthlySubscriptionBillingPlan(
   {
     productId,
-    currencyCode = defaultOptions.currencyCode,
+    currencyCode = defaultCurrencyCode,
     amountValue = "9.99",
-    paypalRequestId = defaultOptions.paypalRequestId,
+    paypalRequestId = randomUUID(),
   }: CreateMonthlySubscriptionBillingPlanOptions = {
-    currencyCode: "USD",
+    currencyCode: defaultCurrencyCode,
     amountValue: "9.99",
-    paypalRequestId: defaultOptions.paypalRequestId,
+    paypalRequestId: randomUUID(),
   },
 ) {
   if (!productId) {
@@ -278,9 +293,9 @@ type CreateOrderForFastlaneOptions = {
 
 export function createOrderForFastlane({
   paymentToken,
-  currencyCode = defaultOptions.currencyCode,
-  amountValue = "10.00",
-  paypalRequestId = defaultOptions.paypalRequestId,
+  currencyCode = defaultCurrencyCode,
+  amountValue = defaultAmountValue,
+  paypalRequestId = randomUUID(),
 }: CreateOrderForFastlaneOptions) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -315,13 +330,15 @@ type CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = {
   paypalRequestId?: string;
 };
 
-export function createOrderForCardOneTimePaymentWithThreeDSecure({
-  currencyCode = defaultOptions.currencyCode,
-  amountValue = defaultOptions.amountValue,
-  returnUrl = defaultOptions.returnUrl,
-  cancelUrl = defaultOptions.cancelUrl,
-  paypalRequestId = defaultOptions.paypalRequestId,
-}: CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = defaultOptions) {
+export function createOrderForCardOneTimePaymentWithThreeDSecure(
+  {
+    currencyCode = defaultCurrencyCode,
+    amountValue = defaultAmountValue,
+    returnUrl = defaultReturnUrl,
+    cancelUrl = defaultCancelUrl,
+    paypalRequestId = randomUUID(),
+  }: CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = getDefaultOptions(),
+) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
@@ -355,11 +372,13 @@ type CreateOrderForOneTimePaymentWithShippingOptions = {
   paypalRequestId?: string;
 };
 
-export function createOrderForOneTimePaymentWithShipping({
-  currencyCode = defaultOptions.currencyCode,
-  amountValue = "10.00",
-  paypalRequestId = defaultOptions.paypalRequestId,
-}: CreateOrderForOneTimePaymentWithShippingOptions = defaultOptions) {
+export function createOrderForOneTimePaymentWithShipping(
+  {
+    currencyCode = defaultCurrencyCode,
+    amountValue = defaultAmountValue,
+    paypalRequestId = randomUUID(),
+  }: CreateOrderForOneTimePaymentWithShippingOptions = getDefaultOptions(),
+) {
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
