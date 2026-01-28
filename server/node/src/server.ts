@@ -23,6 +23,7 @@ import {
   createSetupTokenForPayPalSavePayment,
   createSetupTokenForCardSavePayment,
   createOrderForFastlane,
+  createOrderForCardOneTimePaymentWithThreeDSecure,
 } from "./paymentFlowPayloadVariations";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -139,6 +140,19 @@ app.post(
     const { jsonResponse, httpStatusCode } = await createOrderForFastlane({
       paymentToken,
     });
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
+  async (req: Request, res: Response) => {
+    const referer = req.get("referer") as string;
+    const { jsonResponse, httpStatusCode } =
+      await createOrderForCardOneTimePaymentWithThreeDSecure({
+        returnUrl: referer,
+        cancelUrl: referer,
+      });
     res.status(httpStatusCode).json(jsonResponse);
   },
 );

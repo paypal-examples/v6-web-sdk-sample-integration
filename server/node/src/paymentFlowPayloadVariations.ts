@@ -304,3 +304,45 @@ export function createOrderForFastlane({
   };
   return createOrder({ orderRequestBody, paypalRequestId });
 }
+
+type CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = {
+  currencyCode?: string;
+  amountValue?: string;
+  returnUrl?: string;
+  cancelUrl?: string;
+  paypalRequestId?: string;
+};
+
+export function createOrderForCardOneTimePaymentWithThreeDSecure({
+  currencyCode = defaultOptions.currencyCode,
+  amountValue = defaultOptions.amountValue,
+  returnUrl = defaultOptions.returnUrl,
+  cancelUrl = defaultOptions.cancelUrl,
+  paypalRequestId = defaultOptions.paypalRequestId,
+}: CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = defaultOptions) {
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+        },
+      },
+    ],
+    paymentSource: {
+      card: {
+        attributes: {
+          verification: {
+            method: "SCA_ALWAYS",
+          },
+        },
+        experienceContext: {
+          returnUrl,
+          cancelUrl,
+        },
+      },
+    },
+  };
+  return createOrder({ orderRequestBody, paypalRequestId });
+}
