@@ -3,6 +3,7 @@ import { randomUUID } from "crypto";
 import {
   CheckoutPaymentIntent,
   IntervalUnit,
+  OrdersCardVerificationMethod,
   PaypalExperienceUserAction,
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
@@ -334,7 +335,7 @@ export function createOrderForCardOneTimePaymentWithThreeDSecure({
       card: {
         attributes: {
           verification: {
-            method: "SCA_ALWAYS",
+            method: OrdersCardVerificationMethod.ScaAlways,
           },
         },
         experienceContext: {
