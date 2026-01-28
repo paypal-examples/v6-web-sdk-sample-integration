@@ -346,3 +346,68 @@ export function createOrderForCardOneTimePaymentWithThreeDSecure({
   };
   return createOrder({ orderRequestBody, paypalRequestId });
 }
+
+type CreateOrderForPayPalGuestPaymentWithShippingOptions = {
+  currencyCode?: string;
+  amountValue?: string;
+  paypalRequestId?: string;
+};
+
+export function createOrderForPayPalGuestPaymentWithShipping({
+  currencyCode = defaultOptions.currencyCode,
+  amountValue = "10.00",
+  paypalRequestId = defaultOptions.paypalRequestId,
+}: CreateOrderForPayPalGuestPaymentWithShippingOptions = defaultOptions) {
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+          breakdown: {
+            itemTotal: {
+              currencyCode,
+              value: amountValue,
+            },
+          },
+        },
+        shipping: {
+          options: [
+            {
+              id: "SHIP_FRE",
+              label: "Free",
+              type: "SHIPPING",
+              selected: true,
+              amount: {
+                value: "0.00",
+                currencyCode,
+              },
+            },
+            {
+              id: "SHIP_EXP",
+              label: "Expedited",
+              type: "SHIPPING",
+              selected: false,
+              amount: {
+                value: "5.00",
+                currencyCode,
+              },
+            },
+            {
+              id: "SHIP_UNV",
+              label: "Unavailable",
+              type: "SHIPPING",
+              selected: false,
+              amount: {
+                value: "1000",
+                currencyCode,
+              },
+            },
+          ],
+        },
+      },
+    ],
+  };
+  return createOrder({ orderRequestBody, paypalRequestId });
+}

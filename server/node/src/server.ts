@@ -24,6 +24,7 @@ import {
   createSetupTokenForCardSavePayment,
   createOrderForFastlane,
   createOrderForCardOneTimePaymentWithThreeDSecure,
+  createOrderForPayPalGuestPaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
 const CLIENT_STATIC_DIRECTORY = join(__dirname, "../../../client");
@@ -153,6 +154,15 @@ app.post(
         returnUrl: referer,
         cancelUrl: referer,
       });
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-paypal-guest-payment-with-shipping",
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } =
+      await createOrderForPayPalGuestPaymentWithShipping();
     res.status(httpStatusCode).json(jsonResponse);
   },
 );
