@@ -87,7 +87,7 @@ async function getBrowserSafeClientToken() {
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-with-sample-data",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
     {
       method: "POST",
       headers: {

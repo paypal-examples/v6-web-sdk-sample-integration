@@ -14,7 +14,7 @@ export const getBrowserSafeClientToken = async () => {
 
 export const createOrder = async () => {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-with-sample-data",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
     {
       method: "POST",
       headers: {
@@ -43,7 +43,7 @@ export const captureOrder = async ({ orderId }: { orderId: string }) => {
 
 export const createSubscription = async () => {
   try {
-    const response = await fetch("/paypal-api/subscription", {
+    const response = await fetch("/paypal-api/billing/create-subscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
