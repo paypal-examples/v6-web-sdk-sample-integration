@@ -1,9 +1,9 @@
 let fastlane;
 async function onPayPalWebSdkLoaded() {
-  const clientId = await getBrowserSafeClientId();
+  const clientToken = await getBrowserSafeClientToken();
 
   const sdkInstance = await window.paypal.createInstance({
-    clientId,
+    clientToken,
     pageType: "product-details",
     clientMetadataId: crypto.randomUUID(),
     components: ["fastlane"],
@@ -13,14 +13,14 @@ async function onPayPalWebSdkLoaded() {
   setupFastlaneSdk();
 }
 
-async function getBrowserSafeClientId() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
+async function getBrowserSafeClientToken() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { clientId } = await response.json();
+  const { accessToken } = await response.json();
 
-  return clientId;
+  return accessToken;
 }
