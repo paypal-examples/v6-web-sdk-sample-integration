@@ -28,7 +28,7 @@ import {
 } from "./paymentFlowPayloadVariations";
 
 const CLIENT_STATIC_DIRECTORY =
-  process.env.CLIENT_DIR || join(__dirname, "../../../client");
+  process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
 
 const app = express();
 
