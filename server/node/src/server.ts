@@ -27,7 +27,8 @@ import {
   createOrderForOneTimePaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
-const CLIENT_STATIC_DIRECTORY = join(process.cwd(), "../../client");
+const CLIENT_STATIC_DIRECTORY =
+  process.env.CLIENT_DIR || join(__dirname, "../../../client");
 
 const app = express();
 
