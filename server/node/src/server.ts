@@ -233,7 +233,7 @@ app.post(
 );
 
 async function savePaymentTokenToDatabase(
-  paymentTokenResponse: PaymentTokenResponse,
+  _paymentTokenResponse: PaymentTokenResponse,
 ) {
   // example function to teach saving the paymentToken to a database
   // to be used for future transactions
