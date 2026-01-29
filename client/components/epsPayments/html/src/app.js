@@ -1,8 +1,8 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       testBuyerCountry: "AT", // Austria for EPS testing
       components: ["eps-payments"],
     });
@@ -205,10 +205,10 @@ function handleError(error) {
   });
 }
 
-// Get client token from server
-async function getBrowserSafeClientToken() {
+// Get client id from server
+async function getBrowserSafeClientId() {
   try {
-    const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+    const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
       method: "GET",
       headers: {
         "Content-Type": "application/json",
@@ -216,13 +216,13 @@ async function getBrowserSafeClientToken() {
     });
 
     if (!response.ok) {
-      throw new Error("Failed to fetch client token");
+      throw new Error("Failed to fetch client id");
     }
 
-    const { accessToken } = await response.json();
-    return accessToken;
+    const { clientId } = await response.json();
+    return clientId;
   } catch (error) {
-    console.error("Error fetching client token:", error);
+    console.error("Error fetching client id:", error);
     throw error;
   }
 }
