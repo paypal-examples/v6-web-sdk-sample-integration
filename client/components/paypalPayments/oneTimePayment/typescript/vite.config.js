@@ -7,6 +7,9 @@ export default defineConfig({
   // use a relative base path for hosting dist folder from:
   // /client/components/paypalPayments/oneTimePayment/typescript/src/dist/index.html
   base: "./",
+  build: {
+    sourcemap: true,
+  },
   server: {
     port: 3000,
     proxy: {
