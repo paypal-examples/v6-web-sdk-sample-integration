@@ -55,6 +55,7 @@ FROM base
 
 COPY --from=build /app /app
 WORKDIR /app/server/node
+ENV CLIENT_STATIC_DIRECTORY="/app/client"
 
 EXPOSE 3000
 CMD [ "npm", "run", "start-production" ]
