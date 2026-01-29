@@ -10,7 +10,8 @@
     "clean": "rm -rf dist",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "eslint .",
+    "typecheck": "tsc --build --noEmit",
+    "lint": "eslint . && npm run typecheck",
     "prestart": "npm run check-node-version",
     "start": "dotenvx run -f ../../.env --quiet -- tsx --watch src/server.ts",
     "start-production": "NODE_ENV=production node dist/server.js"
