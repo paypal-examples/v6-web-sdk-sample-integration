@@ -1,8 +1,8 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientId = await getBrowserSafeClientId();
+    const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
-      clientId,
+      clientToken,
       components: ["paypal-payments"],
       pageType: "checkout",
     });
@@ -68,16 +68,16 @@ async function setupPayPalButton(sdkInstance) {
   });
 }
 
-async function getBrowserSafeClientId() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
+async function getBrowserSafeClientToken() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { clientId } = await response.json();
+  const { accessToken } = await response.json();
 
-  return clientId;
+  return accessToken;
 }
 
 async function createVaultSetupToken() {
