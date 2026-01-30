@@ -1,8 +1,8 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["paypal-guest-payments"],
     });
 
@@ -81,16 +81,16 @@ function onError(error) {
   console.log("onError", error);
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
+  return clientId;
 }
 
 async function createOrder() {

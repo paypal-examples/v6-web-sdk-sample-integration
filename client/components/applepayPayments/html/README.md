@@ -71,7 +71,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 2. **Register ngrok domain with PayPal:**
    - In your PayPal developer dashboard, navigate to your app's Apple Pay settings under **Features** -> **Accept payments** -> **Apple Pay** -> **Manage**
    - Add your ngrok domain (e.g. `example.ngrok-free.app`) to the approved domains list
-   - Before clicking **Register Domain**, download and save the domain association file to `applePay/html/.well-known/apple-developer-merchantid-domain-association`
+   - Before clicking **Register Domain**, download and save the domain association file to `applepayPayments/html/.well-known/apple-developer-merchantid-domain-association`
 
 ![Screenshot](images/manage-apple-pay.jpg)
 ![Screenshot](images/domain-registration-with-paypal.jpg)
