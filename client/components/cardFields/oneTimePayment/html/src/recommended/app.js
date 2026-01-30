@@ -97,7 +97,7 @@ async function getBrowserSafeClientId() {
   });
   const { clientId } = await response.json();
 
-  return clientId; // pass as clientId above
+  return clientId;
 }
 
 async function createOrder() {
