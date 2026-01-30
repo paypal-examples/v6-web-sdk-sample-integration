@@ -26,6 +26,7 @@ import {
 } from "../utils";
 import "../static/styles/SoccerBall.css";
 import "../static/styles/Modal.css";
+import PayPalDirectAppSwitchButton from "../components/PayPalDirectAppSwitchButton";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -164,7 +165,7 @@ const SoccerBall = () => {
           </div>
         ) : (
           <>
-            <PayPalButton
+            {/* <PayPalButton
               createOrder={createOrder}
               presentationMode="auto"
               {...handlePaymentCallbacks}
@@ -209,6 +210,11 @@ const SoccerBall = () => {
               createVaultToken={createVaultToken}
               presentationMode="auto"
               {...handleSaveCallbacks}
+            /> */}
+            <PayPalDirectAppSwitchButton
+              createOrder={createOrder}
+              presentationMode="direct-app-switch"
+              {...handlePaymentCallbacks}
             />
           </>
         )}
