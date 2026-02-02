@@ -215,11 +215,12 @@ app.get(
     };
 
     try {
-      const responseData = await findEligibleMethods(testData);
-      res.status(200).json(responseData);
+      const { jsonResponse, httpStatusCode } =
+        await findEligibleMethods(testData);
+      res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
-      console.error("Failed to create setup token:", error);
-      res.status(500).json({ error: "Failed to create setup token." });
+      console.error("Failed to find eligible methods:", error);
+      res.status(500).json({ error: "Failed to find eligible methods." });
     }
   },
 );
