@@ -29,7 +29,7 @@ import {
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
-import { findEligibleMethods } from "./paymentsFindEligibleMethods";
+import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 
 const app = express();
 
@@ -215,7 +215,7 @@ app.get(
     };
 
     try {
-      const responseData = await findEligibleMethods({ body: testData });
+      const responseData = await findEligibleMethods(testData);
       res.status(200).json(responseData);
     } catch (error) {
       console.error("Failed to create setup token:", error);

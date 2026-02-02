@@ -20,8 +20,9 @@ import {
   createOrder,
   createSetupToken,
   createSubscriptionBillingPlan,
-  createSubscriptionProduct,
 } from "./paypalServerSdk";
+
+import { createSubscriptionProduct } from "./customApiEndpoints/createSubscriptionProduct";
 
 const defaultCurrencyCode = "USD";
 const defaultAmountValue = "100.00";
@@ -239,14 +240,18 @@ export async function createMonthlySubscriptionBillingPlan(
   },
 ) {
   if (!productId) {
-    const { id } = await createSubscriptionProduct({
+    const { jsonResponse } = await createSubscriptionProduct({
       name: "Sample Subscription Product",
       description: "Sample product for subscription testing",
       type: "SERVICE",
       category: "SOFTWARE",
     });
 
-    productId = id;
+    if (typeof jsonResponse.id === "string") {
+      productId = jsonResponse.id as string;
+    } else {
+      throw new Error("Failed to create product id");
+    }
   }
 
   const planRequestBody = {
