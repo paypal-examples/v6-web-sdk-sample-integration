@@ -14,7 +14,7 @@ export const getBrowserSafeClientToken = async () => {
 
 export const createOrder = async () => {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
     {
       method: "POST",
       headers: {
