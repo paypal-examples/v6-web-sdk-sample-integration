@@ -63,6 +63,7 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 ### `ngrok` Setup
 
 1. **Add ngrok auth token to .env file:**
+   - if `NGROK_AUTHTOKEN` is set in your `.env` file, the local dev server will automatically attempt to start `ngrok`
 
    ```bash
    NGROK_AUTHTOKEN=your_ngrok_authtoken
