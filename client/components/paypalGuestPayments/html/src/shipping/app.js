@@ -1,8 +1,8 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["paypal-guest-payments"],
     });
 
@@ -109,78 +109,28 @@ function onShippingOptionsChange(data) {
   }
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
+  return clientId;
 }
 
 async function createOrder() {
-  const orderPayload = {
-    intent: "CAPTURE",
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode: "USD",
-          value: "10.00",
-          breakdown: {
-            itemTotal: {
-              currencyCode: "USD",
-              value: "10.00",
-            },
-          },
-        },
-        shipping: {
-          options: [
-            {
-              id: "SHIP_FRE",
-              label: "Free",
-              type: "SHIPPING",
-              selected: true,
-              amount: {
-                value: "0.00",
-                currencyCode: "USD",
-              },
-            },
-            {
-              id: "SHIP_EXP",
-              label: "Expedited",
-              type: "SHIPPING",
-              selected: false,
-              amount: {
-                value: "5.00",
-                currencyCode: "USD",
-              },
-            },
-            {
-              id: "SHIP_UNV",
-              label: "Unavailable",
-              type: "SHIPPING",
-              selected: false,
-              amount: {
-                value: "1000",
-                currencyCode: "USD",
-              },
-            },
-          ],
-        },
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-shipping",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-    ],
-  };
-
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
     },
-    body: JSON.stringify(orderPayload),
-  });
+  );
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 

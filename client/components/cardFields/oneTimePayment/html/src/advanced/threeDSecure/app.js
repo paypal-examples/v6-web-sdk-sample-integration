@@ -1,8 +1,8 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["card-fields"],
     });
 
@@ -88,51 +88,28 @@ async function onPayClick(cardFieldsInstance) {
   }
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken; // pass as clienToken above
+  return clientId;
 }
 
 async function createOrder() {
-  const orderRequestBody = {
-    intent: "CAPTURE",
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode: "USD",
-          value: "100.00",
-        },
-      },
-    ],
-    payment_source: {
-      card: {
-        attributes: {
-          verification: {
-            method: "SCA_ALWAYS", // Possible values are "SCA_ALWAYS" and "SCA_WHEN_REQUIRED"
-          },
-        },
-        experience_context: {
-          return_url: "https://example.com/returnUrl",
-          cancel_url: "https://example.com/cancelUrl",
-        },
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
     },
-  };
-
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify(orderRequestBody),
-  });
+  );
   const { id } = await response.json();
 
   return id; // return the string orderId

@@ -1,8 +1,8 @@
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["googlepay-payments"],
       pageType: "checkout",
     });
@@ -31,35 +31,6 @@ async function onPayPalWebSdkLoaded() {
   } catch (error) {
     console.error(error);
   }
-}
-
-function getPayPalOrderPayload(purchaseAmount) {
-  return {
-    intent: "CAPTURE",
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode: "USD",
-          value: purchaseAmount,
-          breakdown: {
-            itemTotal: {
-              currencyCode: "USD",
-              value: purchaseAmount,
-            },
-          },
-        },
-      },
-    ],
-    paymentSource: {
-      googlePay: {
-        attributes: {
-          verification: {
-            method: "SCA_WHEN_REQUIRED",
-          },
-        },
-      },
-    },
-  };
 }
 
 function getGoogleTransactionInfo(purchaseAmount, countryCode) {
@@ -121,8 +92,7 @@ async function onPaymentAuthorized(
   googlePaySession,
 ) {
   try {
-    const orderPayload = getPayPalOrderPayload(purchaseAmount);
-    const id = await createOrder(orderPayload);
+    const id = await createOrder();
 
     const { status } = await googlePaySession.confirmOrder({
       orderId: id,
@@ -221,26 +191,28 @@ async function setupGooglePayButton(
   }
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
+  return clientId;
 }
 
-async function createOrder(orderPayload) {
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
+async function createOrder() {
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-    body: JSON.stringify(orderPayload),
-  });
+  );
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 

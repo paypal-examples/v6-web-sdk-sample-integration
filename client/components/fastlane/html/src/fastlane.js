@@ -120,35 +120,18 @@ async function renderFastlaneGuestExperience() {
 }
 
 async function createOrder(paymentToken) {
-  const response = await fetch("/paypal-api/checkout/orders/create", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "PayPal-Request-Id": Date.now().toString(),
-    },
-    body: JSON.stringify({
-      paymentSource: {
-        card: {
-          singleUseToken: paymentToken,
-        },
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-fastlane",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
       },
-      purchaseUnits: [
-        {
-          amount: {
-            currencyCode: "USD",
-            value: "10.00",
-            breakdown: {
-              itemTotal: {
-                currencyCode: "USD",
-                value: "10.00",
-              },
-            },
-          },
-        },
-      ],
-      intent: "CAPTURE",
-    }),
-  });
+      body: JSON.stringify({
+        paymentToken,
+      }),
+    },
+  );
   const orderResponse = await response.json();
 
   return orderResponse;

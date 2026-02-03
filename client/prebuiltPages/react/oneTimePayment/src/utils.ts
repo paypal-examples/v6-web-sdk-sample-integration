@@ -20,7 +20,7 @@ export const createOrder = async (
     quantity: number;
   }>,
 ) => {
-  const response = await fetch("/paypal-api/checkout/orders/create", {
+  const response = await fetch("/paypal-api/checkout/orders/create-order-for-one-time-payment", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
@@ -48,7 +48,7 @@ export const captureOrder = async ({ orderId }: { orderId: string }) => {
 
 export const createSubscription = async () => {
   try {
-    const response = await fetch("/paypal-api/subscription", {
+    const response = await fetch("/paypal-api/billing/create-subscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",

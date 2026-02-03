@@ -9,31 +9,23 @@
   <body>
     <h1>PayPal Web SDK Sample Integrations</h1>
 
+    <h2>Static Examples</h2>
     <ul>
-      <li>
-        <strong>Prebuilt Pages (React)</strong>
-        <ul>
-          <li>
-            <a href="/client/prebuiltPages/react/oneTimePayment/dist/index.html"
-              >One-Time Payment (React)</a
-            >
-          </li>
-        </ul>
-      </li>
       <li>
         PayPal Payments
         <ul>
           <li>
             <a
-              href="/client/components/paypalPayments/oneTimePayment/typescript/src/dist/index.html"
-              >One-time payments with TypeScript</a
+              href="/client/components/paypalPayments/oneTimePayment/html/src/recommended/index.html"
+              >One-time payment with PayPal, PayLater, and PayPal Credit
+              buttons</a
             >
           </li>
           <li>
             <a
-              href="/client/components/paypalPayments/oneTimePayment/html/src/recommended/index.html"
-              >One-time payments with PayPal, PayLater, and PayPal Credit
-              buttons</a
+              href="/client/components/paypalPayments/oneTimePaymentWithVault/html/src/recommended/index.html"
+              >One-time payment With Vault with PayPal, PayLater, and PayPal
+              Credit buttons</a
             >
           </li>
           <li>
@@ -230,6 +222,37 @@
           <li>
             <a href="/client/components/epsPayments/html/src/index.html"
               >Recommended integration for EPS</a
+            >
+          </li>
+        </ul>
+      </li>
+    </ul>
+
+    <h2>Dynamic Examples</h2>
+    <p>
+      These client-side examples use TypeScript and frameworks like React. They
+      require a build process to generate the dist folder to be served up by the
+      main server.
+    </p>
+
+    <ul>
+      <li>
+        Prebuilt Pages (React)
+        <ul>
+          <li>
+            <a href="/client/prebuiltPages/react/oneTimePayment/dist/index.html"
+              >One-Time Payment (React)</a
+            >
+          </li>
+        </ul>
+      </li>
+      <li>
+        PayPal Payments
+        <ul>
+          <li>
+            <a
+              href="/client/components/paypalPayments/oneTimePayment/typescript/src/dist/index.html"
+              >One-time payment with TypeScript</a
             >
           </li>
         </ul>

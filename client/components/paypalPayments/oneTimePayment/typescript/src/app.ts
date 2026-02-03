@@ -47,9 +47,9 @@ const paymentSessionOptions = {
 };
 
 try {
-  const clientToken = await getBrowserSafeClientToken();
+  const clientId = await getBrowserSafeClientId();
   const sdkInstance = await paypalGlobalNamespace.createInstance({
-    clientToken,
+    clientId,
     components: ["paypal-payments", "venmo-payments"],
     pageType: "checkout",
   });
@@ -160,24 +160,21 @@ async function setupPayPalCreditButton(
   }
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
 
-  type ClientTokenReponse = {
-    accessToken: string;
-    expiresIn: number;
-    scope: string;
-    tokenType: string;
+  type ClientIdResponse = {
+    clientId: string;
   };
 
-  const { accessToken }: ClientTokenReponse = await response.json();
+  const { clientId }: ClientIdResponse = await response.json();
 
-  return accessToken;
+  return clientId;
 }
 
 type OrderResponseMinimal = {
@@ -192,7 +189,7 @@ type OrderResponseMinimal = {
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-with-sample-data",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
     {
       method: "POST",
       headers: {

@@ -17,15 +17,16 @@
  */
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientId = await getBrowserSafeClientId();
+    const clientToken = await getBrowserSafeClientToken();
     const sdkInstance = await window.paypal.createInstance({
-      clientId,
+      clientToken,
       components: ["paypal-payments"],
       pageType: "checkout",
     });
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",
+      paymentFlow: "VAULT_WITH_PAYMENT",
     });
 
     if (paymentMethods.isEligible("paypal")) {
@@ -78,6 +79,7 @@ const paymentSessionOptions = {
     });
     console.log("onError", error);
   },
+  vault: true,
 };
 
 async function setupPayPalButton(sdkInstance) {
@@ -169,21 +171,21 @@ async function setupPayPalCreditButton(
   });
 }
 
-async function getBrowserSafeClientId() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
+async function getBrowserSafeClientToken() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { clientId } = await response.json();
+  const { accessToken } = await response.json();
 
-  return clientId;
+  return accessToken;
 }
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
     {
       method: "POST",
       headers: {
