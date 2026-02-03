@@ -1,5 +1,3 @@
-import { randomUUID } from "crypto";
-
 import {
   ApiError,
   Client,
@@ -30,8 +28,6 @@ const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
 if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
 }
-
-const BASE_URL = "https://api-m.sandbox.paypal.com";
 
 const client = new Client({
   clientCredentialsAuthCredentials: {
@@ -304,37 +300,4 @@ export async function createSubscription(planId: string) {
     }
     throw error;
   }
-}
-
-type CreateSubscriptionProductOptions = {
-  name: string;
-  description: string;
-  type: string;
-  category: string;
-};
-
-export async function createSubscriptionProduct(
-  productDetails: CreateSubscriptionProductOptions,
-) {
-  const auth = Buffer.from(
-    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
-  ).toString("base64");
-
-  const productResponse = await fetch(`${BASE_URL}/v1/catalogs/products`, {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Basic ${auth}`,
-      "PayPal-Request-Id": randomUUID(),
-    },
-    body: JSON.stringify(productDetails),
-  });
-
-  if (!productResponse.ok) {
-    throw new Error(`Product creation failed: ${productResponse.status}`);
-  }
-
-  return (await productResponse.json()) as CreateSubscriptionProductOptions & {
-    id: string;
-  };
 }

@@ -20,8 +20,9 @@ import {
   createOrder,
   createSetupToken,
   createSubscriptionBillingPlan,
-  createSubscriptionProduct,
 } from "./paypalServerSdk";
+
+import { createSubscriptionProduct } from "./customApiEndpoints/createSubscriptionProduct";
 
 const defaultCurrencyCode = "USD";
 const defaultAmountValue = "100.00";
