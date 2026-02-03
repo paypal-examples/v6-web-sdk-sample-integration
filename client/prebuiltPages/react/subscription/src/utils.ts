@@ -14,7 +14,7 @@ export const getBrowserSafeClientToken = async () => {
 
 export const createSubscription = async () => {
   try {
-    const response = await fetch("/paypal-api/subscription", {
+    const response = await fetch("/paypal-api/billing/create-subscription", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
