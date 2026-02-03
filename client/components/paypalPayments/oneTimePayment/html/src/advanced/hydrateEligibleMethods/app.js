@@ -11,11 +11,7 @@ async function onPayPalWebSdkLoaded() {
         payment_flow: "ONE_TIME_PAYMENT",
         payment_source_constraint: {
           constraint_type: "INCLUDE",
-          payment_sources: [
-            "PAYPAL",
-            "PAYPAL_PAY_LATER",
-            "PAYPAL_CREDIT",
-          ],
+          payment_sources: ["PAYPAL", "PAYPAL_PAY_LATER", "PAYPAL_CREDIT"],
         },
       },
       purchase_units: [{ amount: { currency_code: "USD" } }],
