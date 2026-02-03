@@ -39,8 +39,7 @@ Generates and returns a browser-safe client token for initializing the PayPal We
   ```json
   {
     "accessToken": "abc123...",
-    "expiresIn": "900" // TTL in seconds,
-    // additional metadata
+    "expiresIn": "900"
   }
   ```
 
@@ -236,6 +235,8 @@ Creates a long-lived payment token from a vault setup token. This payment token 
   }
   ```
 
+---
+
 ### Create Subscription
 
 PayPal provides functionality for recurring payments for subscription services. For more details, visit PayPal's [Subscriptions API documentation](https://developer.paypal.com/docs/api/subscriptions/v1/).
@@ -267,6 +268,38 @@ No body required.
         "rel": "approve"
       }
     ]
+  }
+  ```
+
+---
+
+### Payment Eligibility
+
+PayPal provides functionality to determine what payment methods and merchant and buyer are eligible for.
+
+#### `POST /paypal-api/payments/find-eligible-methods`
+
+**Description:**
+Returns a list of payment methods that merchant's can leverage in their integration.
+
+**Request Body:**  
+Accepts serveral optional parameters like currency and customer country code. Check out the [Find Eligible Methods TypeScript types](./src/customApiEndpoints/findEligibleMethods.ts) to learn more.
+
+**Responses:**
+
+- `200 Created`  
+   Returns the eligible payment methods.
+
+  ```json
+  {
+    "eligible_methods": {
+      "venmo": {
+        "can_be_vaulted": true
+      }
+    },
+    "supplementary_data": {
+      "buyer_country_code": "US"
+    }
   }
   ```
 
