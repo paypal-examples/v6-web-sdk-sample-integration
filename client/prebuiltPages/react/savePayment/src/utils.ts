@@ -14,12 +14,15 @@ export const getBrowserSafeClientToken = async () => {
 
 export const createVaultToken = async () => {
   try {
-    const response = await fetch("/paypal-api/vault/create-setup-token-for-paypal-save-payment", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
+    const response = await fetch(
+      "/paypal-api/vault/create-setup-token-for-paypal-save-payment",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
       },
-    });
+    );
 
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
