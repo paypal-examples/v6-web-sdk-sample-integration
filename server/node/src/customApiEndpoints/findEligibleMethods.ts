@@ -31,7 +31,9 @@ export async function findEligibleMethods(payload: FindEligibleMethodsOptions) {
     };
   } catch (error) {
     return {
-      jsonResponse: (error as Error).toString(),
+      jsonResponse: {
+        description: (error as Error).toString(),
+      },
       httpStatusCode: 500,
     };
   }

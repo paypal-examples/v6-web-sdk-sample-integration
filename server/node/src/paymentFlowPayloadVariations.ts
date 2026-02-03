@@ -247,8 +247,8 @@ export async function createMonthlySubscriptionBillingPlan(
       category: "SOFTWARE",
     });
 
-    if (typeof jsonResponse.id === "string") {
-      productId = jsonResponse.id as string;
+    if ("id" in jsonResponse) {
+      productId = jsonResponse.id;
     } else {
       throw new Error("Failed to create product id");
     }

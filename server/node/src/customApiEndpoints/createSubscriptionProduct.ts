@@ -9,6 +9,20 @@ type CreateSubscriptionProductOptions = {
   category: string;
 };
 
+type CreateSubscriptionProductSuccessOutput = {
+  id: string;
+  name: string;
+  description: string;
+  type: string;
+  category: string;
+};
+
+type CreateSubscriptionProductErrorOutput = {
+  name: string;
+  message: string;
+  debug_id: string;
+};
+
 export async function createSubscriptionProduct(
   productDetails: CreateSubscriptionProductOptions,
 ) {
@@ -24,7 +38,9 @@ export async function createSubscriptionProduct(
       body: JSON.stringify(productDetails),
     });
 
-    const jsonResponse = await response.json();
+    const jsonResponse = (await response.json()) as
+      | CreateSubscriptionProductSuccessOutput
+      | CreateSubscriptionProductErrorOutput;
 
     return {
       jsonResponse: jsonResponse,
@@ -32,7 +48,9 @@ export async function createSubscriptionProduct(
     };
   } catch (error) {
     return {
-      jsonResponse: (error as Error).toString(),
+      jsonResponse: {
+        description: (error as Error).toString(),
+      },
       httpStatusCode: 500,
     };
   }
