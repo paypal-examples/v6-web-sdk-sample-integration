@@ -79,18 +79,19 @@ app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment",
   async (req: Request, res: Response) => {
     const { items } = req.body;
-    
+
     let total = "0.00";
     if (items && Array.isArray(items) && items.length > 0) {
       const calculatedTotal = items.reduce(
-        (sum: number, item: any) => sum + (item.price * item.quantity),
-        0
+        (sum: number, item: any) => sum + item.price * item.quantity,
+        0,
       );
       total = calculatedTotal.toFixed(2);
     }
-    
-    const { jsonResponse, httpStatusCode } =
-      await createOrderForOneTimePayment({ amountValue: total });
+
+    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
+      { amountValue: total },
+    );
     res.status(httpStatusCode).json(jsonResponse);
   },
 );
@@ -124,7 +125,7 @@ app.post(
         returnUrl: referer,
         cancelUrl: referer,
       });
-      res.status(httpStatusCode).json(jsonResponse);
+    res.status(httpStatusCode).json(jsonResponse);
   },
 );
 
