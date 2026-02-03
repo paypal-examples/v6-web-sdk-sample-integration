@@ -83,7 +83,8 @@ app.post(
     let total = "0.00";
     if (items && Array.isArray(items) && items.length > 0) {
       const calculatedTotal = items.reduce(
-        (sum: number, item: any) => sum + item.price * item.quantity,
+        (sum: number, item: { price: number; quantity: number }) =>
+          sum + item.price * item.quantity,
         0,
       );
       total = calculatedTotal.toFixed(2);
