@@ -27,9 +27,11 @@ import {
   createOrderForOneTimePaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
+import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
+import { CustomApiError } from "./customApiEndpoints/utils";
+
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
-import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 
 const app = express();
 
@@ -206,21 +208,20 @@ app.post(
   },
 );
 
-app.get(
+app.post(
   "/paypal-api/payments/find-eligible-methods",
-  async (_req: Request, res: Response) => {
-    const testData = {
-      preferences: { payment_flow: "ONE_TIME_PAYMENT" },
-      purchase_units: [{ amount: { currency_code: "USD" } }],
-    };
-
+  async (req: Request, res: Response) => {
     try {
-      const { jsonResponse, httpStatusCode } =
-        await findEligibleMethods(testData);
-      res.status(httpStatusCode).json(jsonResponse);
+      const jsonResponse = await findEligibleMethods(req.body);
+      res.status(200).json(jsonResponse);
     } catch (error) {
       console.error("Failed to find eligible methods:", error);
-      res.status(500).json({ error: "Failed to find eligible methods." });
+
+      if ((error as CustomApiError)?.statusCode) {
+        const { statusCode, jsonResponse } = error as CustomApiError;
+        res.status(statusCode).json(jsonResponse);
+      }
+      throw error;
     }
   },
 );

@@ -240,18 +240,14 @@ export async function createMonthlySubscriptionBillingPlan(
   },
 ) {
   if (!productId) {
-    const { jsonResponse } = await createSubscriptionProduct({
+    const { id } = await createSubscriptionProduct({
       name: "Sample Subscription Product",
       description: "Sample product for subscription testing",
       type: "SERVICE",
       category: "SOFTWARE",
     });
 
-    if ("id" in jsonResponse) {
-      productId = jsonResponse.id;
-    } else {
-      throw new Error("Failed to create product id");
-    }
+    productId = id;
   }
 
   const planRequestBody = {

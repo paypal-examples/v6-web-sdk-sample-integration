@@ -1,6 +1,4 @@
-import { getFullScopeAccessToken } from "./auth";
-
-const BASE_URL = "https://api-m.sandbox.paypal.com";
+import { BASE_URL, CustomApiError, getFullScopeAccessToken } from "./utils";
 
 type CreateSubscriptionProductOptions = {
   name: string;
@@ -9,7 +7,7 @@ type CreateSubscriptionProductOptions = {
   category: string;
 };
 
-type CreateSubscriptionProductSuccessOutput = {
+type CreateSubscriptionProductSuccessResponse = {
   id: string;
   name: string;
   description: string;
@@ -17,7 +15,7 @@ type CreateSubscriptionProductSuccessOutput = {
   category: string;
 };
 
-type CreateSubscriptionProductErrorOutput = {
+type CreateSubscriptionProductErrorResponse = {
   name: string;
   message: string;
   debug_id: string;
@@ -26,32 +24,27 @@ type CreateSubscriptionProductErrorOutput = {
 export async function createSubscriptionProduct(
   productDetails: CreateSubscriptionProductOptions,
 ) {
-  try {
-    const accessToken = await getFullScopeAccessToken();
+  const accessToken = await getFullScopeAccessToken();
 
-    const response = await fetch(`${BASE_URL}/v1/catalogs/products`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${accessToken}`,
-      },
-      body: JSON.stringify(productDetails),
+  const response = await fetch(`${BASE_URL}/v1/catalogs/products`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: `Bearer ${accessToken}`,
+    },
+    body: JSON.stringify(productDetails),
+  });
+
+  const jsonResponse = await response.json();
+
+  if (!response.ok) {
+    const { message } = jsonResponse as CreateSubscriptionProductErrorResponse;
+    throw new CustomApiError({
+      message: message,
+      statusCode: response.status,
+      jsonResponse,
     });
-
-    const jsonResponse = (await response.json()) as
-      | CreateSubscriptionProductSuccessOutput
-      | CreateSubscriptionProductErrorOutput;
-
-    return {
-      jsonResponse: jsonResponse,
-      httpStatusCode: response.status,
-    };
-  } catch (error) {
-    return {
-      jsonResponse: {
-        description: (error as Error).toString(),
-      },
-      httpStatusCode: 500,
-    };
   }
+
+  return jsonResponse as CreateSubscriptionProductSuccessResponse;
 }
