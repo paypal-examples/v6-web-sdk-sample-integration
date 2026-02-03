@@ -302,5 +302,3 @@ Accepts serveral optional parameters like currency and customer country code. Ch
     }
   }
   ```
-
----
