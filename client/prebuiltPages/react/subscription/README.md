@@ -1,20 +1,20 @@
-# PayPal One-Time Payment React Sample Integration
+# PayPal Subscription React Sample Integration
 
 > **SDK Version**: PayPal JS SDK v6
 > **Framework**: React 19.1 + TypeScript
 > **Frontend Package**: @paypal/react-paypal-js v9.0.0-alpha.5
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
-> **Payment Flow**: One-time payments (standard checkout)
-> **Demo**: Multi-page product checkout flow and single-page demo
-> **Live Demo**: [View on fly.dev](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)
+> **Payment Flow**: Recurring subscriptions
+> **Demo**: Subscription billing setup and management
+> **Live Demo**: [View on fly.dev](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/subscription/dist/index.html)
 
-This React sample application demonstrates how to integrate **one-time payment methods** with PayPal's V6 Web SDK.
+This React sample application demonstrates how to integrate **recurring subscriptions** with PayPal's V6 Web SDK. Users set up automated billing for ongoing services or products.
 
 ## Live Demo
 
 Try the deployed example without setting up locally:
 
-**[View React One-Time Payment Demo](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)**
+**[View React Subscription Demo](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/subscription/dist/index.html)**
 
 This demo runs in PayPal sandbox mode - use [Sandbox test accounts](https://developer.paypal.com/dashboard/accounts) to complete transactions.
 
@@ -22,11 +22,9 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 
 ## Supported Payment Methods
 
-- **PayPal** - Standard PayPal checkout with instant payment
-- **Venmo** - Standard Venmo payments
-- **Pay Later** - PayPal's buy now, pay later financing option
-- **PayPal Basic Card** - Guest card payments without requiring a PayPal account
-- **PayPal Credit** - PayPal Credit financing for one-time purchases
+This sample demonstrates **subscription billing** where customers set up recurring payments:
+
+- **PayPal Subscriptions** - Recurring billing
 
 ## Technology Stack
 
@@ -60,12 +58,12 @@ npm start
 **Terminal 2 - Start the React application:**
 
 ```bash
-cd client/prebuiltPages/react/oneTimePayment
+cd client/prebuiltPages/react/subscription
 npm install
 npm start
 ```
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:3002
 - **Backend**: http://localhost:8080
 
 The Vite dev server proxies `/paypal-api` requests to the backend server on port 8080.
@@ -73,23 +71,19 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 ## Project Structure
 
 ```
-oneTimePayment/
+subscription/
 ├── src/
 │   ├── App.tsx                        # Root app with PayPalProvider and routing
 │   ├── main.tsx                       # React entry point
-│   ├── utils.ts                       # API utilities (createOrder, captureOrder)
+│   ├── utils.ts                       # API utilities (createSubscription)
 │   ├── pages/
 │   │   ├── ProductPage.tsx            # Product selection page
 │   │   ├── CartPage.tsx               # Shopping cart page
-│   │   ├── CheckoutPage.tsx           # Multi-page checkout flow
+│   │   ├── CheckoutPage.tsx           # Checkout with subscription buttons
 │   │   ├── SinglePageDemo.tsx         # Single-page demo with all buttons
 │   │   └── ErrorBoundaryTestPage.tsx  # Error handling demo
 │   └── components/
-│       ├── PayPalButton.tsx           # PayPal one-time payment button
-│       ├── VenmoButton.tsx            # Venmo one-time payment button
-│       ├── PayLaterButton.tsx         # Pay Later button
-│       ├── PayPalBasicCardButton.tsx  # Guest card payment button
-│       ├── PayPalCreditOneTimeButton.tsx  # Credit one-time button
+│       ├── PayPalSubscriptionButton.tsx # Subscription button
 │       ├── ProductDisplay.tsx         # Product information display
 │       ├── PaymentModal.tsx           # Success/Cancel/Error modal
 │       └── ErrorBoundary.tsx          # Error boundary component
@@ -113,66 +107,60 @@ oneTimePayment/
 // src/App.tsx
 <PayPalProvider
   clientToken={clientToken}
-  components={[
-    "paypal-payments",
-    "venmo-payments",
-    "paypal-guest-payments",
-    "paypal-subscriptions",
-  ]}
+  components={["paypal-subscriptions"]}
   pageType="checkout"
 >
-  <SoccerBall />
+  <CheckoutPage />
 </PayPalProvider>
 ```
 
 The `components` prop specifies which payment methods to load:
 
-- `paypal-payments` - PayPal and Pay Later buttons
-- `venmo-payments` - Venmo button
-- `paypal-guest-payments` - Guest card payment button
-- `paypal-credit` - PayPal Credit button
+- `paypal-subscriptions` - PayPal Subscriptions button
 
 ### 2. Payment Session Hooks
 
-Each payment button uses a specialized hook to create a one-time payment session:
+The subscription button uses a specialized hook to create a subscription session:
 
-| Hook                                   | Button Type       |
-| -------------------------------------- | ----------------- |
-| `usePayPalOneTimePaymentSession`       | PayPal            |
-| `useVenmoOneTimePaymentSession`        | Venmo             |
-| `usePayLaterOneTimePaymentSession`     | Pay Later         |
-| `usePayPalGuestPaymentSession`         | Basic Card        |
-| `usePayPalCreditOneTimePaymentSession` | Credit (One-time) |
+| Hook                                  | Button Type   |
+| ------------------------------------- | ------------- |
+| `usePayPalSubscriptionPaymentSession` | Subscriptions |
 
 **Example Usage:**
 
 ```tsx
-// src/components/PayPalButton.tsx
+// src/components/PayPalSubscriptionButton.tsx
 import {
-  usePayPalOneTimePaymentSession,
-  type UsePayPalOneTimePaymentSessionProps,
+  usePayPalSubscriptionPaymentSession,
+  type UsePayPalSubscriptionPaymentSessionProps,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
-  const { handleClick } = usePayPalOneTimePaymentSession(props);
+const PayPalSubscriptionButton = (
+  props: UsePayPalSubscriptionPaymentSessionProps,
+) => {
+  const { handleClick } = usePayPalSubscriptionPaymentSession(props);
 
   return (
-    <paypal-button type="pay" onClick={() => handleClick()}></paypal-button>
+    <paypal-button
+      type="subscribe"
+      onClick={() => handleClick()}
+    ></paypal-button>
   );
 };
 ```
 
-### 3. Payment Flow
+### 3. Subscription Flow
 
-**One-Time Payment Flow:**
+**Subscription Setup Flow:**
 
-1. User clicks a payment button
-2. `handleClick()` starts the payment session
-3. `createOrder` callback creates an order via the backend API
-4. PayPal opens the checkout experience
-5. Customer completes payment authorization
-6. On approval, `onApprove` callback captures the payment via the backend
-7. Success/error modal displays the result
+1. User clicks the subscription button
+2. `handleClick()` starts the subscription session
+3. `createSubscription` callback creates a subscription (product, plan, and subscription) via the backend API
+4. PayPal opens the subscription agreement experience (popup/redirect)
+5. Customer reviews and agrees to recurring billing terms
+6. On approval, `onApprove` callback receives the subscription ID
+7. Subscription is activated and first payment may be processed
+8. Automatic billing occurs on scheduled intervals
 
 ## Backend Server
 
@@ -187,7 +175,7 @@ The Node.js backend handles sensitive PayPal API interactions.
 | Controller                     | Purpose                             |
 | ------------------------------ | ----------------------------------- |
 | `OAuthAuthorizationController` | Generate browser-safe client tokens |
-| `OrdersController`             | Create and capture orders           |
+| `SubscriptionsController`      | Create subscriptions and plans      |
 
 **Key Files:**
 
@@ -198,11 +186,10 @@ The Node.js backend handles sensitive PayPal API interactions.
 
 ## Backend API Endpoints
 
-| Endpoint                                        | Method | Description                          |
-| ----------------------------------------------- | ------ | ------------------------------------ |
-| `/paypal-api/auth/browser-safe-client-token`    | GET    | Fetches authentication token for SDK |
-| `/paypal-api/checkout/orders/create`            | POST   | Creates a PayPal order               |
-| `/paypal-api/checkout/orders/{orderId}/capture` | POST   | Captures the approved payment        |
+| Endpoint                                     | Method | Description                                   |
+| -------------------------------------------- | ------ | --------------------------------------------- |
+| `/paypal-api/auth/browser-safe-client-token` | GET    | Fetches authentication token for SDK          |
+| `/paypal-api/subscription`                   | POST   | Creates a subscription (product + plan + sub) |
 
 ## Error Handling
 
@@ -226,15 +213,12 @@ This sample uses [react-error-boundary](https://github.com/bvaughn/react-error-b
 
 ### Frontend Files
 
-| File                           | Purpose                                       |
-| ------------------------------ | --------------------------------------------- |
-| `src/App.tsx`                  | SDK initialization with PayPalProvider        |
-| `src/pages/ProductPage.tsx`    | Product selection (multi-page flow)           |
-| `src/pages/CartPage.tsx`       | Shopping cart (multi-page flow)               |
-| `src/pages/CheckoutPage.tsx`   | Checkout with payment buttons                 |
-| `src/pages/SinglePageDemo.tsx` | Single-page demo with all payment buttons     |
-| `src/utils.ts`                 | Backend API calls (createOrder, captureOrder) |
-| `index.html`                   | HTML entry point                              |
+| File                          | Purpose                                             |
+| ----------------------------- | --------------------------------------------------- |
+| `src/App.tsx`                 | SDK initialization with PayPalProvider              |
+| `src/sections/SoccerBall.tsx` | Payment flow and button rendering                   |
+| `src/utils.ts`                | Backend API calls (createOrder, captureOrder, etc.) |
+| `index.html`                  | HTML entry point                                    |
 
 ### Backend Files
 

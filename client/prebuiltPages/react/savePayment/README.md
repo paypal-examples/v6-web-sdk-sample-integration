@@ -1,20 +1,20 @@
-# PayPal One-Time Payment React Sample Integration
+# PayPal Save Payment React Sample Integration
 
 > **SDK Version**: PayPal JS SDK v6
 > **Framework**: React 19.1 + TypeScript
 > **Frontend Package**: @paypal/react-paypal-js v9.0.0-alpha.5
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
-> **Payment Flow**: One-time payments (standard checkout)
-> **Demo**: Multi-page product checkout flow and single-page demo
-> **Live Demo**: [View on fly.dev](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)
+> **Payment Flow**: Save payment methods (vaulting)
+> **Demo**: Vault payment information for future use
+> **Live Demo**: [View on fly.dev](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/savePayment/dist/index.html)
 
-This React sample application demonstrates how to integrate **one-time payment methods** with PayPal's V6 Web SDK.
+This React sample application demonstrates how to **save payment methods** (vaulting) with PayPal's V6 Web SDK.
 
 ## Live Demo
 
 Try the deployed example without setting up locally:
 
-**[View React One-Time Payment Demo](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/oneTimePayment/dist/index.html)**
+**[View React Save Payment Demo](https://v6-web-sdk-sample-integration-server.fly.dev/client/prebuiltPages/react/savePayment/dist/index.html)**
 
 This demo runs in PayPal sandbox mode - use [Sandbox test accounts](https://developer.paypal.com/dashboard/accounts) to complete transactions.
 
@@ -22,11 +22,10 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 
 ## Supported Payment Methods
 
-- **PayPal** - Standard PayPal checkout with instant payment
-- **Venmo** - Standard Venmo payments
-- **Pay Later** - PayPal's buy now, pay later financing option
-- **PayPal Basic Card** - Guest card payments without requiring a PayPal account
-- **PayPal Credit** - PayPal Credit financing for one-time purchases
+This sample demonstrates **payment vaulting** where customers save payment information for future use:
+
+- **PayPal Save** - Save PayPal account for future transactions
+- **PayPal Credit Save** - Save PayPal Credit account for future purchases
 
 ## Technology Stack
 
@@ -60,12 +59,12 @@ npm start
 **Terminal 2 - Start the React application:**
 
 ```bash
-cd client/prebuiltPages/react/oneTimePayment
+cd client/prebuiltPages/react/savePayment
 npm install
 npm start
 ```
 
-- **Frontend**: http://localhost:3000
+- **Frontend**: http://localhost:3001
 - **Backend**: http://localhost:8080
 
 The Vite dev server proxies `/paypal-api` requests to the backend server on port 8080.
@@ -73,23 +72,20 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 ## Project Structure
 
 ```
-oneTimePayment/
+savePayment/
 ├── src/
 │   ├── App.tsx                        # Root app with PayPalProvider and routing
 │   ├── main.tsx                       # React entry point
-│   ├── utils.ts                       # API utilities (createOrder, captureOrder)
+│   ├── utils.ts                       # API utilities (createVaultToken)
 │   ├── pages/
 │   │   ├── ProductPage.tsx            # Product selection page
 │   │   ├── CartPage.tsx               # Shopping cart page
-│   │   ├── CheckoutPage.tsx           # Multi-page checkout flow
+│   │   ├── CheckoutPage.tsx           # Checkout with save payment buttons
 │   │   ├── SinglePageDemo.tsx         # Single-page demo with all buttons
 │   │   └── ErrorBoundaryTestPage.tsx  # Error handling demo
 │   └── components/
-│       ├── PayPalButton.tsx           # PayPal one-time payment button
-│       ├── VenmoButton.tsx            # Venmo one-time payment button
-│       ├── PayLaterButton.tsx         # Pay Later button
-│       ├── PayPalBasicCardButton.tsx  # Guest card payment button
-│       ├── PayPalCreditOneTimeButton.tsx  # Credit one-time button
+│       ├── PayPalSaveButton.tsx       # PayPal save payment button
+│       ├── PayPalCreditSaveButton.tsx # Credit save payment button
 │       ├── ProductDisplay.tsx         # Product information display
 │       ├── PaymentModal.tsx           # Success/Cancel/Error modal
 │       └── ErrorBoundary.tsx          # Error boundary component
@@ -113,66 +109,56 @@ oneTimePayment/
 // src/App.tsx
 <PayPalProvider
   clientToken={clientToken}
-  components={[
-    "paypal-payments",
-    "venmo-payments",
-    "paypal-guest-payments",
-    "paypal-subscriptions",
-  ]}
+  components={["paypal-payments"]}
   pageType="checkout"
 >
-  <SoccerBall />
+  <CheckoutPage />
 </PayPalProvider>
 ```
 
 The `components` prop specifies which payment methods to load:
 
-- `paypal-payments` - PayPal and Pay Later buttons
-- `venmo-payments` - Venmo button
-- `paypal-guest-payments` - Guest card payment button
-- `paypal-credit` - PayPal Credit button
+- `paypal-payments` - PayPal Save and PayPal Credit Save buttons
 
 ### 2. Payment Session Hooks
 
-Each payment button uses a specialized hook to create a one-time payment session:
+Each save payment button uses a specialized hook to create a vaulting session:
 
-| Hook                                   | Button Type       |
-| -------------------------------------- | ----------------- |
-| `usePayPalOneTimePaymentSession`       | PayPal            |
-| `useVenmoOneTimePaymentSession`        | Venmo             |
-| `usePayLaterOneTimePaymentSession`     | Pay Later         |
-| `usePayPalGuestPaymentSession`         | Basic Card        |
-| `usePayPalCreditOneTimePaymentSession` | Credit (One-time) |
+| Hook                                | Button Type |
+| ----------------------------------- | ----------- |
+| `usePayPalSavePaymentSession`       | PayPal Save |
+| `usePayPalCreditSavePaymentSession` | Credit Save |
 
 **Example Usage:**
 
 ```tsx
-// src/components/PayPalButton.tsx
+// src/components/PayPalSaveButton.tsx
 import {
-  usePayPalOneTimePaymentSession,
-  type UsePayPalOneTimePaymentSessionProps,
+  usePayPalSavePaymentSession,
+  type UsePayPalSavePaymentSessionProps,
 } from "@paypal/react-paypal-js/sdk-v6";
 
-const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
-  const { handleClick } = usePayPalOneTimePaymentSession(props);
+const PayPalSaveButton = (props: UsePayPalSavePaymentSessionProps) => {
+  const { handleClick } = usePayPalSavePaymentSession(props);
 
   return (
-    <paypal-button type="pay" onClick={() => handleClick()}></paypal-button>
+    <paypal-button type="save" onClick={() => handleClick()}></paypal-button>
   );
 };
 ```
 
-### 3. Payment Flow
+### 3. Payment Vaulting Flow
 
-**One-Time Payment Flow:**
+**Save Payment Flow:**
 
-1. User clicks a payment button
-2. `handleClick()` starts the payment session
-3. `createOrder` callback creates an order via the backend API
-4. PayPal opens the checkout experience
-5. Customer completes payment authorization
-6. On approval, `onApprove` callback captures the payment via the backend
-7. Success/error modal displays the result
+1. User clicks a save payment button
+2. `handleClick()` starts the vaulting session
+3. `createVaultSetupToken` callback creates a vault setup token via the backend API
+4. PayPal opens the authorization experience (popup/redirect)
+5. Customer authorizes saving their payment method
+6. On approval, `onApprove` callback receives the vault setup token
+7. Backend creates a long-lived payment token from the setup token
+8. Payment token can be used for future transactions
 
 ## Backend Server
 
@@ -187,7 +173,7 @@ The Node.js backend handles sensitive PayPal API interactions.
 | Controller                     | Purpose                             |
 | ------------------------------ | ----------------------------------- |
 | `OAuthAuthorizationController` | Generate browser-safe client tokens |
-| `OrdersController`             | Create and capture orders           |
+| `VaultController`              | Store payment methods (vaulting)    |
 
 **Key Files:**
 
@@ -198,11 +184,11 @@ The Node.js backend handles sensitive PayPal API interactions.
 
 ## Backend API Endpoints
 
-| Endpoint                                        | Method | Description                          |
-| ----------------------------------------------- | ------ | ------------------------------------ |
-| `/paypal-api/auth/browser-safe-client-token`    | GET    | Fetches authentication token for SDK |
-| `/paypal-api/checkout/orders/create`            | POST   | Creates a PayPal order               |
-| `/paypal-api/checkout/orders/{orderId}/capture` | POST   | Captures the approved payment        |
+| Endpoint                                     | Method | Description                                       |
+| -------------------------------------------- | ------ | ------------------------------------------------- |
+| `/paypal-api/auth/browser-safe-client-token` | GET    | Fetches authentication token for SDK              |
+| `/paypal-api/vault/setup-token/create`       | POST   | Creates vault setup token for saving payment info |
+| `/paypal-api/vault/payment-token/create`     | POST   | Creates long-lived payment token from setup token |
 
 ## Error Handling
 
@@ -222,19 +208,19 @@ This sample uses [react-error-boundary](https://github.com/bvaughn/react-error-b
 
 ## Quick Reference
 
-**Purpose**: React sample demonstrating PayPal V6 SDK one-time payment integration with Node.js backend
+**Purpose**: React sample demonstrating PayPal V6 SDK payment vaulting (save payment methods) with Node.js backend
 
 ### Frontend Files
 
-| File                           | Purpose                                       |
-| ------------------------------ | --------------------------------------------- |
-| `src/App.tsx`                  | SDK initialization with PayPalProvider        |
-| `src/pages/ProductPage.tsx`    | Product selection (multi-page flow)           |
-| `src/pages/CartPage.tsx`       | Shopping cart (multi-page flow)               |
-| `src/pages/CheckoutPage.tsx`   | Checkout with payment buttons                 |
-| `src/pages/SinglePageDemo.tsx` | Single-page demo with all payment buttons     |
-| `src/utils.ts`                 | Backend API calls (createOrder, captureOrder) |
-| `index.html`                   | HTML entry point                              |
+| File                           | Purpose                                |
+| ------------------------------ | -------------------------------------- |
+| `src/App.tsx`                  | SDK initialization with PayPalProvider |
+| `src/pages/ProductPage.tsx`    | Product selection (multi-page flow)    |
+| `src/pages/CartPage.tsx`       | Shopping cart (multi-page flow)        |
+| `src/pages/CheckoutPage.tsx`   | Checkout with save payment buttons     |
+| `src/pages/SinglePageDemo.tsx` | Single-page demo with all buttons      |
+| `src/utils.ts`                 | Backend API calls (createVaultToken)   |
+| `index.html`                   | HTML entry point                       |
 
 ### Backend Files
 
@@ -249,8 +235,8 @@ This sample uses [react-error-boundary](https://github.com/bvaughn/react-error-b
 | ------------------------- | ----------------------------------------------------- |
 | Configure payment methods | `App.tsx` - components array                          |
 | Add new button type       | `src/components/` - create wrapper using session hook |
-| Modify order creation     | `src/utils.ts` - createOrder function                 |
-| Change product data       | `server/node/src/paypalServerSdk.ts`                  |
+| Modify vault setup        | `src/utils.ts` - createVaultToken function            |
+| Handle vault approval     | `src/components/` - onApprove callback                |
 
 ### Import Paths
 
@@ -259,7 +245,7 @@ This sample uses [react-error-boundary](https://github.com/bvaughn/react-error-b
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import {
   usePayPal,
-  usePayPalOneTimePaymentSession,
+  usePayPalSavePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
 
 // Loading state constants

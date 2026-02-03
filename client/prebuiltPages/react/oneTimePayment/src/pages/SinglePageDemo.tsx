@@ -3,29 +3,23 @@ import {
   usePayPal,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
-  type OnApproveDataSavePayments,
   type OnCompleteData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
 import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
-import PayPalSubscriptionButton from "../components/PayPalSubscriptionButton";
-import PayPalSaveButton from "../components/PayPalSaveButton";
 import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
-import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
-import soccerBallImage from "../static/images/world-cup.jpg";
-import {
-  captureOrder,
-  createOrder,
-  createSubscription,
-  createVaultToken,
-} from "../utils";
-import "../static/styles/SoccerBall.css";
-import "../static/styles/Modal.css";
+import soccerBallImage from "../images/world-cup.jpg";
+import basketballImage from "../images/basket-ball.jpeg";
+import baseballImage from "../images/base-ball.jpeg";
+import hockeyPuckImage from "../images/hockey-puck.jpeg";
+import { captureOrder, createOrder } from "../utils";
+import "../styles/SoccerBall.css";
+import "../styles/Modal.css";
 
 // Types
 type ModalType = "success" | "cancel" | "error" | null;
@@ -35,18 +29,65 @@ interface ModalContent {
   message: string;
 }
 
-// Constants
-const PRODUCT = {
-  name: "World Cup Ball",
-  icon: "⚽️",
-  price: 100.0,
-  imageSrc: soccerBallImage,
-  imageAlt: "Official World Cup Soccer Ball",
-} as const;
+interface ProductItem {
+  id: number;
+  name: string;
+  icon: string;
+  price: number;
+  image: {
+    src: string;
+    alt: string;
+  };
+  quantity: number;
+}
+
+const INITIAL_PRODUCTS: ProductItem[] = [
+  {
+    id: 1,
+    name: "World Cup Ball",
+    icon: "⚽️",
+    price: 100.0,
+    image: { src: soccerBallImage, alt: "World Cup Soccer Ball" },
+    quantity: 0,
+  },
+  {
+    id: 2,
+    name: "Professional Basketball",
+    icon: "🏀",
+    price: 100.0,
+    image: { src: basketballImage, alt: "Professional Basketball" },
+    quantity: 0,
+  },
+  {
+    id: 3,
+    name: "Official Baseball",
+    icon: "⚾️",
+    price: 100.0,
+    image: { src: baseballImage, alt: "Official Baseball" },
+    quantity: 0,
+  },
+  {
+    id: 4,
+    name: "Hockey Puck",
+    icon: "🏒",
+    price: 100.0,
+    image: { src: hockeyPuckImage, alt: "Hockey Puck" },
+    quantity: 0,
+  },
+];
 
 const SoccerBall = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const [products, setProducts] = useState<ProductItem[]>(INITIAL_PRODUCTS);
   const { loadingStatus, eligiblePaymentMethods } = usePayPal();
+
+  const handleQuantityChange = (id: number, quantity: number) => {
+    setProducts((prevProducts) =>
+      prevProducts.map((product) =>
+        product.id === id ? { ...product, quantity } : product,
+      ),
+    );
+  };
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -68,47 +109,6 @@ const SoccerBall = () => {
 
     onComplete: (data: OnCompleteData) => {
       console.log("Payment session completed");
-      console.log("On Complete data:", data);
-    },
-  };
-
-  const handleSaveCallbacks = {
-    onApprove: async (data: OnApproveDataSavePayments) => {
-      console.log("Payment method saved:", data);
-      console.log("Vault Setup Token:", data.vaultSetupToken);
-      setModalState("success");
-    },
-
-    onCancel: () => {
-      console.log("Save payment method cancelled");
-      setModalState("cancel");
-    },
-
-    onError: (error: Error) => {
-      console.error("Save payment method error:", error);
-      setModalState("error");
-    },
-  };
-
-  const handleSubscriptionCallbacks = {
-    onApprove: async (data: OnApproveDataOneTimePayments) => {
-      console.log("Subscription approved:", data);
-      console.log("Payer ID:", data.payerId);
-      setModalState("success");
-    },
-
-    onCancel: () => {
-      console.log("Subscription cancelled");
-      setModalState("cancel");
-    },
-
-    onError: (error: Error) => {
-      console.error("Subscription error:", error);
-      setModalState("error");
-    },
-
-    onComplete: (data: OnCompleteData) => {
-      console.log("Subscription session completed");
       console.log("On Complete data:", data);
     },
   };
@@ -146,6 +146,20 @@ const SoccerBall = () => {
   const isSDKLoading =
     loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
 
+  // Wrapper function that captures cart items from products state
+  const handleCreateOrder = useCallback(async () => {
+    const cartItems = products
+      .filter((product) => product.quantity > 0)
+      .map((product) => ({
+        id: product.id,
+        name: product.name,
+        price: product.price,
+        quantity: product.quantity,
+      }));
+
+    return await createOrder(cartItems);
+  }, [products]);
+
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
       {modalContent && (
@@ -155,7 +169,10 @@ const SoccerBall = () => {
         />
       )}
 
-      <ProductDisplay product={PRODUCT} />
+      <ProductDisplay
+        products={products}
+        onQuantityChange={handleQuantityChange}
+      />
 
       <div className="payment-options">
         {isSDKLoading ? (
@@ -165,50 +182,32 @@ const SoccerBall = () => {
         ) : (
           <>
             <PayPalButton
-              createOrder={createOrder}
+              createOrder={handleCreateOrder}
               presentationMode="auto"
               {...handlePaymentCallbacks}
             />
 
             <VenmoButton
-              createOrder={createOrder}
+              createOrder={handleCreateOrder}
               presentationMode="auto"
               {...handlePaymentCallbacks}
             />
 
             <PayLaterButton
-              createOrder={createOrder}
+              createOrder={handleCreateOrder}
               presentationMode="auto"
               {...handlePaymentCallbacks}
             />
 
             <PayPalBasicCardButton
-              createOrder={createOrder}
+              createOrder={handleCreateOrder}
               {...handlePaymentCallbacks}
-            />
-
-            <PayPalSubscriptionButton
-              createSubscription={createSubscription}
-              presentationMode="auto"
-              {...handleSubscriptionCallbacks}
-            />
-
-            <PayPalSaveButton
-              createVaultToken={createVaultToken}
-              presentationMode="auto"
-              {...handleSaveCallbacks}
             />
 
             <PayPalCreditOneTimeButton
-              createOrder={createOrder}
+              createOrder={handleCreateOrder}
               presentationMode="auto"
               {...handlePaymentCallbacks}
-            />
-
-            <PayPalCreditSaveButton
-              createVaultToken={createVaultToken}
-              presentationMode="auto"
-              {...handleSaveCallbacks}
             />
           </>
         )}

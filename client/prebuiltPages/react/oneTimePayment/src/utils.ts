@@ -12,16 +12,21 @@ export const getBrowserSafeClientToken = async () => {
   }
 };
 
-export const createOrder = async () => {
-  const response = await fetch(
-    "/paypal-api/checkout/orders/create-with-sample-data",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
+export const createOrder = async (
+  cartItems: Array<{
+    id: number;
+    name: string;
+    price: number;
+    quantity: number;
+  }>,
+) => {
+  const response = await fetch("/paypal-api/checkout/orders/create", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
     },
-  );
+    body: JSON.stringify({ items: cartItems }),
+  });
   const { id } = await response.json();
   return { orderId: id };
 };

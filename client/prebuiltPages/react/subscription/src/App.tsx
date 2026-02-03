@@ -57,7 +57,7 @@ function Navigation() {
             fontSize: "1.2em",
           }}
         >
-          🏪 PayPal OneTime Payment Store
+          🔄 PayPal Subscription Store
         </Link>
         <Link
           to="/static-buttons"

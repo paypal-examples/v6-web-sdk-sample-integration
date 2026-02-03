@@ -77,14 +77,48 @@ app.post(
   "/paypal-api/checkout/orders/create",
   async (req: Request, res: Response) => {
     try {
-      const paypalRequestId = req.headers["paypal-request-id"]?.toString();
+      const { items } = req.body;
+      
+      if (!items || !Array.isArray(items)) {
+        return res.status(400).json({ error: "Invalid cart items" });
+      }
+
+      const total = items.reduce((sum: number, item: any) => {
+        return sum + (item.price * item.quantity);
+      }, 0);
+
+      const orderPayload: any = {
+        intent: "CAPTURE",
+        purchaseUnits: [
+          {
+            amount: {
+              currencyCode: "USD",
+              value: total.toFixed(2),
+              breakdown: {
+                itemTotal: {
+                  currencyCode: "USD",
+                  value: total.toFixed(2),
+                },
+              },
+            },
+            items: items.map((item: any) => ({
+              name: item.name,
+              quantity: item.quantity.toString(),
+              unitAmount: {
+                currencyCode: "USD",
+                value: item.price.toFixed(2),
+              },
+              category: "PHYSICAL_GOODS",
+            })),
+          },
+        ],
+      };
+
       const { jsonResponse, httpStatusCode } = await createOrder({
-        orderRequestBody: req.body,
-        paypalRequestId,
+        orderRequestBody: orderPayload,
       });
       res.status(httpStatusCode).json(jsonResponse);
     } catch (error) {
-      console.error("Failed to create order:", error);
       res.status(500).json({ error: "Failed to create order." });
     }
   },
