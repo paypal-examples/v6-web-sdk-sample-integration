@@ -19,14 +19,6 @@ const ProductDisplay = ({
   products,
   onQuantityChange,
 }: ProductDisplayProps) => {
-  const total =
-    products?.reduce(
-      (sum, product) => sum + product.price * product.quantity,
-      0,
-    ) ?? 0;
-  const totalItems =
-    products?.reduce((sum, product) => sum + product.quantity, 0) ?? 0;
-
   return (
     <>
       <div className="product-header">
@@ -70,14 +62,6 @@ const ProductDisplay = ({
             </div>
           ))
         )}
-      </div>
-
-      <div className="checkout-summary">
-        <p>
-          Total: ${total.toFixed(2)} ({totalItems}{" "}
-          {totalItems === 1 ? "item" : "items"})
-        </p>
-        <p>Taxes, discounts and shipping calculated at checkout</p>
       </div>
     </>
   );

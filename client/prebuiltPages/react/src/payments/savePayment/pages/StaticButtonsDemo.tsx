@@ -6,13 +6,13 @@ import {
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalSaveButton from "../components/PayPalSaveButton";
 import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
-import ProductDisplay from "../components/ProductDisplay";
+import ProductDisplay from "../../../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
-import soccerBallImage from "../images/world-cup.jpg";
-import basketballImage from "../images/basket-ball.jpeg";
-import baseballImage from "../images/base-ball.jpeg";
-import hockeyPuckImage from "../images/hockey-puck.jpeg";
+import soccerBallImage from "../../../images/world-cup.jpg";
+import basketballImage from "../../../images/basket-ball.jpeg";
+import baseballImage from "../../../images/base-ball.jpeg";
+import hockeyPuckImage from "../../../images/hockey-puck.jpeg";
 import { createVaultToken } from "../utils";
 import "../../../styles/SoccerBall.css";
 import "../../../styles/Modal.css";
@@ -136,9 +136,19 @@ const SoccerBall = () => {
 
   const modalContent = getModalContent(modalState);
 
+  // Calculate totals
+  const total = products.reduce(
+    (sum, product) => sum + product.price * product.quantity,
+    0,
+  );
+  const totalItems = products.reduce(
+    (sum, product) => sum + product.quantity,
+    0,
+  );
+
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
-      <div style={{ marginBottom: "20px", textAlign: "center" }}>
+      <div style={{ marginBottom: "20px", textAlign: "center", width: "100%" }}>
         <Link
           to="/"
           style={{
@@ -163,26 +173,40 @@ const SoccerBall = () => {
         />
       )}
 
-      <ProductDisplay
-        products={products}
-        onQuantityChange={handleQuantityChange}
-      />
-
-      <div className="payment-options">
-        <div>
-          <PayPalSaveButton
-            createVaultToken={createVaultToken}
-            presentationMode="auto"
-            {...handleSaveCallbacks}
+      <div className="main-content-wrapper">
+        <div className="products-section">
+          <ProductDisplay
+            products={products}
+            onQuantityChange={handleQuantityChange}
           />
         </div>
 
-        <div>
-          <PayPalCreditSaveButton
-            createVaultToken={createVaultToken}
-            presentationMode="auto"
-            {...handleSaveCallbacks}
-          />
+        <div className="payment-section">
+          <div className="checkout-summary">
+            <p>
+              Total: ${total.toFixed(2)} ({totalItems}{" "}
+              {totalItems === 1 ? "item" : "items"})
+            </p>
+            <p>Taxes, discounts and shipping calculated at checkout</p>
+          </div>
+
+          <div className="payment-options">
+            <div>
+              <PayPalSaveButton
+                createVaultToken={createVaultToken}
+                presentationMode="auto"
+                {...handleSaveCallbacks}
+              />
+            </div>
+
+            <div>
+              <PayPalCreditSaveButton
+                createVaultToken={createVaultToken}
+                presentationMode="auto"
+                {...handleSaveCallbacks}
+              />
+            </div>
+          </div>
         </div>
       </div>
     </div>

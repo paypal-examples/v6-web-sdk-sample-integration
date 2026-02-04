@@ -110,6 +110,11 @@ react/
 │   │   ├── Modal.css
 │   │   ├── ProductPage.css
 │   │   └── SoccerBall.css
+│   ├── images/                    # Shared product images for all flows
+│   │   ├── world-cup.jpg
+│   │   ├── basket-ball.jpeg
+│   │   ├── base-ball.jpeg
+│   │   └── hockey-puck.jpeg
 │   └── payments/
 │       ├── oneTimePayment/
 │       │   ├── pages/
@@ -121,17 +126,14 @@ react/
 │       │   │   ├── Modal.tsx
 │       │   │   ├── PaymentButton.tsx
 │       │   │   └── PayPalButton.tsx
-│       │   ├── images/
 │       │   └── utils.ts           # Flow-specific utilities
 │       ├── savePayment/
 │       │   ├── pages/
 │       │   ├── components/
-│       │   ├── images/
 │       │   └── utils.ts
 │       └── subscription/
 │           ├── pages/
 │           ├── components/
-│           ├── images/
 │           └── utils.ts
 ├── index.html
 ├── vite.config.ts                 # Vite config with proxy settings

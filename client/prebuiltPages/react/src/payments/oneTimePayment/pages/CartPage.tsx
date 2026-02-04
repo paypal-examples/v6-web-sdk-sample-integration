@@ -34,7 +34,7 @@ const CartPage = () => {
   };
 
   const handleContinueShopping = () => {
-    navigate("/");
+    navigate("/one-time-payment");
   };
 
   const handleCheckout = () => {

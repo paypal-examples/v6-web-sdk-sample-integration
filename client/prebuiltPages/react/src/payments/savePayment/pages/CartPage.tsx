@@ -34,7 +34,7 @@ const CartPage = () => {
   };
 
   const handleContinueShopping = () => {
-    navigate("/");
+    navigate("/save-payment");
   };
 
   const handleCheckout = () => {

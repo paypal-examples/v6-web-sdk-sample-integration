@@ -169,7 +169,7 @@ const CheckoutPage = () => {
 
           <button
             className="back-to-cart-button"
-            onClick={() => navigate("/cart")}
+            onClick={() => navigate("/save-payment/cart")}
           >
             ← Back to Cart
           </button>

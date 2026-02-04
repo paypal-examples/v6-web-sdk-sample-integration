@@ -1,12 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
-import ProductDisplay from "../components/ProductDisplay";
+import ProductDisplay from "../../../components/ProductDisplay";
 import "../../../styles/ProductPage.css";
 
-import soccerBallImage from "../images/world-cup.jpg";
-import basketballImage from "../images/basket-ball.jpeg";
-import baseballImage from "../images/base-ball.jpeg";
-import hockeyPuckImage from "../images/hockey-puck.jpeg";
+import soccerBallImage from "../../../images/world-cup.jpg";
+import basketballImage from "../../../images/basket-ball.jpeg";
+import baseballImage from "../../../images/base-ball.jpeg";
+import hockeyPuckImage from "../../../images/hockey-puck.jpeg";
 
 export interface ProductItem {
   id: number;

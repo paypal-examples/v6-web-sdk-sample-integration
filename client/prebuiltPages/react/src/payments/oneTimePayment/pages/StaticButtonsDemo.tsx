@@ -11,13 +11,13 @@ import VenmoButton from "../components/VenmoButton";
 import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
-import ProductDisplay from "../components/ProductDisplay";
+import ProductDisplay from "../../../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
 
-import soccerBallImage from "../images/world-cup.jpg";
-import basketballImage from "../images/basket-ball.jpeg";
-import baseballImage from "../images/base-ball.jpeg";
-import hockeyPuckImage from "../images/hockey-puck.jpeg";
+import soccerBallImage from "../../../images/world-cup.jpg";
+import basketballImage from "../../../images/basket-ball.jpeg";
+import baseballImage from "../../../images/base-ball.jpeg";
+import hockeyPuckImage from "../../../images/hockey-puck.jpeg";
 import { captureOrder, createOrder } from "../utils";
 import "../../../styles/SoccerBall.css";
 import "../../../styles/Modal.css";
@@ -161,9 +161,19 @@ const SoccerBall = () => {
     return await createOrder(cartItems);
   }, [products]);
 
+  // Calculate totals
+  const total = products.reduce(
+    (sum, product) => sum + product.price * product.quantity,
+    0,
+  );
+  const totalItems = products.reduce(
+    (sum, product) => sum + product.quantity,
+    0,
+  );
+
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
-      <div style={{ marginBottom: "20px", textAlign: "center" }}>
+      <div style={{ marginBottom: "20px", textAlign: "center", width: "100%" }}>
         <Link
           to="/"
           style={{
@@ -188,48 +198,62 @@ const SoccerBall = () => {
         />
       )}
 
-      <ProductDisplay
-        products={products}
-        onQuantityChange={handleQuantityChange}
-      />
+      <div className="main-content-wrapper">
+        <div className="products-section">
+          <ProductDisplay
+            products={products}
+            onQuantityChange={handleQuantityChange}
+          />
+        </div>
 
-      <div className="payment-options">
-        {isSDKLoading ? (
-          <div style={{ padding: "1rem", textAlign: "center" }}>
-            Loading payment methods...
+        <div className="payment-section">
+          <div className="checkout-summary">
+            <p>
+              Total: ${total.toFixed(2)} ({totalItems}{" "}
+              {totalItems === 1 ? "item" : "items"})
+            </p>
+            <p>Taxes, discounts and shipping calculated at checkout</p>
           </div>
-        ) : (
-          <>
-            <PayPalButton
-              createOrder={handleCreateOrder}
-              presentationMode="auto"
-              {...handlePaymentCallbacks}
-            />
 
-            <VenmoButton
-              createOrder={handleCreateOrder}
-              presentationMode="auto"
-              {...handlePaymentCallbacks}
-            />
+          <div className="payment-options">
+            {isSDKLoading ? (
+              <div style={{ padding: "1rem", textAlign: "center" }}>
+                Loading payment methods...
+              </div>
+            ) : (
+              <>
+                <PayPalButton
+                  createOrder={handleCreateOrder}
+                  presentationMode="auto"
+                  {...handlePaymentCallbacks}
+                />
 
-            <PayLaterButton
-              createOrder={handleCreateOrder}
-              presentationMode="auto"
-              {...handlePaymentCallbacks}
-            />
+                <VenmoButton
+                  createOrder={handleCreateOrder}
+                  presentationMode="auto"
+                  {...handlePaymentCallbacks}
+                />
 
-            <PayPalBasicCardButton
-              createOrder={handleCreateOrder}
-              {...handlePaymentCallbacks}
-            />
+                <PayLaterButton
+                  createOrder={handleCreateOrder}
+                  presentationMode="auto"
+                  {...handlePaymentCallbacks}
+                />
 
-            <PayPalCreditOneTimeButton
-              createOrder={handleCreateOrder}
-              presentationMode="auto"
-              {...handlePaymentCallbacks}
-            />
-          </>
-        )}
+                <PayPalBasicCardButton
+                  createOrder={handleCreateOrder}
+                  {...handlePaymentCallbacks}
+                />
+
+                <PayPalCreditOneTimeButton
+                  createOrder={handleCreateOrder}
+                  presentationMode="auto"
+                  {...handlePaymentCallbacks}
+                />
+              </>
+            )}
+          </div>
+        </div>
       </div>
     </div>
   );
