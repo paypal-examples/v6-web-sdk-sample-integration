@@ -161,7 +161,7 @@
     position: relative;
     top: 0;
   }
-  
+
   .product-images-grid {
     grid-template-columns: 1fr;
   }
