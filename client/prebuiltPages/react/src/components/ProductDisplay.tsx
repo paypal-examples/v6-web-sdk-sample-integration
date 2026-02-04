@@ -1,14 +1,4 @@
-interface ProductItem {
-  id: number;
-  name: string;
-  icon: string;
-  price: number;
-  image: {
-    src: string;
-    alt: string;
-  };
-  quantity: number;
-}
+import type { ProductItem } from "../types";
 
 interface ProductDisplayProps {
   products: ProductItem[];

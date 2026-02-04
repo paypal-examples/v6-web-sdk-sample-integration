@@ -4,28 +4,28 @@ import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
-import { HomePage } from "./pages/HomePage";
+import { HomePage } from "./pages/Home";
 
 // One-Time Payment flow
-import OneTimeProductPage from "./payments/oneTimePayment/pages/ProductPage";
-import OneTimeCartPage from "./payments/oneTimePayment/pages/CartPage";
-import OneTimeCheckoutPage from "./payments/oneTimePayment/pages/CheckoutPage";
-import OneTimeStaticButtonsDemo from "./payments/oneTimePayment/pages/StaticButtonsDemo";
+import OneTimeProductPage from "./payments/oneTimePayment/pages/Product";
+import OneTimeCartPage from "./payments/oneTimePayment/pages/Cart";
+import OneTimeCheckoutPage from "./payments/oneTimePayment/pages/Checkout";
+import OneTimeStaticButtonsDemo from "./payments/oneTimePayment/pages/StaticButtons";
 
 // Save Payment flow
-import SavePaymentProductPage from "./payments/savePayment/pages/ProductPage";
-import SavePaymentCartPage from "./payments/savePayment/pages/CartPage";
-import SavePaymentCheckoutPage from "./payments/savePayment/pages/CheckoutPage";
-import SavePaymentStaticButtonsDemo from "./payments/savePayment/pages/StaticButtonsDemo";
+import SavePaymentProductPage from "./payments/savePayment/pages/Product";
+import SavePaymentCartPage from "./payments/savePayment/pages/Cart";
+import SavePaymentCheckoutPage from "./payments/savePayment/pages/Checkout";
+import SavePaymentStaticButtonsDemo from "./payments/savePayment/pages/StaticButtons";
 
 // Subscription flow
-import SubscriptionProductPage from "./payments/subscription/pages/ProductPage";
-import SubscriptionCartPage from "./payments/subscription/pages/CartPage";
-import SubscriptionCheckoutPage from "./payments/subscription/pages/CheckoutPage";
-import SubscriptionStaticButtonsDemo from "./payments/subscription/pages/StaticButtonsDemo";
+import SubscriptionProductPage from "./payments/subscription/pages/Product";
+import SubscriptionCartPage from "./payments/subscription/pages/Cart";
+import SubscriptionCheckoutPage from "./payments/subscription/pages/Checkout";
+import SubscriptionStaticButtonsDemo from "./payments/subscription/pages/StaticButtons";
 
 // Error handling demo
-import ErrorBoundaryTestPage from "./pages/ErrorBoundaryTestPage";
+import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
 
 function ErrorFallback({ error }: { error: Error }) {
   const { resetBoundary } = useErrorBoundary();

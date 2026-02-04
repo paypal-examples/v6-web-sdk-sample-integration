@@ -1,9 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import type { ProductItem } from "./ProductPage";
-import "../../../styles/CartPage.css";
+import type { ProductItem } from "../types";
+import "../styles/Cart.css";
 
-const CartPage = () => {
+interface CartPageProps {
+  flowType: "one-time-payment" | "save-payment" | "subscription";
+}
+
+const BaseCart = ({ flowType }: CartPageProps) => {
   const [cartItems, setCartItems] = useState<ProductItem[]>([]);
   const navigate = useNavigate();
 
@@ -12,9 +16,9 @@ const CartPage = () => {
     if (savedCart) {
       setCartItems(JSON.parse(savedCart));
     } else {
-      navigate("/");
+      navigate(`/${flowType}`);
     }
-  }, [navigate]);
+  }, [navigate, flowType]);
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
     const updatedCart = cartItems
@@ -34,11 +38,11 @@ const CartPage = () => {
   };
 
   const handleContinueShopping = () => {
-    navigate("/subscription");
+    navigate(`/${flowType}`);
   };
 
   const handleCheckout = () => {
-    navigate("/subscription/checkout");
+    navigate(`/${flowType}/checkout`);
   };
 
   const total = cartItems.reduce(
@@ -94,7 +98,7 @@ const CartPage = () => {
                   }
                   className="cart-quantity-dropdown"
                 >
-                  {[0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  {[0, 1, 2, 3, 4, 5].map((num) => (
                     <option key={num} value={num}>
                       {num}
                     </option>
@@ -141,4 +145,4 @@ const CartPage = () => {
   );
 };
 
-export default CartPage;
+export default BaseCart;

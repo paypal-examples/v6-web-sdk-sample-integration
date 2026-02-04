@@ -1,7 +1,5 @@
-interface ModalContent {
-  title: string;
-  message: string;
-}
+import type { ModalContent } from "../types";
+import "../styles/Modal.css";
 
 interface PaymentModalProps {
   content: ModalContent;
