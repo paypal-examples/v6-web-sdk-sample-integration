@@ -97,43 +97,66 @@ react/
 ├── src/
 │   ├── App.tsx                    # Main app with routing and PayPalProvider
 │   ├── main.tsx                   # React entry point
-│   ├── utils.ts                   # Shared utilities
-│   ├── pages/
-│   │   ├── HomePage.tsx           # Landing page with navigation
-│   │   └── ErrorBoundaryTestPage.tsx  # Error handling demo
-│   ├── components/                # Shared components
-│   │   ├── ErrorBoundary.tsx
-│   │   └── ErrorTest.tsx
+│   ├── utils.ts                   # Shared utilities (client token fetching)
+│   ├── types/
+│   │   └── index.ts               # Shared TypeScript interfaces
+│   ├── constants/
+│   │   └── products.ts            # Product catalog data
+│   ├── pages/                     # Base components (shared across flows)
+│   │   ├── Home.tsx               # Landing page with navigation
+│   │   ├── BaseProduct.tsx        # Base product selection page
+│   │   ├── BaseCart.tsx           # Base shopping cart page
+│   │   ├── BaseCheckout.tsx       # Base checkout page
+│   │   ├── BaseStaticButtons.tsx  # Base static buttons demo page
+│   │   └── ErrorBoundary.tsx      # Error handling demo
+│   ├── components/                # Shared UI components
+│   │   ├── ProductDisplay.tsx     # Product grid display
+│   │   ├── PaymentModal.tsx       # Success/error modal
+│   │   ├── ErrorBoundary.tsx      # Error boundary component
+│   │   └── ErrorTest.tsx          # Error test component
 │   ├── styles/                    # Shared CSS
-│   │   ├── CartPage.css
-│   │   ├── CheckoutPage.css
+│   │   ├── Cart.css
+│   │   ├── Checkout.css
 │   │   ├── Modal.css
-│   │   ├── ProductPage.css
-│   │   └── SoccerBall.css
+│   │   ├── Product.css
+│   │   └── StaticButtons.css
 │   ├── images/                    # Shared product images for all flows
 │   │   ├── world-cup.jpg
 │   │   ├── basket-ball.jpeg
 │   │   ├── base-ball.jpeg
 │   │   └── hockey-puck.jpeg
-│   └── payments/
+│   └── payments/                  # Flow-specific implementations
 │       ├── oneTimePayment/
-│       │   ├── pages/
-│       │   │   ├── ProductPage.tsx
-│       │   │   ├── CartPage.tsx
-│       │   │   ├── CheckoutPage.tsx
-│       │   │   └── StaticButtonsDemo.tsx
-│       │   ├── components/
-│       │   │   ├── Modal.tsx
-│       │   │   ├── PaymentButton.tsx
-│       │   │   └── PayPalButton.tsx
-│       │   └── utils.ts           # Flow-specific utilities
+│       │   ├── pages/             # Flow wrappers (use Base components)
+│       │   │   ├── Product.tsx
+│       │   │   ├── Cart.tsx
+│       │   │   ├── Checkout.tsx
+│       │   │   └── StaticButtons.tsx
+│       │   ├── components/        # Flow-specific payment buttons
+│       │   │   ├── PayPalButton.tsx
+│       │   │   ├── VenmoButton.tsx
+│       │   │   ├── PayLaterButton.tsx
+│       │   │   ├── PayPalBasicCardButton.tsx
+│       │   │   └── PayPalCreditOneTimeButton.tsx
+│       │   └── utils.ts           # Flow-specific API calls
 │       ├── savePayment/
 │       │   ├── pages/
+│       │   │   ├── Product.tsx
+│       │   │   ├── Cart.tsx
+│       │   │   ├── Checkout.tsx
+│       │   │   └── StaticButtons.tsx
 │       │   ├── components/
+│       │   │   ├── PayPalSaveButton.tsx
+│       │   │   └── PayPalCreditSaveButton.tsx
 │       │   └── utils.ts
 │       └── subscription/
 │           ├── pages/
+│           │   ├── Product.tsx
+│           │   ├── Cart.tsx
+│           │   ├── Checkout.tsx
+│           │   └── StaticButtons.tsx
 │           ├── components/
+│           │   └── PayPalSubscriptionButton.tsx
 │           └── utils.ts
 ├── index.html
 ├── vite.config.ts                 # Vite config with proxy settings
@@ -268,14 +291,19 @@ The Node.js backend handles sensitive PayPal API interactions.
 
 ### Frontend Files
 
-| File                      | Purpose                                            |
-| ------------------------- | -------------------------------------------------- |
-| `src/App.tsx`             | SDK initialization with PayPalProvider and routing |
-| `src/pages/HomePage.tsx`  | Landing page with payment flow navigation          |
-| `src/utils.ts`            | Shared utilities                                   |
-| `src/payments/*/pages/`   | Flow-specific pages (Product, Cart, Checkout)      |
-| `src/payments/*/utils.ts` | Flow-specific API calls                            |
-| `index.html`              | HTML entry point                                   |
+| File                              | Purpose                                            |
+| --------------------------------- | -------------------------------------------------- |
+| `src/App.tsx`                     | SDK initialization with PayPalProvider and routing |
+| `src/pages/Home.tsx`              | Landing page with payment flow navigation          |
+| `src/pages/Base*.tsx`             | Base components (shared UI and logic)              |
+| `src/components/`                 | Shared UI components (ProductDisplay, Modal, etc.) |
+| `src/types/index.ts`              | Shared TypeScript interfaces                       |
+| `src/constants/products.ts`       | Product catalog data                               |
+| `src/utils.ts`                    | Shared utilities (client token fetching)           |
+| `src/payments/*/pages/*.tsx`      | Flow wrappers (thin wrappers for Base components)  |
+| `src/payments/*/components/*.tsx` | Flow-specific payment button components            |
+| `src/payments/*/utils.ts`         | Flow-specific API calls                            |
+| `index.html`                      | HTML entry point                                   |
 
 ### Backend Files
 
@@ -286,13 +314,16 @@ The Node.js backend handles sensitive PayPal API interactions.
 
 ### Common Tasks
 
-| Task                      | Location                                       |
-| ------------------------- | ---------------------------------------------- |
-| Configure payment methods | `App.tsx` - components array in PayPalProvider |
-| Add new payment flow      | Create new directory under `src/payments/`     |
-| Modify routing            | `App.tsx` - router configuration               |
-| Add shared components     | `src/components/` directory                    |
-| Update flow-specific code | `src/payments/<flow-name>/` directory          |
+| Task                         | Location                                              |
+| ---------------------------- | ----------------------------------------------------- |
+| Configure payment methods    | `App.tsx` - components array in PayPalProvider        |
+| Add new payment flow         | Create wrapper in `src/payments/<flow>/pages/`        |
+| Modify shared UI/logic       | Update Base components in `src/pages/`                |
+| Add flow-specific button     | Create component in `src/payments/<flow>/components/` |
+| Modify routing               | `App.tsx` - Routes configuration                      |
+| Add shared components        | `src/components/` directory                           |
+| Update product catalog       | `src/constants/products.ts`                           |
+| Update TypeScript interfaces | `src/types/index.ts`                                  |
 
 ### Import Paths
 
