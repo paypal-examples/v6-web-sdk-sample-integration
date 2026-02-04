@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      Hydrate Eligible Methods - One-time Payment Flow - PayPal Web SDK
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Hydrate Eligible Methods</h1>
+    <p>
+      This advanced integration shows how you can call the eligibility api
+      directly and pass the response to the sdk to hydrate it.
+    </p>
+
+    <div class="buttons-container">
+      <paypal-button id="paypal-button" type="pay" hidden></paypal-button>
+      <paypal-pay-later-button
+        id="paylater-button"
+        hidden
+      ></paypal-pay-later-button>
+      <paypal-credit-button
+        id="paypal-credit-button"
+        hidden
+      ></paypal-credit-button>
+    </div>
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>

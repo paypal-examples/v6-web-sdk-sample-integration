@@ -27,6 +27,9 @@ import {
   createOrderForOneTimePaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
+import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
+import { CustomApiError } from "./customApiEndpoints/utils";
+
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
 
@@ -215,6 +218,24 @@ app.post(
     const { jsonResponse, httpStatusCode } =
       await createSetupTokenForCardSavePayment();
     res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/payments/find-eligible-methods",
+  async (req: Request, res: Response) => {
+    try {
+      const jsonResponse = await findEligibleMethods(req.body);
+      res.status(200).json(jsonResponse);
+    } catch (error) {
+      console.error("Failed to find eligible methods:", error);
+
+      if ((error as CustomApiError)?.statusCode) {
+        const { statusCode, jsonResponse } = error as CustomApiError;
+        res.status(statusCode).json(jsonResponse);
+      }
+      throw error;
+    }
   },
 );
 
