@@ -1,6 +1,6 @@
 import { BASE_URL, CustomApiError, getFullScopeAccessToken } from "./utils";
 
-type FindEligibleMethodsOptions = {
+type FindEligibleMethodsRequest = {
   customer?: {
     // two-letter country code for the customer's location
     country_code?: string;
@@ -28,6 +28,8 @@ type FindEligibleMethodsOptions = {
         | "APPLE_PAY"
         | "GOOGLE_PAY"
         | "PAYPAL"
+        | "PAYPAL_PAY_LATER"
+        | "PAYPAL_CREDIT"
         | "VENMO"
       )[];
     };
@@ -50,18 +52,25 @@ type FindEligibleMethodsErrorResponse = {
   debug_id: string;
 };
 
-export async function findEligibleMethods(payload: FindEligibleMethodsOptions) {
+export async function findEligibleMethods({
+  body,
+  userAgent,
+}: {
+  body: FindEligibleMethodsRequest;
+  userAgent?: string;
+}) {
   const accessToken = await getFullScopeAccessToken();
 
   const response = await fetch(
     `${BASE_URL}/v2/payments/find-eligible-methods`,
     {
       method: "POST",
-      body: JSON.stringify(payload),
+      body: JSON.stringify(body),
       headers: {
         "Content-Type": "application/json",
         "Accept-Language": "en_US",
         Authorization: `Bearer ${accessToken}`,
+        ...(userAgent && { "User-Agent": userAgent }),
       },
     },
   );
