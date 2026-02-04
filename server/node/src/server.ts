@@ -212,7 +212,11 @@ app.post(
   "/paypal-api/payments/find-eligible-methods",
   async (req: Request, res: Response) => {
     try {
-      const jsonResponse = await findEligibleMethods(req.body);
+      const jsonResponse = await findEligibleMethods({
+        body: req.body,
+        userAgent: req.headers["user-agent"],
+      });
+
       res.status(200).json(jsonResponse);
     } catch (error) {
       console.error("Failed to find eligible methods:", error);
