@@ -1,33 +1,38 @@
-/**
- * Initializes the PayPal Web SDK, determines eligible payment methods,
- * and sets up the appropriate payment buttons. This function is invoked
- * by the SDK script tag's "onload" event.
- *
- * ```html
- * <script
- *   async
- *   src="https://www.sandbox.paypal.com/web-sdk/v6/core"
- *   onload="onPayPalWebSdkLoaded()">
- * </script>
- * ```
- *
- * @async
- * @function onPayPalWebSdkLoaded
- * @returns {Promise<void>}
- */
 async function onPayPalWebSdkLoaded() {
   try {
-    const clientToken = await getBrowserSafeClientToken();
+    // custom eligibility api call that happen server-side or client-side
+    // before the SDK is loaded
+    const customEligibilityResponse = await customFindEligibleMethods({
+      preferences: {
+        customer: {
+          // leverage your own service to derive customer country code from IP Address
+          country_code: "US",
+        },
+        payment_flow: "ONE_TIME_PAYMENT",
+        payment_source_constraint: {
+          constraint_type: "INCLUDE",
+          payment_sources: [
+            "PAYPAL",
+            "PAYPAL_PAY_LATER",
+            "PAYPAL_CREDIT",
+            "VENMO",
+            "ADVANCED_CARDS",
+          ],
+        },
+      },
+      purchase_units: [{ amount: { currency_code: "USD" } }],
+    });
+
+    const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
-      clientToken,
+      clientId,
       components: ["paypal-payments"],
       pageType: "checkout",
     });
 
-    const paymentMethods = await sdkInstance.findEligibleMethods({
-      currencyCode: "USD",
-      paymentFlow: "VAULT_WITH_PAYMENT",
-    });
+    const paymentMethods = await sdkInstance.hydrateEligibleMethods(
+      customEligibilityResponse,
+    );
 
     if (paymentMethods.isEligible("paypal")) {
       setupPayPalButton(sdkInstance);
@@ -79,7 +84,6 @@ const paymentSessionOptions = {
     });
     console.log("onError", error);
   },
-  vault: true,
 };
 
 async function setupPayPalButton(sdkInstance) {
@@ -171,21 +175,43 @@ async function setupPayPalCreditButton(
   });
 }
 
-async function getBrowserSafeClientToken() {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
+  return clientId;
+}
+
+async function customFindEligibleMethods(findEligibleMethodsPayload) {
+  try {
+    const response = await fetch("/paypal-api/payments/find-eligible-methods", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(findEligibleMethodsPayload),
+    });
+    const jsonResponse = await response.json();
+    console.log(jsonResponse);
+    renderAlert({
+      type: "info",
+      message: "Custom Eligibility API call is successful",
+    });
+
+    return jsonResponse;
+  } catch (error) {
+    renderAlert({ type: "danger", message: "Custom Eligibility API failed" });
+  }
 }
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
     {
       method: "POST",
       headers: {
