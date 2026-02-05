@@ -4,7 +4,8 @@ async function onPayPalWebSdkLoaded() {
     // before the SDK is loaded
     const customEligibilityResponse = await customFindEligibleMethods({
       customer: {
-        // leverage your own service to derive customer country code from IP Address
+        // leverage your own service to derive the customer's country code from their IP Address,
+        // or retrieve it from the user's profile if they are already authenticated.
         country_code: "US",
       },
       preferences: {
