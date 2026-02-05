@@ -1,6 +1,7 @@
 import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
 import { join } from "path";
+import { z } from "zod/v4";
+import cors from "cors";
 import ngrok from "@ngrok/ngrok";
 
 import type {
@@ -110,7 +111,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   async (req: Request, res: Response) => {
-    const referer = req.get("referer") as string;
+    const referer = z.string().parse(req.get("referer"));
     const { jsonResponse, httpStatusCode } =
       await createOrderForPayPalOneTimePaymentWithRedirect({
         returnUrl: referer,
@@ -132,7 +133,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   async (req: Request, res: Response) => {
-    const orderId = req.params.orderId as string;
+    const orderId = z.string().parse(req.params.orderId);
     const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
     res.status(httpStatusCode).json(jsonResponse);
   },
@@ -141,7 +142,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-fastlane",
   async (req: Request, res: Response) => {
-    const { paymentToken } = req.body;
+    const paymentToken = z.string().parse(req.body.paymentToken);
     const { jsonResponse, httpStatusCode } = await createOrderForFastlane({
       paymentToken,
     });
@@ -152,7 +153,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
   async (req: Request, res: Response) => {
-    const referer = req.get("referer") as string;
+    const referer = z.string().parse(req.get("referer"));
     const { jsonResponse, httpStatusCode } =
       await createOrderForCardOneTimePaymentWithThreeDSecure({
         returnUrl: referer,
@@ -214,7 +215,7 @@ app.post(
     try {
       const jsonResponse = await findEligibleMethods({
         body: req.body,
-        userAgent: req.headers["user-agent"],
+        userAgent: z.string().parse(req.get("user-agent")),
       });
 
       res.status(200).json(jsonResponse);
