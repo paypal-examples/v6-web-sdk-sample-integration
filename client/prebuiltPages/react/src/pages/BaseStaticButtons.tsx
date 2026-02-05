@@ -1,16 +1,11 @@
-import { useState, useEffect, type ReactNode } from "react";
+import { type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
-import type {
-  ModalType,
-  ModalContent,
-  ProductItem,
-  ProductPrice,
-} from "../types";
-import { PRODUCT_DATA } from "../constants/products";
-import { fetchProducts } from "../utils";
+import type { ModalType, ModalContent, ProductItem } from "../types";
 import { useCartTotals } from "../hooks/useCartTotals";
+import { useProducts } from "../hooks/useProducts";
+import { useQuantityChange } from "../hooks/useQuantityChange";
 import "../styles/StaticButtons.css";
 
 interface BaseStaticButtonsProps {
@@ -26,50 +21,8 @@ const BaseStaticButtons = ({
   modalState,
   onModalClose,
 }: BaseStaticButtonsProps) => {
-  const [products, setProducts] = useState<ProductItem[]>([]);
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    const loadProducts = async () => {
-      try {
-        const productPrices: ProductPrice[] = await fetchProducts();
-
-        const productsWithPricing: ProductItem[] = productPrices
-          .map((productPrice) => {
-            const productData = PRODUCT_DATA[productPrice.sku];
-            if (!productData) {
-              console.warn(
-                `No product data found for SKU: ${productPrice.sku}`,
-              );
-              return null;
-            }
-            return {
-              ...productData,
-              sku: productPrice.sku,
-              price: parseFloat(productPrice.price),
-              quantity: 0,
-            };
-          })
-          .filter(Boolean) as ProductItem[];
-
-        setProducts(productsWithPricing);
-      } catch (error) {
-        console.error("Failed to load products:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    loadProducts();
-  }, []);
-
-  const handleQuantityChange = (id: number, quantity: number) => {
-    setProducts((prevProducts) =>
-      prevProducts.map((product) =>
-        product.id === id ? { ...product, quantity } : product,
-      ),
-    );
-  };
+  const { products, setProducts, loading } = useProducts();
+  const handleQuantityChange = useQuantityChange(setProducts);
 
   const modalContent = getModalContent(modalState);
 

@@ -101,9 +101,11 @@ react/
 │   ├── types/
 │   │   └── index.ts               # Shared TypeScript interfaces
 │   ├── constants/
-│   │   └── products.ts            # Client product catalog
-│   ├── hooks/
-│   │   └── useCartTotals.ts       # Custom hook for cart calculations
+│   │   └── products.ts            # Client product catalog (all details except price)
+│   ├── hooks/                     # Custom React hooks for code reuse
+│   │   ├── useCartTotals.ts       # Hook for cart calculations (totalItems, total)
+│   │   ├── useProducts.ts         # Hook for loading products with prices from server
+│   │   └── useQuantityChange.ts   # Hook for handling product quantity updates
 │   ├── pages/                     # Base components (shared across flows)
 │   │   ├── Home.tsx               # Landing page with navigation
 │   │   ├── BaseProduct.tsx        # Base product selection page
