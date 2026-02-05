@@ -86,62 +86,26 @@ app.get("/paypal-api/products", (_req: Request, res: Response) => {
 
 app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
-      { amountValue: "100.00" },
-    );
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-dynamic-order-for-one-time-payment",
   async (req: Request, res: Response) => {
     const { cart } = req.body;
 
-    // Validate cart is provided
-    if (!cart || !Array.isArray(cart) || cart.length === 0) {
-      return res.status(400).json({
-        error: "Invalid request",
-        message: "Cart is required and must contain at least one item",
-      });
-    }
-
-    // Calculate total from product catalog
-    let total = 0;
-    const invalidItems: string[] = [];
-
-    for (const item of cart) {
-      if (
-        !item.sku ||
-        typeof item.quantity !== "number" ||
-        item.quantity <= 0
-      ) {
-        return res.status(400).json({
-          error: "Invalid cart item",
-          message: "Each item must have a valid sku and quantity > 0",
-        });
-      }
-
-      const price = getProductPrice(item.sku);
-      if (!price) {
-        invalidItems.push(item.sku);
-        continue;
-      }
-
-      total += parseFloat(price) * item.quantity;
-    }
-
-    // Check for invalid SKUs
-    if (invalidItems.length > 0) {
-      return res.status(404).json({
-        error: "Products not found",
-        message: `The following SKUs are not in the catalog: ${invalidItems.join(", ")}`,
-      });
+    let total = "0.00";
+    if (cart && Array.isArray(cart) && cart.length > 0) {
+      const calculatedTotal = cart.reduce(
+        (sum: number, item: { sku: string; quantity: number }) => {
+          const price = getProductPrice(item.sku);
+          if (price) {
+            return sum + parseFloat(price) * item.quantity;
+          }
+          return sum;
+        },
+        0,
+      );
+      total = calculatedTotal.toFixed(2);
     }
 
     const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
-      { amountValue: total.toFixed(2) },
+      { amountValue: total },
     );
     res.status(httpStatusCode).json(jsonResponse);
   },
