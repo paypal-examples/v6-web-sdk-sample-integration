@@ -29,6 +29,7 @@ import {
 
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
+import { getAllProducts, getProductPrice } from "./productCatalog";
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
@@ -78,23 +79,69 @@ app.get(
   },
 );
 
+app.get("/paypal-api/products", (_req: Request, res: Response) => {
+  const products = getAllProducts();
+  res.status(200).json(products);
+});
+
 app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment",
-  async (req: Request, res: Response) => {
-    const { items } = req.body;
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
+      { amountValue: "100.00" },
+    );
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
 
-    let total = "0.00";
-    if (items && Array.isArray(items) && items.length > 0) {
-      const calculatedTotal = items.reduce(
-        (sum: number, item: { price: number; quantity: number }) =>
-          sum + item.price * item.quantity,
-        0,
-      );
-      total = calculatedTotal.toFixed(2);
+app.post(
+  "/paypal-api/checkout/orders/create-dynamic-order-for-one-time-payment",
+  async (req: Request, res: Response) => {
+    const { cart } = req.body;
+
+    // Validate cart is provided
+    if (!cart || !Array.isArray(cart) || cart.length === 0) {
+      return res.status(400).json({
+        error: "Invalid request",
+        message: "Cart is required and must contain at least one item",
+      });
+    }
+
+    // Calculate total from product catalog
+    let total = 0;
+    const invalidItems: string[] = [];
+
+    for (const item of cart) {
+      if (
+        !item.sku ||
+        typeof item.quantity !== "number" ||
+        item.quantity <= 0
+      ) {
+        return res.status(400).json({
+          error: "Invalid cart item",
+          message: "Each item must have a valid sku and quantity > 0",
+        });
+      }
+
+      const price = getProductPrice(item.sku);
+      if (!price) {
+        invalidItems.push(item.sku);
+        continue;
+      }
+
+      total += parseFloat(price) * item.quantity;
+    }
+
+    // Check for invalid SKUs
+    if (invalidItems.length > 0) {
+      return res.status(404).json({
+        error: "Products not found",
+        message: `The following SKUs are not in the catalog: ${invalidItems.join(", ")}`,
+      });
     }
 
     const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
-      { amountValue: total },
+      { amountValue: total.toFixed(2) },
     );
     res.status(httpStatusCode).json(jsonResponse);
   },

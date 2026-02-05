@@ -2,6 +2,7 @@ import { useState, useEffect, type ReactNode } from "react";
 import { useNavigate } from "react-router-dom";
 import PaymentModal from "../components/PaymentModal";
 import type { ProductItem, ModalType, ModalContent } from "../types";
+import { useCartTotals } from "../hooks/useCartTotals";
 import "../styles/Checkout.css";
 
 interface CheckoutPageProps {
@@ -31,10 +32,7 @@ const BaseCheckout = ({
     }
   }, [navigate, flowType]);
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const { totalItems, total } = useCartTotals(cartItems);
 
   const modalContent = getModalContent(modalState);
 
@@ -57,13 +55,18 @@ const BaseCheckout = ({
                 <p>
                   {item.icon} {item.name}
                 </p>
-                <p className="checkout-item-qty">
-                  Qty: {item.quantity} × ${item.price.toFixed(2)}
-                </p>
+                <p className="checkout-item-qty">Qty: {item.quantity}</p>
+                {item.price !== undefined && (
+                  <p className="checkout-item-price">
+                    ${item.price.toFixed(2)} each
+                  </p>
+                )}
               </div>
-              <div className="checkout-item-total">
-                ${(item.price * item.quantity).toFixed(2)}
-              </div>
+              {item.price !== undefined && (
+                <div className="checkout-item-total">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </div>
+              )}
             </div>
           ))}
 
@@ -71,6 +74,10 @@ const BaseCheckout = ({
             <div className="checkout-row total">
               <span>Subtotal:</span>
               <span>${total.toFixed(2)}</span>
+            </div>
+            <div className="checkout-row">
+              <span>Total Items:</span>
+              <span>{totalItems}</span>
             </div>
             <p
               style={{
@@ -80,7 +87,7 @@ const BaseCheckout = ({
                 textAlign: "center",
               }}
             >
-              Taxes and shipping calculated at payment
+              Taxes and shipping calculated at checkout
             </p>
           </div>
         </div>

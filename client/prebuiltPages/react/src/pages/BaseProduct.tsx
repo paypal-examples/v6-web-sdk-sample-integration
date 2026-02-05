@@ -1,8 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import ProductDisplay from "../components/ProductDisplay";
-import type { ProductItem } from "../types";
-import { INITIAL_PRODUCTS } from "../constants/products";
+import type { ProductItem, ProductPrice } from "../types";
+import { PRODUCT_DATA } from "../constants/products";
+import { fetchProducts } from "../utils";
 import "../styles/Product.css";
 
 interface ProductPageProps {
@@ -10,22 +11,53 @@ interface ProductPageProps {
 }
 
 const BaseProduct = ({ flowType }: ProductPageProps) => {
-  const [products, setProducts] = useState<ProductItem[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedCart = sessionStorage.getItem("cart");
-    if (savedCart) {
-      const cartItems: ProductItem[] = JSON.parse(savedCart);
-      setProducts((prevProducts) =>
-        prevProducts.map((product) => {
-          const cartItem = cartItems.find((item) => item.id === product.id);
-          return cartItem
-            ? { ...product, quantity: cartItem.quantity }
-            : product;
-        }),
-      );
-    }
+    const loadProducts = async () => {
+      try {
+        const productPrices: ProductPrice[] = await fetchProducts();
+
+        const productsWithPricing: ProductItem[] = productPrices
+          .map((productPrice) => {
+            const productData = PRODUCT_DATA[productPrice.sku];
+            if (!productData) {
+              console.warn(
+                `No product data found for SKU: ${productPrice.sku}`,
+              );
+              return null;
+            }
+            return {
+              ...productData,
+              sku: productPrice.sku,
+              price: parseFloat(productPrice.price),
+              quantity: 0,
+            };
+          })
+          .filter(Boolean) as ProductItem[];
+
+        const savedCart = sessionStorage.getItem("cart");
+        if (savedCart) {
+          const cartItems: ProductItem[] = JSON.parse(savedCart);
+          productsWithPricing.forEach((product) => {
+            const cartItem = cartItems.find((item) => item.sku === product.sku);
+            if (cartItem) {
+              product.quantity = cartItem.quantity;
+            }
+          });
+        }
+
+        setProducts(productsWithPricing);
+      } catch (error) {
+        console.error("Failed to load products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
   }, []);
 
   const handleQuantityChange = (id: number, quantity: number) => {
@@ -43,6 +75,16 @@ const BaseProduct = ({ flowType }: ProductPageProps) => {
   };
 
   const totalItems = products.reduce((sum, p) => sum + p.quantity, 0);
+
+  if (loading) {
+    return (
+      <div className="product-page-container">
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          Loading products...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="product-page-container">

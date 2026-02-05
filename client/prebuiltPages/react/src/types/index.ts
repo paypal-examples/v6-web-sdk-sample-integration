@@ -1,15 +1,26 @@
 export interface ProductItem {
   id: number;
+  sku: string;
   name: string;
+  description: string;
+  category: string;
+  stock: number;
   icon: string;
-  price: number;
+  price?: number;
   image: {
     src: string;
     alt: string;
   };
   quantity: number;
 }
-
+export interface ProductPrice {
+  sku: string;
+  price: string;
+}
+export interface CartItem {
+  sku: string;
+  quantity: number;
+}
 export interface ModalContent {
   title: string;
   message: string;

@@ -72,16 +72,14 @@ const StaticButtons = () => {
     loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
-    const cartItems = products
+    const cart = products
       .filter((product) => product.quantity > 0)
       .map((product) => ({
-        id: product.id,
-        name: product.name,
-        price: product.price,
+        sku: product.sku,
         quantity: product.quantity,
       }));
 
-    return await createOrder(cartItems);
+    return await createOrder(cart);
   }, []);
 
   const renderPaymentButtons = (products: ProductItem[]) => {

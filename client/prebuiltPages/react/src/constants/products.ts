@@ -2,39 +2,53 @@ import soccerBallImage from "../images/world-cup.jpg";
 import basketballImage from "../images/basket-ball.jpeg";
 import baseballImage from "../images/base-ball.jpeg";
 import hockeyPuckImage from "../images/hockey-puck.jpeg";
-import type { ProductItem } from "../types";
 
-export const INITIAL_PRODUCTS: ProductItem[] = [
+export const PRODUCT_DATA: Record<
+  string,
   {
+    id: number;
+    name: string;
+    description: string;
+    category: string;
+    stock: number;
+    icon: string;
+    image: { src: string; alt: string };
+  }
+> = {
+  "1blwyeo8": {
     id: 1,
     name: "World Cup Ball",
+    description: "Official World Cup soccer ball",
+    category: "PHYSICAL_GOODS",
+    stock: 10,
     icon: "⚽️",
-    price: 100.0,
     image: { src: soccerBallImage, alt: "World Cup Soccer Ball" },
-    quantity: 0,
   },
-  {
+  i5b1g92y: {
     id: 2,
     name: "Professional Basketball",
+    description: "Professional grade basketball",
+    category: "PHYSICAL_GOODS",
+    stock: 15,
     icon: "🏀",
-    price: 100.0,
     image: { src: basketballImage, alt: "Professional Basketball" },
-    quantity: 0,
   },
-  {
+  "3xk9m4n2": {
     id: 3,
     name: "Official Baseball",
+    description: "Official league baseball",
+    category: "PHYSICAL_GOODS",
+    stock: 20,
     icon: "⚾️",
-    price: 100.0,
     image: { src: baseballImage, alt: "Official Baseball" },
-    quantity: 0,
   },
-  {
+  "7pq2r5t8": {
     id: 4,
     name: "Hockey Puck",
+    description: "Official NHL hockey puck",
+    category: "PHYSICAL_GOODS",
+    stock: 25,
     icon: "🏒",
-    price: 100.0,
     image: { src: hockeyPuckImage, alt: "Hockey Puck" },
-    quantity: 0,
   },
-];
+};

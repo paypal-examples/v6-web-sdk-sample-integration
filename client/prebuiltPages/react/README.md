@@ -101,7 +101,9 @@ react/
 │   ├── types/
 │   │   └── index.ts               # Shared TypeScript interfaces
 │   ├── constants/
-│   │   └── products.ts            # Product catalog data
+│   │   └── products.ts            # Client product catalog
+│   ├── hooks/
+│   │   └── useCartTotals.ts       # Custom hook for cart calculations
 │   ├── pages/                     # Base components (shared across flows)
 │   │   ├── Home.tsx               # Landing page with navigation
 │   │   ├── BaseProduct.tsx        # Base product selection page
@@ -268,6 +270,7 @@ The Node.js backend handles sensitive PayPal API interactions.
 | Endpoint                                                        | Method | Description                                       |
 | --------------------------------------------------------------- | ------ | ------------------------------------------------- |
 | `/paypal-api/auth/browser-safe-client-token`                    | GET    | Fetches authentication token for SDK              |
+| `/paypal-api/products`                                          | GET    | Returns product pricing (SKU → price mapping)     |
 | `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment       |
 | `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment                     |
 | `/paypal-api/vault/create-setup-token-for-paypal-save-payment`  | POST   | Creates vault setup token for saving payment info |
@@ -324,6 +327,7 @@ The Node.js backend handles sensitive PayPal API interactions.
 | Add shared components        | `src/components/` directory                           |
 | Update product catalog       | `src/constants/products.ts`                           |
 | Update TypeScript interfaces | `src/types/index.ts`                                  |
+| Add custom hooks             | `src/hooks/` directory                                |
 
 ### Import Paths
 

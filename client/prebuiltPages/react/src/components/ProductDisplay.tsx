@@ -30,7 +30,9 @@ const ProductDisplay = ({
               <h3 className="product-name">
                 {product.icon} {product.name}
               </h3>
-              <p className="image-price">${product.price.toFixed(2)}</p>
+              {product.price !== undefined && (
+                <p className="image-price">${product.price.toFixed(2)}</p>
+              )}
 
               <div className="quantity-selector">
                 <label htmlFor={`quantity-${product.id}`}>Qty:</label>

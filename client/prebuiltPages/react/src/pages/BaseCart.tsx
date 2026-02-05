@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import type { ProductItem } from "../types";
+import { useCartTotals } from "../hooks/useCartTotals";
 import "../styles/Cart.css";
 
 interface CartPageProps {
@@ -45,10 +46,7 @@ const BaseCart = ({ flowType }: CartPageProps) => {
     navigate(`/${flowType}/checkout`);
   };
 
-  const total = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0,
-  );
+  const { totalItems, total } = useCartTotals(cartItems);
 
   if (cartItems.length === 0) {
     return (
@@ -85,7 +83,11 @@ const BaseCart = ({ flowType }: CartPageProps) => {
                 <h3>
                   {item.icon} {item.name}
                 </h3>
-                <p className="cart-item-price">${item.price.toFixed(2)} each</p>
+                {item.price !== undefined && (
+                  <p className="cart-item-price">
+                    ${item.price.toFixed(2)} each
+                  </p>
+                )}
               </div>
 
               <div className="cart-item-quantity">
@@ -106,9 +108,11 @@ const BaseCart = ({ flowType }: CartPageProps) => {
                 </select>
               </div>
 
-              <div className="cart-item-total">
-                ${(item.price * item.quantity).toFixed(2)}
-              </div>
+              {item.price !== undefined && (
+                <div className="cart-item-total">
+                  ${(item.price * item.quantity).toFixed(2)}
+                </div>
+              )}
 
               <button
                 className="cart-item-remove"
@@ -125,6 +129,10 @@ const BaseCart = ({ flowType }: CartPageProps) => {
           <div className="summary-row total">
             <span>Subtotal:</span>
             <span>${total.toFixed(2)}</span>
+          </div>
+          <div className="summary-row">
+            <span>Total Items:</span>
+            <span>{totalItems}</span>
           </div>
           <p style={{ fontSize: "0.9em", color: "#666", marginTop: "10px" }}>
             Taxes and shipping calculated at checkout

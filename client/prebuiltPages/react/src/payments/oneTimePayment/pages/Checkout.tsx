@@ -12,7 +12,7 @@ import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
 import BaseCheckout from "../../../pages/BaseCheckout";
-import type { ModalType, ModalContent } from "../../../types";
+import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../utils";
 
 const Checkout = () => {
@@ -22,8 +22,14 @@ const Checkout = () => {
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
-    const cartItems = savedCart ? JSON.parse(savedCart) : [];
-    return await createOrder(cartItems);
+    const products: ProductItem[] = savedCart ? JSON.parse(savedCart) : [];
+
+    const cart = products.map((product) => ({
+      sku: product.sku,
+      quantity: product.quantity,
+    }));
+
+    return await createOrder(cart);
   };
 
   const handlePaymentCallbacks = {

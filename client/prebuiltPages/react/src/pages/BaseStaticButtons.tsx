@@ -1,9 +1,16 @@
-import { useState, type ReactNode } from "react";
+import { useState, useEffect, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import ProductDisplay from "../components/ProductDisplay";
 import PaymentModal from "../components/PaymentModal";
-import type { ModalType, ModalContent, ProductItem } from "../types";
-import { INITIAL_PRODUCTS } from "../constants/products";
+import type {
+  ModalType,
+  ModalContent,
+  ProductItem,
+  ProductPrice,
+} from "../types";
+import { PRODUCT_DATA } from "../constants/products";
+import { fetchProducts } from "../utils";
+import { useCartTotals } from "../hooks/useCartTotals";
 import "../styles/StaticButtons.css";
 
 interface BaseStaticButtonsProps {
@@ -19,7 +26,42 @@ const BaseStaticButtons = ({
   modalState,
   onModalClose,
 }: BaseStaticButtonsProps) => {
-  const [products, setProducts] = useState<ProductItem[]>(INITIAL_PRODUCTS);
+  const [products, setProducts] = useState<ProductItem[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadProducts = async () => {
+      try {
+        const productPrices: ProductPrice[] = await fetchProducts();
+
+        const productsWithPricing: ProductItem[] = productPrices
+          .map((productPrice) => {
+            const productData = PRODUCT_DATA[productPrice.sku];
+            if (!productData) {
+              console.warn(
+                `No product data found for SKU: ${productPrice.sku}`,
+              );
+              return null;
+            }
+            return {
+              ...productData,
+              sku: productPrice.sku,
+              price: parseFloat(productPrice.price),
+              quantity: 0,
+            };
+          })
+          .filter(Boolean) as ProductItem[];
+
+        setProducts(productsWithPricing);
+      } catch (error) {
+        console.error("Failed to load products:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadProducts();
+  }, []);
 
   const handleQuantityChange = (id: number, quantity: number) => {
     setProducts((prevProducts) =>
@@ -31,15 +73,17 @@ const BaseStaticButtons = ({
 
   const modalContent = getModalContent(modalState);
 
-  // Calculate totals
-  const total = products.reduce(
-    (sum, product) => sum + product.price * product.quantity,
-    0,
-  );
-  const totalItems = products.reduce(
-    (sum, product) => sum + product.quantity,
-    0,
-  );
+  const { totalItems, total } = useCartTotals(products);
+
+  if (loading) {
+    return (
+      <div className="product-page-container">
+        <div style={{ textAlign: "center", padding: "2rem" }}>
+          Loading products...
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="soccer-ball-container" data-testid="soccer-ball-container">
@@ -75,11 +119,15 @@ const BaseStaticButtons = ({
 
         <div className="payment-section">
           <div className="checkout-summary">
-            <p>
-              Total: ${total.toFixed(2)} ({totalItems}{" "}
-              {totalItems === 1 ? "item" : "items"})
+            <p>Subtotal: ${total.toFixed(2)}</p>
+            <p style={{ fontSize: "0.9em", color: "#666" }}>
+              Total: {totalItems} {totalItems === 1 ? "item" : "items"}
             </p>
-            <p>Taxes, discounts and shipping calculated at checkout</p>
+            <p
+              style={{ fontSize: "0.85em", color: "#999", marginTop: "0.5rem" }}
+            >
+              Taxes and shipping calculated at checkout
+            </p>
           </div>
 
           <div className="payment-options">{paymentButtons(products)}</div>
