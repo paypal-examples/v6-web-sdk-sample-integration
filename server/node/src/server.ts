@@ -112,7 +112,11 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   async (req: Request, res: Response) => {
-    const referer = z.string().optional().parse(req.get("referer"));
+    const schema = z.object({
+      referer: z.string().optional(),
+    });
+    const { referer } = schema.parse({ paymentToken: req.get("referer") });
+
     const { jsonResponse, httpStatusCode } =
       await createOrderForPayPalOneTimePaymentWithRedirect({
         returnUrl: referer,
@@ -143,7 +147,12 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-fastlane",
   async (req: Request, res: Response) => {
-    const paymentToken = z.string().parse(req.body.paymentToken);
+    const schema = z.object({
+      paymentToken: z.string(),
+    });
+    const { paymentToken } = schema.parse({
+      paymentToken: req.body.paymentToken,
+    });
     const { jsonResponse, httpStatusCode } = await createOrderForFastlane({
       paymentToken,
     });
@@ -154,7 +163,11 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
   async (req: Request, res: Response) => {
-    const referer = z.string().optional().parse(req.get("referer"));
+    const schema = z.object({
+      referer: z.string().optional(),
+    });
+    const { referer } = schema.parse({ paymentToken: req.get("referer") });
+
     const { jsonResponse, httpStatusCode } =
       await createOrderForCardOneTimePaymentWithThreeDSecure({
         returnUrl: referer,
