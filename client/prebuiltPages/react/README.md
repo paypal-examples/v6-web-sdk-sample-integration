@@ -2,7 +2,7 @@
 
 > **SDK Version**: PayPal JS SDK v6
 > **Framework**: React 19.1 + TypeScript
-> **Frontend Package**: @paypal/react-paypal-js v9.0.0-alpha.5
+> **Frontend Package**: @paypal/react-paypal-js v9.0.0-alpha.6
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
 > **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card, Subscriptions, Save, Credit
 > **Demo**: Multi-page checkout flows with routing
@@ -37,7 +37,7 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 | Vite                      | 7.x           | Development server and bundler                     |
 | TypeScript                | 5.8.x         | Type safety                                        |
 | React Router DOM          | 7.13.0        | Client-side routing                                |
-| @paypal/react-paypal-js   | 9.0.0-alpha.5 | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/react-paypal-js   | 9.0.0-alpha.6 | React hooks and Context provider for PayPal V6 SDK |
 | @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
 
 ## Prerequisites
@@ -350,6 +350,6 @@ import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
 
 | Package                   | Version       | Purpose                                            |
 | ------------------------- | ------------- | -------------------------------------------------- |
-| @paypal/react-paypal-js   | 9.0.0-alpha.5 | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/react-paypal-js   | 9.0.0-alpha.6 | React hooks and Context provider for PayPal V6 SDK |
 | @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
 | react-router-dom          | 7.13.0        | Client-side routing                                |
