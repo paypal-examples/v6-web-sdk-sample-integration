@@ -1,40 +1,48 @@
+import { z } from "zod/v4";
 import { BASE_URL, CustomApiError, getFullScopeAccessToken } from "./utils";
 
-type FindEligibleMethodsRequest = {
-  customer?: {
-    // two-letter country code for the customer's location
-    country_code?: string;
-  };
-  purchase_units?: ReadonlyArray<{
-    amount: {
-      currency_code: string;
-      value?: string;
-    };
-    payee?: {
-      client_id?: string;
-      merchant_id?: string;
-    };
-  }>;
-  preferences?: {
-    payment_flow?:
-      | "ONE_TIME_PAYMENT"
-      | "RECURRING_PAYMENT"
-      | "VAULT_WITHOUT_PAYMENT"
-      | "VAULT_WITH_PAYMENT";
-    payment_source_constraint?: {
-      constraint_type: "INCLUDE";
-      payment_sources: (
-        | "ADVANCED_CARDS"
-        | "APPLE_PAY"
-        | "GOOGLE_PAY"
-        | "PAYPAL"
-        | "PAYPAL_PAY_LATER"
-        | "PAYPAL_CREDIT"
-        | "VENMO"
-      )[];
-    };
-  };
-};
+const PurchaseUnitSchema = z.object({
+  amount: z.object({
+    currency_code: z.string().length(3),
+    value: z.string().optional(),
+  }),
+  payee: z
+    .object({
+      merchant_id: z.string().optional(),
+    })
+    .optional(),
+});
+
+const FindEligibleMethodsRequestSchema = z.object({
+  customer: z
+    .object({
+      country_code: z.string().length(2).optional(),
+    })
+    .optional(),
+  purchase_units: PurchaseUnitSchema.array().optional(),
+  preferences: z
+    .object({
+      payment_flow: z
+        .enum([
+          "ONE_TIME_PAYMENT",
+          "RECURRING_PAYMENT",
+          "VAULT_WITHOUT_PAYMENT",
+          "VAULT_WITH_PAYMENT",
+        ])
+        .optional(),
+      payment_source_constraint: z
+        .object({
+          constraint_type: z.enum(["INCLUDE", "EXCLUDE"]),
+          payment_sources: z.array(z.string()),
+        })
+        .optional(),
+    })
+    .optional(),
+});
+
+type FindEligibleMethodsRequest = z.infer<
+  typeof FindEligibleMethodsRequestSchema
+>;
 
 // the presence of a payment_source in the response
 // indicates that it is eligible
@@ -60,12 +68,18 @@ export async function findEligibleMethods({
   userAgent?: string;
 }) {
   const accessToken = await getFullScopeAccessToken();
+  const { success, error, data } =
+    FindEligibleMethodsRequestSchema.safeParse(body);
+
+  if (!success) {
+    throw new Error(z.prettifyError(error));
+  }
 
   const response = await fetch(
     `${BASE_URL}/v2/payments/find-eligible-methods`,
     {
       method: "POST",
-      body: JSON.stringify(body),
+      body: JSON.stringify(data),
       headers: {
         "Content-Type": "application/json",
         "Accept-Language": "en_US",
