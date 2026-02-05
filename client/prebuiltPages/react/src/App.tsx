@@ -127,7 +127,10 @@ function App() {
             />
 
             {/* Save Payment flow */}
-            <Route path="/save-payment" element={<BaseProduct flowType="save-payment" />} />
+            <Route
+              path="/save-payment"
+              element={<BaseProduct flowType="save-payment" />}
+            />
             <Route
               path="/save-payment/cart"
               element={<BaseCart flowType="save-payment" />}
@@ -146,7 +149,10 @@ function App() {
             />
 
             {/* Subscription flow */}
-            <Route path="/subscription" element={<BaseProduct flowType="subscription" />} />
+            <Route
+              path="/subscription"
+              element={<BaseProduct flowType="subscription" />}
+            />
             <Route
               path="/subscription/cart"
               element={<BaseCart flowType="subscription" />}
