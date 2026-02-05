@@ -86,6 +86,15 @@ app.get("/paypal-api/products", (_req: Request, res: Response) => {
 
 app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+  async (_req: Request, res: Response) => {
+    const { jsonResponse, httpStatusCode } =
+      await createOrderForOneTimePayment();
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
   async (req: Request, res: Response) => {
     const { cart } = req.body;
 
