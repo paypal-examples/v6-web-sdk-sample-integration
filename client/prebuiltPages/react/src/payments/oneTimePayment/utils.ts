@@ -2,7 +2,7 @@ import type { CartItem } from "../../types";
 
 export const createOrder = async (cart: CartItem[]) => {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
     {
       method: "POST",
       headers: {

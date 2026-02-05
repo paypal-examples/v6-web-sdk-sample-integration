@@ -9,8 +9,6 @@ export const PRODUCT_DATA: Record<
     id: number;
     name: string;
     description: string;
-    category: string;
-    stock: number;
     icon: string;
     image: { src: string; alt: string };
   }
@@ -19,8 +17,6 @@ export const PRODUCT_DATA: Record<
     id: 1,
     name: "World Cup Ball",
     description: "Official World Cup soccer ball",
-    category: "PHYSICAL_GOODS",
-    stock: 10,
     icon: "⚽️",
     image: { src: soccerBallImage, alt: "World Cup Soccer Ball" },
   },
@@ -28,8 +24,6 @@ export const PRODUCT_DATA: Record<
     id: 2,
     name: "Professional Basketball",
     description: "Professional grade basketball",
-    category: "PHYSICAL_GOODS",
-    stock: 15,
     icon: "🏀",
     image: { src: basketballImage, alt: "Professional Basketball" },
   },
@@ -37,8 +31,6 @@ export const PRODUCT_DATA: Record<
     id: 3,
     name: "Official Baseball",
     description: "Official league baseball",
-    category: "PHYSICAL_GOODS",
-    stock: 20,
     icon: "⚾️",
     image: { src: baseballImage, alt: "Official Baseball" },
   },
@@ -46,8 +38,6 @@ export const PRODUCT_DATA: Record<
     id: 4,
     name: "Hockey Puck",
     description: "Official NHL hockey puck",
-    category: "PHYSICAL_GOODS",
-    stock: 25,
     icon: "🏒",
     image: { src: hockeyPuckImage, alt: "Hockey Puck" },
   },

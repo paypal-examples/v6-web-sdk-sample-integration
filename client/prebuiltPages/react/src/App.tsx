@@ -5,22 +5,18 @@ import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
 import { HomePage } from "./pages/Home";
+import BaseProduct from "./pages/BaseProduct";
+import BaseCart from "./pages/BaseCart";
 
 // One-Time Payment flow
-import OneTimeProductPage from "./payments/oneTimePayment/pages/Product";
-import OneTimeCartPage from "./payments/oneTimePayment/pages/Cart";
 import OneTimeCheckoutPage from "./payments/oneTimePayment/pages/Checkout";
 import OneTimeStaticButtonsDemo from "./payments/oneTimePayment/pages/StaticButtons";
 
 // Save Payment flow
-import SavePaymentProductPage from "./payments/savePayment/pages/Product";
-import SavePaymentCartPage from "./payments/savePayment/pages/Cart";
 import SavePaymentCheckoutPage from "./payments/savePayment/pages/Checkout";
 import SavePaymentStaticButtonsDemo from "./payments/savePayment/pages/StaticButtons";
 
 // Subscription flow
-import SubscriptionProductPage from "./payments/subscription/pages/Product";
-import SubscriptionCartPage from "./payments/subscription/pages/Cart";
 import SubscriptionCheckoutPage from "./payments/subscription/pages/Checkout";
 import SubscriptionStaticButtonsDemo from "./payments/subscription/pages/StaticButtons";
 
@@ -109,10 +105,13 @@ function App() {
             <Route path="/" element={<HomePage />} />
 
             {/* One-Time Payment flow */}
-            <Route path="/one-time-payment" element={<OneTimeProductPage />} />
+            <Route
+              path="/one-time-payment"
+              element={<BaseProduct flowType="one-time-payment" />}
+            />
             <Route
               path="/one-time-payment/cart"
-              element={<OneTimeCartPage />}
+              element=<BaseCart flowType="one-time-payment" />
             />
             <Route
               path="/one-time-payment/checkout"
@@ -128,10 +127,10 @@ function App() {
             />
 
             {/* Save Payment flow */}
-            <Route path="/save-payment" element={<SavePaymentProductPage />} />
+            <Route path="/save-payment" element={<BaseProduct flowType="save-payment" />} />
             <Route
               path="/save-payment/cart"
-              element={<SavePaymentCartPage />}
+              element={<BaseCart flowType="save-payment" />}
             />
             <Route
               path="/save-payment/checkout"
@@ -147,10 +146,10 @@ function App() {
             />
 
             {/* Subscription flow */}
-            <Route path="/subscription" element={<SubscriptionProductPage />} />
+            <Route path="/subscription" element={<BaseProduct flowType="subscription" />} />
             <Route
               path="/subscription/cart"
-              element={<SubscriptionCartPage />}
+              element={<BaseCart flowType="subscription" />}
             />
             <Route
               path="/subscription/checkout"

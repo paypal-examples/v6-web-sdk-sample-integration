@@ -132,8 +132,6 @@ react/
 │   └── payments/                  # Flow-specific implementations
 │       ├── oneTimePayment/
 │       │   ├── pages/             # Flow wrappers (use Base components)
-│       │   │   ├── Product.tsx
-│       │   │   ├── Cart.tsx
 │       │   │   ├── Checkout.tsx
 │       │   │   └── StaticButtons.tsx
 │       │   ├── components/        # Flow-specific payment buttons
@@ -145,8 +143,6 @@ react/
 │       │   └── utils.ts           # Flow-specific API calls
 │       ├── savePayment/
 │       │   ├── pages/
-│       │   │   ├── Product.tsx
-│       │   │   ├── Cart.tsx
 │       │   │   ├── Checkout.tsx
 │       │   │   └── StaticButtons.tsx
 │       │   ├── components/
@@ -155,8 +151,6 @@ react/
 │       │   └── utils.ts
 │       └── subscription/
 │           ├── pages/
-│           │   ├── Product.tsx
-│           │   ├── Cart.tsx
 │           │   ├── Checkout.tsx
 │           │   └── StaticButtons.tsx
 │           ├── components/

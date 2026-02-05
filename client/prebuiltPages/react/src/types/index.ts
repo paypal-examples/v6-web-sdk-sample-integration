@@ -3,8 +3,6 @@ export interface ProductItem {
   sku: string;
   name: string;
   description: string;
-  category: string;
-  stock: number;
   icon: string;
   price?: number;
   image: {
