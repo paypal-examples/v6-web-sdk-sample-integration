@@ -30,10 +30,12 @@ const FindEligibleMethodsRequestSchema = z.object({
           "VAULT_WITH_PAYMENT",
         ])
         .optional(),
-      payment_source_constraint: z.object({
-        constraint_type: z.enum(["INCLUDE", "EXCLUDE"]),
-        payment_sources: z.array(z.string()),
-      }),
+      payment_source_constraint: z
+        .object({
+          constraint_type: z.enum(["INCLUDE", "EXCLUDE"]),
+          payment_sources: z.array(z.string()),
+        })
+        .optional(),
     })
     .optional(),
 });
