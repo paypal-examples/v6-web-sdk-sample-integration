@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express, { Request, Response } from "express";
 import { join } from "path";
 import { z } from "zod/v4";
 import cors from "cors";
@@ -28,6 +28,7 @@ import {
   createOrderForOneTimePaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
+import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
 
@@ -111,7 +112,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   async (req: Request, res: Response) => {
-    const referer = z.string().parse(req.get("referer"));
+    const referer = z.string().optional().parse(req.get("referer"));
     const { jsonResponse, httpStatusCode } =
       await createOrderForPayPalOneTimePaymentWithRedirect({
         returnUrl: referer,
@@ -153,7 +154,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
   async (req: Request, res: Response) => {
-    const referer = z.string().parse(req.get("referer"));
+    const referer = z.string().optional().parse(req.get("referer"));
     const { jsonResponse, httpStatusCode } =
       await createOrderForCardOneTimePaymentWithThreeDSecure({
         returnUrl: referer,
@@ -286,19 +287,7 @@ async function setupNgrokForHTTPS(port: number) {
   }
 }
 
-app.use(
-  (
-    error: Error,
-    _request: Request,
-    response: Response,
-    _next: NextFunction,
-  ) => {
-    response.status(500).json({
-      error: "Internal Server Error",
-      errorDescription: error.toString(),
-    });
-  },
-);
+app.use(errorMiddleware);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 const hostname = process.env.HOSTNAME ?? "localhost";
