@@ -19,7 +19,6 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@dotenvx/dotenvx": "^1.52.0",
-    "@ngrok/ngrok": "^1.7.0",
     "@paypal/paypal-server-sdk": "^2.2.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
@@ -28,6 +27,7 @@
   "devDependencies": {
     "@eslint/js": "^9.39.2",
     "@flydotio/dockerfile": "^0.7.10",
+    "@ngrok/ngrok": "^1.7.0",
     "@types/cors": "^2.8.19",
     "@types/express": "^5.0.6",
     "@types/node": "^25.1.0",
