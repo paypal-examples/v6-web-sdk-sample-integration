@@ -287,9 +287,9 @@ async function setupNgrokForHTTPS(port: number) {
     return;
   }
 
-  const ngrok = await import("@ngrok/ngrok");
-
   try {
+    const ngrok = await import("@ngrok/ngrok");
+
     const listener = await ngrok.connect({
       addr: port,
       authtoken: NGROK_AUTHTOKEN,
