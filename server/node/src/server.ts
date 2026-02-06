@@ -32,6 +32,7 @@ import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
 import { getAllProducts, getProductPrice } from "./productCatalog";
+import { cartRequestSchema } from "./validation/cartSchema";
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
@@ -98,22 +99,26 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
   async (req: Request, res: Response) => {
-    const { cart } = req.body;
+    const validationResult = cartRequestSchema.safeParse(req.body);
 
-    let total = "0.00";
-    if (cart && Array.isArray(cart) && cart.length > 0) {
-      const calculatedTotal = cart.reduce(
-        (sum: number, item: { sku: string; quantity: number }) => {
-          const price = getProductPrice(item.sku);
-          if (price) {
-            return sum + parseFloat(price) * item.quantity;
-          }
-          return sum;
-        },
-        0,
-      );
-      total = calculatedTotal.toFixed(2);
+    if (!validationResult.success) {
+      return res.status(400).json({
+        error: "Invalid cart data",
+        details: validationResult.error.issues,
+      });
     }
+
+    const { cart } = validationResult.data;
+
+    const calculatedTotal = cart.reduce((sum: number, item) => {
+      const price = getProductPrice(item.sku);
+      if (!price) {
+        throw new Error(`Product with SKU ${item.sku} not found`);
+      }
+      return sum + parseFloat(price) * item.quantity;
+    }, 0);
+
+    const total = calculatedTotal.toFixed(2);
 
     const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
       { amountValue: total },
