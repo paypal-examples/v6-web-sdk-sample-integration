@@ -1,6 +1,7 @@
-import express, { Request, Response, NextFunction } from "express";
-import cors from "cors";
+import express, { Request, Response } from "express";
 import { join } from "path";
+import { z } from "zod/v4";
+import cors from "cors";
 import ngrok from "@ngrok/ngrok";
 
 import type {
@@ -27,6 +28,7 @@ import {
   createOrderForOneTimePaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
+import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
 import { getAllProducts, getProductPrice } from "./productCatalog";
@@ -143,7 +145,11 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   async (req: Request, res: Response) => {
-    const referer = req.get("referer") as string;
+    const schema = z.object({
+      referer: z.string().optional(),
+    });
+    const { referer } = schema.parse({ paymentToken: req.get("referer") });
+
     const { jsonResponse, httpStatusCode } =
       await createOrderForPayPalOneTimePaymentWithRedirect({
         returnUrl: referer,
@@ -165,7 +171,7 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   async (req: Request, res: Response) => {
-    const orderId = req.params.orderId as string;
+    const orderId = z.string().parse(req.params.orderId);
     const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
     res.status(httpStatusCode).json(jsonResponse);
   },
@@ -174,7 +180,12 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-fastlane",
   async (req: Request, res: Response) => {
-    const { paymentToken } = req.body;
+    const schema = z.object({
+      paymentToken: z.string(),
+    });
+    const { paymentToken } = schema.parse({
+      paymentToken: req.body.paymentToken,
+    });
     const { jsonResponse, httpStatusCode } = await createOrderForFastlane({
       paymentToken,
     });
@@ -185,7 +196,11 @@ app.post(
 app.post(
   "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
   async (req: Request, res: Response) => {
-    const referer = req.get("referer") as string;
+    const schema = z.object({
+      referer: z.string().optional(),
+    });
+    const { referer } = schema.parse({ paymentToken: req.get("referer") });
+
     const { jsonResponse, httpStatusCode } =
       await createOrderForCardOneTimePaymentWithThreeDSecure({
         returnUrl: referer,
@@ -247,7 +262,7 @@ app.post(
     try {
       const jsonResponse = await findEligibleMethods({
         body: req.body,
-        userAgent: req.headers["user-agent"],
+        userAgent: z.string().parse(req.get("user-agent")),
       });
 
       res.status(200).json(jsonResponse);
@@ -318,19 +333,7 @@ async function setupNgrokForHTTPS(port: number) {
   }
 }
 
-app.use(
-  (
-    error: Error,
-    _request: Request,
-    response: Response,
-    _next: NextFunction,
-  ) => {
-    response.status(500).json({
-      error: "Internal Server Error",
-      errorDescription: error.toString(),
-    });
-  },
-);
+app.use(errorMiddleware);
 
 const port = process.env.PORT ? Number(process.env.PORT) : 8080;
 const hostname = process.env.HOSTNAME ?? "localhost";
