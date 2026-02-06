@@ -98,14 +98,15 @@ app.post(
 
 app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
-  async (req: Request, res: Response) => {
+  async (req: Request, res: Response): Promise<void> => {
     const validationResult = cartRequestSchema.safeParse(req.body);
 
     if (!validationResult.success) {
-      return res.status(400).json({
+      res.status(400).json({
         error: "Invalid cart data",
         details: validationResult.error.issues,
       });
+      return;
     }
 
     const { cart } = validationResult.data;
