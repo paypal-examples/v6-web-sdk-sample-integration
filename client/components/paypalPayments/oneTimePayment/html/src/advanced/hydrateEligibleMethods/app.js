@@ -3,11 +3,12 @@ async function onPayPalWebSdkLoaded() {
     // custom eligibility api call that happen server-side or client-side
     // before the SDK is loaded
     const customEligibilityResponse = await customFindEligibleMethods({
+      customer: {
+        // leverage your own service to derive the customer's country code from their IP Address,
+        // or retrieve it from the user's profile if they are already authenticated.
+        country_code: "US",
+      },
       preferences: {
-        customer: {
-          // leverage your own service to derive customer country code from IP Address
-          country_code: "US",
-        },
         payment_flow: "ONE_TIME_PAYMENT",
         payment_source_constraint: {
           constraint_type: "INCLUDE",
