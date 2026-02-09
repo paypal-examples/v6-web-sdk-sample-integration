@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import { join } from "path";
 import { z } from "zod/v4";
 import cors from "cors";
-import ngrok from "@ngrok/ngrok";
 
 import type {
   PaymentTokenResponse,
@@ -318,6 +317,8 @@ async function setupNgrokForHTTPS(port: number) {
   }
 
   try {
+    const ngrok = await import("@ngrok/ngrok");
+
     const listener = await ngrok.connect({
       addr: port,
       authtoken: NGROK_AUTHTOKEN,
