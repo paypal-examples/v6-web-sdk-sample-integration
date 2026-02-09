@@ -7,7 +7,7 @@
 > **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card, Subscriptions, Save, Credit
 > **Demo**: Multi-page checkout flows with routing
 
-This React sample application demonstrates how to integrate three different PayPal payment flows using the PayPal V6 Web SDK in a single unified application.
+This React sample application demonstrates how to integrate different PayPal payment flows using PayPal's React component library, `react-paypal-js`.
 
 ## Live Demo
 
@@ -97,7 +97,7 @@ react/
 ├── src/
 │   ├── App.tsx                    # Main app with routing and PayPalProvider
 │   ├── main.tsx                   # React entry point
-│   ├── utils.ts                   # Shared utilities (client token fetching)
+│   ├── utils.ts                   # Shared utilities for all payment flows
 │   ├── types/
 │   │   └── index.ts               # Shared TypeScript interfaces
 │   ├── constants/
@@ -134,28 +134,25 @@ react/
 │       │   ├── pages/             # Flow wrappers (use Base components)
 │       │   │   ├── Checkout.tsx
 │       │   │   └── StaticButtons.tsx
-│       │   ├── components/        # Flow-specific payment buttons
-│       │   │   ├── PayPalButton.tsx
-│       │   │   ├── VenmoButton.tsx
-│       │   │   ├── PayLaterButton.tsx
-│       │   │   ├── PayPalBasicCardButton.tsx
-│       │   │   └── PayPalCreditOneTimeButton.tsx
-│       │   └── utils.ts           # Flow-specific API calls
+│       │   └── components/        # Flow-specific payment buttons
+│       │       ├── PayPalButton.tsx
+│       │       ├── VenmoButton.tsx
+│       │       ├── PayLaterButton.tsx
+│       │       ├── PayPalBasicCardButton.tsx
+│       │       └── PayPalCreditOneTimeButton.tsx
 │       ├── savePayment/
 │       │   ├── pages/
 │       │   │   ├── Checkout.tsx
 │       │   │   └── StaticButtons.tsx
-│       │   ├── components/
-│       │   │   ├── PayPalSaveButton.tsx
-│       │   │   └── PayPalCreditSaveButton.tsx
-│       │   └── utils.ts
+│       │   └── components/
+│       │       ├── PayPalSaveButton.tsx
+│       │       └── PayPalCreditSaveButton.tsx
 │       └── subscription/
 │           ├── pages/
 │           │   ├── Checkout.tsx
 │           │   └── StaticButtons.tsx
-│           ├── components/
-│           │   └── PayPalSubscriptionButton.tsx
-│           └── utils.ts
+│           └── components/
+│               └── PayPalSubscriptionButton.tsx
 ├── index.html
 ├── vite.config.ts                 # Vite config with proxy settings
 ├── package.json
@@ -298,10 +295,9 @@ The Node.js backend handles sensitive PayPal API interactions.
 | `src/components/`                 | Shared UI components (ProductDisplay, Modal, etc.) |
 | `src/types/index.ts`              | Shared TypeScript interfaces                       |
 | `src/constants/products.ts`       | Product catalog data                               |
-| `src/utils.ts`                    | Shared utilities (client token fetching)           |
+| `src/utils.ts`                    | Shared utilities                                   |
 | `src/payments/*/pages/*.tsx`      | Flow wrappers (thin wrappers for Base components)  |
 | `src/payments/*/components/*.tsx` | Flow-specific payment button components            |
-| `src/payments/*/utils.ts`         | Flow-specific API calls                            |
 | `index.html`                      | HTML entry point                                   |
 
 ### Backend Files

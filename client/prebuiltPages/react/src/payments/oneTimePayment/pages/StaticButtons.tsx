@@ -4,6 +4,8 @@ import {
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnCompleteData,
+  type OnErrorData,
+  type OnCancelDataOneTimePayments,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
@@ -12,7 +14,7 @@ import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
 import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent, ProductItem } from "../../../types";
-import { captureOrder, createOrder } from "../utils";
+import { captureOrder, createOrder } from "../../../utils";
 
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
@@ -26,12 +28,12 @@ const StaticButtons = () => {
       setModalState("success");
     },
 
-    onCancel: () => {
-      console.log("Payment cancelled");
+    onCancel: (data: OnCancelDataOneTimePayments) => {
+      console.log("Payment cancelled", data);
       setModalState("cancel");
     },
 
-    onError: (error: Error) => {
+    onError: (error: OnErrorData) => {
       console.error("Payment error:", error);
       setModalState("error");
     },

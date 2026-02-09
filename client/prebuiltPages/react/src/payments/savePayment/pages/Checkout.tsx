@@ -3,12 +3,14 @@ import { useNavigate } from "react-router-dom";
 import {
   type OnApproveDataSavePayments,
   type OnCompleteData,
+  type OnErrorData,
+  type OnCancelDataSavePayments,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalSaveButton from "../components/PayPalSaveButton";
 import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
 import BaseCheckout from "../../../pages/BaseCheckout";
 import type { ModalType, ModalContent } from "../../../types";
-import { createVaultToken } from "../utils";
+import { createVaultToken } from "../../../utils";
 
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
@@ -21,12 +23,12 @@ const Checkout = () => {
       setModalState("success");
     },
 
-    onCancel: () => {
-      console.log("Save payment method cancelled");
+    onCancel: (data: OnCancelDataSavePayments) => {
+      console.log("Save payment method cancelled:", data);
       setModalState("cancel");
     },
 
-    onError: (error: Error) => {
+    onError: (error: OnErrorData) => {
       console.error("Save payment method error:", error);
       setModalState("error");
     },

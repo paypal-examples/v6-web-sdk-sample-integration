@@ -2,12 +2,14 @@ import { useState, useCallback } from "react";
 import {
   type OnApproveDataSavePayments,
   type OnCompleteData,
+  type OnCancelDataSavePayments,
+  type OnErrorData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalSaveButton from "../components/PayPalSaveButton";
 import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
 import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent } from "../../../types";
-import { createVaultToken } from "../utils";
+import { createVaultToken } from "../../../utils";
 
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
@@ -19,12 +21,12 @@ const StaticButtons = () => {
       setModalState("success");
     },
 
-    onCancel: () => {
-      console.log("Save payment method cancelled");
+    onCancel: (data: OnCancelDataSavePayments) => {
+      console.log("Save payment method cancelled:", data);
       setModalState("cancel");
     },
 
-    onError: (error: Error) => {
+    onError: (error: OnErrorData) => {
       console.error("Save payment method error:", error);
       setModalState("error");
     },

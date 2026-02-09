@@ -1,5 +1,4 @@
-/* SoccerBall.css */
-.soccer-ball-container {
+.static-button-container {
   display: flex;
   flex-direction: column;
   gap: 16px;
@@ -166,7 +165,7 @@
     grid-template-columns: 1fr;
   }
 
-  .soccer-ball-container {
+  .static-button-container {
     max-width: 100%;
   }
 }

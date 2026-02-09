@@ -2,11 +2,13 @@ import { useState, useCallback } from "react";
 import {
   type OnApproveDataOneTimePayments,
   type OnCompleteData,
+  type OnCancelDataOneTimePayments,
+  type OnErrorData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalSubscriptionButton from "../components/PayPalSubscriptionButton";
 import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent } from "../../../types";
-import { createSubscription } from "../utils";
+import { createSubscription } from "../../../utils";
 
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
@@ -18,12 +20,12 @@ const StaticButtons = () => {
       setModalState("success");
     },
 
-    onCancel: () => {
-      console.log("Subscription cancelled");
+    onCancel: (data: OnCancelDataOneTimePayments) => {
+      console.log("Subscription cancelled:", data);
       setModalState("cancel");
     },
 
-    onError: (error: Error) => {
+    onError: (error: OnErrorData) => {
       console.error("Subscription error:", error);
       setModalState("error");
     },
