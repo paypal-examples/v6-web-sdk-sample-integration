@@ -39,7 +39,10 @@ const BaseStaticButtons = ({
   }
 
   return (
-    <div className="static-button-container" data-testid="static-button-container">
+    <div
+      className="static-button-container"
+      data-testid="static-button-container"
+    >
       <div style={{ marginBottom: "20px", textAlign: "center", width: "100%" }}>
         <Link
           to="/"
