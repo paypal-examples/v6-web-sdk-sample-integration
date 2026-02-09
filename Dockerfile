@@ -21,11 +21,8 @@ RUN npm install --include=dev
 
 # Install dependencies for React app
 WORKDIR /app
-# COPY syntax: COPY <source on host> <destination in container>
-# Source: client/... (relative to build context on host machine)
-# Destination: ./client/... (relative to WORKDIR /app, so final path is /app/client/...)
-COPY client/prebuiltPages/react/oneTimePayment/.npmrc client/prebuiltPages/react/oneTimePayment/package.json ./client/prebuiltPages/react/oneTimePayment/
-WORKDIR /app/client/prebuiltPages/react/oneTimePayment
+COPY client/prebuiltPages/react/package.json ./client/prebuiltPages/react/
+WORKDIR /app/client/prebuiltPages/react
 RUN npm install --include=dev
 
 # Install dependencies for TypeScript app
@@ -43,7 +40,7 @@ COPY client ./client
 WORKDIR /app/server/node
 RUN npm run build && npm prune --omit=dev
 
-WORKDIR /app/client/prebuiltPages/react/oneTimePayment
+WORKDIR /app/client/prebuiltPages/react
 RUN npm run build && npm prune --omit=dev
 
 WORKDIR /app/client/components/paypalPayments/oneTimePayment/typescript
