@@ -61,6 +61,57 @@ Returns the static PayPal Client ID defined in the .env file for the client-side
 
 ---
 
+### Product Catalog
+
+The server maintains a product catalog that maps SKU identifiers to prices. This ensures that pricing cannot be manipulated by the client.
+
+#### `GET /paypal-api/products`
+
+**Description:**
+Returns the product catalog with SKU and price mappings. The client uses this to display accurate pricing while the server maintains the pricing for order creation.
+
+**Responses:**
+
+- `200 OK`  
+  Returns an array of products with SKU and price.
+
+  ```json
+  [
+    {
+      "sku": "1blwyeo8",
+      "price": "100.00"
+    },
+    {
+      "sku": "i5b1g92y",
+      "price": "100.00"
+    }
+  ]
+  ```
+
+**Implementation:**
+The product catalog is defined in `src/productCatalog.ts`:
+
+```typescript
+export interface Product {
+  sku: string;
+  price: string;
+}
+
+export const PRODUCT_CATALOG: Record<string, Product> = {
+  "1blwyeo8": { sku: "1blwyeo8", price: "100.00" },
+  i5b1g92y: { sku: "i5b1g92y", price: "100.00" },
+  // ... more products
+};
+```
+
+**Helper Functions:**
+
+- `getProduct(sku: string)` - Get product by SKU
+- `getAllProducts()` - Get all products as array
+- `getProductPrice(sku: string)` - Get price for a specific SKU
+
+---
+
 ### Create Order
 
 The first step in a PayPal Checkout session is to create an order. The order payload includes the amount, currency, intent, and many optional features like shipping and tax information. For more details, visit PayPal's [Orders API documentation](https://developer.paypal.com/docs/api/orders/v2/#orders_create).
@@ -68,7 +119,7 @@ The first step in a PayPal Checkout session is to create an order. The order pay
 #### `POST /paypal-api/checkout/orders/create-order-for-one-time-payment`
 
 **Description:**
-Creates a new order for a one-time payment using the USD currency.
+Creates a new order for a one-time payment using the USD currency with a fixed amount.
 
 **Request Body:**
 No body required.
@@ -89,6 +140,46 @@ The server provides variations of this endpoint to support different currencies:
 
 - EUR - /paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur
 - PLN - /paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-pln
+
+#### `POST /paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart`
+
+**Description:**
+Creates a new order for a one-time payment with cart-based pricing. The server calculates the total by looking up prices for each SKU in the product catalog.
+
+**Request Body:**
+
+```json
+{
+  "cart": [
+    {
+      "sku": "1blwyeo8",
+      "quantity": 2
+    },
+    {
+      "sku": "i5b1g92y",
+      "quantity": 1
+    }
+  ]
+}
+```
+
+**Request Body Parameters:**
+
+- `cart` (array, required): Array of cart items
+  - `sku` (string, required): Product SKU identifier
+  - `quantity` (number, required): Quantity of the product
+
+**Responses:**
+
+- `201 Created`  
+  Returns the new order's details.
+
+  ```json
+  {
+    "id": "ORDER-ID",
+    "status": "CREATED"
+  }
+  ```
 
 #### `POST /paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault`
 
