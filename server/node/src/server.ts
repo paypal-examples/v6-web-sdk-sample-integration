@@ -2,7 +2,6 @@ import express, { Request, Response } from "express";
 import { join } from "path";
 import { z } from "zod/v4";
 import cors from "cors";
-import ngrok from "@ngrok/ngrok";
 
 import type {
   PaymentTokenResponse,
@@ -31,6 +30,8 @@ import {
 import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
+import { getAllProducts, getProductPrice } from "./productCatalog";
+import { cartRequestSchema } from "./validation/cartSchema";
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
@@ -80,11 +81,38 @@ app.get(
   },
 );
 
+app.get("/paypal-api/products", (_req: Request, res: Response) => {
+  const products = getAllProducts();
+  res.status(200).json(products);
+});
+
 app.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment",
   async (_req: Request, res: Response) => {
     const { jsonResponse, httpStatusCode } =
       await createOrderForOneTimePayment();
+    res.status(httpStatusCode).json(jsonResponse);
+  },
+);
+
+app.post(
+  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
+  async (req: Request, res: Response) => {
+    const { cart } = cartRequestSchema.parse(req.body);
+
+    const calculatedTotal = cart.reduce((sum: number, item) => {
+      const price = getProductPrice(item.sku);
+      if (!price) {
+        throw new Error(`Product with SKU ${item.sku} not found`);
+      }
+      return sum + parseFloat(price) * item.quantity;
+    }, 0);
+
+    const total = calculatedTotal.toFixed(2);
+
+    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
+      { amountValue: total },
+    );
     res.status(httpStatusCode).json(jsonResponse);
   },
 );
@@ -289,6 +317,8 @@ async function setupNgrokForHTTPS(port: number) {
   }
 
   try {
+    const ngrok = await import("@ngrok/ngrok");
+
     const listener = await ngrok.connect({
       addr: port,
       authtoken: NGROK_AUTHTOKEN,

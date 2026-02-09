@@ -1,0 +1,143 @@
+.checkout-page-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.checkout-page-container h1 {
+  margin-bottom: 30px;
+  color: #333;
+}
+
+.checkout-content {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+}
+
+.checkout-summary {
+  background: #f8f9fa;
+  padding: 25px;
+  border-radius: 8px;
+  height: fit-content;
+}
+
+.checkout-summary h2 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  color: #333;
+}
+
+.checkout-item {
+  display: grid;
+  grid-template-columns: 60px 1fr auto;
+  gap: 15px;
+  align-items: center;
+  padding: 15px 0;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.checkout-item:last-of-type {
+  border-bottom: 2px solid #ddd;
+  margin-bottom: 15px;
+}
+
+.checkout-item img {
+  width: 60px;
+  height: 60px;
+  object-fit: contain;
+  border-radius: 4px;
+}
+
+.checkout-item-details p {
+  margin: 0;
+  color: #333;
+}
+
+.checkout-item-qty {
+  font-size: 0.9em;
+  color: #666;
+  margin-top: 5px !important;
+}
+
+.checkout-item-total {
+  font-weight: bold;
+  color: #0070ba;
+  font-size: 1.1em;
+}
+
+.checkout-totals {
+  margin-top: 20px;
+}
+
+.checkout-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+  font-size: 1em;
+}
+
+.checkout-row.total {
+  font-size: 1.3em;
+  font-weight: bold;
+  padding-top: 12px;
+  border-top: 2px solid #ddd;
+  margin-top: 12px;
+  color: #0070ba;
+}
+
+.payment-section {
+  background: #ffffff;
+  padding: 25px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+}
+
+.payment-section h2 {
+  margin-top: 0;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.payment-description {
+  color: #666;
+  margin-bottom: 25px;
+}
+
+.payment-options {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  max-width: 400px;
+  margin: 0 auto 40px;
+  padding-bottom: 20px;
+}
+
+.back-to-cart-button {
+  width: 100%;
+  max-width: 400px;
+  margin: 20px auto 0;
+  display: block;
+  background-color: transparent;
+  color: #0070ba;
+  border: 2px solid #0070ba;
+  padding: 12px;
+  font-size: 1em;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.back-to-cart-button:hover {
+  background-color: #0070ba;
+  color: white;
+}
+
+@media (max-width: 968px) {
+  .checkout-content {
+    grid-template-columns: 1fr;
+  }
+}
