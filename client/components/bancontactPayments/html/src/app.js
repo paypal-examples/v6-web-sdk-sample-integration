@@ -132,7 +132,7 @@ async function createOrder() {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currencyCode: "EUR" })
+        body: JSON.stringify({ currencyCode: "EUR" }),
       },
     );
 
