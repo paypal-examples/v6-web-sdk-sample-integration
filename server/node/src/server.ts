@@ -51,7 +51,8 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 /* ######################################################################
- * Entry point for React client example
+ * Catch-all for React SPA - serves index.html for all sub-routes
+ * so client-side routing and page refreshes work correctly
  * ###################################################################### */
 
 app.get(
