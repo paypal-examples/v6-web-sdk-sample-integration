@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Lithuania Banks Button Popup Flow</title>
+  <link rel="stylesheet" href="/client/shared/styles.css">
+</head>
+<body>
+  <section aria-labelledby="payment-experience">
+    <div class="payment-experience-container full-height">
+      <div class="nextgen-column">
+        <h1 id="payment-experience">Lithuania Banks Button Popup Flow</h1>
+        <form class="form-controls">
+          <fieldset class="border nextgen-formset">
+            <legend class="text-sm sr-only">Controls for "Lithuania Banks" payment flow</legend>
+            <div>
+              <input type="checkbox" id="prefill-full-name" />
+              <label for="prefill-full-name"> Prefill full name field </label>
+            </div>
+          </fieldset>
+          <fieldset class="border nextgen-formset">
+            <div>
+              <label for="update-locale" class="nextgen-dropdown_label">Locale:</label>
+              <select id="update-locale" class="nextgen-dropdown">
+                <option value="lt-LT">Lithuanian (LT)</option>
+                <option value="en-US">English (US)</option>
+                <option value="ru-RU">Russian (RU)</option>
+              </select>
+            </div>
+            <div>
+              <label for="country-code" class="nextgen-dropdown_label">Country:</label>
+              <input type="text" id="country-code" class="nextgen-input_field" value="LT" />
+            </div>
+            <div>
+              <label for="currency-code" class="nextgen-dropdown_label">Currency:</label>
+              <input type="text" id="currency-code" class="nextgen-input_field" value="EUR" />
+            </div>
+          </fieldset>
+        </form>
+        <section class="payment-method-container">
+          <h2>Unbranded Lithuania Banks Payment Button</h2>
+          <p>
+            <lithuaniabanks-mark></lithuaniabanks-mark>
+            This example uses the <code>lithuaniabanks-button</code> web component to launch the popup flow.
+          </p>
+          <div id="lithuaniabanks-full-name" class="w-full max-w-96 h-24 min-w-6 mb-2.5"></div>
+          <lithuaniabanks-button id="lithuaniabanks-button" class="w-56" hidden></lithuaniabanks-button>
+        </section>
+      </div>
+      <aside class="right-rail">
+        <div class="message-container">
+          <pre id="message"></pre>
+        </div>
+      </aside>
+    </div>
+  </section>
+  <script src="/web-sdk/v6/core"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
