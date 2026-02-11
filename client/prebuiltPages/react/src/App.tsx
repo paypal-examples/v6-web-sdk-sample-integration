@@ -98,7 +98,7 @@ function App() {
         ]}
         pageType="checkout"
       >
-        <BrowserRouter>
+        <BrowserRouter basename={import.meta.env.BASE_URL}>
           <Navigation />
           <Routes>
             {/* Home page */}
@@ -111,7 +111,7 @@ function App() {
             />
             <Route
               path="/one-time-payment/cart"
-              element=<BaseCart flowType="one-time-payment" />
+              element={<BaseCart flowType="one-time-payment" />}
             />
             <Route
               path="/one-time-payment/checkout"

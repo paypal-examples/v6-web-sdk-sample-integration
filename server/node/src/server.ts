@@ -51,6 +51,14 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 /* ######################################################################
+ * Entry point for React client example
+ * ###################################################################### */
+
+app.get("/client/prebuiltPages/react/dist/*path", (_req: Request, res: Response) => {
+  res.sendFile(join(CLIENT_STATIC_DIRECTORY, "prebuiltPages/react/dist/index.html"));
+});
+
+/* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
  * ###################################################################### */
 
