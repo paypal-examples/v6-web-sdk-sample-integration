@@ -2,7 +2,10 @@ import {
   CheckoutPaymentIntent,
   OrdersController,
   PaypalExperienceUserAction,
+  PaypalPaymentTokenCustomerType,
+  PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
+  StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
 import { z } from "zod/v4";
 import { randomUUID } from "crypto";
@@ -108,6 +111,64 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
           returnUrl,
           cancelUrl,
           userAction: PaypalExperienceUserAction.Continue,
+          shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
+        },
+      },
+    },
+  };
+
+  const { result, statusCode } = await ordersController.createOrder({
+    body: orderRequestBody,
+    paypalRequestId: randomUUID(),
+    prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const PayPalOneTimePaymentSchema = OneTimePaymentSchema.extend({
+    returnUrl: z.url().default(() => {
+      return request.get("referer") ?? "https://www.example.com/success";
+    }),
+    cancelUrl: z.url().default(() => {
+      return request.get("referer") ?? "https://www.example.com/cancel";
+    }),
+  });
+
+  const { currencyCode, amountValue, returnUrl, cancelUrl } =
+    PayPalOneTimePaymentSchema.transform((data) => {
+      return {
+        ...data,
+        amountValue: calculateCartAmount(data.cart),
+      };
+    }).parse(request.body);
+
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+        },
+      },
+    ],
+    paymentSource: {
+      paypal: {
+        attributes: {
+          vault: {
+            storeInVault: StoreInVaultInstruction.OnSuccess,
+            usageType: PaypalPaymentTokenUsageType.Merchant,
+            customerType: PaypalPaymentTokenCustomerType.Consumer,
+          },
+        },
+        experienceContext: {
+          returnUrl,
+          cancelUrl,
           shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
         },
       },

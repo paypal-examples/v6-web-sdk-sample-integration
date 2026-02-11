@@ -14,7 +14,6 @@ import { createPaymentToken, createSubscription } from "./paypalServerSdk";
 
 import {
   createMonthlySubscriptionBillingPlan,
-  createOrderForPayPalOneTimePaymentWithVault,
   createSetupTokenForPayPalSavePayment,
   createSetupTokenForCardSavePayment,
   createOrderForFastlane,
@@ -25,7 +24,6 @@ import {
 import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
-import { getAllProducts } from "./productCatalog";
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
@@ -48,20 +46,6 @@ app.get("/", (_req: Request, res: Response) => {
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
  * ###################################################################### */
-
-app.get("/paypal-api/products", (_req: Request, res: Response) => {
-  const products = getAllProducts();
-  res.status(200).json(products);
-});
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } =
-      await createOrderForPayPalOneTimePaymentWithVault();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
 
 app.post(
   "/paypal-api/checkout/orders/create-order-for-fastlane",

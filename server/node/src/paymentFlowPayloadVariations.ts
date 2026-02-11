@@ -4,12 +4,9 @@ import {
   CheckoutPaymentIntent,
   IntervalUnit,
   OrdersCardVerificationMethod,
-  PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
-  PaypalWalletContextShippingPreference,
   PlanRequestStatus,
   ShippingType,
-  StoreInVaultInstruction,
   TenureType,
   VaultInstructionAction,
   VaultCardVerificationMethod,
@@ -36,53 +33,6 @@ function getDefaultOptions() {
     cancelUrl: defaultCancelUrl,
     paypalRequestId: randomUUID(),
   };
-}
-
-type CreateOrderForPayPalOneTimePaymentWithVaultOptions = {
-  currencyCode?: string;
-  amountValue?: string;
-  returnUrl?: string;
-  cancelUrl?: string;
-  paypalRequestId?: string;
-};
-
-export async function createOrderForPayPalOneTimePaymentWithVault(
-  {
-    currencyCode = defaultCurrencyCode,
-    amountValue = defaultAmountValue,
-    paypalRequestId = randomUUID(),
-    returnUrl = defaultReturnUrl,
-    cancelUrl = defaultCancelUrl,
-  }: CreateOrderForPayPalOneTimePaymentWithVaultOptions = getDefaultOptions(),
-) {
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: amountValue,
-        },
-      },
-    ],
-    paymentSource: {
-      paypal: {
-        attributes: {
-          vault: {
-            storeInVault: StoreInVaultInstruction.OnSuccess,
-            usageType: PaypalPaymentTokenUsageType.Merchant,
-            customerType: PaypalPaymentTokenCustomerType.Consumer,
-          },
-        },
-        experienceContext: {
-          returnUrl,
-          cancelUrl,
-          shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
-        },
-      },
-    },
-  };
-  return createOrder({ orderRequestBody, paypalRequestId });
 }
 
 type CreateSetupTokenForPayPalSavePaymentOptions = {

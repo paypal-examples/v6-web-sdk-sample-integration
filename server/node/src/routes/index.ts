@@ -8,8 +8,11 @@ import {
 import {
   createOrderForOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentRouteHandler,
+  createOrderForPayPalOneTimePaymentWithVaultRouteHandler,
   captureOrderRouteHandler,
 } from "./ordersRouteHandler";
+
+import { getProductsRouteHandler } from "./productsRouteHandler";
 
 const router = Router();
 
@@ -31,8 +34,15 @@ router.post(
 );
 
 router.post(
+  "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
+  createOrderForPayPalOneTimePaymentWithVaultRouteHandler,
+);
+
+router.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   captureOrderRouteHandler,
 );
+
+router.get("/paypal-api/products", getProductsRouteHandler);
 
 export default router;
