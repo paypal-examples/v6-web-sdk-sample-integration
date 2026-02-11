@@ -1,25 +1,10 @@
-import {
-  usePayLaterOneTimePaymentSession,
-  type UsePayLaterOneTimePaymentSessionProps,
-  usePayPal,
-} from "@paypal/react-paypal-js/sdk-v6";
+import { PayLaterOneTimePaymentButton } from "@paypal/react-paypal-js/sdk-v6";
+import type { ComponentProps } from "react";
 
-const PayLaterButton = (props: UsePayLaterOneTimePaymentSessionProps) => {
-  const { handleClick } = usePayLaterOneTimePaymentSession(props);
+type PayLaterButtonProps = ComponentProps<typeof PayLaterOneTimePaymentButton>;
 
-  const { eligiblePaymentMethods } = usePayPal();
-  const payLaterDetails = eligiblePaymentMethods?.getDetails?.("paylater");
-  const countryCode = payLaterDetails?.countryCode;
-  const productCode = payLaterDetails?.productCode;
-
-  return (
-    <paypal-pay-later-button
-      onClick={() => handleClick()}
-      countryCode={countryCode}
-      productCode={productCode}
-      id="paylater-button"
-    ></paypal-pay-later-button>
-  );
+const PayLaterButton = (props: PayLaterButtonProps) => {
+  return <PayLaterOneTimePaymentButton {...props} />;
 };
 
 export default PayLaterButton;
