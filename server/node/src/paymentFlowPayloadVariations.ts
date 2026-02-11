@@ -4,7 +4,6 @@ import {
   CheckoutPaymentIntent,
   IntervalUnit,
   OrdersCardVerificationMethod,
-  PaypalExperienceUserAction,
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
@@ -37,33 +36,6 @@ function getDefaultOptions() {
     cancelUrl: defaultCancelUrl,
     paypalRequestId: randomUUID(),
   };
-}
-
-type CreateOrderForOneTimePaymentOptions = {
-  currencyCode?: string;
-  amountValue?: string;
-  paypalRequestId?: string;
-};
-
-export function createOrderForOneTimePayment(
-  {
-    currencyCode = defaultCurrencyCode,
-    amountValue = defaultAmountValue,
-    paypalRequestId = randomUUID(),
-  }: CreateOrderForOneTimePaymentOptions = getDefaultOptions(),
-) {
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: amountValue,
-        },
-      },
-    ],
-  };
-  return createOrder({ orderRequestBody, paypalRequestId });
 }
 
 type CreateOrderForPayPalOneTimePaymentWithVaultOptions = {
@@ -105,47 +77,6 @@ export async function createOrderForPayPalOneTimePaymentWithVault(
         experienceContext: {
           returnUrl,
           cancelUrl,
-          shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
-        },
-      },
-    },
-  };
-  return createOrder({ orderRequestBody, paypalRequestId });
-}
-
-type CreateOrderForPayPalOneTimePaymentWithRedirectOptions = {
-  currencyCode?: string;
-  amountValue?: string;
-  returnUrl?: string;
-  cancelUrl?: string;
-  paypalRequestId?: string;
-};
-
-export function createOrderForPayPalOneTimePaymentWithRedirect(
-  {
-    currencyCode = defaultCurrencyCode,
-    amountValue = defaultAmountValue,
-    paypalRequestId = randomUUID(),
-    returnUrl = defaultReturnUrl,
-    cancelUrl = defaultCancelUrl,
-  }: CreateOrderForPayPalOneTimePaymentWithRedirectOptions = getDefaultOptions(),
-) {
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: amountValue,
-        },
-      },
-    ],
-    paymentSource: {
-      paypal: {
-        experienceContext: {
-          returnUrl,
-          cancelUrl,
-          userAction: PaypalExperienceUserAction.Continue,
           shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
         },
       },
