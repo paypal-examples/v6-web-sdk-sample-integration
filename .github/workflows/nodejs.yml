@@ -62,7 +62,7 @@ jobs:
             directory=$(dirname "$file")
             echo "::group:: $directory"
             cd "$directory" 
-            npm run test || exit 1
+            npm run test --if-present || exit 1
             cd -
             echo "::endgroup::"
           done

@@ -5,8 +5,7 @@
   "scripts": {
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "echo \"eslint is not set up\"",
-    "test": "echo \"tests are not set up\""
+    "lint": "echo \"eslint is not set up\""
   },
   "license": "Apache-2.0",
   "devDependencies": {
