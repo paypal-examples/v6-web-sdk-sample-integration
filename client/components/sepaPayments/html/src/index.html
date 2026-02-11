@@ -11,29 +11,6 @@
         margin-top: 4rem;
       }
 
-      .form-controls {
-        margin-bottom: 2rem;
-      }
-
-      .form-controls fieldset {
-        border: 1px solid #ddd;
-        padding: 1rem;
-        border-radius: 4px;
-      }
-
-      .form-controls label {
-        display: inline-block;
-        margin-right: 0.5rem;
-        font-weight: 500;
-      }
-
-      .form-controls select {
-        margin-right: 1.5rem;
-        padding: 0.25rem 0.5rem;
-        border: 1px solid #ccc;
-        border-radius: 3px;
-      }
-
       .sepa-mark-container {
         margin-bottom: 2rem;
       }
@@ -52,25 +29,6 @@
   <body>
     <h1>SEPA One-Time Payment Integration</h1>
 
-    <form class="form-controls">
-      <fieldset>
-        <div>
-          <label for="button-color">Button Color:</label>
-          <select id="button-color">
-            <option value="silver">Silver (Default)</option>
-            <option value="sepa-white">White</option>
-            <option value="sepa-black">Black</option>
-          </select>
-
-          <label for="button-type">Button Type:</label>
-          <select id="button-type">
-            <option value="none">None</option>
-            <option value="pay">Pay</option>
-          </select>
-        </div>
-      </fieldset>
-    </form>
-
     <div class="sepa-mark-container">
       <h2>SEPA Payment Mark</h2>
       <sepa-mark></sepa-mark>
@@ -78,7 +36,7 @@
 
     <div class="payment-container">
       <h2>SEPA Payment Button</h2>
-      <sepa-button id="sepa-button" hidden></sepa-button>
+      <sepa-button id="sepa-button" type="pay" hidden></sepa-button>
     </div>
 
     <alert-component></alert-component>

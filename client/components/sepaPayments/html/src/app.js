@@ -64,9 +64,6 @@ function setupSepaPayment(sdkInstance) {
 
     // Setup button click handler
     setupButtonHandler(sepaCheckout);
-
-    // Setup button customization
-    setupButtonCustomization();
   } catch (error) {
     renderAlert({
       type: "danger",
@@ -118,43 +115,6 @@ function setupButtonHandler(sepaCheckout) {
       });
       console.error("Payment error:", error);
     }
-  });
-}
-
-function setupButtonCustomization() {
-  const sepaButton = document.querySelector("#sepa-button");
-
-  // Button color control
-  document
-    .querySelector("#button-color")
-    .addEventListener("change", (event) => {
-      const color = event.target.value;
-      // Remove all color classes
-      sepaButton.classList.remove("sepa-white", "sepa-black");
-      // Add the selected color class if not default silver
-      if (color !== "silver") {
-        sepaButton.classList.add(color);
-      }
-      // Force the web component to re-render
-      sepaButton.requestUpdate();
-      renderAlert({
-        type: "info",
-        message: `Button color updated to ${color}`,
-      });
-    });
-
-  // Button type control
-  document.querySelector("#button-type").addEventListener("change", (event) => {
-    const type = event.target.value;
-    if (type === "none") {
-      sepaButton.removeAttribute("type");
-    } else {
-      sepaButton.setAttribute("type", type);
-    }
-    renderAlert({
-      type: "info",
-      message: `Button type updated to ${type}`,
-    });
   });
 }
 
