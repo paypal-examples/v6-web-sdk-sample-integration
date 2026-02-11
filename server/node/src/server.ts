@@ -14,7 +14,6 @@ import { createPaymentToken, createSubscription } from "./paypalServerSdk";
 
 import {
   createMonthlySubscriptionBillingPlan,
-  createOrderForOneTimePayment,
   createOrderForPayPalOneTimePaymentWithVault,
   createSetupTokenForPayPalSavePayment,
   createSetupTokenForCardSavePayment,
