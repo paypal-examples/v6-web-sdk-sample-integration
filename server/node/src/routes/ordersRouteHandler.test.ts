@@ -2,12 +2,14 @@ import { beforeEach, describe, expect, test, vi } from "vitest";
 import request from "supertest";
 import express, { type Express } from "express";
 
-import { createOrderForOneTimePaymentRouteHandler } from "./ordersRouteHandler";
+import {
+  createOrderForOneTimePaymentRouteHandler,
+  createOrderForPayPalOneTimePaymentRouteHandler,
+} from "./ordersRouteHandler";
 
 import errorMiddleware from "../middleware/errorMiddleware";
 
-vi.mock("@paypal/paypal-server-sdk", async () => {
-  const actual = await vi.importActual("@paypal/paypal-server-sdk");
+const { createOrderMock, captureOrderMock } = vi.hoisted(() => {
   const createOrderMock = vi.fn().mockResolvedValue({
     statusCode: 201,
     result: {
@@ -54,6 +56,14 @@ vi.mock("@paypal/paypal-server-sdk", async () => {
   });
 
   return {
+    createOrderMock,
+    captureOrderMock,
+  };
+});
+
+vi.mock("@paypal/paypal-server-sdk", async () => {
+  const actual = await vi.importActual("@paypal/paypal-server-sdk");
+  return {
     ...actual,
     OrdersController: vi.fn(
       class {
@@ -89,6 +99,21 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
         status: "CREATED",
       }),
     );
+    expect(createOrderMock).toBeCalledWith(
+      expect.objectContaining({
+        body: {
+          intent: "CAPTURE",
+          purchaseUnits: [
+            {
+              amount: {
+                currencyCode: "USD",
+                value: expect.any(String),
+              },
+            },
+          ],
+        },
+      }),
+    );
   });
 
   test("should return a successful response with optional input", async () => {
@@ -115,6 +140,21 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
         status: "CREATED",
       }),
     );
+    expect(createOrderMock).toBeCalledWith(
+      expect.objectContaining({
+        body: {
+          intent: "CAPTURE",
+          purchaseUnits: [
+            {
+              amount: {
+                currencyCode: "EUR",
+                value: expect.any(String),
+              },
+            },
+          ],
+        },
+      }),
+    );
   });
 
   test("should return 400 for invalid POST body", async () => {
@@ -138,6 +178,113 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
         errorDescription: expect.stringContaining(
           '✖ Invalid option: expected one of "1blwyeo8"|"i5b1g92y"|"3xk9m4n2"|"7pq2r5t8"',
         ),
+      }),
+    );
+  });
+});
+
+describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
+  let app: Express;
+
+  beforeEach(() => {
+    app = express();
+    app.use(express.json());
+    app.post(
+      "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
+      createOrderForPayPalOneTimePaymentRouteHandler,
+    );
+    app.use(errorMiddleware);
+  });
+
+  test("should return a successful response and use referer for redirect and cancel urls", async () => {
+    const response = await request(app)
+      .post(
+        "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
+      )
+      .set("Referer", "https://url-from-referer-header.com/")
+      .send({});
+
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        status: "CREATED",
+      }),
+    );
+    expect(createOrderMock).toBeCalledWith(
+      expect.objectContaining({
+        body: {
+          intent: "CAPTURE",
+          purchaseUnits: [
+            {
+              amount: {
+                currencyCode: "USD",
+                value: expect.any(String),
+              },
+            },
+          ],
+          paymentSource: {
+            paypal: {
+              experienceContext: {
+                cancelUrl: "https://url-from-referer-header.com/",
+                returnUrl: "https://url-from-referer-header.com/",
+                shippingPreference: "NO_SHIPPING",
+                userAction: "CONTINUE",
+              },
+            },
+          },
+        },
+      }),
+    );
+  });
+
+  test("should return a successful response with optional input", async () => {
+    const response = await request(app)
+      .post(
+        "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
+      )
+      .send({
+        cart: [
+          {
+            sku: "i5b1g92y",
+            quantity: 1,
+          },
+        ],
+        currencyCode: "USD",
+        returnUrl: "https://www.custom-value.com/success-page-test",
+        cancelUrl: "https://www.custom-value.com/cancel-page-test",
+      });
+
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        status: "CREATED",
+      }),
+    );
+    expect(createOrderMock).toBeCalledWith(
+      expect.objectContaining({
+        body: {
+          intent: "CAPTURE",
+          purchaseUnits: [
+            {
+              amount: {
+                currencyCode: "USD",
+                value: expect.any(String),
+              },
+            },
+          ],
+          paymentSource: {
+            paypal: {
+              experienceContext: {
+                cancelUrl: "https://www.custom-value.com/cancel-page-test",
+                returnUrl: "https://www.custom-value.com/success-page-test",
+                shippingPreference: "NO_SHIPPING",
+                userAction: "CONTINUE",
+              },
+            },
+          },
+        },
       }),
     );
   });

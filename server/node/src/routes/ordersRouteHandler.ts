@@ -1,6 +1,8 @@
 import {
   CheckoutPaymentIntent,
   OrdersController,
+  PaypalExperienceUserAction,
+  PaypalWalletContextShippingPreference,
 } from "@paypal/paypal-server-sdk";
 import { z } from "zod/v4";
 import { randomUUID } from "crypto";
@@ -19,13 +21,8 @@ const OneTimePaymentSchema = z.object({
         quantity: z.number().int().positive().min(1).max(10),
       }),
     )
-    .default(() => {
-      return [{ sku: getAllProducts()[0].sku, quantity: 2 }];
-    }),
-  currencyCode: z
-    .string()
-    .length(3)
-    .default(() => "USD"),
+    .default([{ sku: getAllProducts()[0].sku, quantity: 2 }]),
+  currencyCode: z.string().length(3).default("USD"),
 });
 
 function calculateCartAmount(cart: { sku: string; quantity: number }[]) {
@@ -87,14 +84,13 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
     }),
   });
 
-  const { currencyCode, amountValue } = PayPalOneTimePaymentSchema.transform(
-    (data) => {
+  const { currencyCode, amountValue, returnUrl, cancelUrl } =
+    PayPalOneTimePaymentSchema.transform((data) => {
       return {
         ...data,
         amountValue: calculateCartAmount(data.cart),
       };
-    },
-  ).parse(request.body);
+    }).parse(request.body);
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -106,6 +102,16 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
         },
       },
     ],
+    paymentSource: {
+      paypal: {
+        experienceContext: {
+          returnUrl,
+          cancelUrl,
+          userAction: PaypalExperienceUserAction.Continue,
+          shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
+        },
+      },
+    },
   };
 
   const { result, statusCode } = await ordersController.createOrder({
