@@ -95,7 +95,8 @@ function setupButtonHandler(sepaCheckout) {
 
         console.log("Validation successful, starting payment flow...");
 
-        // Get createOrder promise WITHOUT awaiting (prevents transient activation issues)
+        // get the promise reference by invoking createOrder()
+        // do not await this async function since it can cause transient activation issues
         const createOrderPromise = createOrder();
 
         // Start payment flow with popup mode
