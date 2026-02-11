@@ -76,10 +76,10 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
   response: Response,
 ) {
   const PayPalOneTimePaymentSchema = OneTimePaymentSchema.extend({
-    returnUrl: z.string().default(() => {
+    returnUrl: z.url().default(() => {
       return request.get("referer") ?? "https://www.example.com/success";
     }),
-    cancelUrl: z.string().default(() => {
+    cancelUrl: z.url().default(() => {
       return request.get("referer") ?? "https://www.example.com/cancel";
     }),
   });
@@ -136,6 +136,7 @@ export async function captureOrderRouteHandler(
   const { result, statusCode } = await ordersController.captureOrder({
     id: orderId,
     prefer: "return=minimal",
+    paypalRequestId: randomUUID(),
     // Uncomment one of these to force an error for negative testing (in sandbox mode only). Documentation:
     // https://developer.paypal.com/tools/sandbox/negative-testing/request-headers/
     // paypalMockResponse: '{"mock_application_codes": "INSTRUMENT_DECLINED"}'
