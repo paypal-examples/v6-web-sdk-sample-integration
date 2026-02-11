@@ -164,10 +164,11 @@ async function createOrder() {
     console.log("Creating PayPal order...");
 
     const response = await fetch(
-      "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur",
+      "/paypal-api/checkout/orders/create-order-for-one-time-payment",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currencyCode: "EUR" }),
       },
     );
 
