@@ -10,7 +10,8 @@
     "preview": "vite preview",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "typecheck": "tsc --build --noEmit"
+    "typecheck": "tsc --build --noEmit",
+    "tests": "echo \"tests are not set up\""
   },
   "dependencies": {
     "@paypal/react-paypal-js": "^9.0.0-alpha.6",

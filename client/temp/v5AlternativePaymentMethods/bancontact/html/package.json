@@ -9,7 +9,8 @@
     "start": "vite",
     "format": "prettier . --write",
     "format:check": "prettier . --check",
-    "lint": "echo \"eslint is not set up\""
+    "lint": "echo \"eslint is not set up\"",
+    "tests": "echo \"tests are not set up\""
   },
   "license": "Apache-2.0",
   "devDependencies": {

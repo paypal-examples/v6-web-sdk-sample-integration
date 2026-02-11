@@ -10,7 +10,8 @@
     "format": "prettier . --write",
     "format:check": "prettier . --check",
     "typecheck": "tsc --build --noEmit",
-    "lint": "eslint . && npm run typecheck"
+    "lint": "eslint . && npm run typecheck",
+    "tests": "echo \"tests are not set up\""
   },
   "author": "",
   "license": "MIT",
