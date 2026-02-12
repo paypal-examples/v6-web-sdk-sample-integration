@@ -1,10 +1,12 @@
 import {
   CheckoutPaymentIntent,
+  OrdersCardVerificationMethod,
   OrdersController,
   PaypalExperienceUserAction,
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
+  ShippingType,
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
 import { z } from "zod/v4";
@@ -12,7 +14,7 @@ import { randomUUID } from "crypto";
 import type { Request, Response } from "express";
 
 import { client } from "../paypalServerSdk";
-import { getAllProducts, getProductPrice } from "../productCatalog";
+import { getAllProducts, getProduct } from "../productCatalog";
 
 const ordersController = new OrdersController(client);
 
@@ -24,31 +26,64 @@ const OneTimePaymentSchema = z.object({
         quantity: z.number().int().positive().min(1).max(10),
       }),
     )
-    .default([{ sku: getAllProducts()[0].sku, quantity: 2 }]),
+    .default([
+      { sku: getAllProducts()[0].sku, quantity: 2 },
+      { sku: getAllProducts()[1].sku, quantity: 1 },
+    ]),
   currencyCode: z.string().length(3).default("USD"),
 });
 
-function calculateCartAmount(cart: { sku: string; quantity: number }[]) {
-  const calculatedTotal = cart.reduce((sum: number, item) => {
-    const price = getProductPrice(item.sku);
-    if (!price) {
-      throw new Error(`Product with SKU ${item.sku} not found`);
-    }
-    return sum + parseFloat(price) * item.quantity;
-  }, 0);
+function calculateCartAmount(
+  cart: { sku: string; quantity: number }[],
+  currencyCode: string,
+) {
+  type Item = {
+    sku: string;
+    name: string;
+    quantity: string;
+    unitAmount: {
+      currencyCode: string;
+      value: string;
+    };
+  };
 
-  return calculatedTotal.toFixed(2);
+  const items: Item[] = [];
+  let totalAmount = 0;
+
+  for (const { sku, quantity } of cart) {
+    const { name, price } = getProduct(sku);
+    totalAmount += parseFloat(price) * quantity;
+    items.push({
+      sku,
+      name,
+      quantity: String(quantity),
+      unitAmount: {
+        currencyCode,
+        value: price,
+      },
+    });
+  }
+
+  return {
+    totalAmount: totalAmount.toFixed(2),
+    items,
+  };
 }
 
 export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, amountValue } = OneTimePaymentSchema.transform(
+  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.transform(
     (data) => {
+      const { items, totalAmount } = calculateCartAmount(
+        data.cart,
+        data.currencyCode,
+      );
       return {
         ...data,
-        amountValue: calculateCartAmount(data.cart),
+        totalAmount,
+        items,
       };
     },
   ).parse(request.body);
@@ -59,8 +94,15 @@ export async function createOrderForOneTimePaymentRouteHandler(
       {
         amount: {
           currencyCode,
-          value: amountValue,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
         },
+        items,
       },
     ],
   };
@@ -89,9 +131,13 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
 
   const { currencyCode, amountValue, returnUrl, cancelUrl } =
     PayPalOneTimePaymentSchema.transform((data) => {
+      const { items, totalAmount } = calculateCartAmount(
+        data.cart,
+        data.currencyCode,
+      );
       return {
         ...data,
-        amountValue: calculateCartAmount(data.cart),
+        amountValue: totalAmount,
       };
     }).parse(request.body);
 
@@ -141,9 +187,14 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
 
   const { currencyCode, amountValue, returnUrl, cancelUrl } =
     PayPalOneTimePaymentSchema.transform((data) => {
+      const { items, totalAmount } = calculateCartAmount(
+        data.cart,
+        data.currencyCode,
+      );
+
       return {
         ...data,
-        amountValue: calculateCartAmount(data.cart),
+        amountValue: totalAmount,
       };
     }).parse(request.body);
 
@@ -170,6 +221,185 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
           returnUrl,
           cancelUrl,
           shippingPreference: PaypalWalletContextShippingPreference.NoShipping,
+        },
+      },
+    },
+  };
+
+  const { result, statusCode } = await ordersController.createOrder({
+    body: orderRequestBody,
+    paypalRequestId: randomUUID(),
+    prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function createOrderForOneTimePaymentWithShippingRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { currencyCode, amountValue } = OneTimePaymentSchema.transform(
+    (data) => {
+      const { items, totalAmount } = calculateCartAmount(
+        data.cart,
+        data.currencyCode,
+      );
+      return {
+        ...data,
+        amountValue: totalAmount,
+      };
+    },
+  ).parse(request.body);
+
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+        },
+        shipping: {
+          options: [
+            {
+              id: "SHIP_FRE",
+              label: "Free",
+              type: ShippingType.Shipping,
+              selected: true,
+              amount: {
+                value: "0.00",
+                currencyCode,
+              },
+            },
+            {
+              id: "SHIP_EXP",
+              label: "Expedited",
+              type: ShippingType.Shipping,
+              selected: false,
+              amount: {
+                value: "5.00",
+                currencyCode,
+              },
+            },
+            {
+              id: "SHIP_UNV",
+              label: "Unavailable",
+              type: ShippingType.Shipping,
+              selected: false,
+              amount: {
+                value: "1000",
+                currencyCode,
+              },
+            },
+          ],
+        },
+      },
+    ],
+  };
+
+  const { result, statusCode } = await ordersController.createOrder({
+    body: orderRequestBody,
+    paypalRequestId: randomUUID(),
+    prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function createOrderForCardWithSingleUseTokenRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { paymentToken, currencyCode, amountValue } =
+    OneTimePaymentSchema.extend({
+      paymentToken: z.string(),
+    })
+      .transform((data) => {
+        const { items, totalAmount } = calculateCartAmount(
+          data.cart,
+          data.currencyCode,
+        );
+
+        return {
+          ...data,
+          amountValue: totalAmount,
+        };
+      })
+      .parse(request.body);
+
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+        },
+      },
+    ],
+    paymentSource: {
+      card: {
+        singleUseToken: paymentToken,
+      },
+    },
+  };
+
+  const { result, statusCode } = await ordersController.createOrder({
+    body: orderRequestBody,
+    paypalRequestId: randomUUID(),
+    prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function createOrderForCardWithThreeDSecureRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { currencyCode, amountValue, returnUrl, cancelUrl } =
+    OneTimePaymentSchema.extend({
+      returnUrl: z.url().default(() => {
+        return request.get("referer") ?? "https://www.example.com/success";
+      }),
+      cancelUrl: z.url().default(() => {
+        return request.get("referer") ?? "https://www.example.com/cancel";
+      }),
+    })
+      .transform((data) => {
+        const { items, totalAmount } = calculateCartAmount(
+          data.cart,
+          data.currencyCode,
+        );
+
+        return {
+          ...data,
+          amountValue: totalAmount,
+        };
+      })
+      .parse(request.body);
+
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: amountValue,
+        },
+      },
+    ],
+    paymentSource: {
+      card: {
+        attributes: {
+          verification: {
+            method: OrdersCardVerificationMethod.ScaAlways,
+          },
+        },
+        experienceContext: {
+          returnUrl,
+          cancelUrl,
         },
       },
     },

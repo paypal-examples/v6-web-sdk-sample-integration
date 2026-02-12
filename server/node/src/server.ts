@@ -16,9 +16,6 @@ import {
   createMonthlySubscriptionBillingPlan,
   createSetupTokenForPayPalSavePayment,
   createSetupTokenForCardSavePayment,
-  createOrderForFastlane,
-  createOrderForCardOneTimePaymentWithThreeDSecure,
-  createOrderForOneTimePaymentWithShipping,
 } from "./paymentFlowPayloadVariations";
 
 import errorMiddleware from "./middleware/errorMiddleware";
@@ -46,48 +43,6 @@ app.get("/", (_req: Request, res: Response) => {
 /* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
  * ###################################################################### */
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-fastlane",
-  async (req: Request, res: Response) => {
-    const schema = z.object({
-      paymentToken: z.string(),
-    });
-    const { paymentToken } = schema.parse({
-      paymentToken: req.body.paymentToken,
-    });
-    const { jsonResponse, httpStatusCode } = await createOrderForFastlane({
-      paymentToken,
-    });
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
-  async (req: Request, res: Response) => {
-    const schema = z.object({
-      referer: z.string().optional(),
-    });
-    const { referer } = schema.parse({ paymentToken: req.get("referer") });
-
-    const { jsonResponse, httpStatusCode } =
-      await createOrderForCardOneTimePaymentWithThreeDSecure({
-        returnUrl: referer,
-        cancelUrl: referer,
-      });
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-shipping",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } =
-      await createOrderForOneTimePaymentWithShipping();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
 
 app.post(
   "/paypal-api/billing/create-subscription",

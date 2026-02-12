@@ -121,7 +121,7 @@ async function renderFastlaneGuestExperience() {
 
 async function createOrder(paymentToken) {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-fastlane",
+    "/paypal-api/checkout/orders/create-order-for-card-with-single-use-token",
     {
       method: "POST",
       headers: {

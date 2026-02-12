@@ -1,19 +1,15 @@
 import { randomUUID } from "crypto";
 
 import {
-  CheckoutPaymentIntent,
   IntervalUnit,
-  OrdersCardVerificationMethod,
   PaypalPaymentTokenUsageType,
   PlanRequestStatus,
-  ShippingType,
   TenureType,
   VaultInstructionAction,
   VaultCardVerificationMethod,
 } from "@paypal/paypal-server-sdk";
 
 import {
-  createOrder,
   createSetupToken,
   createSubscriptionBillingPlan,
 } from "./paypalServerSdk";
@@ -21,19 +17,8 @@ import {
 import { createSubscriptionProduct } from "./customApiEndpoints/createSubscriptionProduct";
 
 const defaultCurrencyCode = "USD";
-const defaultAmountValue = "100.00";
 const defaultReturnUrl = "http://example.com";
 const defaultCancelUrl = "http://example.com";
-
-function getDefaultOptions() {
-  return {
-    currencyCode: defaultCurrencyCode,
-    amountValue: defaultAmountValue,
-    returnUrl: defaultReturnUrl,
-    cancelUrl: defaultCancelUrl,
-    paypalRequestId: randomUUID(),
-  };
-}
 
 type CreateSetupTokenForPayPalSavePaymentOptions = {
   returnUrl?: string;
@@ -164,153 +149,4 @@ export async function createMonthlySubscriptionBillingPlan(
   };
 
   return createSubscriptionBillingPlan(planRequestBody, paypalRequestId);
-}
-
-type CreateOrderForFastlaneOptions = {
-  paymentToken: string;
-  currencyCode?: string;
-  amountValue?: string;
-  paypalRequestId?: string;
-};
-
-export function createOrderForFastlane({
-  paymentToken,
-  currencyCode = defaultCurrencyCode,
-  amountValue = defaultAmountValue,
-  paypalRequestId = randomUUID(),
-}: CreateOrderForFastlaneOptions) {
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: amountValue,
-          breakdown: {
-            itemTotal: {
-              currencyCode,
-              value: amountValue,
-            },
-          },
-        },
-      },
-    ],
-    paymentSource: {
-      card: {
-        singleUseToken: paymentToken,
-      },
-    },
-  };
-  return createOrder({ orderRequestBody, paypalRequestId });
-}
-
-type CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = {
-  currencyCode?: string;
-  amountValue?: string;
-  returnUrl?: string;
-  cancelUrl?: string;
-  paypalRequestId?: string;
-};
-
-export function createOrderForCardOneTimePaymentWithThreeDSecure(
-  {
-    currencyCode = defaultCurrencyCode,
-    amountValue = defaultAmountValue,
-    returnUrl = defaultReturnUrl,
-    cancelUrl = defaultCancelUrl,
-    paypalRequestId = randomUUID(),
-  }: CreateOrderForCardOneTimePaymentWithThreeDSecureOptions = getDefaultOptions(),
-) {
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: amountValue,
-        },
-      },
-    ],
-    paymentSource: {
-      card: {
-        attributes: {
-          verification: {
-            method: OrdersCardVerificationMethod.ScaAlways,
-          },
-        },
-        experienceContext: {
-          returnUrl,
-          cancelUrl,
-        },
-      },
-    },
-  };
-  return createOrder({ orderRequestBody, paypalRequestId });
-}
-
-type CreateOrderForOneTimePaymentWithShippingOptions = {
-  currencyCode?: string;
-  amountValue?: string;
-  paypalRequestId?: string;
-};
-
-export function createOrderForOneTimePaymentWithShipping(
-  {
-    currencyCode = defaultCurrencyCode,
-    amountValue = defaultAmountValue,
-    paypalRequestId = randomUUID(),
-  }: CreateOrderForOneTimePaymentWithShippingOptions = getDefaultOptions(),
-) {
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: amountValue,
-          breakdown: {
-            itemTotal: {
-              currencyCode,
-              value: amountValue,
-            },
-          },
-        },
-        shipping: {
-          options: [
-            {
-              id: "SHIP_FRE",
-              label: "Free",
-              type: ShippingType.Shipping,
-              selected: true,
-              amount: {
-                value: "0.00",
-                currencyCode,
-              },
-            },
-            {
-              id: "SHIP_EXP",
-              label: "Expedited",
-              type: ShippingType.Shipping,
-              selected: false,
-              amount: {
-                value: "5.00",
-                currencyCode,
-              },
-            },
-            {
-              id: "SHIP_UNV",
-              label: "Unavailable",
-              type: ShippingType.Shipping,
-              selected: false,
-              amount: {
-                value: "1000",
-                currencyCode,
-              },
-            },
-          ],
-        },
-      },
-    ],
-  };
-  return createOrder({ orderRequestBody, paypalRequestId });
 }

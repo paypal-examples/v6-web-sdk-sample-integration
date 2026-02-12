@@ -5,6 +5,7 @@ import express, { type Express } from "express";
 import {
   createOrderForOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentRouteHandler,
+  captureOrderRouteHandler,
 } from "./ordersRouteHandler";
 
 import errorMiddleware from "../middleware/errorMiddleware";
@@ -41,7 +42,7 @@ const { createOrderMock, captureOrderMock } = vi.hoisted(() => {
   });
 
   const captureOrderMock = vi.fn().mockResolvedValue({
-    statusCode: 200,
+    statusCode: 201,
     result: {
       id: "53S42029KD820825W",
       status: "COMPLETED",
@@ -285,6 +286,39 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
             },
           },
         },
+      }),
+    );
+  });
+});
+
+describe("captureOrderRouteHandler", () => {
+  let app: Express;
+
+  beforeEach(() => {
+    app = express();
+    app.use(express.json());
+    app.post(
+      "/paypal-api/checkout/orders/:orderId/capture",
+      captureOrderRouteHandler,
+    );
+    app.use(errorMiddleware);
+  });
+
+  test("should return a successful response", async () => {
+    const response = await request(app)
+      .post("/paypal-api/checkout/orders/53S42029KD820825W/capture")
+      .send({});
+
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        status: "COMPLETED",
+      }),
+    );
+    expect(captureOrderMock).toBeCalledWith(
+      expect.objectContaining({
+        id: expect.any(String),
       }),
     );
   });
