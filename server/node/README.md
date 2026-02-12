@@ -108,7 +108,6 @@ export const PRODUCT_CATALOG: Record<string, Product> = {
 
 - `getProduct(sku: string)` - Get product by SKU
 - `getAllProducts()` - Get all products as array
-- `getProductPrice(sku: string)` - Get price for a specific SKU
 
 ---
 

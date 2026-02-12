@@ -68,12 +68,7 @@ export async function findEligibleMethods({
   userAgent?: string;
 }) {
   const accessToken = await getFullScopeAccessToken();
-  const { success, error, data } =
-    FindEligibleMethodsRequestSchema.safeParse(body);
-
-  if (!success) {
-    throw new Error(z.prettifyError(error));
-  }
+  const data = FindEligibleMethodsRequestSchema.parse(body);
 
   const response = await fetch(
     `${BASE_URL}/v2/payments/find-eligible-methods`,
@@ -89,16 +84,16 @@ export async function findEligibleMethods({
     },
   );
 
-  const jsonResponse = await response.json();
+  const result = await response.json();
 
   if (!response.ok) {
-    const { message } = jsonResponse as FindEligibleMethodsErrorResponse;
+    const { message } = result as FindEligibleMethodsErrorResponse;
     throw new CustomApiError({
       message: message || "Failed to find eligible methods",
       statusCode: response.status,
-      jsonResponse,
+      result,
     });
   }
 
-  return jsonResponse as FindEligibleMethodsSuccessResponse;
+  return result as FindEligibleMethodsSuccessResponse;
 }

@@ -1,7 +1,7 @@
 import { OAuthAuthorizationController } from "@paypal/paypal-server-sdk";
 import type { Request, Response } from "express";
 
-import { client } from "../paypalServerSdk";
+import { client } from "../paypalServerSdkClient";
 
 const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
   process.env;
