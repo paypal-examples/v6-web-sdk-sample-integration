@@ -7,12 +7,11 @@ import {
   type OnErrorData,
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
+  PayPalOneTimePaymentButton,
+  VenmoOneTimePaymentButton,
+  PayLaterOneTimePaymentButton,
+  PayPalGuestPaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import PayPalButton from "../components/PayPalButton";
-import VenmoButton from "../components/VenmoButton";
-import PayLaterButton from "../components/PayLaterButton";
-import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
-import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
 import BaseCheckout from "../../../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../../../utils";
@@ -102,32 +101,26 @@ const Checkout = () => {
     </div>
   ) : (
     <>
-      <PayPalButton
+      <PayPalOneTimePaymentButton
         createOrder={handleCreateOrder}
         presentationMode="auto"
         {...handlePaymentCallbacks}
       />
 
-      <VenmoButton
+      <VenmoOneTimePaymentButton
         createOrder={handleCreateOrder}
         presentationMode="auto"
         {...handlePaymentCallbacks}
       />
 
-      <PayLaterButton
+      <PayLaterOneTimePaymentButton
         createOrder={handleCreateOrder}
         presentationMode="auto"
         {...handlePaymentCallbacks}
       />
 
-      <PayPalBasicCardButton
+      <PayPalGuestPaymentButton
         createOrder={handleCreateOrder}
-        {...handlePaymentCallbacks}
-      />
-
-      <PayPalCreditOneTimeButton
-        createOrder={handleCreateOrder}
-        presentationMode="auto"
         {...handlePaymentCallbacks}
       />
     </>
