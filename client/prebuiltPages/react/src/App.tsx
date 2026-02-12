@@ -98,7 +98,7 @@ function App() {
         ]}
         pageType="checkout"
       >
-        <HashRouter basename={import.meta.env.BASE_URL}>
+        <HashRouter>
           <Navigation />
           <Routes>
             {/* Home page */}
