@@ -68,12 +68,7 @@ export async function findEligibleMethods({
   userAgent?: string;
 }) {
   const accessToken = await getFullScopeAccessToken();
-  const { success, error, data } =
-    FindEligibleMethodsRequestSchema.safeParse(body);
-
-  if (!success) {
-    throw new Error(z.prettifyError(error));
-  }
+  const data = FindEligibleMethodsRequestSchema.parse(body);
 
   const response = await fetch(
     `${BASE_URL}/v2/payments/find-eligible-methods`,

@@ -2,6 +2,8 @@ import { z, ZodError } from "zod/v4";
 import { ApiError } from "@paypal/paypal-server-sdk";
 import type { Request, Response, NextFunction } from "express";
 
+import { CustomApiError } from "../customApiEndpoints/utils";
+
 export default async function errorMiddleware(
   error: Error,
   _request: Request,
@@ -13,7 +15,7 @@ export default async function errorMiddleware(
       error: "Bad Request",
       errorDescription: z.prettifyError(error),
     });
-  } else if (error instanceof ApiError) {
+  } else if (error instanceof ApiError || error instanceof CustomApiError) {
     const { result, statusCode } = error;
     response.status(statusCode).json(result);
   } else {
