@@ -286,12 +286,12 @@ export async function createOrderForOneTimePaymentWithShippingRouteHandler(
               },
             },
             {
-              id: "SHIP_UNV",
-              label: "Unavailable",
-              type: ShippingType.Shipping,
+              id: "IN_STORE",
+              label: "Pickup in Store",
+              type: ShippingType.PickupInStore,
               selected: false,
               amount: {
-                value: "1000",
+                value: "0.00",
                 currencyCode,
               },
             },
