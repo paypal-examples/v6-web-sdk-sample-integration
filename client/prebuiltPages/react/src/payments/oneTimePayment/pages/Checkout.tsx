@@ -3,14 +3,15 @@ import { useNavigate } from "react-router-dom";
 import {
   usePayPal,
   INSTANCE_LOADING_STATE,
+  PayLaterOneTimePaymentButton,
   type OnApproveDataOneTimePayments,
   type OnErrorData,
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
+  useEligibleMethods,
 } from "@paypal/react-paypal-js/sdk-v6";
 import PayPalButton from "../components/PayPalButton";
 import VenmoButton from "../components/VenmoButton";
-import PayLaterButton from "../components/PayLaterButton";
 import PayPalBasicCardButton from "../components/PayPalBasicCardButton";
 import PayPalCreditOneTimeButton from "../components/PayPalCreditOneTimeButton";
 import BaseCheckout from "../../../pages/BaseCheckout";
@@ -19,7 +20,8 @@ import { captureOrder, createOrder } from "../../../utils";
 
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
-  const { loadingStatus, eligiblePaymentMethods } = usePayPal();
+  const { loadingStatus } = usePayPal();
+  const { isLoading } = useEligibleMethods()
   const navigate = useNavigate();
 
   const handleCreateOrder = async () => {
@@ -87,7 +89,7 @@ const Checkout = () => {
   );
 
   const isSDKLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
+    loadingStatus === INSTANCE_LOADING_STATE.PENDING || isLoading;
 
   const handleModalClose = () => {
     setModalState(null);
@@ -114,7 +116,7 @@ const Checkout = () => {
         {...handlePaymentCallbacks}
       />
 
-      <PayLaterButton
+      <PayLaterOneTimePaymentButton
         createOrder={handleCreateOrder}
         presentationMode="auto"
         {...handlePaymentCallbacks}
