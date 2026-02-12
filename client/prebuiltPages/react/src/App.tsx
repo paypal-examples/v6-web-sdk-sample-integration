@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { Routes, Route, Link, HashRouter } from "react-router-dom";
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
 
@@ -98,7 +98,7 @@ function App() {
         ]}
         pageType="checkout"
       >
-        <BrowserRouter>
+        <HashRouter>
           <Navigation />
           <Routes>
             {/* Home page */}
@@ -176,7 +176,7 @@ function App() {
               element={<ErrorBoundaryTestPage />}
             />
           </Routes>
-        </BrowserRouter>
+        </HashRouter>
       </PayPalProvider>
     </ErrorBoundary>
   );
