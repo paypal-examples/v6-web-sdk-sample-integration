@@ -18,20 +18,34 @@ import { getAllProducts, getProduct } from "../productCatalog";
 
 const ordersController = new OrdersController(client);
 
-const OneTimePaymentSchema = z.object({
-  cart: z
-    .array(
-      z.object({
-        sku: z.enum(getAllProducts().map(({ sku }) => sku)),
-        quantity: z.number().int().positive().min(1).max(10),
-      }),
-    )
-    .default([
-      { sku: getAllProducts()[0].sku, quantity: 2 },
-      { sku: getAllProducts()[1].sku, quantity: 1 },
-    ]),
-  currencyCode: z.string().length(3).default("USD"),
-});
+const OneTimePaymentSchema = z
+  .object({
+    cart: z
+      .array(
+        z.object({
+          sku: z.enum(getAllProducts().map(({ sku }) => sku)),
+          quantity: z.number().int().positive().min(1).max(10),
+        }),
+      )
+      .default([
+        { sku: getAllProducts()[0].sku, quantity: 2 },
+        { sku: getAllProducts()[1].sku, quantity: 1 },
+      ]),
+    currencyCode: z.string().length(3).default("USD"),
+    returnUrl: z.url().optional(),
+    cancelUrl: z.url().optional(),
+  })
+  .transform((data) => {
+    const { items, totalAmount } = calculateCartAmount(
+      data.cart,
+      data.currencyCode,
+    );
+    return {
+      ...data,
+      totalAmount,
+      items,
+    };
+  });
 
 function calculateCartAmount(
   cart: { sku: string; quantity: number }[],
@@ -74,19 +88,9 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.transform(
-    (data) => {
-      const { items, totalAmount } = calculateCartAmount(
-        data.cart,
-        data.currencyCode,
-      );
-      return {
-        ...data,
-        totalAmount,
-        items,
-      };
-    },
-  ).parse(request.body);
+  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
+    request.body,
+  );
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -120,24 +124,18 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const PayPalOneTimePaymentSchema = OneTimePaymentSchema.extend({
-    returnUrl: z.url().default(() => {
-      return request.get("referer") ?? "https://www.example.com/success";
-    }),
-    cancelUrl: z.url().default(() => {
-      return request.get("referer") ?? "https://www.example.com/cancel";
-    }),
-  });
-
-  const { currencyCode, amountValue, returnUrl, cancelUrl } =
-    PayPalOneTimePaymentSchema.transform((data) => {
-      const { items, totalAmount } = calculateCartAmount(
-        data.cart,
-        data.currencyCode,
-      );
+  const { currencyCode, totalAmount, items, returnUrl, cancelUrl } =
+    OneTimePaymentSchema.transform((data) => {
       return {
         ...data,
-        amountValue: totalAmount,
+        returnUrl:
+          data.returnUrl ??
+          request.get("referer") ??
+          "https://www.example.com/success",
+        cancelUrl:
+          data.cancelUrl ??
+          request.get("referer") ??
+          "https://www.example.com/cancel",
       };
     }).parse(request.body);
 
@@ -147,8 +145,15 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
       {
         amount: {
           currencyCode,
-          value: amountValue,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
         },
+        items,
       },
     ],
     paymentSource: {
@@ -176,25 +181,18 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const PayPalOneTimePaymentSchema = OneTimePaymentSchema.extend({
-    returnUrl: z.url().default(() => {
-      return request.get("referer") ?? "https://www.example.com/success";
-    }),
-    cancelUrl: z.url().default(() => {
-      return request.get("referer") ?? "https://www.example.com/cancel";
-    }),
-  });
-
-  const { currencyCode, amountValue, returnUrl, cancelUrl } =
-    PayPalOneTimePaymentSchema.transform((data) => {
-      const { items, totalAmount } = calculateCartAmount(
-        data.cart,
-        data.currencyCode,
-      );
-
+  const { currencyCode, totalAmount, items, returnUrl, cancelUrl } =
+    OneTimePaymentSchema.transform((data) => {
       return {
         ...data,
-        amountValue: totalAmount,
+        returnUrl:
+          data.returnUrl ??
+          request.get("referer") ??
+          "https://www.example.com/success",
+        cancelUrl:
+          data.cancelUrl ??
+          request.get("referer") ??
+          "https://www.example.com/cancel",
       };
     }).parse(request.body);
 
@@ -204,8 +202,15 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
       {
         amount: {
           currencyCode,
-          value: amountValue,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
         },
+        items,
       },
     ],
     paymentSource: {
@@ -239,18 +244,9 @@ export async function createOrderForOneTimePaymentWithShippingRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, amountValue } = OneTimePaymentSchema.transform(
-    (data) => {
-      const { items, totalAmount } = calculateCartAmount(
-        data.cart,
-        data.currencyCode,
-      );
-      return {
-        ...data,
-        amountValue: totalAmount,
-      };
-    },
-  ).parse(request.body);
+  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
+    request.body,
+  );
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -258,8 +254,15 @@ export async function createOrderForOneTimePaymentWithShippingRouteHandler(
       {
         amount: {
           currencyCode,
-          value: amountValue,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
         },
+        items,
         shipping: {
           options: [
             {
@@ -311,22 +314,15 @@ export async function createOrderForCardWithSingleUseTokenRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { paymentToken, currencyCode, amountValue } =
-    OneTimePaymentSchema.extend({
+  const { paymentToken } = z
+    .object({
       paymentToken: z.string(),
     })
-      .transform((data) => {
-        const { items, totalAmount } = calculateCartAmount(
-          data.cart,
-          data.currencyCode,
-        );
+    .parse({ paymentToken: request.body.paymentToken });
 
-        return {
-          ...data,
-          amountValue: totalAmount,
-        };
-      })
-      .parse(request.body);
+  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
+    request.body,
+  );
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -334,8 +330,15 @@ export async function createOrderForCardWithSingleUseTokenRouteHandler(
       {
         amount: {
           currencyCode,
-          value: amountValue,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
         },
+        items,
       },
     ],
     paymentSource: {
@@ -358,27 +361,20 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, amountValue, returnUrl, cancelUrl } =
-    OneTimePaymentSchema.extend({
-      returnUrl: z.url().default(() => {
-        return request.get("referer") ?? "https://www.example.com/success";
-      }),
-      cancelUrl: z.url().default(() => {
-        return request.get("referer") ?? "https://www.example.com/cancel";
-      }),
-    })
-      .transform((data) => {
-        const { items, totalAmount } = calculateCartAmount(
-          data.cart,
-          data.currencyCode,
-        );
-
-        return {
-          ...data,
-          amountValue: totalAmount,
-        };
-      })
-      .parse(request.body);
+  const { currencyCode, totalAmount, items, returnUrl, cancelUrl } =
+    OneTimePaymentSchema.transform((data) => {
+      return {
+        ...data,
+        returnUrl:
+          data.returnUrl ??
+          request.get("referer") ??
+          "https://www.example.com/success",
+        cancelUrl:
+          data.cancelUrl ??
+          request.get("referer") ??
+          "https://www.example.com/cancel",
+      };
+    }).parse(request.body);
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -386,8 +382,15 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
       {
         amount: {
           currencyCode,
-          value: amountValue,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
         },
+        items,
       },
     ],
     paymentSource: {

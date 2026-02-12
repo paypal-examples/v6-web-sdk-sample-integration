@@ -1,4 +1,4 @@
-// Server maintains SKU, name, and price mapping for validation and debugging
+// simulates a product database table to help with calculating order amounts
 export interface Product {
   sku: string;
   name: string;
@@ -37,8 +37,4 @@ export function getProduct(sku: string): Product {
 
 export function getAllProducts(): Product[] {
   return Object.values(PRODUCT_CATALOG);
-}
-
-export function getProductPrice(sku: string): string | undefined {
-  return PRODUCT_CATALOG[sku]?.price;
 }

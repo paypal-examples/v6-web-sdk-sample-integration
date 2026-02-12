@@ -4,17 +4,10 @@ import {
   CustomError,
   Environment,
   LogLevel,
-  OrdersController,
   SubscriptionsController,
-  VaultController,
-  VaultTokenRequestType,
 } from "@paypal/paypal-server-sdk";
 
-import type {
-  OrderRequest,
-  PlanRequest,
-  SetupTokenRequest,
-} from "@paypal/paypal-server-sdk";
+import type { PlanRequest } from "@paypal/paypal-server-sdk";
 
 /* ######################################################################
  * Set up PayPal controllers
@@ -44,111 +37,7 @@ export const client = new Client({
   },
 });
 
-const ordersController = new OrdersController(client);
 const subscriptionsController = new SubscriptionsController(client);
-const vaultController = new VaultController(client);
-
-/* ######################################################################
- * Process orders
- * ###################################################################### */
-
-export async function createOrder({
-  orderRequestBody,
-  paypalRequestId,
-}: {
-  orderRequestBody: OrderRequest;
-  paypalRequestId?: string;
-}) {
-  try {
-    const { result, statusCode } = await ordersController.createOrder({
-      body: orderRequestBody,
-      paypalRequestId,
-      prefer: "return=minimal",
-    });
-
-    return {
-      jsonResponse: result,
-      httpStatusCode: statusCode,
-    };
-  } catch (error) {
-    if (error instanceof ApiError) {
-      const { result, statusCode } = error;
-      return {
-        jsonResponse: result as CustomError,
-        httpStatusCode: statusCode,
-      };
-    } else {
-      throw error;
-    }
-  }
-}
-
-/* ######################################################################
- * Save payment methods
- * ###################################################################### */
-
-export async function createSetupToken(
-  setupTokenRequestBody: SetupTokenRequest,
-  paypalRequestId?: string,
-) {
-  try {
-    const { result, statusCode } = await vaultController.createSetupToken({
-      body: setupTokenRequestBody,
-      paypalRequestId,
-    });
-
-    return {
-      jsonResponse: result,
-      httpStatusCode: statusCode,
-    };
-  } catch (error) {
-    if (error instanceof ApiError) {
-      const { result, statusCode } = error;
-
-      return {
-        jsonResponse: result as CustomError,
-        httpStatusCode: statusCode,
-      };
-    } else {
-      throw error;
-    }
-  }
-}
-
-export async function createPaymentToken(
-  vaultSetupToken: string,
-  paypalRequestId?: string,
-) {
-  try {
-    const { result, statusCode } = await vaultController.createPaymentToken({
-      paypalRequestId: paypalRequestId ?? Date.now().toString(),
-      body: {
-        paymentSource: {
-          token: {
-            id: vaultSetupToken,
-            type: VaultTokenRequestType.SetupToken,
-          },
-        },
-      },
-    });
-
-    return {
-      jsonResponse: result,
-      httpStatusCode: statusCode,
-    };
-  } catch (error) {
-    if (error instanceof ApiError) {
-      const { result, statusCode } = error;
-
-      return {
-        jsonResponse: result as CustomError,
-        httpStatusCode: statusCode,
-      };
-    } else {
-      throw error;
-    }
-  }
-}
 
 /* ######################################################################
  * Subscription helpers

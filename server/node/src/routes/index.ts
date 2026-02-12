@@ -15,6 +15,12 @@ import {
   captureOrderRouteHandler,
 } from "./ordersRouteHandler";
 
+import {
+  createSetupTokenForPayPalSavePaymentRouteHandler,
+  createSetupTokenForCardSavePaymentRouteHandler,
+  createPaymentTokenRouteHandler,
+} from "./vaultRouteHandler";
+
 import { getProductsRouteHandler } from "./productsRouteHandler";
 
 const router = Router();
@@ -59,6 +65,21 @@ router.post(
 router.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   captureOrderRouteHandler,
+);
+
+router.post(
+  "/paypal-api/vault/create-setup-token-for-paypal-save-payment",
+  createSetupTokenForPayPalSavePaymentRouteHandler,
+);
+
+router.post(
+  "/paypal-api/vault/create-setup-token-for-card-save-payment",
+  createSetupTokenForCardSavePaymentRouteHandler,
+);
+
+router.post(
+  "/paypal-api/vault/payment-token/create",
+  createPaymentTokenRouteHandler,
 );
 
 router.get("/paypal-api/products", getProductsRouteHandler);

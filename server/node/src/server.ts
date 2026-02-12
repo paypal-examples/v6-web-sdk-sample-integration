@@ -3,20 +3,13 @@ import { join } from "path";
 import { z } from "zod/v4";
 import cors from "cors";
 
-import type {
-  PaymentTokenResponse,
-  BillingPlan,
-} from "@paypal/paypal-server-sdk";
+import type { BillingPlan } from "@paypal/paypal-server-sdk";
 
 import routes from "./routes/index";
 
-import { createPaymentToken, createSubscription } from "./paypalServerSdk";
+import { createSubscription } from "./paypalServerSdk";
 
-import {
-  createMonthlySubscriptionBillingPlan,
-  createSetupTokenForPayPalSavePayment,
-  createSetupTokenForCardSavePayment,
-} from "./paymentFlowPayloadVariations";
+import { createMonthlySubscriptionBillingPlan } from "./paymentFlowPayloadVariations";
 
 import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
@@ -64,24 +57,6 @@ app.post(
 );
 
 app.post(
-  "/paypal-api/vault/create-setup-token-for-paypal-save-payment",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } =
-      await createSetupTokenForPayPalSavePayment();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/vault/create-setup-token-for-card-save-payment",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } =
-      await createSetupTokenForCardSavePayment();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
   "/paypal-api/payments/find-eligible-methods",
   async (req: Request, res: Response) => {
     try {
@@ -102,42 +77,6 @@ app.post(
     }
   },
 );
-
-app.post(
-  "/paypal-api/vault/payment-token/create",
-  async (req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } = await createPaymentToken(
-      req.body.vaultSetupToken as string,
-    );
-
-    const paymentTokenResponse = jsonResponse as PaymentTokenResponse;
-
-    if (paymentTokenResponse.id) {
-      // This payment token id is a long-lived value for making
-      // future payments when the buyer is not present.
-      // PayPal recommends storing this value in your database
-      // and NOT returning it back to the browser.
-      await savePaymentTokenToDatabase(paymentTokenResponse);
-      res.status(httpStatusCode).json({
-        status: "SUCCESS",
-        description: "Payment token saved to database for future transactions",
-      });
-    } else {
-      res.status(httpStatusCode).json({
-        status: "ERROR",
-        description: "Failed to create payment token",
-      });
-    }
-  },
-);
-
-async function savePaymentTokenToDatabase(
-  _paymentTokenResponse: PaymentTokenResponse,
-) {
-  // example function to teach saving the paymentToken to a database
-  // to be used for future transactions
-  return Promise.resolve();
-}
 
 async function setupNgrokForHTTPS(port: number) {
   const { NGROK_AUTHTOKEN } = process.env;

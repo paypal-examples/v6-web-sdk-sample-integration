@@ -109,7 +109,14 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
               amount: {
                 currencyCode: "USD",
                 value: expect.any(String),
+                breakdown: {
+                  itemTotal: {
+                    currencyCode: "USD",
+                    value: expect.any(String),
+                  },
+                },
               },
+              items: expect.any(Array),
             },
           ],
         },
@@ -149,8 +156,34 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
             {
               amount: {
                 currencyCode: "EUR",
-                value: expect.any(String),
+                value: "85.00",
+                breakdown: {
+                  itemTotal: {
+                    currencyCode: "EUR",
+                    value: "85.00",
+                  },
+                },
               },
+              items: [
+                {
+                  name: "Professional Basketball",
+                  quantity: "1",
+                  sku: "i5b1g92y",
+                  unitAmount: {
+                    currencyCode: "EUR",
+                    value: "55.00",
+                  },
+                },
+                {
+                  name: "Hockey Puck",
+                  quantity: "2",
+                  sku: "7pq2r5t8",
+                  unitAmount: {
+                    currencyCode: "EUR",
+                    value: "15.00",
+                  },
+                },
+              ],
             },
           ],
         },
@@ -221,7 +254,14 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
               amount: {
                 currencyCode: "USD",
                 value: expect.any(String),
+                breakdown: {
+                  itemTotal: {
+                    currencyCode: "USD",
+                    value: expect.any(String),
+                  },
+                },
               },
+              items: expect.any(Array),
             },
           ],
           paymentSource: {
@@ -272,7 +312,14 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
               amount: {
                 currencyCode: "USD",
                 value: expect.any(String),
+                breakdown: {
+                  itemTotal: {
+                    currencyCode: "USD",
+                    value: expect.any(String),
+                  },
+                },
               },
+              items: expect.any(Array),
             },
           ],
           paymentSource: {

@@ -2,89 +2,15 @@ import { randomUUID } from "crypto";
 
 import {
   IntervalUnit,
-  PaypalPaymentTokenUsageType,
   PlanRequestStatus,
   TenureType,
-  VaultInstructionAction,
-  VaultCardVerificationMethod,
 } from "@paypal/paypal-server-sdk";
 
-import {
-  createSetupToken,
-  createSubscriptionBillingPlan,
-} from "./paypalServerSdk";
+import { createSubscriptionBillingPlan } from "./paypalServerSdk";
 
 import { createSubscriptionProduct } from "./customApiEndpoints/createSubscriptionProduct";
 
 const defaultCurrencyCode = "USD";
-const defaultReturnUrl = "http://example.com";
-const defaultCancelUrl = "http://example.com";
-
-type CreateSetupTokenForPayPalSavePaymentOptions = {
-  returnUrl?: string;
-  cancelUrl?: string;
-  paypalRequestId?: string;
-};
-
-export function createSetupTokenForPayPalSavePayment(
-  {
-    returnUrl = defaultReturnUrl,
-    cancelUrl = defaultCancelUrl,
-    paypalRequestId = randomUUID(),
-  }: CreateSetupTokenForPayPalSavePaymentOptions = {
-    returnUrl: defaultReturnUrl,
-    cancelUrl: defaultCancelUrl,
-    paypalRequestId: randomUUID(),
-  },
-) {
-  const setupTokenRequestBody = {
-    paymentSource: {
-      paypal: {
-        experienceContext: {
-          cancelUrl,
-          returnUrl,
-          vaultInstruction: VaultInstructionAction.OnPayerApproval,
-        },
-        usageType: PaypalPaymentTokenUsageType.Merchant,
-      },
-    },
-  };
-
-  return createSetupToken(setupTokenRequestBody, paypalRequestId);
-}
-
-type CreateSetupTokenForCardSavePaymentOptions = {
-  returnUrl?: string;
-  cancelUrl?: string;
-  paypalRequestId?: string;
-};
-
-export function createSetupTokenForCardSavePayment(
-  {
-    returnUrl = defaultReturnUrl,
-    cancelUrl = defaultCancelUrl,
-    paypalRequestId = randomUUID(),
-  }: CreateSetupTokenForCardSavePaymentOptions = {
-    returnUrl: defaultReturnUrl,
-    cancelUrl: defaultCancelUrl,
-    paypalRequestId: randomUUID(),
-  },
-) {
-  const setupTokenRequestBody = {
-    paymentSource: {
-      card: {
-        experienceContext: {
-          cancelUrl,
-          returnUrl,
-        },
-        verificationMethod: VaultCardVerificationMethod.ScaWhenRequired,
-        usageType: PaypalPaymentTokenUsageType.Merchant,
-      },
-    },
-  };
-
-  return createSetupToken(setupTokenRequestBody, paypalRequestId);
-}
 
 type CreateMonthlySubscriptionBillingPlanOptions = {
   productId?: string;
