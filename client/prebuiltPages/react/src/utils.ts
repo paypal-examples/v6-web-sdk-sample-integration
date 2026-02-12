@@ -24,7 +24,7 @@ export const fetchProducts = async () => {
 
 export const createOrder = async (cart: CartItem[]) => {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
     {
       method: "POST",
       headers: {

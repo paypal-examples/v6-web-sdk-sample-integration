@@ -8,17 +8,12 @@ import type {
   BillingPlan,
 } from "@paypal/paypal-server-sdk";
 
-import {
-  getBrowserSafeClientToken,
-  captureOrder,
-  createPaymentToken,
-  createSubscription,
-} from "./paypalServerSdk";
+import routes from "./routes/index";
+
+import { createPaymentToken, createSubscription } from "./paypalServerSdk";
 
 import {
   createMonthlySubscriptionBillingPlan,
-  createOrderForOneTimePayment,
-  createOrderForPayPalOneTimePaymentWithRedirect,
   createOrderForPayPalOneTimePaymentWithVault,
   createSetupTokenForPayPalSavePayment,
   createSetupTokenForCardSavePayment,
@@ -30,8 +25,7 @@ import {
 import errorMiddleware from "./middleware/errorMiddleware";
 import { findEligibleMethods } from "./customApiEndpoints/findEligibleMethods";
 import { CustomApiError } from "./customApiEndpoints/utils";
-import { getAllProducts, getProductPrice } from "./productCatalog";
-import { cartRequestSchema } from "./validation/cartSchema";
+import { getAllProducts } from "./productCatalog";
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
@@ -40,6 +34,7 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+app.use(routes);
 app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
 
 /* ######################################################################
@@ -54,120 +49,16 @@ app.get("/", (_req: Request, res: Response) => {
  * API Endpoints for the client-side JavaScript PayPal Integration code
  * ###################################################################### */
 
-app.get(
-  "/paypal-api/auth/browser-safe-client-token",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } = await getBrowserSafeClientToken();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-/*
- * For convenience, this API endpoint returns the PayPal Client ID to the front-end.
- * This way the .env file can be the single source of truth for the Client ID.
- * It is safe for merchant developers to hardcode Client ID values in front-end JavaScript/HTML files.
- */
-app.get(
-  "/paypal-api/auth/browser-safe-client-id",
-  (_req: Request, res: Response) => {
-    const { PAYPAL_SANDBOX_CLIENT_ID } = process.env;
-
-    if (!PAYPAL_SANDBOX_CLIENT_ID) {
-      throw new Error(
-        "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
-      );
-    }
-    res.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
-  },
-);
-
 app.get("/paypal-api/products", (_req: Request, res: Response) => {
   const products = getAllProducts();
   res.status(200).json(products);
 });
 
 app.post(
-  "/paypal-api/checkout/orders/create-order-for-one-time-payment",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } =
-      await createOrderForOneTimePayment();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart",
-  async (req: Request, res: Response) => {
-    const { cart } = cartRequestSchema.parse(req.body);
-
-    const calculatedTotal = cart.reduce((sum: number, item) => {
-      const price = getProductPrice(item.sku);
-      if (!price) {
-        throw new Error(`Product with SKU ${item.sku} not found`);
-      }
-      return sum + parseFloat(price) * item.quantity;
-    }, 0);
-
-    const total = calculatedTotal.toFixed(2);
-
-    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
-      { amountValue: total },
-    );
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
-      { currencyCode: "EUR" },
-    );
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-pln",
-  async (_req: Request, res: Response) => {
-    const { jsonResponse, httpStatusCode } = await createOrderForOneTimePayment(
-      { currencyCode: "PLN" },
-    );
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
-  async (req: Request, res: Response) => {
-    const schema = z.object({
-      referer: z.string().optional(),
-    });
-    const { referer } = schema.parse({ paymentToken: req.get("referer") });
-
-    const { jsonResponse, httpStatusCode } =
-      await createOrderForPayPalOneTimePaymentWithRedirect({
-        returnUrl: referer,
-        cancelUrl: referer,
-      });
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
   async (_req: Request, res: Response) => {
     const { jsonResponse, httpStatusCode } =
       await createOrderForPayPalOneTimePaymentWithVault();
-    res.status(httpStatusCode).json(jsonResponse);
-  },
-);
-
-app.post(
-  "/paypal-api/checkout/orders/:orderId/capture",
-  async (req: Request, res: Response) => {
-    const orderId = z.string().parse(req.params.orderId);
-    const { jsonResponse, httpStatusCode } = await captureOrder(orderId);
     res.status(httpStatusCode).json(jsonResponse);
   },
 );

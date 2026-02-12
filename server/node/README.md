@@ -122,31 +122,8 @@ The first step in a PayPal Checkout session is to create an order. The order pay
 Creates a new order for a one-time payment using the USD currency with a fixed amount.
 
 **Request Body:**
-No body required.
 
-**Responses:**
-
-- `201 Created`  
-  Returns the new order's details.
-
-  ```json
-  {
-    "id": "ORDER-ID",
-    "status": "CREATED"
-  }
-  ```
-
-The server provides variations of this endpoint to support different currencies:
-
-- EUR - /paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-eur
-- PLN - /paypal-api/checkout/orders/create-order-for-one-time-payment-with-currency-code-pln
-
-#### `POST /paypal-api/checkout/orders/create-order-for-one-time-payment-with-cart`
-
-**Description:**
-Creates a new order for a one-time payment with cart-based pricing. The server calculates the total by looking up prices for each SKU in the product catalog.
-
-**Request Body:**
+Optional request body for defining a custom cart array and currency code. The server calculates the total by looking up prices for each SKU in the product catalog.
 
 ```json
 {
@@ -159,15 +136,10 @@ Creates a new order for a one-time payment with cart-based pricing. The server c
       "sku": "i5b1g92y",
       "quantity": 1
     }
-  ]
+  ],
+  "currencyCode": "USD"
 }
 ```
-
-**Request Body Parameters:**
-
-- `cart` (array, required): Array of cart items
-  - `sku` (string, required): Product SKU identifier
-  - `quantity` (number, required): Quantity of the product
 
 **Responses:**
 
