@@ -35,16 +35,16 @@ export async function createSubscriptionProduct(
     body: JSON.stringify(productDetails),
   });
 
-  const jsonResponse = await response.json();
+  const result = await response.json();
 
   if (!response.ok) {
-    const { message } = jsonResponse as CreateSubscriptionProductErrorResponse;
+    const { message } = result as CreateSubscriptionProductErrorResponse;
     throw new CustomApiError({
       message: message,
       statusCode: response.status,
-      jsonResponse,
+      result,
     });
   }
 
-  return jsonResponse as CreateSubscriptionProductSuccessResponse;
+  return result as CreateSubscriptionProductSuccessResponse;
 }

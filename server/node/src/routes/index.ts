@@ -21,6 +21,8 @@ import {
   createPaymentTokenRouteHandler,
 } from "./vaultRouteHandler";
 
+import { createSubscriptionRouteHandler } from "./subscriptionsRouteHandler";
+import { findEligibleMethodsRouteHandler } from "./findEligibleMethodsRouteHandler";
 import { getProductsRouteHandler } from "./productsRouteHandler";
 
 const router = Router();
@@ -80,6 +82,16 @@ router.post(
 router.post(
   "/paypal-api/vault/payment-token/create",
   createPaymentTokenRouteHandler,
+);
+
+router.post(
+  "/paypal-api/billing/create-subscription",
+  createSubscriptionRouteHandler,
+);
+
+router.post(
+  "/paypal-api/payments/find-eligible-methods",
+  findEligibleMethodsRouteHandler,
 );
 
 router.get("/paypal-api/products", getProductsRouteHandler);

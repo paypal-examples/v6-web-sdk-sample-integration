@@ -10,7 +10,7 @@ import { z } from "zod/v4";
 import { randomUUID } from "crypto";
 import type { Request, Response } from "express";
 
-import { client } from "../paypalServerSdk";
+import { client } from "../paypalServerSdkClient";
 
 const vaultController = new VaultController(client);
 

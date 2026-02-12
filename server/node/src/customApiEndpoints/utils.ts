@@ -32,36 +32,36 @@ export async function getFullScopeAccessToken() {
     },
   });
 
-  const jsonResponse = await response.json();
+  const result = await response.json();
 
   if (!response.ok) {
-    const { error_description } = jsonResponse as AuthTokenErrorResponse;
+    const { error_description } = result as AuthTokenErrorResponse;
     throw new CustomApiError({
       message: error_description || "Failed to create full scope access token",
       statusCode: response.status,
-      jsonResponse,
+      result,
     });
   }
 
-  const { access_token } = jsonResponse as AuthTokenSuccessResponse;
+  const { access_token } = result as AuthTokenSuccessResponse;
   return access_token;
 }
 
 export class CustomApiError extends Error {
   statusCode: number;
-  jsonResponse: Record<string, unknown>;
+  result: Record<string, unknown>;
 
   constructor({
     message,
     statusCode,
-    jsonResponse,
+    result,
   }: {
     message: string;
     statusCode: number;
-    jsonResponse: Record<string, unknown>;
+    result: Record<string, unknown>;
   }) {
     super(message);
     this.statusCode = statusCode;
-    this.jsonResponse = jsonResponse;
+    this.result = result;
   }
 }

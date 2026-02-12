@@ -89,16 +89,16 @@ export async function findEligibleMethods({
     },
   );
 
-  const jsonResponse = await response.json();
+  const result = await response.json();
 
   if (!response.ok) {
-    const { message } = jsonResponse as FindEligibleMethodsErrorResponse;
+    const { message } = result as FindEligibleMethodsErrorResponse;
     throw new CustomApiError({
       message: message || "Failed to find eligible methods",
       statusCode: response.status,
-      jsonResponse,
+      result,
     });
   }
 
-  return jsonResponse as FindEligibleMethodsSuccessResponse;
+  return result as FindEligibleMethodsSuccessResponse;
 }
