@@ -51,20 +51,6 @@ app.get("/", (_req: Request, res: Response) => {
 });
 
 /* ######################################################################
- * Catch-all for React SPA - serves index.html for all sub-routes
- * so client-side routing and page refreshes work correctly
- * ###################################################################### */
-
-app.get(
-  "/client/prebuiltPages/react/dist/*path",
-  (_req: Request, res: Response) => {
-    res.sendFile(
-      join(CLIENT_STATIC_DIRECTORY, "prebuiltPages/react/dist/index.html"),
-    );
-  },
-);
-
-/* ######################################################################
  * API Endpoints for the client-side JavaScript PayPal Integration code
  * ###################################################################### */
 
