@@ -4,8 +4,8 @@ import {
   type OnCompleteData,
   type OnCancelDataSavePayments,
   type OnErrorData,
+  PayPalSavePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import PayPalSaveButton from "../components/PayPalSaveButton";
 import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
 import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent } from "../../../types";
@@ -68,7 +68,7 @@ const StaticButtons = () => {
     return (
       <>
         <div>
-          <PayPalSaveButton
+          <PayPalSavePaymentButton
             createVaultToken={createVaultToken}
             presentationMode="auto"
             {...handleSaveCallbacks}
