@@ -4,8 +4,7 @@
   "main": "index.html",
   "scripts": {
     "format": "prettier . --write",
-    "format:check": "prettier . --check",
-    "lint": "echo \"eslint is not set up\""
+    "format:check": "prettier . --check"
   },
   "license": "Apache-2.0",
   "devDependencies": {

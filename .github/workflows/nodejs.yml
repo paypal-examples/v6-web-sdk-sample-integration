@@ -40,7 +40,7 @@ jobs:
             directory=$(dirname "$file")
             echo "::group:: $directory"
             cd "$directory" 
-            npm run format:check || exit 1
+            npm run format:check --if-present || exit 1
             cd -
             echo "::endgroup::"
           done
@@ -51,7 +51,7 @@ jobs:
             directory=$(dirname "$file")
             echo "::group:: $directory"
             cd "$directory" 
-            npm run lint || exit 1
+            npm run lint --if-present || exit 1
             cd -
             echo "::endgroup::"
           done
