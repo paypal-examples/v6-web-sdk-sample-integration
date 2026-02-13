@@ -20,7 +20,7 @@ const BaseCheckout = ({
   getModalContent,
   paymentButtons,
 }: CheckoutPageProps) => {
-  const [cartItems, ] = useState<ProductItem[]>(() => {
+  const [cartItems] = useState<ProductItem[]>(() => {
     const savedCart = sessionStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
   });
@@ -29,7 +29,7 @@ const BaseCheckout = ({
   useEffect(() => {
     if (!sessionStorage.getItem("cart")) {
       navigate(`/${flowType}`);
-    } 
+    }
   }, [navigate, flowType]);
 
   const { totalItems, total } = useCartTotals(cartItems);

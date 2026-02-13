@@ -85,8 +85,7 @@ const Checkout = () => {
     [],
   );
 
-  const isSDKLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleModalClose = () => {
     setModalState(null);

@@ -69,8 +69,7 @@ const StaticButtons = () => {
     [],
   );
 
-  const isSDKLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
