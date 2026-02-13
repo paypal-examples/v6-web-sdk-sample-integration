@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Link, HashRouter } from "react-router-dom";
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
-import { ErrorBoundary, useErrorBoundary } from "react-error-boundary";
+import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
 import { getBrowserSafeClientToken } from "./utils";
 import { HomePage } from "./pages/Home";
@@ -23,15 +23,15 @@ import SubscriptionStaticButtonsDemo from "./payments/subscription/pages/StaticB
 // Error handling demo
 import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
 
-function ErrorFallback({ error }: { error: Error }) {
-  const { resetBoundary } = useErrorBoundary();
-
+function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <div role="alert" style={{ padding: "20px", textAlign: "center" }}>
       <p>Something went wrong:</p>
-      <pre style={{ color: "red", margin: "20px 0" }}>{error.message}</pre>
+      <pre style={{ color: "red", margin: "20px 0" }}>
+        {error instanceof Error ? error.message : String(error)}
+      </pre>
       <button
-        onClick={resetBoundary}
+        onClick={resetErrorBoundary}
         style={{ padding: "10px 20px", cursor: "pointer" }}
       >
         Try again
