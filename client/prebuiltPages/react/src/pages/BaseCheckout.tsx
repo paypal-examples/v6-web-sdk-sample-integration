@@ -20,14 +20,14 @@ const BaseCheckout = ({
   getModalContent,
   paymentButtons,
 }: CheckoutPageProps) => {
-  const [cartItems, setCartItems] = useState<ProductItem[]>([]);
+  const [cartItems] = useState<ProductItem[]>(() => {
+    const savedCart = sessionStorage.getItem("cart");
+    return savedCart ? JSON.parse(savedCart) : [];
+  });
   const navigate = useNavigate();
 
   useEffect(() => {
-    const savedCart = sessionStorage.getItem("cart");
-    if (savedCart) {
-      setCartItems(JSON.parse(savedCart));
-    } else {
+    if (!sessionStorage.getItem("cart")) {
       navigate(`/${flowType}`);
     }
   }, [navigate, flowType]);

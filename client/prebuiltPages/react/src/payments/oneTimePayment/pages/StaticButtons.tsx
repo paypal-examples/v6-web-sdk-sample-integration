@@ -17,7 +17,7 @@ import { captureOrder, createOrder } from "../../../utils";
 
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
-  const { loadingStatus, eligiblePaymentMethods } = usePayPal();
+  const { loadingStatus } = usePayPal();
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -69,8 +69,7 @@ const StaticButtons = () => {
     [],
   );
 
-  const isSDKLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
+  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
