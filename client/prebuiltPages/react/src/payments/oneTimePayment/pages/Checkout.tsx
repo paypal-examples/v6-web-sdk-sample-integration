@@ -18,7 +18,7 @@ import { captureOrder, createOrder } from "../../../utils";
 
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
-  const { loadingStatus, eligiblePaymentMethods } = usePayPal();
+  const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
 
   const handleCreateOrder = async () => {
@@ -48,8 +48,8 @@ const Checkout = () => {
       setModalState("cancel");
     },
 
-    onError: (error: OnErrorData) => {
-      console.error("Payment error:", error);
+    onError: (data: OnErrorData) => {
+      console.error("Payment error:", data);
       setModalState("error");
     },
 
@@ -86,7 +86,7 @@ const Checkout = () => {
   );
 
   const isSDKLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING || !eligiblePaymentMethods;
+    loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleModalClose = () => {
     setModalState(null);
