@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
 import { usePayPalMessages } from "@paypal/react-paypal-js/sdk-v6";
 import type {
   LearnMore,
@@ -85,6 +85,13 @@ interface LearnMoreDemoProps {
   initialAmount?: string;
 }
 
+type LearnMoreInstances = {
+  auto: LearnMore | undefined;
+  modal: LearnMore | undefined;
+  popup: LearnMore | undefined;
+  redirect: LearnMore | undefined;
+};
+
 /**
  * Comprehensive Learn More demo featuring amount control,
  * four presentation modes, instance state tracking, and event logging.
@@ -93,21 +100,8 @@ export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
   initialAmount = "50.00",
 }) => {
   const [amount, setAmount] = useState(initialAmount);
-  const [eventLog, setEventLog] = useState<string[]>([]);
 
-  const [learnMoreInstances, setLearnMoreInstances] = useState<{
-    auto: LearnMore | undefined;
-    modal: LearnMore | undefined;
-    popup: LearnMore | undefined;
-    redirect: LearnMore | undefined;
-  }>({
-    auto: undefined,
-    modal: undefined,
-    popup: undefined,
-    redirect: undefined,
-  });
-
-  const [instanceStates, setInstanceStates] = useState<{
+  const [, setInstanceStates] = useState<{
     auto: boolean;
     modal: boolean;
     popup: boolean;
@@ -124,96 +118,78 @@ export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
     currencyCode: "USD",
   });
 
-  const logEvent = useCallback((eventName: string, detail?: unknown) => {
-    const timestamp = new Date().toLocaleTimeString();
-    const message = `[${timestamp}] ${eventName}${
-      detail ? ": " + JSON.stringify(detail) : ""
-    }`;
-    console.log(message);
-    setEventLog((prev) => [message, ...prev].slice(0, 15));
-  }, []);
-
   const createLearnMoreInstance = useCallback(
     (mode: string) => {
       const options: LearnMoreOptions = {
         amount,
         presentationMode: mode as LearnMoreOptions["presentationMode"],
         onShow: (data) => {
-          logEvent(`${mode} onShow`, data);
+          console.log(`${mode} onShow`, data);
           setInstanceStates((prev) => ({
             ...prev,
             [mode.toLowerCase()]: true,
           }));
         },
         onClose: (data) => {
-          logEvent(`${mode} onClose`, data);
+          console.log(`${mode} onClose`, data);
           setInstanceStates((prev) => ({
             ...prev,
             [mode.toLowerCase()]: false,
           }));
         },
         onApply: (data) => {
-          logEvent(`${mode} onApply`, data);
+          console.log(`${mode} onApply`, data);
         },
         onCalculate: (data) => {
-          logEvent(`${mode} onCalculate`, data);
+          console.log(`${mode} onCalculate`, data);
         },
       };
 
       return handleCreateLearnMore(options);
     },
-    [amount, handleCreateLearnMore, logEvent],
+    [amount, handleCreateLearnMore],
   );
 
-  useEffect(() => {
-    if (!isReady) return;
+  const learnMoreInstances = useMemo<LearnMoreInstances>(() => {
+    if (!isReady) {
+      return { auto: undefined, modal: undefined, popup: undefined, redirect: undefined };
+    }
 
-    logEvent("Creating Learn More instances");
-
-    const instances = {
+    return {
       auto: createLearnMoreInstance("AUTO"),
       modal: createLearnMoreInstance("MODAL"),
       popup: createLearnMoreInstance("POPUP"),
       redirect: createLearnMoreInstance("REDIRECT"),
     };
-
-    setLearnMoreInstances(instances);
-    logEvent("All Learn More instances created");
-  }, [isReady, createLearnMoreInstance, logEvent]);
+  }, [isReady, createLearnMoreInstance]);
 
   useEffect(() => {
     if (!isReady) return;
 
-    const updatePromises = Object.entries(learnMoreInstances).map(
-      async ([mode, instance]) => {
-        if (instance) {
-          await instance.update({
-            amount,
-            presentationMode:
-              mode.toUpperCase() as LearnMoreOptions["presentationMode"],
-          });
-          logEvent(
-            `Updated ${mode.toUpperCase()} instance with amount ${amount}`,
-          );
-        }
-      },
-    );
-
-    Promise.all(updatePromises);
-  }, [amount, learnMoreInstances, isReady, logEvent]);
+    Object.entries(learnMoreInstances).forEach(async ([mode, instance]) => {
+      if (instance) {
+        await instance.update({
+          amount,
+          presentationMode:
+            mode.toUpperCase() as LearnMoreOptions["presentationMode"],
+        });
+        console.log(
+          `Updated ${mode.toUpperCase()} instance with amount ${amount}`,
+        );
+      }
+    });
+  }, [amount, learnMoreInstances, isReady]);
 
   const openLearnMore = async (mode: string) => {
     const instance =
       learnMoreInstances[mode.toLowerCase() as keyof typeof learnMoreInstances];
     if (instance) {
-      logEvent(`Opening ${mode} Learn More`);
+      console.log(`Opening ${mode} Learn More`);
       try {
         await instance.open();
-        logEvent(`${mode} Learn More opened successfully`);
+        console.log(`${mode} Learn More opened successfully`);
       } catch (err) {
-        logEvent(`Failed to open ${mode} Learn More`, {
-          error: (err as Error).message,
-        });
+        console.error(`Failed to open ${mode} Learn More`, err);
       }
     }
   };
@@ -294,61 +270,6 @@ export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
         </div>
       </section>
 
-      {/* Event Log */}
-      <section
-        style={{
-          padding: "20px",
-          border: "1px solid #ddd",
-          borderRadius: "8px",
-          backgroundColor: "#f9f9f9",
-        }}
-      >
-        <h3>Event Log</h3>
-        <p style={{ fontSize: "14px", color: "#666", marginBottom: "10px" }}>
-          Real-time log of Learn More events (last 15 events)
-        </p>
-
-        {eventLog.length === 0 ? (
-          <p style={{ fontStyle: "italic", color: "#999" }}>
-            No events logged yet. Click a button to open Learn More.
-          </p>
-        ) : (
-          <div
-            style={{
-              maxHeight: "300px",
-              overflowY: "auto",
-              backgroundColor: "#1e1e1e",
-              color: "#d4d4d4",
-              padding: "10px",
-              borderRadius: "4px",
-              fontFamily: "monospace",
-              fontSize: "12px",
-            }}
-          >
-            {eventLog.map((log, index) => (
-              <div key={index} style={{ marginBottom: "5px" }}>
-                {log}
-              </div>
-            ))}
-          </div>
-        )}
-
-        <button
-          onClick={() => setEventLog([])}
-          style={{
-            marginTop: "10px",
-            padding: "8px 16px",
-            backgroundColor: "#6c757d",
-            color: "white",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-            fontSize: "14px",
-          }}
-        >
-          Clear Event Log
-        </button>
-      </section>
     </div>
   );
 };
