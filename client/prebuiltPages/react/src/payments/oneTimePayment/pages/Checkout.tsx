@@ -16,6 +16,32 @@ import BaseCheckout from "../../../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../../../utils";
 
+/**
+ * Checkout page for one-time payments.
+ *
+ * ELIGIBILITY HOOKS:
+ *
+ * useEligibleMethods - Client-side hook that returns eligibility from context
+ * OR fetches via SDK if not available. It will:
+ *   1. Return eligibility from PayPalProvider context (if already hydrated), or
+ *   2. Make an SDK call to fetch eligibility if not available in context.
+ * Use this at the top of checkout flow when you need client-side eligibility.
+ *
+ * Example:
+ *   const { eligiblePaymentMethods, isLoading } = useEligibleMethods();
+ *   if (isLoading) return <Spinner />;
+ *   // Use eligiblePaymentMethods to conditionally render payment buttons
+ *
+ * useFetchEligibleMethods - Server-only function for SSR/Next.js server
+ * components. Use this to pre-fetch eligibility server-side and pass to
+ * PayPalProvider via eligibleMethodsResponse prop. This is a context
+ * pass-through pattern - the provider holds the data, useEligibleMethods
+ * reads it without making additional network calls.
+ *
+ * Example (server component):
+ *   const response = await useFetchEligibleMethods({ clientToken, environment });
+ *   <PayPalProvider eligibleMethodsResponse={response} ... />
+ */
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();

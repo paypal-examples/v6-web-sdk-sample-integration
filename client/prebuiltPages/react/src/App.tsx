@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { Routes, Route, Link, HashRouter } from "react-router-dom";
-import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
+import {
+  PayPalProvider,
+  type FindEligiblePaymentMethodsResponse,
+} from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
-import { getBrowserSafeClientToken } from "./utils";
+import { getBrowserSafeClientToken, fetchEligibleMethods } from "./utils";
 import { HomePage } from "./pages/Home";
 import BaseProduct from "./pages/BaseProduct";
 import BaseCart from "./pages/BaseCart";
@@ -76,20 +79,36 @@ function Navigation() {
 
 function App() {
   const [clientToken, setClientToken] = useState<string | undefined>(undefined);
+  const [eligibleMethodsResponse, setEligibleMethodsResponse] = useState<
+    FindEligiblePaymentMethodsResponse | undefined
+  >(undefined);
 
   useEffect(() => {
-    const getClientToken = async () => {
-      const clientToken = await getBrowserSafeClientToken();
-      setClientToken(clientToken);
+    // Fetch client token and eligibility in parallel during app initialization.
+    // The eligibility response is passed to PayPalProvider to hydrate context,
+    // since the provider no longer auto-fetches eligibility.
+    const initializePayPal = async () => {
+      const [token, eligibility] = await Promise.all([
+        getBrowserSafeClientToken(),
+        fetchEligibleMethods(),
+      ]);
+      setClientToken(token);
+      setEligibleMethodsResponse(eligibility);
     };
 
-    getClientToken();
+    initializePayPal();
   }, []);
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
+      {/*
+        Pass eligibleMethodsResponse to hydrate the provider context.
+        This allows useEligibleMethods to return eligibility data without
+        making additional network calls.
+      */}
       <PayPalProvider
         clientToken={clientToken}
+        eligibleMethodsResponse={eligibleMethodsResponse}
         components={[
           "paypal-payments",
           "venmo-payments",

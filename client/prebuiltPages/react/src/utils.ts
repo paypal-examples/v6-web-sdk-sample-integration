@@ -103,3 +103,38 @@ export const createVaultToken = async () => {
     throw error;
   }
 };
+
+/**
+ * Fetches eligible payment methods from the server.
+ * This demonstrates server-side eligibility - the server calls PayPal's API
+ * and returns the response to hydrate the PayPalProvider context.
+ */
+export const fetchEligibleMethods = async () => {
+  const response = await fetch("/paypal-api/payments/find-eligible-methods", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      customer: {
+        country_code: "US",
+      },
+      purchase_units: [
+        {
+          amount: {
+            currency_code: "USD",
+          },
+        },
+      ],
+      preferences: {
+        include_account_features: true,
+      },
+    }),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Eligibility fetch failed: ${response.status}`);
+  }
+
+  return await response.json();
+};
