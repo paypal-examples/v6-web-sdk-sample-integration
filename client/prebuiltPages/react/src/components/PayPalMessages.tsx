@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback, useMemo } from "react";
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from "react";
 import { usePayPalMessages } from "@paypal/react-paypal-js/sdk-v6";
 import type {
   LearnMore,
@@ -55,8 +61,10 @@ export const ManualMessagingComponent: React.FC<PayPalMessagesProps> = ({
   amount,
 }) => {
   const containerRef = useRef<PayPalMessagesElement | null>(null);
-  const [messageContent, setMessageContent] =
-    useState<Record<string, unknown> | null>(null);
+  const [messageContent, setMessageContent] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
 
   const { handleFetchContent, isReady } = usePayPalMessages({
     buyerCountry: "US",
@@ -159,7 +167,12 @@ export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
 
   const learnMoreInstances = useMemo<LearnMoreInstances>(() => {
     if (!isReady) {
-      return { auto: undefined, modal: undefined, popup: undefined, redirect: undefined };
+      return {
+        auto: undefined,
+        modal: undefined,
+        popup: undefined,
+        redirect: undefined,
+      };
     }
 
     return {
@@ -276,7 +289,6 @@ export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
           ))}
         </div>
       </section>
-
     </div>
   );
 };

@@ -175,10 +175,7 @@ function App() {
             />
 
             {/* PayPal Messages demo */}
-            <Route
-              path="/paypal-messages"
-              element={<PayPalMessagesDemo />}
-            />
+            <Route path="/paypal-messages" element={<PayPalMessagesDemo />} />
 
             {/* Error handling demo */}
             <Route
