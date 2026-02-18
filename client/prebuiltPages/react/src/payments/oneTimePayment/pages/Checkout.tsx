@@ -15,6 +15,7 @@ import {
 import BaseCheckout from "../../../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../../../utils";
+import CardFieldsExperience from "../components/CardFieldsOneTimePayment";
 
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
@@ -121,6 +122,10 @@ const Checkout = () => {
       <PayPalGuestPaymentButton
         createOrder={handleCreateOrder}
         {...handlePaymentCallbacks}
+      />
+
+      <CardFieldsExperience
+        createOrder={handleCreateOrder}
       />
     </>
   );

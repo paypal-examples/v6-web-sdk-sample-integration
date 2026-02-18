@@ -95,6 +95,7 @@ function App() {
           "venmo-payments",
           "paypal-guest-payments",
           "paypal-subscriptions",
+          "card-fields"
         ]}
         pageType="checkout"
       >
