@@ -61,11 +61,6 @@ export const ManualMessagingComponent: React.FC<PayPalMessagesProps> = ({
   amount,
 }) => {
   const containerRef = useRef<PayPalMessagesElement | null>(null);
-  const [messageContent, setMessageContent] = useState<Record<
-    string,
-    unknown
-  > | null>(null);
-
   const { handleFetchContent, isReady } = usePayPalMessages({
     buyerCountry: "US",
     currencyCode: "USD",
@@ -83,22 +78,16 @@ export const ManualMessagingComponent: React.FC<PayPalMessagesProps> = ({
         logoType: "WORDMARK",
         textColor: "BLACK",
         onReady: (content) => {
-          setMessageContent(content);
+          const element = containerRef.current;
+          if (element && element.setContent) {
+            element.setContent(content);
+          }
         },
       });
     }
 
     loadContent();
   }, [amount, isReady, handleFetchContent]);
-
-  useEffect(() => {
-    if (containerRef.current && messageContent) {
-      const element = containerRef.current;
-      if (element.setContent) {
-        element.setContent(messageContent);
-      }
-    }
-  }, [messageContent]);
 
   return <paypal-message ref={containerRef} />;
 };
