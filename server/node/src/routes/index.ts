@@ -12,6 +12,7 @@ import {
   createOrderForOneTimePaymentWithShippingRouteHandler,
   createOrderForCardWithSingleUseTokenRouteHandler,
   createOrderForCardWithThreeDSecureRouteHandler,
+  getOrderRouteHandler,
   captureOrderRouteHandler,
 } from "./ordersRouteHandler";
 
@@ -62,6 +63,11 @@ router.post(
 router.post(
   "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
   createOrderForCardWithThreeDSecureRouteHandler,
+);
+
+router.get(
+  "/paypal-api/checkout/orders/:orderId",
+  getOrderRouteHandler,
 );
 
 router.post(
