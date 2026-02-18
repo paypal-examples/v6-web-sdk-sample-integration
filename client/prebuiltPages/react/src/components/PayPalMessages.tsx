@@ -11,8 +11,15 @@ interface PayPalMessagesProps {
 }
 
 /**
- * Basic PayPal Messages component that leverages auto-bootstrap
- * to have the component automatically fetch and display content.
+ * Basic PayPal Messages component using auto-bootstrap mode.
+ *
+ * With `auto-bootstrap={true}`, the `<paypal-message>` web component handles
+ * fetching and rendering Pay Later content on its own — no manual fetch calls needed.
+ * This is the simplest integration path for displaying Pay Later messaging.
+ *
+ * The `onPaypalMessageClick` event fires when a buyer clicks the "Learn More"
+ * link within the message, which can be used to track analytics or trigger
+ * custom behavior.
  */
 export const PayPalMessages: React.FC<PayPalMessagesProps> = ({ amount }) => {
   const { error } = usePayPalMessages({});
@@ -34,8 +41,15 @@ export const PayPalMessages: React.FC<PayPalMessagesProps> = ({ amount }) => {
 };
 
 /**
- * Manual messaging component that fetches content programmatically
- * and applies it to the web component via setContent().
+ * Manual messaging component that fetches content programmatically.
+ *
+ * Use this approach over auto-bootstrap when you need control over when content
+ * is fetched, want to customize fetch options per render, or need to react to
+ * the content before displaying it (via the `onReady` callback).
+ *
+ * The two-step flow is:
+ * 1. Call `handleFetchContent()` with styling and callback options
+ * 2. Apply the returned content to the `<paypal-message>` element via `setContent()`
  */
 export const ManualMessagingComponent: React.FC<PayPalMessagesProps> = ({
   amount,
@@ -93,25 +107,26 @@ type LearnMoreInstances = {
 };
 
 /**
- * Comprehensive Learn More demo featuring amount control,
- * four presentation modes, instance state tracking, and event logging.
+ * Learn More demo with programmatic control over all 4 presentation modes.
+ *
+ * Each mode determines how the financing details are displayed to the buyer:
+ * - AUTO: defaults to MODAL, but falls back to POPUP if the content is not embeddable in an iframe
+ * - MODAL: iframe overlay with accessibility features (tab trapping, close button)
+ * - POPUP: opens in a new browser popup window
+ * - REDIRECT: opens in a new browser tab via window.open()
+ *
+ * Instances support dynamic reconfiguration via `instance.update()`, used here
+ * to keep messaging in sync when the cart amount changes.
+ *
+ * Callback hooks:
+ * - onShow/onClose: fired when the Learn More experience opens or closes
+ * - onApply: fired when the buyer clicks the "Apply Now" button in the modal
+ * - onCalculate: fired when the buyer interacts with the payment calculator in the modal
  */
 export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
   initialAmount = "50.00",
 }) => {
   const [amount, setAmount] = useState(initialAmount);
-
-  const [, setInstanceStates] = useState<{
-    auto: boolean;
-    modal: boolean;
-    popup: boolean;
-    redirect: boolean;
-  }>({
-    auto: false,
-    modal: false,
-    popup: false,
-    redirect: false,
-  });
 
   const { handleCreateLearnMore, error, isReady } = usePayPalMessages({
     buyerCountry: "US",
@@ -125,17 +140,9 @@ export const PayPalMessagesLearnMore: React.FC<LearnMoreDemoProps> = ({
         presentationMode: mode as LearnMoreOptions["presentationMode"],
         onShow: (data) => {
           console.log(`${mode} onShow`, data);
-          setInstanceStates((prev) => ({
-            ...prev,
-            [mode.toLowerCase()]: true,
-          }));
         },
         onClose: (data) => {
           console.log(`${mode} onClose`, data);
-          setInstanceStates((prev) => ({
-            ...prev,
-            [mode.toLowerCase()]: false,
-          }));
         },
         onApply: (data) => {
           console.log(`${mode} onApply`, data);
