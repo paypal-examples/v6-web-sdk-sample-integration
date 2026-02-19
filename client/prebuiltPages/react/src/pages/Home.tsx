@@ -1,7 +1,6 @@
 import { Link } from "react-router-dom";
 
 export function HomePage() {
-
   return (
     <div
       style={{

@@ -73,25 +73,25 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 ## Application Routes
 
-| Route                           | Description                                     |
-| ------------------------------- | ----------------------------------------------- |
-| `/`                             | Home page with navigation |
-| `/one-time-payment`             | One-Time Payment product page                   |
-| `/one-time-payment/cart`        | One-Time Payment cart page                      |
-| `/one-time-payment/checkout`    | One-Time Payment checkout page                  |
-| `/one-time-payment/static-demo` | One-Time Payment static buttons demo            |
-| `/one-time-payment/error`       | One-Time Payment error boundary demo            |
-| `/save-payment`                 | Save Payment product page                       |
-| `/save-payment/cart`            | Save Payment cart page                          |
-| `/save-payment/checkout`        | Save Payment checkout page                      |
-| `/save-payment/static-demo`     | Save Payment static buttons demo                |
-| `/save-payment/error`           | Save Payment error boundary demo                |
-| `/subscription`                 | Subscription product page                       |
-| `/subscription/cart`            | Subscription cart page                          |
-| `/subscription/checkout`        | Subscription checkout page                      |
-| `/subscription/static-demo`     | Subscription static buttons demo                |
-| `/subscription/error`           | Subscription error boundary demo                |
-| `/error-boundary-test`          | Standalone error handling demonstration         |
+| Route                           | Description                             |
+| ------------------------------- | --------------------------------------- |
+| `/`                             | Home page with navigation               |
+| `/one-time-payment`             | One-Time Payment product page           |
+| `/one-time-payment/cart`        | One-Time Payment cart page              |
+| `/one-time-payment/checkout`    | One-Time Payment checkout page          |
+| `/one-time-payment/static-demo` | One-Time Payment static buttons demo    |
+| `/one-time-payment/error`       | One-Time Payment error boundary demo    |
+| `/save-payment`                 | Save Payment product page               |
+| `/save-payment/cart`            | Save Payment cart page                  |
+| `/save-payment/checkout`        | Save Payment checkout page              |
+| `/save-payment/static-demo`     | Save Payment static buttons demo        |
+| `/save-payment/error`           | Save Payment error boundary demo        |
+| `/subscription`                 | Subscription product page               |
+| `/subscription/cart`            | Subscription cart page                  |
+| `/subscription/checkout`        | Subscription checkout page              |
+| `/subscription/static-demo`     | Subscription static buttons demo        |
+| `/subscription/error`           | Subscription error boundary demo        |
+| `/error-boundary-test`          | Standalone error handling demonstration |
 
 ## Project Structure
 
@@ -206,25 +206,25 @@ Each checkout page uses `useEligibleMethods` to fetch eligibility data with the 
 
 ```typescript
 type FindEligibleMethodsOptions = {
-    amount?: string;           // Transaction amount, e.g., "100.00"
-    currencyCode?: string;     // Currency code, e.g., "USD"
-    paymentFlow?: PaymentFlow; // Payment flow type (see below)
+  amount?: string; // Transaction amount, e.g., "100.00"
+  currencyCode?: string; // Currency code, e.g., "USD"
+  paymentFlow?: PaymentFlow; // Payment flow type (see below)
 };
 
 type PaymentFlow =
-    | "ONE_TIME_PAYMENT"       // One-time payment (default)
-    | "RECURRING_PAYMENT"      // Subscription/recurring payments
-    | "VAULT_WITH_PAYMENT"     // Save payment method + charge immediately
-    | "VAULT_WITHOUT_PAYMENT"; // Save payment method only (no charge)
+  | "ONE_TIME_PAYMENT" // One-time payment (default)
+  | "RECURRING_PAYMENT" // Subscription/recurring payments
+  | "VAULT_WITH_PAYMENT" // Save payment method + charge immediately
+  | "VAULT_WITHOUT_PAYMENT"; // Save payment method only (no charge)
 ```
 
 #### paymentFlow by Page Type
 
-| Page Type       | paymentFlow Value        | Description                         |
-| --------------- | ------------------------ | ----------------------------------- |
-| One-Time        | `ONE_TIME_PAYMENT`       | Standard checkout                   |
-| Subscription    | `RECURRING_PAYMENT`      | Recurring/subscription payments     |
-| Save Payment    | `VAULT_WITHOUT_PAYMENT`  | Save payment method without charge  |
+| Page Type    | paymentFlow Value       | Description                        |
+| ------------ | ----------------------- | ---------------------------------- |
+| One-Time     | `ONE_TIME_PAYMENT`      | Standard checkout                  |
+| Subscription | `RECURRING_PAYMENT`     | Recurring/subscription payments    |
+| Save Payment | `VAULT_WITHOUT_PAYMENT` | Save payment method without charge |
 
 #### Example
 
