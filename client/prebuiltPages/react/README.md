@@ -195,7 +195,7 @@ The `components` prop specifies which payment methods to load:
 
 ### 2. Eligibility
 
-The PayPalProvider no longer auto-fetches eligibility. This example uses `useEligibleMethods` to fetch and hydrate eligibility data at the top level.
+This example uses `useEligibleMethods` to fetch and hydrate eligibility data at the top level.
 
 #### How It Works (Fire-and-Forget Pattern)
 
