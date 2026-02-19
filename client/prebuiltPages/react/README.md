@@ -227,8 +227,8 @@ Home.tsx (top-level component below PayPalProvider)
 // Home.tsx - fire-and-forget (start fetch early)
 useEligibleMethods();
 
-// Checkout.tsx - handle loading/error states
-const { isLoading, error } = useEligibleMethods();
+// Checkout.tsx - check for errors
+const { error } = useEligibleMethods();
 ```
 
 See `src/pages/Home.tsx` and `src/payments/oneTimePayment/pages/Checkout.tsx` for full implementation.

@@ -24,9 +24,8 @@ const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
 
-  // Access eligibility from provider reducer.
-  const { isLoading: isEligibilityLoading, error: eligibilityError } =
-    useEligibleMethods();
+  // Access eligibility from provider reducer (pre-fetched in Home.tsx via fire-and-forget).
+  const { error: eligibilityError } = useEligibleMethods();
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -79,7 +78,6 @@ const StaticButtons = () => {
   );
 
   const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isLoading = isSDKLoading || isEligibilityLoading;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
@@ -93,7 +91,7 @@ const StaticButtons = () => {
   }, []);
 
   const renderPaymentButtons = (products: ProductItem[]) => {
-    if (isLoading) {
+    if (isSDKLoading) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...

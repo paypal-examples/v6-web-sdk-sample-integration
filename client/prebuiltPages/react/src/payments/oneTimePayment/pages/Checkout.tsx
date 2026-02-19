@@ -29,9 +29,8 @@ const Checkout = () => {
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
 
-  // Access eligibility from context (likely already fetched in Home.tsx).
-  const { isLoading: isEligibilityLoading, error: eligibilityError } =
-    useEligibleMethods();
+  // Access eligibility from provider reducer (pre-fetched in Home.tsx via fire-and-forget).
+  const { error: eligibilityError } = useEligibleMethods();
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -98,7 +97,6 @@ const Checkout = () => {
   );
 
   const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isLoading = isSDKLoading || isEligibilityLoading;
 
   const handleModalClose = () => {
     setModalState(null);
@@ -107,9 +105,7 @@ const Checkout = () => {
     }
   };
 
-  // Show loading state while SDK or eligibility is loading
-  // Show error state if eligibility fetch failed
-  const paymentButtons = isLoading ? (
+  const paymentButtons = isSDKLoading ? (
     <div style={{ padding: "1rem", textAlign: "center" }}>
       Loading payment methods...
     </div>
