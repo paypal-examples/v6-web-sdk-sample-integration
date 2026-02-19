@@ -79,7 +79,7 @@ const paymentSessionOptions = {
     });
     console.log("onError", error);
   },
-  vault: true,
+  savePayment: true,
 };
 
 async function setupPayPalButton(sdkInstance) {
