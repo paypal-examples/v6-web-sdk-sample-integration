@@ -20,7 +20,7 @@ import { captureOrder, createOrder } from "../../../utils";
 /**
  * Checkout page for one-time payments.
  *
- * Eligibility: We call useEligibleMethods here to access eligibility data.
+ * Eligibility: We call useEligibleMethods here to access eligibility from the provider reducer.
  * The fetch was started in Home.tsx (fire-and-forget), so data is likely
  * already in context. See README.md for details.
  */
