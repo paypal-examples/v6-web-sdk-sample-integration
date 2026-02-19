@@ -1,21 +1,6 @@
 import { Link } from "react-router-dom";
-import { useEligibleMethods } from "@paypal/react-paypal-js/sdk-v6";
 
-/**
- *
- * We call useEligibleMethods here to start fetching eligibility data early,
- * in order to hydrate the PayPalProvider's reducer with the PayPal JS SDK's eligibility response before user navigates to checkout. This is
- * a "fire-and-forget" pattern - we don't block page rendering while waiting.
- *
- *
- * See README.md for detailed eligibility documentation.
- */
 export function HomePage() {
-  // Start eligibility fetch early (fire-and-forget pattern).
-  // We don't block rendering - the page loads immediately while eligibility
-  // fetches in the background. Buttons that need eligibility will handle
-  // their own loading states.
-  useEligibleMethods();
 
   return (
     <div

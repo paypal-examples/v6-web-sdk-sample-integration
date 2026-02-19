@@ -1,5 +1,8 @@
 import { useState, useCallback } from "react";
 import {
+  usePayPal,
+  useEligibleMethods,
+  INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
@@ -10,8 +13,26 @@ import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent } from "../../../types";
 import { createSubscription } from "../../../utils";
 
+/**
+ * Static buttons demo for subscription payments.
+ *
+ * Uses useEligibleMethods to check payment method eligibility for recurring payments.
+ */
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus } = usePayPal();
+
+  // Fetch eligibility for recurring/subscription payment flow
+  const { isLoading: isEligibilityLoading, error: eligibilityError } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+        paymentFlow: "RECURRING_PAYMENT",
+      },
+    });
+
+  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isReady = !isSDKLoading && !isEligibilityLoading;
 
   const handleSubscriptionCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -63,6 +84,22 @@ const StaticButtons = () => {
   );
 
   const renderPaymentButtons = () => {
+    if (!isReady) {
+      return (
+        <div style={{ padding: "1rem", textAlign: "center" }}>
+          Loading payment methods...
+        </div>
+      );
+    }
+
+    if (eligibilityError) {
+      return (
+        <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+          Failed to load payment options. Please refresh the page.
+        </div>
+      );
+    }
+
     return (
       <PayPalSubscriptionButton
         createSubscription={createSubscription}

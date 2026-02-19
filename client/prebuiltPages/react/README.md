@@ -75,7 +75,7 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 | Route                           | Description                                     |
 | ------------------------------- | ----------------------------------------------- |
-| `/`                             | Home page with eligibility fetch and navigation |
+| `/`                             | Home page with navigation |
 | `/one-time-payment`             | One-Time Payment product page                   |
 | `/one-time-payment/cart`        | One-Time Payment cart page                      |
 | `/one-time-payment/checkout`    | One-Time Payment checkout page                  |
@@ -110,7 +110,7 @@ react/
 │   │   ├── useProducts.ts         # Hook for loading products with prices from server
 │   │   └── useQuantityChange.ts   # Hook for handling product quantity updates
 │   ├── pages/                     # Base components (shared across flows)
-│   │   ├── Home.tsx               # Landing page (calls useEligibleMethods)
+│   │   ├── Home.tsx               # Landing page with navigation
 │   │   ├── BaseProduct.tsx        # Base product selection page
 │   │   ├── BaseCart.tsx           # Base shopping cart page
 │   │   ├── BaseCheckout.tsx       # Base checkout page
@@ -135,7 +135,7 @@ react/
 │   └── payments/                  # Flow-specific implementations
 │       ├── oneTimePayment/
 │       │   ├── pages/
-│       │   │   ├── Checkout.tsx   # Uses useEligibleMethods for error handling
+│       │   │   ├── Checkout.tsx   # Uses useEligibleMethods with ONE_TIME_PAYMENT
 │       │   │   └── StaticButtons.tsx
 │       │   └── components/
 │       │       └── PayPalCreditOneTimeButton.tsx
@@ -193,24 +193,7 @@ The `components` prop specifies which payment methods to load:
 
 ### 2. Eligibility
 
-This example uses `useEligibleMethods` to fetch and hydrate eligibility data at the top level.
-
-#### How It Works (Fire-and-Forget Pattern)
-
-```
-Home.tsx (top-level component below PayPalProvider)
-    │
-    └── useEligibleMethods()  // Start fetch, don't block rendering
-              │
-              ├── Page renders immediately (no blocking)
-              └── Eligibility fetches in background
-                      │
-                      ↓
-        When user reaches Checkout:
-              │
-              └── PayLaterButton reads eligibility from context
-                  (countryCode, productCode) - renders when ready
-```
+Each checkout page uses `useEligibleMethods` to fetch eligibility data with the appropriate `paymentFlow` parameter.
 
 #### SDK Eligibility Hooks
 
@@ -219,17 +202,56 @@ Home.tsx (top-level component below PayPalProvider)
 | `useEligibleMethods`      | Client-side | **Yes**              | Returns `{ eligiblePaymentMethods, isLoading, error }`. Fetches via SDK if context is empty, otherwise returns eligibility from the provider context. |
 | `useFetchEligibleMethods` | Server-only | **No**               | Requires `"server-only"` import. Do not use in client-side React apps.                                                                                |
 
+#### useEligibleMethods Parameters
+
+```typescript
+type FindEligibleMethodsOptions = {
+    amount?: string;           // Transaction amount, e.g., "100.00"
+    currencyCode?: string;     // Currency code, e.g., "USD"
+    paymentFlow?: PaymentFlow; // Payment flow type (see below)
+};
+
+type PaymentFlow =
+    | "ONE_TIME_PAYMENT"       // One-time payment (default)
+    | "RECURRING_PAYMENT"      // Subscription/recurring payments
+    | "VAULT_WITH_PAYMENT"     // Save payment method + charge immediately
+    | "VAULT_WITHOUT_PAYMENT"; // Save payment method only (no charge)
+```
+
+#### paymentFlow by Page Type
+
+| Page Type       | paymentFlow Value        | Description                         |
+| --------------- | ------------------------ | ----------------------------------- |
+| One-Time        | `ONE_TIME_PAYMENT`       | Standard checkout                   |
+| Subscription    | `RECURRING_PAYMENT`      | Recurring/subscription payments     |
+| Save Payment    | `VAULT_WITHOUT_PAYMENT`  | Save payment method without charge  |
+
 #### Example
 
 ```tsx
-// Home.tsx - fire-and-forget (start fetch early)
-useEligibleMethods();
+// Checkout.tsx - fetch eligibility with correct paymentFlow
+const { isLoading: isEligibilityLoading, error: eligibilityError } = useEligibleMethods({
+  payload: {
+    currencyCode: "USD",
+    paymentFlow: "ONE_TIME_PAYMENT",
+  },
+});
 
-// Checkout.tsx - check for errors
-const { error } = useEligibleMethods();
+// Use isReady to control button visibility
+const isReady = !isSDKLoading && !isEligibilityLoading;
+
+if (!isReady) {
+  return <div>Loading payment methods...</div>;
+}
+
+if (eligibilityError) {
+  return <div>Failed to load payment options.</div>;
+}
+
+return <PayPalOneTimePaymentButton ... />;
 ```
 
-See `src/pages/Home.tsx` and `src/payments/oneTimePayment/pages/Checkout.tsx` for full implementation.
+See `src/payments/oneTimePayment/pages/Checkout.tsx` for full implementation.
 
 ### 3. Payment Session Hooks
 

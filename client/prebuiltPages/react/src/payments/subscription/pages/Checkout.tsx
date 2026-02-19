@@ -1,6 +1,9 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
+  usePayPal,
+  useEligibleMethods,
+  INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
@@ -11,9 +14,27 @@ import BaseCheckout from "../../../pages/BaseCheckout";
 import type { ModalType, ModalContent } from "../../../types";
 import { createSubscription } from "../../../utils";
 
+/**
+ * Checkout page for subscription payments.
+ *
+ * Uses useEligibleMethods to check payment method eligibility for recurring payments.
+ */
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
+
+  // Fetch eligibility for recurring/subscription payment flow
+  const { isLoading: isEligibilityLoading, error: eligibilityError } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+        paymentFlow: "RECURRING_PAYMENT",
+      },
+    });
+
+  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isReady = !isSDKLoading && !isEligibilityLoading;
 
   const handleSubscriptionCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -71,7 +92,15 @@ const Checkout = () => {
     }
   };
 
-  const paymentButtons = (
+  const paymentButtons = !isReady ? (
+    <div style={{ padding: "1rem", textAlign: "center" }}>
+      Loading payment methods...
+    </div>
+  ) : eligibilityError ? (
+    <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+      Failed to load payment options. Please refresh the page.
+    </div>
+  ) : (
     <PayPalSubscriptionButton
       createSubscription={createSubscription}
       presentationMode="auto"

@@ -20,17 +20,21 @@ import { captureOrder, createOrder } from "../../../utils";
 /**
  * Checkout page for one-time payments.
  *
- * Eligibility: We call useEligibleMethods here to access eligibility from the provider reducer.
- * The fetch was started in Home.tsx (fire-and-forget), so data is likely
- * already in context. See README.md for details.
+ * Uses useEligibleMethods to check payment method eligibility for one-time payments.
  */
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
 
-  // Access eligibility from provider reducer (pre-fetched in Home.tsx via fire-and-forget).
-  const { error: eligibilityError } = useEligibleMethods();
+  // Fetch eligibility for one-time payment flow
+  const { isLoading: isEligibilityLoading, error: eligibilityError } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+        paymentFlow: "ONE_TIME_PAYMENT",
+      },
+    });
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -97,6 +101,7 @@ const Checkout = () => {
   );
 
   const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isReady = !isSDKLoading && !isEligibilityLoading;
 
   const handleModalClose = () => {
     setModalState(null);
@@ -105,7 +110,7 @@ const Checkout = () => {
     }
   };
 
-  const paymentButtons = isSDKLoading ? (
+  const paymentButtons = !isReady ? (
     <div style={{ padding: "1rem", textAlign: "center" }}>
       Loading payment methods...
     </div>

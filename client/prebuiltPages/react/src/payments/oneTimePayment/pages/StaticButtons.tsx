@@ -18,14 +18,21 @@ import { captureOrder, createOrder } from "../../../utils";
 
 /**
  * Static buttons demo for one-time payments.
- * See README.md for eligibility documentation.
+ *
+ * Uses useEligibleMethods to check payment method eligibility for one-time payments.
  */
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
 
-  // Access eligibility from provider reducer (pre-fetched in Home.tsx via fire-and-forget).
-  const { error: eligibilityError } = useEligibleMethods();
+  // Fetch eligibility for one-time payment flow
+  const { isLoading: isEligibilityLoading, error: eligibilityError } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+        paymentFlow: "ONE_TIME_PAYMENT",
+      },
+    });
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -78,6 +85,7 @@ const StaticButtons = () => {
   );
 
   const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isReady = !isSDKLoading && !isEligibilityLoading;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
@@ -91,7 +99,7 @@ const StaticButtons = () => {
   }, []);
 
   const renderPaymentButtons = (products: ProductItem[]) => {
-    if (isSDKLoading) {
+    if (!isReady) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...
