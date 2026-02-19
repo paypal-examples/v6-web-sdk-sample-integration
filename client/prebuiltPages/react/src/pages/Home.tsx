@@ -2,14 +2,11 @@ import { Link } from "react-router-dom";
 import { useEligibleMethods } from "@paypal/react-paypal-js/sdk-v6";
 
 /**
- * HomePage is the entry point of the app, placed just below PayPalProvider.
  *
  * We call useEligibleMethods here to start fetching eligibility data early,
  * so it's likely ready by the time the user navigates to checkout. This is
  * a "fire-and-forget" pattern - we don't block page rendering while waiting.
  *
- * The PayLaterButton component internally handles missing eligibility data
- * (it won't render until countryCode/productCode are available).
  *
  * See README.md for detailed eligibility documentation.
  */

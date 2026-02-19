@@ -25,7 +25,6 @@ const StaticButtons = () => {
   const { loadingStatus } = usePayPal();
 
   // Access eligibility from context (likely already fetched in Home.tsx).
-  // PayLaterButton internally uses this data for rendering.
   const { isLoading: isEligibilityLoading, error: eligibilityError } =
     useEligibleMethods();
 
