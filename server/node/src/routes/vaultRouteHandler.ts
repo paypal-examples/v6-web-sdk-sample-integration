@@ -115,10 +115,9 @@ async function savePaymentTokenToDatabase(
     paypalCustomerId?: string;
   }) => {};
 
-  // store the payment token for future transactions
-  // store the customer id for two things:
-  // 1. CRUD operations with the Payment Method Tokens API
-  // 2. Displaying the return buyer experience with the PayPal Web SDK
+  // store the following information to your customer database table:
+  // 1. store the payment token for future transactions
+  // 2. store the paypal customer id for displaying the return buyer experience with the PayPal Web SDK
   storeInCustomerTable({
     paymentToken: paymentTokenResponse.id,
     paypalCustomerId: paymentTokenResponse.customer?.id,
