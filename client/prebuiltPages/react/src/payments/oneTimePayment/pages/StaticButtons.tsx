@@ -24,7 +24,7 @@ const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
 
-  // Access eligibility from context (likely already fetched in Home.tsx).
+  // Access eligibility from provider reducer.
   const { isLoading: isEligibilityLoading, error: eligibilityError } =
     useEligibleMethods();
 
