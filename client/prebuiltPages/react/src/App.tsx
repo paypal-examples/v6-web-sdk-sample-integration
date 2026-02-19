@@ -79,8 +79,8 @@ function App() {
 
   useEffect(() => {
     const getClientToken = async () => {
-      const token = await getBrowserSafeClientToken();
-      setClientToken(token);
+      const clientToken = await getBrowserSafeClientToken();
+      setClientToken(clientToken);
     };
 
     getClientToken();
