@@ -111,8 +111,8 @@ async function savePaymentTokenToDatabase(
   paymentTokenResponse: PaymentTokenResponse,
 ) {
   const storeInCustomerTable = (_options: {
-    paymentToken: string;
-    paypalCustomerId: string;
+    paymentToken?: string;
+    paypalCustomerId?: string;
   }) => {};
 
   // store the payment token for future transactions
@@ -120,8 +120,8 @@ async function savePaymentTokenToDatabase(
   // 1. CRUD operations with the Payment Method Tokens API
   // 2. Displaying the return buyer experience with the PayPal Web SDK
   storeInCustomerTable({
-    paymentToken: paymentTokenResponse.id!,
-    paypalCustomerId: paymentTokenResponse.customer?.id!,
+    paymentToken: paymentTokenResponse.id,
+    paypalCustomerId: paymentTokenResponse.customer?.id,
   });
 
   return Promise.resolve();
