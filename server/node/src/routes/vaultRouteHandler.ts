@@ -106,10 +106,23 @@ export async function createPaymentTokenRouteHandler(
   }
 }
 
+// example function to teach saving the paymentTokenResponse to a database
 async function savePaymentTokenToDatabase(
-  _paymentTokenResponse: PaymentTokenResponse,
+  paymentTokenResponse: PaymentTokenResponse,
 ) {
-  // example function to teach saving the paymentToken to a database
-  // to be used for future transactions
+  const storeInCustomerTable = (_options: {
+    paymentToken: string;
+    paypalCustomerId: string;
+  }) => {};
+
+  // store the payment token for future transactions
+  // store the customer id for two things:
+  // 1. CRUD operations with the Payment Method Tokens API
+  // 2. Displaying the return buyer experience with the PayPal Web SDK
+  storeInCustomerTable({
+    paymentToken: paymentTokenResponse.id!,
+    paypalCustomerId: paymentTokenResponse.customer?.id!,
+  });
+
   return Promise.resolve();
 }
