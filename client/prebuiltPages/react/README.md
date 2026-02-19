@@ -75,20 +75,23 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 | Route                           | Description                                     |
 | ------------------------------- | ----------------------------------------------- |
-| `/`                             | Home page with links to all three payment flows |
+| `/`                             | Home page with eligibility fetch and navigation |
 | `/one-time-payment`             | One-Time Payment product page                   |
 | `/one-time-payment/cart`        | One-Time Payment cart page                      |
 | `/one-time-payment/checkout`    | One-Time Payment checkout page                  |
 | `/one-time-payment/static-demo` | One-Time Payment static buttons demo            |
+| `/one-time-payment/error`       | One-Time Payment error boundary demo            |
 | `/save-payment`                 | Save Payment product page                       |
 | `/save-payment/cart`            | Save Payment cart page                          |
 | `/save-payment/checkout`        | Save Payment checkout page                      |
 | `/save-payment/static-demo`     | Save Payment static buttons demo                |
+| `/save-payment/error`           | Save Payment error boundary demo                |
 | `/subscription`                 | Subscription product page                       |
 | `/subscription/cart`            | Subscription cart page                          |
 | `/subscription/checkout`        | Subscription checkout page                      |
 | `/subscription/static-demo`     | Subscription static buttons demo                |
-| `/error-boundary-test`          | Error handling demonstration                    |
+| `/subscription/error`           | Subscription error boundary demo                |
+| `/error-boundary-test`          | Standalone error handling demonstration         |
 
 ## Project Structure
 
@@ -101,18 +104,18 @@ react/
 │   ├── types/
 │   │   └── index.ts               # Shared TypeScript interfaces
 │   ├── constants/
-│   │   └── products.ts            # Client product catalog (all details except price)
+│   │   └── products.ts            # Client product catalog
 │   ├── hooks/                     # Custom React hooks for code reuse
 │   │   ├── useCartTotals.ts       # Hook for cart calculations (totalItems, total)
 │   │   ├── useProducts.ts         # Hook for loading products with prices from server
 │   │   └── useQuantityChange.ts   # Hook for handling product quantity updates
 │   ├── pages/                     # Base components (shared across flows)
-│   │   ├── Home.tsx               # Landing page with navigation
+│   │   ├── Home.tsx               # Landing page (calls useEligibleMethods)
 │   │   ├── BaseProduct.tsx        # Base product selection page
 │   │   ├── BaseCart.tsx           # Base shopping cart page
 │   │   ├── BaseCheckout.tsx       # Base checkout page
 │   │   ├── BaseStaticButtons.tsx  # Base static buttons demo page
-│   │   └── ErrorBoundary.tsx      # Error handling demo
+│   │   └── ErrorBoundary.tsx      # Error handling demo page
 │   ├── components/                # Shared UI components
 │   │   ├── ProductDisplay.tsx     # Product grid display
 │   │   ├── PaymentModal.tsx       # Success/error modal
@@ -124,28 +127,23 @@ react/
 │   │   ├── Modal.css
 │   │   ├── Product.css
 │   │   └── StaticButtons.css
-│   ├── images/                    # Shared product images for all flows
+│   ├── images/                    # Product images
 │   │   ├── world-cup.jpg
 │   │   ├── basket-ball.jpeg
 │   │   ├── base-ball.jpeg
 │   │   └── hockey-puck.jpeg
 │   └── payments/                  # Flow-specific implementations
 │       ├── oneTimePayment/
-│       │   ├── pages/             # Flow wrappers (use Base components)
-│       │   │   ├── Checkout.tsx
+│       │   ├── pages/
+│       │   │   ├── Checkout.tsx   # Uses useEligibleMethods for error handling
 │       │   │   └── StaticButtons.tsx
-│       │   └── components/        # Flow-specific payment buttons
-│       │       ├── PayPalButton.tsx
-│       │       ├── VenmoButton.tsx
-│       │       ├── PayLaterButton.tsx
-│       │       ├── PayPalBasicCardButton.tsx
+│       │   └── components/
 │       │       └── PayPalCreditOneTimeButton.tsx
 │       ├── savePayment/
 │       │   ├── pages/
 │       │   │   ├── Checkout.tsx
 │       │   │   └── StaticButtons.tsx
 │       │   └── components/
-│       │       ├── PayPalSaveButton.tsx
 │       │       └── PayPalCreditSaveButton.tsx
 │       └── subscription/
 │           ├── pages/
@@ -216,10 +214,10 @@ Home.tsx (top-level component below PayPalProvider)
 
 #### SDK Eligibility Hooks
 
-| Hook                      | Environment | Use in this example? | Description                                                                                                                 |
-| ------------------------- | ----------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
+| Hook                      | Environment | Use in this example? | Description                                                                                                                                           |
+| ------------------------- | ----------- | -------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `useEligibleMethods`      | Client-side | **Yes**              | Returns `{ eligiblePaymentMethods, isLoading, error }`. Fetches via SDK if context is empty, otherwise returns eligibility from the provider context. |
-| `useFetchEligibleMethods` | Server-only | **No**               | Requires `"server-only"` import. Do not use in client-side React apps.            |
+| `useFetchEligibleMethods` | Server-only | **No**               | Requires `"server-only"` import. Do not use in client-side React apps.                                                                                |
 
 #### Example
 
