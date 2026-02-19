@@ -216,10 +216,10 @@ Home.tsx (top-level component below PayPalProvider)
 
 #### SDK Eligibility Hooks
 
-| Hook                      | Environment | Use in this example? | Description                                                                 |
-| ------------------------- | ----------- | -------------------- | --------------------------------------------------------------------------- |
+| Hook                      | Environment | Use in this example? | Description                                                                                                                 |
+| ------------------------- | ----------- | -------------------- | --------------------------------------------------------------------------------------------------------------------------- |
 | `useEligibleMethods`      | Client-side | **Yes**              | Returns `{ eligiblePaymentMethods, isLoading, error }`. Fetches via SDK if context is empty, otherwise returns cached data. |
-| `useFetchEligibleMethods` | Server-only | **No**               | For SSR frameworks only (Next.js, Remix). Requires `"server-only"` import. Do not use in client-side React apps. |
+| `useFetchEligibleMethods` | Server-only | **No**               | For SSR frameworks only (Next.js, Remix). Requires `"server-only"` import. Do not use in client-side React apps.            |
 
 #### Example
 

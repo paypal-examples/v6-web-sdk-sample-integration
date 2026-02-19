@@ -103,4 +103,3 @@ export const createVaultToken = async () => {
     throw error;
   }
 };
-
