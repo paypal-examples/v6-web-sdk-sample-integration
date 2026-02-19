@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   usePayPal,
+  useEligibleMethods,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnErrorData,
@@ -19,33 +20,19 @@ import { captureOrder, createOrder } from "../../../utils";
 /**
  * Checkout page for one-time payments.
  *
- * ELIGIBILITY HOOKS:
- *
- * useEligibleMethods - Client-side hook that returns eligibility from context
- * OR fetches via SDK if not available. It will:
- *   1. Return eligibility from PayPalProvider context (if already hydrated), or
- *   2. Make an SDK call to fetch eligibility if not available in context.
- * Use this at the top of checkout flow when you need client-side eligibility.
- *
- * Example:
- *   const { eligiblePaymentMethods, isLoading } = useEligibleMethods();
- *   if (isLoading) return <Spinner />;
- *   // Use eligiblePaymentMethods to conditionally render payment buttons
- *
- * useFetchEligibleMethods - Server-only function for SSR/Next.js server
- * components. Use this to pre-fetch eligibility server-side and pass to
- * PayPalProvider via eligibleMethodsResponse prop. This is a context
- * pass-through pattern - the provider holds the data, useEligibleMethods
- * reads it without making additional network calls.
- *
- * Example (server component):
- *   const response = await useFetchEligibleMethods({ clientToken, environment });
- *   <PayPalProvider eligibleMethodsResponse={response} ... />
+ * Eligibility: We call useEligibleMethods here to access eligibility data.
+ * The fetch was started in Home.tsx (fire-and-forget), so data is likely
+ * already in context. See README.md for details.
  */
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
+
+  // Access eligibility from context (likely already fetched in Home.tsx).
+  // PayLaterButton internally uses this data for rendering.
+  const { isLoading: isEligibilityLoading, error: eligibilityError } =
+    useEligibleMethods();
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -112,6 +99,7 @@ const Checkout = () => {
   );
 
   const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isLoading = isSDKLoading || isEligibilityLoading;
 
   const handleModalClose = () => {
     setModalState(null);
@@ -120,9 +108,15 @@ const Checkout = () => {
     }
   };
 
-  const paymentButtons = isSDKLoading ? (
+  // Show loading state while SDK or eligibility is loading
+  // Show error state if eligibility fetch failed
+  const paymentButtons = isLoading ? (
     <div style={{ padding: "1rem", textAlign: "center" }}>
       Loading payment methods...
+    </div>
+  ) : eligibilityError ? (
+    <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+      Failed to load payment options. Please refresh the page.
     </div>
   ) : (
     <>

@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import {
   usePayPal,
+  useEligibleMethods,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnCompleteData,
@@ -16,22 +17,17 @@ import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../../../utils";
 
 /**
- * useEligibleMethods - Client-side hook that accesses eligible payment methods.
- * It returns eligibility from PayPalProvider context if already hydrated (e.g.,
- * via server-side fetch passed to eligibleMethodsResponse prop), OR fetches
- * via SDK if not available in context.
- *
- * useFetchEligibleMethods - Server-only function (import "server-only") for
- * pre-fetching eligibility in SSR environments. Pass the response to
- * PayPalProvider's eligibleMethodsResponse prop to hydrate context.
- *
- * Example:
- *   const { eligiblePaymentMethods, isLoading } = useEligibleMethods();
- *   if (isLoading) return <LoadingSpinner />;
+ * Static buttons demo for one-time payments.
+ * See README.md for eligibility documentation.
  */
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
+
+  // Access eligibility from context (likely already fetched in Home.tsx).
+  // PayLaterButton internally uses this data for rendering.
+  const { isLoading: isEligibilityLoading, error: eligibilityError } =
+    useEligibleMethods();
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -84,6 +80,7 @@ const StaticButtons = () => {
   );
 
   const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isLoading = isSDKLoading || isEligibilityLoading;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
@@ -97,10 +94,18 @@ const StaticButtons = () => {
   }, []);
 
   const renderPaymentButtons = (products: ProductItem[]) => {
-    if (isSDKLoading) {
+    if (isLoading) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...
+        </div>
+      );
+    }
+
+    if (eligibilityError) {
+      return (
+        <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+          Failed to load payment options. Please refresh the page.
         </div>
       );
     }

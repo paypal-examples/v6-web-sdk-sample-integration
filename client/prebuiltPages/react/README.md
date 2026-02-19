@@ -193,7 +193,47 @@ The `components` prop specifies which payment methods to load:
 - `paypal-guest-payments` - Guest card payment button
 - `paypal-subscriptions` - Subscription buttons
 
-### 2. Payment Session Hooks
+### 2. Eligibility
+
+The PayPalProvider no longer auto-fetches eligibility. This example uses `useEligibleMethods` to fetch and hydrate eligibility data at the top level.
+
+#### How It Works (Fire-and-Forget Pattern)
+
+```
+Home.tsx (top-level component below PayPalProvider)
+    │
+    └── useEligibleMethods()  // Start fetch, don't block rendering
+              │
+              ├── Page renders immediately (no blocking)
+              └── Eligibility fetches in background
+                      │
+                      ↓
+        When user reaches Checkout:
+              │
+              └── PayLaterButton reads eligibility from context
+                  (countryCode, productCode) - renders when ready
+```
+
+#### SDK Eligibility Hooks
+
+| Hook                      | Environment | Use in this example? | Description                                                                 |
+| ------------------------- | ----------- | -------------------- | --------------------------------------------------------------------------- |
+| `useEligibleMethods`      | Client-side | **Yes**              | Returns `{ eligiblePaymentMethods, isLoading, error }`. Fetches via SDK if context is empty, otherwise returns cached data. |
+| `useFetchEligibleMethods` | Server-only | **No**               | For SSR frameworks only (Next.js, Remix). Requires `"server-only"` import. Do not use in client-side React apps. |
+
+#### Example
+
+```tsx
+// Home.tsx - fire-and-forget (start fetch early)
+useEligibleMethods();
+
+// Checkout.tsx - handle loading/error states
+const { isLoading, error } = useEligibleMethods();
+```
+
+See `src/pages/Home.tsx` and `src/payments/oneTimePayment/pages/Checkout.tsx` for full implementation.
+
+### 3. Payment Session Hooks
 
 Each payment button uses a specialized hook to create a payment session:
 
@@ -225,7 +265,7 @@ const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
 };
 ```
 
-### 3. Payment Flow
+### 4. Payment Flow
 
 1. User clicks a payment button
 2. `handleClick()` starts the payment session
