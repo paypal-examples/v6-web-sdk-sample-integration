@@ -4,7 +4,7 @@ import { useEligibleMethods } from "@paypal/react-paypal-js/sdk-v6";
 /**
  *
  * We call useEligibleMethods here to start fetching eligibility data early,
- * so it's likely ready by the time the user navigates to checkout. This is
+ * in order to hydrate the PayPalProvider's reducer with the PayPal JS SDK's eligibility response before user navigates to checkout. This is
  * a "fire-and-forget" pattern - we don't block page rendering while waiting.
  *
  *
