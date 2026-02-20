@@ -170,7 +170,6 @@ function setupPayPalCreditButton({
 
 function getSharedPaymentSessionOptions() {
   return {
-    commit: false,
     async onApprove(data: OnApproveDataOneTimePayments) {
       console.log("onApprove", data);
       const orderData = await captureOrderApiCall({
