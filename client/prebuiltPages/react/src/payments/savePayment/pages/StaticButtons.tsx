@@ -1,5 +1,8 @@
 import { useState, useCallback } from "react";
 import {
+  usePayPal,
+  useEligibleMethods,
+  INSTANCE_LOADING_STATE,
   type OnApproveDataSavePayments,
   type OnCompleteData,
   type OnCancelDataSavePayments,
@@ -11,8 +14,24 @@ import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent } from "../../../types";
 import { createVaultToken } from "../../../utils";
 
+/**
+ * Static buttons demo for saving payment methods (vaulting).
+ *
+ * Uses useEligibleMethods to check payment method eligibility for vaulting without payment.
+ */
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus } = usePayPal();
+
+  // Fetch eligibility for vault without payment flow (save payment method only)
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "VAULT_WITHOUT_PAYMENT",
+    },
+  });
+
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleSaveCallbacks = {
     onApprove: async (data: OnApproveDataSavePayments) => {
@@ -65,6 +84,22 @@ const StaticButtons = () => {
   );
 
   const renderPaymentButtons = () => {
+    if (isLoading) {
+      return (
+        <div style={{ padding: "1rem", textAlign: "center" }}>
+          Loading payment methods...
+        </div>
+      );
+    }
+
+    if (eligibilityError) {
+      return (
+        <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+          Failed to load payment options. Please refresh the page.
+        </div>
+      );
+    }
+
     return (
       <>
         <div>
