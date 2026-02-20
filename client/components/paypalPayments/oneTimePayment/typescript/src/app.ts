@@ -1,14 +1,17 @@
-import { loadCoreSdkScript } from "@paypal/paypal-js/sdk-v6";
-
-import type {
-  SdkInstance,
-  OnApproveDataOneTimePayments,
-  OnCancelDataOneTimePayments,
-  OnErrorData,
-  FindEligibleMethodsGetDetails,
+import {
+  loadCoreSdkScript,
+  type SdkInstance,
+  type OnApproveDataOneTimePayments,
+  type OnCancelDataOneTimePayments,
+  type OnErrorData,
+  type FindEligibleMethodsGetDetails,
+  type PayPalOneTimePaymentSessionOptions,
 } from "@paypal/paypal-js/sdk-v6";
 
-type AppSdkInstance = SdkInstance<["paypal-payments", "venmo-payments"]>;
+import { createOrderApiCall, captureOrderApiCall } from "./orders";
+import { renderAlert } from "./alert";
+
+type AppSdkInstance = SdkInstance<["paypal-payments"]>;
 
 const paypalGlobalNamespace = await loadCoreSdkScript({
   environment: "sandbox",
@@ -18,39 +21,11 @@ if (!paypalGlobalNamespace) {
   throw new Error("PayPal Core SDK script failed to load");
 }
 
-const paymentSessionOptions = {
-  async onApprove(data: OnApproveDataOneTimePayments) {
-    console.log("onApprove", data);
-    const orderData = await captureOrder({
-      orderId: data.orderId,
-    });
-    renderAlert({
-      type: "success",
-      message: `Order successfully captured! ${JSON.stringify(data)}`,
-    });
-    console.log("Capture result", orderData);
-  },
-  onCancel(data: OnCancelDataOneTimePayments) {
-    renderAlert({
-      type: "warning",
-      message: `onCancel() callback called ${data.orderId ?? ""}`,
-    });
-    console.log("onCancel");
-  },
-  onError(error: OnErrorData) {
-    renderAlert({
-      type: "danger",
-      message: `onError() callback called: ${error}`,
-    });
-    console.log("onError", error);
-  },
-};
-
 try {
   const clientId = await getBrowserSafeClientId();
   const sdkInstance = await paypalGlobalNamespace.createInstance({
     clientId,
-    components: ["paypal-payments", "venmo-payments"],
+    components: ["paypal-payments"],
     pageType: "checkout",
   });
 
@@ -58,25 +33,42 @@ try {
     currencyCode: "USD",
   });
 
+  const paymentSessionOptions = getSharedPaymentSessionOptions();
+
   if (paymentMethods.isEligible("paypal")) {
-    setupPayPalButton(sdkInstance);
+    setupPayPalButton({ sdkInstance, paymentSessionOptions });
   }
 
   if (paymentMethods.isEligible("paylater")) {
-    const paylaterPaymentMethodDetails = paymentMethods.getDetails("paylater");
-    setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+    setupPayLaterButton({
+      sdkInstance,
+      paylaterPaymentMethodDetails: paymentMethods.getDetails("paylater"),
+      paymentSessionOptions,
+    });
   }
 
   if (paymentMethods.isEligible("credit")) {
-    const paypalCreditPaymentMethodDetails =
-      paymentMethods.getDetails("credit");
-    setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+    setupPayPalCreditButton({
+      sdkInstance,
+      creditPaymentMethodDetails: paymentMethods.getDetails("credit"),
+      paymentSessionOptions,
+    });
   }
 } catch (error) {
+  renderAlert({
+    type: "danger",
+    message: "Failed to initialize the PayPal Web SDK",
+  });
   console.error(error);
 }
 
-async function setupPayPalButton(sdkInstance: AppSdkInstance) {
+function setupPayPalButton({
+  sdkInstance,
+  paymentSessionOptions,
+}: {
+  sdkInstance: AppSdkInstance;
+  paymentSessionOptions: PayPalOneTimePaymentSessionOptions;
+}) {
   const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
     paymentSessionOptions,
   );
@@ -88,21 +80,28 @@ async function setupPayPalButton(sdkInstance: AppSdkInstance) {
     try {
       // get the promise reference by invoking createOrder()
       // do not await this async function since it can cause transient activation issues
-      const createOrderPromise = createOrder();
+      const createOrderPromise = createOrderApiCall();
       await paypalPaymentSession.start(
         { presentationMode: "auto" },
         createOrderPromise,
       );
+
+      renderAlert({ type: "info", message: "Order successfully created" });
     } catch (error) {
       console.error(error);
     }
   });
 }
 
-async function setupPayLaterButton(
-  sdkInstance: AppSdkInstance,
-  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">,
-) {
+function setupPayLaterButton({
+  sdkInstance,
+  paylaterPaymentMethodDetails,
+  paymentSessionOptions,
+}: {
+  sdkInstance: AppSdkInstance;
+  paylaterPaymentMethodDetails: FindEligibleMethodsGetDetails<"paylater">;
+  paymentSessionOptions: PayPalOneTimePaymentSessionOptions;
+}) {
   const paylaterPaymentSession =
     sdkInstance.createPayLaterOneTimePaymentSession(paymentSessionOptions);
 
@@ -118,11 +117,13 @@ async function setupPayLaterButton(
       try {
         // get the promise reference by invoking createOrder()
         // do not await this async function since it can cause transient activation issues
-        const createOrderPromise = createOrder();
+        const createOrderPromise = createOrderApiCall();
         await paylaterPaymentSession.start(
           { presentationMode: "auto" },
           createOrderPromise,
         );
+
+        renderAlert({ type: "info", message: "Order successfully created" });
       } catch (error) {
         console.error(error);
       }
@@ -130,14 +131,19 @@ async function setupPayLaterButton(
   }
 }
 
-async function setupPayPalCreditButton(
-  sdkInstance: AppSdkInstance,
-  paypalCreditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">,
-) {
+function setupPayPalCreditButton({
+  sdkInstance,
+  creditPaymentMethodDetails,
+  paymentSessionOptions,
+}: {
+  sdkInstance: AppSdkInstance;
+  creditPaymentMethodDetails: FindEligibleMethodsGetDetails<"credit">;
+  paymentSessionOptions: PayPalOneTimePaymentSessionOptions;
+}) {
   const paypalCreditPaymentSession =
     sdkInstance.createPayPalCreditOneTimePaymentSession(paymentSessionOptions);
 
-  const { countryCode } = paypalCreditPaymentMethodDetails;
+  const { countryCode } = creditPaymentMethodDetails;
   const paypalCreditButton = document.querySelector("#paypal-credit-button");
 
   if (paypalCreditButton && countryCode) {
@@ -148,16 +154,49 @@ async function setupPayPalCreditButton(
       try {
         // get the promise reference by invoking createOrder()
         // do not await this async function since it can cause transient activation issues
-        const createOrderPromise = createOrder();
+        const createOrderPromise = createOrderApiCall();
         await paypalCreditPaymentSession.start(
           { presentationMode: "auto" },
           createOrderPromise,
         );
+
+        renderAlert({ type: "info", message: "Order successfully created" });
       } catch (error) {
         console.error(error);
       }
     });
   }
+}
+
+function getSharedPaymentSessionOptions() {
+  return {
+    commit: false,
+    async onApprove(data: OnApproveDataOneTimePayments) {
+      console.log("onApprove", data);
+      const orderData = await captureOrderApiCall({
+        orderId: data.orderId,
+      });
+      renderAlert({
+        type: "success",
+        message: `Order successfully captured! ${JSON.stringify(data)}`,
+      });
+      console.log("Capture result", orderData);
+    },
+    onCancel(data: OnCancelDataOneTimePayments) {
+      console.log("onCancel", data);
+      renderAlert({
+        type: "warning",
+        message: `onCancel() callback called ${data.orderId ?? ""}`,
+      });
+    },
+    onError(error: OnErrorData) {
+      console.log("onError", error);
+      renderAlert({
+        type: "danger",
+        message: `onError() callback called: ${error}`,
+      });
+    },
+  };
 }
 
 async function getBrowserSafeClientId() {
@@ -168,74 +207,14 @@ async function getBrowserSafeClientId() {
     },
   });
 
+  if (!response.ok) {
+    throw new Error("Failed to fetch clientId");
+  }
+
   type ClientIdResponse = {
     clientId: string;
   };
 
   const { clientId }: ClientIdResponse = await response.json();
-
   return clientId;
-}
-
-type OrderResponseMinimal = {
-  id: string;
-  status: string;
-  links: {
-    href: string;
-    rel: string;
-    method: string;
-  }[];
-};
-
-async function createOrder() {
-  const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  const { id }: OrderResponseMinimal = await response.json();
-  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
-
-  return { orderId: id };
-}
-
-async function captureOrder({ orderId }: { orderId: string }) {
-  const response = await fetch(
-    `/paypal-api/checkout/orders/${orderId}/capture`,
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-    },
-  );
-  type OrderResponse = OrderResponseMinimal & {
-    payer: Record<string, unknown>;
-    paymentSource: Record<string, unknown>;
-    purchaseUnits: Record<string, unknown>[];
-  };
-
-  const data: OrderResponse = await response.json();
-
-  return data;
-}
-
-type RenderAlertOptions = {
-  type: "success" | "info" | "warning" | "danger";
-  message: string;
-};
-
-function renderAlert({ type, message }: RenderAlertOptions) {
-  const alertComponentElement =
-    document.querySelector<HTMLElement>("alert-component");
-  if (!alertComponentElement) {
-    return;
-  }
-
-  alertComponentElement.setAttribute("type", type);
-  alertComponentElement.innerText = message;
 }
