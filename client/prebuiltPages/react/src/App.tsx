@@ -23,6 +23,9 @@ import SubscriptionStaticButtonsDemo from "./payments/subscription/pages/StaticB
 // Error handling demo
 import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
 
+// PayPal Messages demo
+import PayPalMessagesDemo from "./pages/PayPalMessagesDemo";
+
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
     <div role="alert" style={{ padding: "20px", textAlign: "center" }}>
@@ -95,6 +98,7 @@ function App() {
           "venmo-payments",
           "paypal-guest-payments",
           "paypal-subscriptions",
+          "paypal-messages",
         ]}
         pageType="checkout"
       >
@@ -169,6 +173,9 @@ function App() {
               path="/subscription/error"
               element={<ErrorBoundaryTestPage />}
             />
+
+            {/* PayPal Messages demo */}
+            <Route path="/paypal-messages" element={<PayPalMessagesDemo />} />
 
             {/* Error handling demo */}
             <Route
