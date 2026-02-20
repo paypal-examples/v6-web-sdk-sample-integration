@@ -26,13 +26,12 @@ const StaticButtons = () => {
   const { loadingStatus } = usePayPal();
 
   // Fetch eligibility for one-time payment flow
-  const { isLoading: isEligibilityLoading, error: eligibilityError } =
-    useEligibleMethods({
-      payload: {
-        currencyCode: "USD",
-        paymentFlow: "ONE_TIME_PAYMENT",
-      },
-    });
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT",
+    },
+  });
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -84,8 +83,7 @@ const StaticButtons = () => {
     [],
   );
 
-  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isReady = !isSDKLoading && !isEligibilityLoading;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
@@ -99,7 +97,7 @@ const StaticButtons = () => {
   }, []);
 
   const renderPaymentButtons = (products: ProductItem[]) => {
-    if (!isReady) {
+    if (isLoading) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...

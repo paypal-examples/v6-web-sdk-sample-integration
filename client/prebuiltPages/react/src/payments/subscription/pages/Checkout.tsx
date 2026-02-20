@@ -25,16 +25,14 @@ const Checkout = () => {
   const navigate = useNavigate();
 
   // Fetch eligibility for recurring/subscription payment flow
-  const { isLoading: isEligibilityLoading, error: eligibilityError } =
-    useEligibleMethods({
-      payload: {
-        currencyCode: "USD",
-        paymentFlow: "RECURRING_PAYMENT",
-      },
-    });
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "RECURRING_PAYMENT",
+    },
+  });
 
-  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isReady = !isSDKLoading && !isEligibilityLoading;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleSubscriptionCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -92,7 +90,7 @@ const Checkout = () => {
     }
   };
 
-  const paymentButtons = !isReady ? (
+  const paymentButtons = isLoading ? (
     <div style={{ padding: "1rem", textAlign: "center" }}>
       Loading payment methods...
     </div>

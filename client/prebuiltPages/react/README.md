@@ -230,17 +230,17 @@ type PaymentFlow =
 
 ```tsx
 // Checkout.tsx - fetch eligibility with correct paymentFlow
-const { isLoading: isEligibilityLoading, error: eligibilityError } = useEligibleMethods({
+const { error: eligibilityError } = useEligibleMethods({
   payload: {
     currencyCode: "USD",
     paymentFlow: "ONE_TIME_PAYMENT",
   },
 });
 
-// Use isReady to control button visibility
-const isReady = !isSDKLoading && !isEligibilityLoading;
+// Use SDK loading state to control button visibility
+const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
-if (!isReady) {
+if (isLoading) {
   return <div>Loading payment methods...</div>;
 }
 

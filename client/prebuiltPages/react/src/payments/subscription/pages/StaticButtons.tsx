@@ -23,16 +23,14 @@ const StaticButtons = () => {
   const { loadingStatus } = usePayPal();
 
   // Fetch eligibility for recurring/subscription payment flow
-  const { isLoading: isEligibilityLoading, error: eligibilityError } =
-    useEligibleMethods({
-      payload: {
-        currencyCode: "USD",
-        paymentFlow: "RECURRING_PAYMENT",
-      },
-    });
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "RECURRING_PAYMENT",
+    },
+  });
 
-  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isReady = !isSDKLoading && !isEligibilityLoading;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleSubscriptionCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -84,7 +82,7 @@ const StaticButtons = () => {
   );
 
   const renderPaymentButtons = () => {
-    if (!isReady) {
+    if (isLoading) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...

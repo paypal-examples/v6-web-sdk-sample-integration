@@ -24,16 +24,14 @@ const StaticButtons = () => {
   const { loadingStatus } = usePayPal();
 
   // Fetch eligibility for vault without payment flow (save payment method only)
-  const { isLoading: isEligibilityLoading, error: eligibilityError } =
-    useEligibleMethods({
-      payload: {
-        currencyCode: "USD",
-        paymentFlow: "VAULT_WITHOUT_PAYMENT",
-      },
-    });
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "VAULT_WITHOUT_PAYMENT",
+    },
+  });
 
-  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isReady = !isSDKLoading && !isEligibilityLoading;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleSaveCallbacks = {
     onApprove: async (data: OnApproveDataSavePayments) => {
@@ -86,7 +84,7 @@ const StaticButtons = () => {
   );
 
   const renderPaymentButtons = () => {
-    if (!isReady) {
+    if (isLoading) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...
