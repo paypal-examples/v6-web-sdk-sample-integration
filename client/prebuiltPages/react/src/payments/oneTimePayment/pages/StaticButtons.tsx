@@ -1,6 +1,7 @@
 import { useState, useCallback } from "react";
 import {
   usePayPal,
+  useEligibleMethods,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnCompleteData,
@@ -15,9 +16,22 @@ import BaseStaticButtons from "../../../pages/BaseStaticButtons";
 import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../../../utils";
 
+/**
+ * Static buttons demo for one-time payments.
+ *
+ * Uses useEligibleMethods to check payment method eligibility for one-time payments.
+ */
 const StaticButtons = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
+
+  // Fetch eligibility for one-time payment flow
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT",
+    },
+  });
 
   const handlePaymentCallbacks = {
     onApprove: async (data: OnApproveDataOneTimePayments) => {
@@ -69,7 +83,7 @@ const StaticButtons = () => {
     [],
   );
 
-  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleCreateOrder = useCallback(async (products: ProductItem[]) => {
     const cart = products
@@ -83,10 +97,18 @@ const StaticButtons = () => {
   }, []);
 
   const renderPaymentButtons = (products: ProductItem[]) => {
-    if (isSDKLoading) {
+    if (isLoading) {
       return (
         <div style={{ padding: "1rem", textAlign: "center" }}>
           Loading payment methods...
+        </div>
+      );
+    }
+
+    if (eligibilityError) {
+      return (
+        <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+          Failed to load payment options. Please refresh the page.
         </div>
       );
     }

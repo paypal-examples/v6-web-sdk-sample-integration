@@ -2,6 +2,7 @@ import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   usePayPal,
+  useEligibleMethods,
   INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnErrorData,
@@ -17,10 +18,23 @@ import type { ModalType, ModalContent, ProductItem } from "../../../types";
 import { captureOrder, createOrder } from "../../../utils";
 import CardFieldsExperience from "../components/CardFieldsOneTimePayment";
 
+/**
+ * Checkout page for one-time payments.
+ *
+ * Uses useEligibleMethods to check payment method eligibility for one-time payments.
+ */
 const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
+
+  // Fetch eligibility for one-time payment flow
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT",
+    },
+  });
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -86,7 +100,7 @@ const Checkout = () => {
     [],
   );
 
-  const isSDKLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleModalClose = () => {
     setModalState(null);
@@ -95,9 +109,13 @@ const Checkout = () => {
     }
   };
 
-  const paymentButtons = isSDKLoading ? (
+  const paymentButtons = isLoading ? (
     <div style={{ padding: "1rem", textAlign: "center" }}>
       Loading payment methods...
+    </div>
+  ) : eligibilityError ? (
+    <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+      Failed to load payment options. Please refresh the page.
     </div>
   ) : (
     <>
