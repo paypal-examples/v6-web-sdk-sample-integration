@@ -169,6 +169,40 @@ export function HomePage() {
                   }}
                 >
                   <Link
+                    to="/paypal-messages"
+                    style={{
+                      color: "#0070ba",
+                      textDecoration: "none",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    PayPal Messages
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "16px",
+                    color: "#4a5568",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  PayPal Pay Later messaging demos showing auto-bootstrap,
+                  manual content fetching, and Learn More presentation modes.
+                </td>
+              </tr>
+              <tr
+                style={{
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "16px",
+                  }}
+                >
+                  <Link
                     to="/error-boundary-test"
                     style={{
                       color: "#0070ba",
