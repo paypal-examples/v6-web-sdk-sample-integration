@@ -41,6 +41,11 @@ router.post(
 );
 
 router.post(
+  "/paypal-api/checkout/orders/create-order-with-custom-payload",
+  createOrderForOneTimePaymentRouteHandler,
+);
+
+router.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   createOrderForPayPalOneTimePaymentRouteHandler,
 );

@@ -28,14 +28,6 @@
                 <option value="ru-RU">Russian (RU)</option>
               </select>
             </div>
-            <div>
-              <label for="country-code" class="nextgen-dropdown_label">Country:</label>
-              <input type="text" id="country-code" class="nextgen-input_field" value="LT" />
-            </div>
-            <div>
-              <label for="currency-code" class="nextgen-dropdown_label">Currency:</label>
-              <input type="text" id="currency-code" class="nextgen-input_field" value="EUR" />
-            </div>
           </fieldset>
         </form>
         <section class="payment-method-container">
@@ -55,7 +47,7 @@
       </aside>
     </div>
   </section>
-  <script src="/web-sdk/v6/core"></script>
-  <script type="module" src="app.js"></script>
+  <script async src="https://www.sandbox.paypal.com/web-sdk/v6/core" onload="onPayPalWebSdkLoaded()"></script>
+  <script src="app.js"></script>
 </body>
 </html>

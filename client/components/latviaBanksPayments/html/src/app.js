@@ -1,142 +1,298 @@
-import {
-  createOrder as createOrderHelper,
-  getOrder,
-  initAuth,
-} from "/web-sdk/demo/assets/js/ordersApiFetchHelpers.mjs";
-import { initializeCountryAndCurrencyCodes, initializeLocale } from "/web-sdk/demo/assets/js/lpmHelpers.mjs";
+async function onPayPalWebSdkLoaded() {
+  try {
+    const clientId = await getBrowserSafeClientId();
+    const sdkInstance = await window.paypal.createInstance({
+      clientId,
+      testBuyerCountry: "LV", // Latvia for Latvia Banks testing
+      components: ["latviabanks-payments"],
+    });
 
-function setMessage(message) {
-  document.querySelector("#message").textContent = message;
-  console.log(message);
+    // Check if Latvia Banks is eligible
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "EUR",
+    });
+
+    const isLatviaBanksEligible = paymentMethods.isEligible("latvia_banks");
+
+    if (isLatviaBanksEligible) {
+      setupLatviaBanksPayment(sdkInstance);
+    } else {
+      showMessage({
+        text: "Latvia Banks is not eligible. Please ensure your buyer country is Latvia.",
+        type: "error",
+      });
+      console.error("Latvia Banks is not eligible");
+    }
+  } catch (error) {
+    console.error("Error initializing PayPal SDK:", error);
+    showMessage({
+      text: "Failed to initialize payment system. Please try again.",
+      type: "error",
+    });
+  }
 }
 
-setMessage("Fetching auth...");
-const { auth, clientName } = await initAuth("LPM");
-setMessage("Auth ready: " + (auth.clientId ? "clientId" : "clientToken"));
+function setupLatviaBanksPayment(sdkInstance) {
+  try {
+    // Create Latvia Banks checkout session
+    const latviabanksCheckout = sdkInstance.createLatviaBanksOneTimePaymentSession({
+      onApprove: handleApprove,
+      onCancel: handleCancel,
+      onError: handleError,
+    });
 
-function createOrderFactory(currencyCode) {
-  return async function createOrder() {
-    setMessage("Creating order...");
+    // Setup payment fields
+    setupPaymentFields(latviabanksCheckout);
+
+    // Setup button click handler
+    setupButtonHandler(latviabanksCheckout);
+
+    // Setup locale dropdown
+    setupLocaleDropdown(sdkInstance);
+  } catch (error) {
+    console.error("Error setting up Latvia Banks payment:", error);
+    showMessage({
+      text: "Failed to setup payment. Please refresh the page.",
+      type: "error",
+    });
+  }
+}
+
+function setupPaymentFields(latviabanksCheckout) {
+  // Check for prefill values from URL params
+  const urlParams = new URLSearchParams(window.location.search);
+  const prefillName = urlParams.get("prefillName") === "true";
+
+  // Set checkbox state
+  if (prefillName) {
+    document.querySelector("#prefill-full-name").checked = true;
+  }
+
+  // Create payment field for full name with optional prefill
+  const fullNameField = latviabanksCheckout.createPaymentFields({
+    type: "name",
+    value: prefillName ? "John Doe" : "",
+    style: {
+      variables: {
+        textColor: "#333333",
+        colorTextPlaceholder: "#999999",
+        fontFamily: "Verdana, sans-serif",
+        fontSizeBase: "14px",
+      },
+    },
+  });
+  document.querySelector("#latviabanks-full-name").appendChild(fullNameField);
+
+  // Setup prefill checkbox event listener
+  setupPrefillCheckbox();
+}
+
+function setupPrefillCheckbox() {
+  const prefillNameCheckbox = document.querySelector("#prefill-full-name");
+  prefillNameCheckbox.addEventListener("change", () => {
+    const searchParams = new URLSearchParams(window.location.search);
+    if (prefillNameCheckbox.checked) {
+      searchParams.set("prefillName", "true");
+    } else {
+      searchParams.delete("prefillName");
+    }
+    window.location.href = window.location.pathname + "?" + searchParams.toString();
+  });
+}
+
+function setupLocaleDropdown(sdkInstance) {
+  document.querySelector("#update-locale").addEventListener("change", async (event) => {
+    const newLocale = event.target.value;
+    sdkInstance.updateLocale(newLocale);
+    showMessage({
+      text: `Locale updated to ${newLocale}`,
+      type: "success",
+    });
+  });
+}
+
+function setupButtonHandler(latviabanksCheckout) {
+  const latviabanksButton = document.querySelector("#latviabanks-button");
+  latviabanksButton.removeAttribute("hidden");
+
+  latviabanksButton.addEventListener("click", async () => {
+    try {
+      console.log("Validating payment fields...");
+
+      // Validate the payment fields (name)
+      const isValid = await latviabanksCheckout.validate();
+
+      if (isValid) {
+        console.log("Validation successful, starting payment flow...");
+
+        // get the promise reference by invoking createOrder()
+        // do not await this async function since it can cause transient activation issues
+        const createOrderPromise = createOrder();
+
+        // Start payment flow with popup mode
+        await latviabanksCheckout.start(
+          { presentationMode: "popup" },
+          createOrderPromise,
+        );
+      } else {
+        console.error("Validation failed");
+        showMessage({
+          text: "Please fill in all required fields correctly.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      showMessage({
+        text: error.message || "An error occurred during payment. Please try again.",
+        type: "error",
+      });
+    }
+  });
+}
+
+// Create PayPal order for Latvia Banks with custom payload
+async function createOrder() {
+  try {
+    console.log("Creating PayPal order for Latvia Banks...");
+
+    // Custom payload required by Latvia Banks with processing_instruction
+    // Note: PayPal API expects snake_case keys
     const orderPayload = {
       intent: "CAPTURE",
       processing_instruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
       purchase_units: [
         {
           amount: {
-            currency_code: currencyCode,
-            value: "10.00",
+            currency_code: "EUR",
+            value: "10.00"
           },
-        },
-      ],
+          payee: {
+            merchant_id: "9ALVB9G2KPFQL"
+          }
+        }
+      ]
     };
-    const { id: orderId } = await createOrderHelper({
-      headers: { "X-CSRF-TOKEN": "" },
-      body: orderPayload,
-      clientName,
+
+    const response = await fetch(
+      "/paypal-api/checkout/orders/create-order-with-custom-payload",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderPayload),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to create order");
+    }
+
+    const { id } = await response.json();
+    console.log("Order created with ID:", id);
+
+    return { orderId: id };
+  } catch (error) {
+    console.error("Error creating order:", error);
+    showMessage({
+      text: "Failed to create order. Please try again.",
+      type: "error",
     });
-    setMessage(`Order ${orderId}`);
-    return { orderId };
-  };
+    throw error;
+  }
 }
 
-async function onApprove(data) {
-  console.log("onApprove", data);
-  setMessage(`Fetching order details for ${data.orderId}...`);
+// Get order details after approval
+async function getOrder(orderId) {
   try {
-    const orderDetails = await getOrder({
-      orderId: data.orderId,
-      headers: { "X-CSRF-TOKEN": "" },
-      clientName,
-    });
-    console.log("Order details", orderDetails);
-    setMessage(JSON.stringify(orderDetails, null, 2));
+    console.log("Fetching order details:", orderId);
+
+    const response = await fetch(
+      `/paypal-api/checkout/orders/${orderId}`,
+      {
+        method: "GET",
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch order details");
+    }
+
+    const data = await response.json();
+    console.log("Order details fetched successfully:", data);
+
+    return data;
   } catch (error) {
     console.error("Error fetching order details:", error);
-    setMessage(`Transaction Successful but failed to fetch order details: ${error.message}`);
+    throw error;
   }
 }
 
-function onCancel(data) {
-  console.log("onCancel", data);
-  let message = "Canceled order";
-  if (data) {
-    message += ` ${data.orderId}`;
-  }
-  setMessage(message);
-}
+// Handle successful payment
+async function handleApprove(data) {
+  console.log("Payment approved:", data);
 
-function onError(data) {
-  console.log("onError", data);
-  setMessage(data);
-}
+  try {
+    const orderDetails = await getOrder(data.orderId);
+    console.log("Order details:", orderDetails);
 
-(async () => {
-  let fullName;
-  const prefillCheckbox = document.querySelector("#prefill-full-name");
-  prefillCheckbox.addEventListener("change", () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (prefillCheckbox.checked) {
-      searchParams.append("prefillName", "true");
-    } else {
-      searchParams.delete("prefillName");
-    }
-    window.location.href = window.location.pathname + "?" + searchParams.toString();
-  });
-  const { countryCode, currencyCode } = initializeCountryAndCurrencyCodes({
-    defaultCountryCode: "LV",
-    defaultCurrencyCode: "EUR",
-  });
-  while (!window.paypal || !window.paypal.createInstance) {
-    await new Promise((resolve) => setTimeout(resolve, 50));
-  }
-  const sdkInstance = await window.paypal.createInstance({
-    ...auth,
-    components: ["latviabanks-payments"],
-    testBuyerCountry: countryCode,
-  });
-  initializeLocale({
-    sdkInstance,
-    setMessage,
-  });
-  const paymentMethods = await sdkInstance.findEligibleMethods({
-    currencyCode: currencyCode,
-  });
-  const isLatviaBanksEligible = paymentMethods.isEligible("latvia_banks");
-  if (isLatviaBanksEligible) {
-    const createOrder = createOrderFactory(currencyCode);
-    const latviabanksCheckout = sdkInstance.createLatviaBanksOneTimePaymentSession({
-      onApprove,
-      onCancel,
-      onError
+    showMessage({
+      text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
+      type: "success",
     });
-    const fullNameField = latviabanksCheckout.createPaymentFields({
-      type: "name",
-      value: fullName,
+  } catch (error) {
+    console.error("Failed to fetch order details:", error);
+    showMessage({
+      text: "Transaction successful but failed to fetch order details.",
+      type: "error",
     });
-    document.querySelector("#latviabanks-full-name").appendChild(fullNameField);
-    async function onClick() {
-      try {
-        const valid = await latviabanksCheckout.validate();
-        if(valid) {
-          await latviabanksCheckout.start(
-            { presentationMode: "popup" },
-            createOrder()
-          );
-        } else {
-          setMessage("validation failed");
-        }
-      } catch (e) {
-        console.error(e);
-        setMessage(e.message || "Validation failed");
-      }
-    }
-    const latviaBanksButton = document.querySelector("#latviabanks-button");
-    latviaBanksButton.removeAttribute("hidden");
-    latviaBanksButton.addEventListener("click", onClick);
   }
-  document.querySelector("#update-locale").addEventListener("change", async (event) => {
-    const newLocale = event.target.value;
-    sdkInstance.updateLocale(newLocale);
-    setMessage(`Locale updated to ${newLocale}`);
+}
+
+// Handle cancelled payment
+function handleCancel(data) {
+  console.log("Payment cancelled:", data);
+  showMessage({
+    text: "Payment was cancelled. Please try again if needed.",
+    type: "info",
   });
-})();
+}
+
+// Handle payment errors
+function handleError(error) {
+  console.error("Payment error:", error);
+  showMessage({
+    text: "An error occurred during payment. Please try again.",
+    type: "error",
+  });
+}
+
+// Get browser safe client ID from server
+async function getBrowserSafeClientId() {
+  try {
+    const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch client id");
+    }
+
+    const { clientId } = await response.json();
+    return clientId;
+  } catch (error) {
+    console.error("Error fetching client id:", error);
+    throw error;
+  }
+}
+
+// Show user message
+function showMessage({ text, type }) {
+  const messageContainer = document.querySelector("#message");
+  messageContainer.textContent = text;
+  messageContainer.className = `message ${type}`;
+  console.log(`[${type.toUpperCase()}] ${text}`);
+}

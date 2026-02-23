@@ -29,22 +29,8 @@
               <select id="update-locale" class="nextgen-dropdown">
                 <option value="lt-LT">Lithuanian (LT)</option>
                 <option value="en-US">English (US)</option>
-                <option value="de-DE">German (DE)</option>
-                <option value="fr-FR">French (FR)</option>
-                <option value="es-ES">Spanish (ES)</option>
-                <option value="it-IT">Italian (IT)</option>
-                <option value="zh-CN">Chinese (Simplified)</option>
-                <option value="ja-JP">Japanese (JP)</option>
                 <option value="ru-RU">Russian (RU)</option>
               </select>
-            </div>
-            <div>
-              <label for="country-code" class="nextgen-dropdown_label">Country:</label>
-              <input type="text" id="country-code" class="nextgen-input_field" value="LT" />
-            </div>
-            <div>
-              <label for="currency-code" class="nextgen-dropdown_label">Currency:</label>
-              <input type="text" id="currency-code" class="nextgen-input_field" value="EUR" />
             </div>
           </fieldset>
         </form>
@@ -66,7 +52,7 @@
       </aside>
     </div>
   </section>
-  <script src="/web-sdk/v6/core"></script>
-  <script type="module" src="app.js"></script>
+  <script async src="https://www.sandbox.paypal.com/web-sdk/v6/core" onload="onPayPalWebSdkLoaded()"></script>
+  <script src="app.js"></script>
 </body>
 </html>
