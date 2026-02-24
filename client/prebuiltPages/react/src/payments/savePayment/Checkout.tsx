@@ -9,11 +9,11 @@ import {
   type OnErrorData,
   type OnCancelDataSavePayments,
   PayPalSavePaymentButton,
+  PayPalCreditSavePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import PayPalCreditSaveButton from "../components/PayPalCreditSaveButton";
-import BaseCheckout from "../../../pages/BaseCheckout";
-import type { ModalType, ModalContent } from "../../../types";
-import { createVaultToken } from "../../../utils";
+import BaseCheckout from "../../pages/BaseCheckout";
+import type { ModalType, ModalContent } from "../../types";
+import { createVaultToken } from "../../utils";
 
 /**
  * Checkout page for saving payment methods (vaulting).
@@ -111,7 +111,7 @@ const Checkout = () => {
       </div>
 
       <div>
-        <PayPalCreditSaveButton
+        <PayPalCreditSavePaymentButton
           createVaultToken={createVaultToken}
           presentationMode="auto"
           {...handleSaveCallbacks}
