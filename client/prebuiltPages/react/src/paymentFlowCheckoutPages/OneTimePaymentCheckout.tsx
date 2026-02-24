@@ -14,16 +14,16 @@ import {
   PayPalGuestPaymentButton,
   // PayPalCreditOneTimePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import BaseCheckout from "../../pages/BaseCheckout";
-import type { ModalType, ModalContent, ProductItem } from "../../types";
-import { captureOrder, createOrder } from "../../utils";
+import BaseCheckout from "../pages/BaseCheckout";
+import type { ModalType, ModalContent, ProductItem } from "../types";
+import { captureOrder, createOrder } from "../utils";
 
 /**
  * Checkout page for one-time payments.
  *
  * Uses useEligibleMethods to check payment method eligibility for one-time payments.
  */
-const Checkout = () => {
+const OneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
@@ -165,4 +165,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default OneTimePaymentCheckout;

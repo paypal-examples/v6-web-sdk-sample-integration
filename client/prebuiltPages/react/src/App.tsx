@@ -9,13 +9,13 @@ import BaseProduct from "./pages/BaseProduct";
 import BaseCart from "./pages/BaseCart";
 
 // One-Time Payment flow
-import OneTimeCheckoutPage from "./payments/oneTimePayment/Checkout";
+import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
 
 // Save Payment flow
-import SavePaymentCheckoutPage from "./payments/savePayment/Checkout";
+import SavePaymentCheckoutPage from "./paymentFlowCheckoutPages/SavePaymentCheckout";
 
 // Subscription flow
-import SubscriptionCheckoutPage from "./payments/subscription/Checkout";
+import SubscriptionCheckoutPage from "./paymentFlowCheckoutPages/SubscriptionCheckout";
 
 // Error handling demo
 import ErrorBoundaryTestPage from "./pages/ErrorBoundary";

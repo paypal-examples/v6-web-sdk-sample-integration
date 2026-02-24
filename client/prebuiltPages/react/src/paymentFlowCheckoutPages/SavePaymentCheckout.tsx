@@ -11,16 +11,16 @@ import {
   PayPalSavePaymentButton,
   PayPalCreditSavePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import BaseCheckout from "../../pages/BaseCheckout";
-import type { ModalType, ModalContent } from "../../types";
-import { createVaultToken } from "../../utils";
+import BaseCheckout from "../pages/BaseCheckout";
+import type { ModalType, ModalContent } from "../types";
+import { createVaultToken } from "../utils";
 
 /**
  * Checkout page for saving payment methods (vaulting).
  *
  * Uses useEligibleMethods to check payment method eligibility for vaulting without payment.
  */
-const Checkout = () => {
+const SavePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
@@ -131,4 +131,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default SavePaymentCheckout;
