@@ -21,7 +21,7 @@ import SubscriptionCheckoutPage from "./paymentFlowCheckoutPages/SubscriptionChe
 import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
 
 // PayPal Messages demo
-import PayPalMessagesDemo from "./pages/PayPalMessagesDemo";
+import PayPalMessagesDemo from "./paypalMessages/PayPalMessagesDemo";
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (

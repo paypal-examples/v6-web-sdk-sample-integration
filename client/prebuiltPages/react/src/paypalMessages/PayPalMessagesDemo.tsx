@@ -2,7 +2,7 @@ import {
   PayPalMessages,
   ManualMessagingComponent,
   PayPalMessagesLearnMore,
-} from "../components/PayPalMessages";
+} from "./PayPalMessages";
 
 export default function PayPalMessagesDemo() {
   return (
