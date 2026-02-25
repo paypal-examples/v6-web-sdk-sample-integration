@@ -8,7 +8,7 @@ import {
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
   type OnErrorData,
-  PayPalSubscriptionButton
+  PayPalSubscriptionButton,
 } from "@paypal/react-paypal-js/sdk-v6";
 import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent } from "../types";

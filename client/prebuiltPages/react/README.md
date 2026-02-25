@@ -73,22 +73,22 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 ## Application Routes
 
-| Route                           | Description                             |
-| ------------------------------- | --------------------------------------- |
-| `/`                             | Home page with navigation               |
-| `/one-time-payment`             | One-Time Payment product page           |
-| `/one-time-payment/cart`        | One-Time Payment cart page              |
-| `/one-time-payment/checkout`    | One-Time Payment checkout page          |
-| `/one-time-payment/error`       | One-Time Payment error boundary demo    |
-| `/save-payment`                 | Save Payment product page               |
-| `/save-payment/cart`            | Save Payment cart page                  |
-| `/save-payment/checkout`        | Save Payment checkout page              |
-| `/save-payment/error`           | Save Payment error boundary demo        |
-| `/subscription`                 | Subscription product page               |
-| `/subscription/cart`            | Subscription cart page                  |
-| `/subscription/checkout`        | Subscription checkout page              |
-| `/subscription/error`           | Subscription error boundary demo        |
-| `/error-boundary-test`          | Standalone error handling demonstration |
+| Route                        | Description                             |
+| ---------------------------- | --------------------------------------- |
+| `/`                          | Home page with navigation               |
+| `/one-time-payment`          | One-Time Payment product page           |
+| `/one-time-payment/cart`     | One-Time Payment cart page              |
+| `/one-time-payment/checkout` | One-Time Payment checkout page          |
+| `/one-time-payment/error`    | One-Time Payment error boundary demo    |
+| `/save-payment`              | Save Payment product page               |
+| `/save-payment/cart`         | Save Payment cart page                  |
+| `/save-payment/checkout`     | Save Payment checkout page              |
+| `/save-payment/error`        | Save Payment error boundary demo        |
+| `/subscription`              | Subscription product page               |
+| `/subscription/cart`         | Subscription cart page                  |
+| `/subscription/checkout`     | Subscription checkout page              |
+| `/subscription/error`        | Subscription error boundary demo        |
+| `/error-boundary-test`       | Standalone error handling demonstration |
 
 ## Project Structure
 
