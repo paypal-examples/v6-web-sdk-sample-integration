@@ -11,5 +11,5 @@ export function renderAlert({ type, message }: RenderAlertOptions) {
   }
 
   alertComponentElement.setAttribute("type", type);
-  alertComponentElement.innerText = message;
+  alertComponentElement.textContent = message;
 }

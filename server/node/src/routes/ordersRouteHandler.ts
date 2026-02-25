@@ -10,7 +10,7 @@ import {
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
 import { z } from "zod/v4";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
 import { client } from "../paypalServerSdkClient";
@@ -66,7 +66,7 @@ function calculateCartAmount(
 
   for (const { sku, quantity } of cart) {
     const { name, price } = getProduct(sku);
-    totalAmount += parseFloat(price) * quantity;
+    totalAmount += Number.parseFloat(price) * quantity;
     items.push({
       sku,
       name,

@@ -4,7 +4,7 @@ import {
   SubscriptionsController,
   TenureType,
 } from "@paypal/paypal-server-sdk";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
 import { client } from "../paypalServerSdkClient";
