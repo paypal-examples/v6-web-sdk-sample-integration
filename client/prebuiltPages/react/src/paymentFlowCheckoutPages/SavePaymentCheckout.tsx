@@ -4,55 +4,56 @@ import {
   usePayPal,
   useEligibleMethods,
   INSTANCE_LOADING_STATE,
-  type OnApproveDataOneTimePayments,
+  type OnApproveDataSavePayments,
   type OnCompleteData,
-  type OnCancelDataOneTimePayments,
   type OnErrorData,
+  type OnCancelDataSavePayments,
+  PayPalSavePaymentButton,
+  PayPalCreditSavePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import PayPalSubscriptionButton from "../components/PayPalSubscriptionButton";
-import BaseCheckout from "../../../pages/BaseCheckout";
-import type { ModalType, ModalContent } from "../../../types";
-import { createSubscription } from "../../../utils";
+import BaseCheckout from "../pages/BaseCheckout";
+import type { ModalType, ModalContent } from "../types";
+import { createVaultToken } from "../utils";
 
 /**
- * Checkout page for subscription payments.
+ * Checkout page for saving payment methods (vaulting).
  *
- * Uses useEligibleMethods to check payment method eligibility for recurring payments.
+ * Uses useEligibleMethods to check payment method eligibility for vaulting without payment.
  */
-const Checkout = () => {
+const SavePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
 
-  // Fetch eligibility for recurring/subscription payment flow
+  // Fetch eligibility for vault without payment flow (save payment method only)
   const { error: eligibilityError } = useEligibleMethods({
     payload: {
       currencyCode: "USD",
-      paymentFlow: "RECURRING_PAYMENT",
+      paymentFlow: "VAULT_WITHOUT_PAYMENT",
     },
   });
 
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
-  const handleSubscriptionCallbacks = {
-    onApprove: async (data: OnApproveDataOneTimePayments) => {
-      console.log("Subscription approved:", data);
-      console.log("Payer ID:", data.payerId);
+  const handleSaveCallbacks = {
+    onApprove: async (data: OnApproveDataSavePayments) => {
+      console.log("Payment method saved:", data);
+      console.log("Vault Setup Token:", data.vaultSetupToken);
       setModalState("success");
     },
 
-    onCancel: (data: OnCancelDataOneTimePayments) => {
-      console.log("Subscription cancelled:", data);
+    onCancel: (data: OnCancelDataSavePayments) => {
+      console.log("Save payment method cancelled:", data);
       setModalState("cancel");
     },
 
     onError: (error: OnErrorData) => {
-      console.error("Subscription error:", error);
+      console.error("Save payment method error:", error);
       setModalState("error");
     },
 
     onComplete: (data: OnCompleteData) => {
-      console.log("Subscription session completed");
+      console.log("Payment session completed");
       console.log("On Complete data:", data);
     },
   };
@@ -62,19 +63,20 @@ const Checkout = () => {
       switch (state) {
         case "success":
           return {
-            title: "Subscription Created! 🎉",
-            message: "Your subscription has been successfully set up!",
+            title: "Payment Method Saved! 🎉",
+            message:
+              "Your payment method has been securely saved for future use.",
           };
         case "cancel":
           return {
-            title: "Subscription Cancelled",
-            message: "Your subscription setup was cancelled.",
+            title: "Save Cancelled",
+            message: "Saving your payment method was cancelled.",
           };
         case "error":
           return {
-            title: "Subscription Error",
+            title: "Save Error",
             message:
-              "There was an error setting up your subscription. Please try again.",
+              "There was an error saving your payment method. Please try again.",
           };
         default:
           return null;
@@ -99,16 +101,28 @@ const Checkout = () => {
       Failed to load payment options. Please refresh the page.
     </div>
   ) : (
-    <PayPalSubscriptionButton
-      createSubscription={createSubscription}
-      presentationMode="auto"
-      {...handleSubscriptionCallbacks}
-    />
+    <>
+      <div>
+        <PayPalSavePaymentButton
+          createVaultToken={createVaultToken}
+          presentationMode="auto"
+          {...handleSaveCallbacks}
+        />
+      </div>
+
+      <div>
+        <PayPalCreditSavePaymentButton
+          createVaultToken={createVaultToken}
+          presentationMode="auto"
+          {...handleSaveCallbacks}
+        />
+      </div>
+    </>
   );
 
   return (
     <BaseCheckout
-      flowType="subscription"
+      flowType="save-payment"
       modalState={modalState}
       onModalClose={handleModalClose}
       getModalContent={getModalContent}
@@ -117,4 +131,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default SavePaymentCheckout;

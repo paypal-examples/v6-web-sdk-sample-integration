@@ -12,17 +12,18 @@ import {
   VenmoOneTimePaymentButton,
   PayLaterOneTimePaymentButton,
   PayPalGuestPaymentButton,
+  // PayPalCreditOneTimePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import BaseCheckout from "../../../pages/BaseCheckout";
-import type { ModalType, ModalContent, ProductItem } from "../../../types";
-import { captureOrder, createOrder } from "../../../utils";
+import BaseCheckout from "../pages/BaseCheckout";
+import type { ModalType, ModalContent, ProductItem } from "../types";
+import { captureOrder, createOrder } from "../utils";
 
 /**
  * Checkout page for one-time payments.
  *
  * Uses useEligibleMethods to check payment method eligibility for one-time payments.
  */
-const Checkout = () => {
+const OneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
@@ -136,6 +137,16 @@ const Checkout = () => {
         {...handlePaymentCallbacks}
       />
 
+      {/*
+        This is an example of the PayPalCreditOneTimePaymentButton.
+        In this example we leverage the PayLaterOneTimePaymentButton instead of Credit.
+      */}
+      {/* <PayPalCreditOneTimePaymentButton
+        createOrder={handleCreateOrder}
+        presentationMode="auto"
+        {...handlePaymentCallbacks}
+      /> */}
+
       <PayPalGuestPaymentButton
         createOrder={handleCreateOrder}
         {...handlePaymentCallbacks}
@@ -154,4 +165,4 @@ const Checkout = () => {
   );
 };
 
-export default Checkout;
+export default OneTimePaymentCheckout;
