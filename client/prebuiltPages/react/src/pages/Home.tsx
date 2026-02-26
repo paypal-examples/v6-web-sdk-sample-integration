@@ -120,8 +120,8 @@ export function HomePage() {
                     lineHeight: "1.6",
                   }}
                 >
-                  Vault payment methods for future use. Shows how to securely
-                  save customer payment information for recurring purchases.
+                  Save a payment method without making a purchase. Demonstrates
+                  the vault-without-payment flow in an account settings context.
                 </td>
               </tr>
               <tr

@@ -12,7 +12,7 @@ import BaseCart from "./pages/BaseCart";
 import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
 
 // Save Payment flow
-import SavePaymentCheckoutPage from "./paymentFlowCheckoutPages/SavePaymentCheckout";
+import SavePaymentSettings from "./pages/SavePaymentSettings";
 
 // Subscription flow
 import SubscriptionCheckoutPage from "./paymentFlowCheckoutPages/SubscriptionCheckout";
@@ -126,19 +126,7 @@ function App() {
             {/* Save Payment flow */}
             <Route
               path="/save-payment"
-              element={<BaseProduct flowType="save-payment" />}
-            />
-            <Route
-              path="/save-payment/cart"
-              element={<BaseCart flowType="save-payment" />}
-            />
-            <Route
-              path="/save-payment/checkout"
-              element={<SavePaymentCheckoutPage />}
-            />
-            <Route
-              path="/save-payment/error"
-              element={<ErrorBoundaryTestPage />}
+              element={<SavePaymentSettings />}
             />
 
             {/* Subscription flow */}
