@@ -166,29 +166,29 @@ async function createOrder() {
   }
 }
 
-// Capture order after approval
-async function captureOrder(orderId) {
+// Get order details after approval
+async function getOrder(orderId) {
   try {
-    console.log("Capturing order:", orderId);
+    console.log("Fetching order details:", orderId);
 
     const response = await fetch(
-      `/paypal-api/checkout/orders/${orderId}/capture`,
+      `/paypal-api/checkout/orders/${orderId}`,
       {
-        method: "POST",
+        method: "GET",
         headers: { "Content-Type": "application/json" },
       },
     );
 
     if (!response.ok) {
-      throw new Error("Failed to capture order");
+      throw new Error("Failed to fetch order details");
     }
 
     const data = await response.json();
-    console.log("Order captured successfully:", data);
+    console.log("Order details fetched successfully:", data);
 
     return data;
   } catch (error) {
-    console.error("Error capturing order:", error);
+    console.error("Error fetching order details:", error);
     throw error;
   }
 }
@@ -198,17 +198,17 @@ async function handleApprove(data) {
   console.log("Payment approved:", data);
 
   try {
-    const result = await captureOrder(data.orderId);
-    console.log("Capture successful:", result);
+    const orderDetails = await getOrder(data.orderId);
+    console.log("Order details:", orderDetails);
 
     showMessage({
-      text: `Payment successful! Order ID: ${data.orderId}. Check console for details.`,
+      text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
       type: "success",
     });
   } catch (error) {
-    console.error("Capture failed:", error);
+    console.error("Failed to fetch order details:", error);
     showMessage({
-      text: "Payment approved but capture failed.",
+      text: "Transaction successful but failed to fetch order details.",
       type: "error",
     });
   }
