@@ -6,6 +6,11 @@ if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
 }
 
+export const PAYPAL_BASE_URL =
+  process.env.PAYPAL_ENVIRONMENT === "production"
+    ? "https://api-m.paypal.com"
+    : "https://api-m.sandbox.paypal.com";
+
 export const client = new Client({
   clientCredentialsAuthCredentials: {
     oAuthClientId: PAYPAL_SANDBOX_CLIENT_ID,
