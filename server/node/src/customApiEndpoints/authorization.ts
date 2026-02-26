@@ -1,6 +1,7 @@
-const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
+import { CustomApiError } from "./customApiError";
+import { BASE_URL } from "./constants";
 
-export const BASE_URL = "https://api-m.sandbox.paypal.com";
+const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
 
 type AuthTokenSuccessResponse = {
   scope: string;
@@ -45,23 +46,4 @@ export async function getFullScopeAccessToken() {
 
   const { access_token } = result as AuthTokenSuccessResponse;
   return access_token;
-}
-
-export class CustomApiError extends Error {
-  statusCode: number;
-  result: Record<string, unknown>;
-
-  constructor({
-    message,
-    statusCode,
-    result,
-  }: {
-    message: string;
-    statusCode: number;
-    result: Record<string, unknown>;
-  }) {
-    super(message);
-    this.statusCode = statusCode;
-    this.result = result;
-  }
 }

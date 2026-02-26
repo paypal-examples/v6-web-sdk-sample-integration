@@ -7,7 +7,7 @@ import {
   VaultTokenRequestType,
 } from "@paypal/paypal-server-sdk";
 import { z } from "zod/v4";
-import { randomUUID } from "crypto";
+import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
 import { client } from "../paypalServerSdkClient";
@@ -109,7 +109,5 @@ export async function createPaymentTokenRouteHandler(
 async function savePaymentTokenToDatabase(
   _paymentTokenResponse: PaymentTokenResponse,
 ) {
-  // example function to teach saving the paymentToken to a database
-  // to be used for future transactions
-  return Promise.resolve();
+  // TODO: implement saving the paymentToken to your database for future transactions
 }
