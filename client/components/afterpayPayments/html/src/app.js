@@ -1,241 +1,262 @@
-import {
-  createOrder as createOrderHelper,
-  getOrder,
-  initAuth,
-} from "/web-sdk/demo/assets/js/ordersApiFetchHelpers.mjs";
-import { initializeCountryAndCurrencyCodes } from "/web-sdk/demo/assets/js/lpmHelpers.mjs";
-
-function setMessage(message) {
-  document.querySelector("#message").textContent = message;
-  console.log(message);
-}
-
-setMessage("Fetching auth...");
-const { auth, clientName } = await initAuth("AFTERPAY");
-setMessage("Auth ready: " + (auth.clientId ? "clientId" : "clientToken"));
-
-function buildCreateOrderFunction(currencyCode) {
-  return async function createOrder() {
-    setMessage("Creating order...");
-    const orderPayload = {
-      intent: "CAPTURE",
-      processing_instruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
-      purchase_units: [
-        {
-          reference_id: "default",
-          amount: {
-            breakdown: {
-              item_total: {
-                currency_code: currencyCode,
-                value: "24.10"
-              },
-              tax_total: {
-                currency_code: currencyCode,
-                value: "2.00"
-              }
-            },
-            currency_code: currencyCode,
-            value: "26.10"
-          },
-          invoice_id: "Invoice-12345",
-          payee: {
-            merchant_id: "M683SLY6MTM78",
-          },
-          items: [
-            {
-              name: "Shirt",
-              quantity: "1",
-              unit_amount: {
-                currency_code: currencyCode,
-                value: "12.05"
-              },
-              tax: {
-                currency_code: currencyCode,
-                value: "1.00"
-              }
-            },
-            {
-              name: "Trouser",
-              quantity: "1",
-              unit_amount: {
-                currency_code: currencyCode,
-                value: "12.05"
-              },
-              tax: {
-                currency_code: currencyCode,
-                value: "1.00"
-              }
-            }
-          ]
-        }
-      ]
-    };
-    const { id: orderId } = await createOrderHelper({
-      headers: { "X-CSRF-TOKEN": "" },
-      body: orderPayload,
-      clientName,
-    });
-    setMessage(`Order ${orderId}`);
-    return { orderId };
-  };
-}
-
-async function onApprove(data) {
-  console.log("onApprove", data);
-  setMessage(`Fetching order details for ${data.orderId}...`);
+async function onPayPalWebSdkLoaded() {
   try {
-    const orderDetails = await getOrder({
-      orderId: data.orderId,
-      headers: { "X-CSRF-TOKEN": "" },
-      clientName,
+    const clientId = await getBrowserSafeClientId();
+    const sdkInstance = await window.paypal.createInstance({
+      clientId,
+      testBuyerCountry: "US", // United States for Afterpay testing
+      components: ["afterpay-payments"],
     });
-    console.log("Order details", orderDetails);
-    setMessage(JSON.stringify(orderDetails, null, 2));
+
+    // Check if Afterpay is eligible
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
+
+    const isAfterpayEligible = paymentMethods.isEligible("afterpay");
+
+    if (isAfterpayEligible) {
+      setupAfterpayPayment(sdkInstance);
+    } else {
+      showMessage({
+        text: "Afterpay is not eligible. Please ensure your buyer country is United States and currency is USD.",
+        type: "error",
+      });
+      console.error("Afterpay is not eligible");
+    }
   } catch (error) {
-    console.error("Error fetching order details:", error);
-    setMessage(`Transaction Successful but failed to fetch order details: ${error.message}`);
+    console.error("Error initializing PayPal SDK:", error);
+    showMessage({
+      text: "Failed to initialize payment system. Please try again.",
+      type: "error",
+    });
   }
 }
 
-function onCancel(data) {
-  console.log("onCancel", data);
-  let message = "Canceled order";
-  if (data) {
-    message += ` ${data.orderId}`;
-  }
-  setMessage(message);
-}
-
-function onError(data) {
-  console.log("onError", data);
-  setMessage(data);
-}
-
-function validateBillingAddress() {
-  const addressLine1 = document.querySelector("#address-line-1").value.trim();
-  const adminArea1 = document.querySelector("#admin-area-1").value.trim();
-  const postalCode = document.querySelector("#postal-code").value.trim();
-  const countryCode = document.querySelector("#country-code").value.trim();
-  const errors = [];
-  if (!addressLine1) errors.push('Address Line 1');
-  if (!adminArea1) errors.push('Admin Area 1');
-  if (!postalCode) errors.push('Postal Code');
-  if (!countryCode) errors.push('Country Code');
-  if (errors.length > 0) {
-    const errorMessage = `The following fields are required: ${errors.join(', ')}`;
-    setMessage(errorMessage);
-    throw new Error(errorMessage);
-  }
-  return {
-    addressLine1,
-    adminArea1,
-    postalCode,
-    countryCode
-  };
-}
-
-function afterpayCheckoutSessionOptionsPromiseFactory(createOrder) {
-  return async function afterpayCheckoutSessionOptionsPromise(billingData) {
-    const orderResult = await createOrder();
-    const { addressLine1, adminArea1, postalCode, countryCode } = billingData;
-    return {
-      orderId: orderResult.orderId,
-      billingAddress: {
-        addressLine1,
-        adminArea1,
-        postalCode,
-        countryCode
-      }
-    };
-  };
-}
-
-(async () => {
-  let fullnameValue;
-  let emailValue;
-
-  const prefillNameCheckbox = document.querySelector("#prefill-full-name");
-  prefillNameCheckbox.addEventListener("change", () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (prefillNameCheckbox.checked) {
-      searchParams.append("prefillName", "true");
-    } else {
-      searchParams.delete("prefillName");
-    }
-    window.location.href = window.location.pathname + "?" + searchParams.toString();
-  });
-
-  const prefillEmailCheckbox = document.querySelector("#prefill-email");
-  prefillEmailCheckbox.addEventListener("change", () => {
-    const searchParams = new URLSearchParams(window.location.search);
-    if (prefillEmailCheckbox.checked) {
-      searchParams.append("prefillEmail", "true");
-    } else {
-      searchParams.delete("prefillEmail");
-    }
-    window.location.href = window.location.pathname + "?" + searchParams.toString();
-  });
-
-  const { countryCode, currencyCode } = initializeCountryAndCurrencyCodes({
-    defaultCountryCode: "US",
-    defaultCurrencyCode: "USD",
-  });
-
-  const sdkInstance = await window.paypal.createInstance({
-    ...auth,
-    components: ["afterpay-payments"],
-    testBuyerCountry: countryCode,
-  });
-
-  const paymentMethods = await sdkInstance.findEligibleMethods({
-    currencyCode: currencyCode,
-  });
-
-  const isAfterpayEligible = paymentMethods.isEligible("afterpay");
-
-  if (isAfterpayEligible) {
-    const createOrder = buildCreateOrderFunction(currencyCode);
+function setupAfterpayPayment(sdkInstance) {
+  try {
+    // Create Afterpay checkout session
     const afterpayCheckout = sdkInstance.createAfterpayOneTimePaymentSession({
-      onApprove,
-      onCancel,
-      onError
+      onApprove: handleApprove,
+      onCancel: handleCancel,
+      onError: handleError,
     });
-    const fullnameField = afterpayCheckout.createPaymentFields({
-      type: "name",
-      value: fullnameValue,
-    });
-    document.querySelector("#afterpay-full-name").appendChild(fullnameField);
-    const emailField = afterpayCheckout.createPaymentFields({
-      type: "email",
-      value: emailValue,
-    });
-    document.querySelector("#afterpay-email").appendChild(emailField);
-    const afterpayButton = document.querySelector("#afterpay-button");
-    afterpayButton.removeAttribute("hidden");
-    document.querySelector("#custom-fields").removeAttribute("hidden");
-    async function onClick() {
-      try {
-        const billingData = validateBillingAddress();
-        const valid = await afterpayCheckout.validate();
-        if(valid) {
-          await afterpayCheckout.start(
-            { presentationMode: "popup" },
-            afterpayCheckoutSessionOptionsPromiseFactory(createOrder)(billingData)
-          );
-        } else {
-          setMessage("validation failed");
-        }
-      } catch (e) {
-        console.error(e);
-        setMessage(e.message || "Validation failed");
-      }
-    }
-    afterpayButton.addEventListener("click", onClick);
-  }
 
-  document.querySelector("#update-locale").addEventListener("change", async (event) => {
-    const newLocale = event.target.value;
-    sdkInstance.updateLocale(newLocale);
-    setMessage(`Locale updated to ${newLocale}`);
+    // Setup payment fields
+    setupPaymentFields(afterpayCheckout);
+
+    // Setup button click handler
+    setupButtonHandler(afterpayCheckout);
+  } catch (error) {
+    console.error("Error setting up Afterpay payment:", error);
+    showMessage({
+      text: "Failed to setup payment. Please refresh the page.",
+      type: "error",
+    });
+  }
+}
+
+function setupPaymentFields(afterpayCheckout) {
+  // Create payment field for full name with optional prefill
+  const fullNameField = afterpayCheckout.createPaymentFields({
+    type: "name",
+    value: "", // Optional prefill value
+    style: {
+      // Optional styling to match your website
+      variables: {
+        textColor: "#333333",
+        colorTextPlaceholder: "#999999",
+        fontFamily: "Verdana, sans-serif",
+        fontSizeBase: "14px",
+      },
+    },
   });
-})();
+
+  // Create payment field for email with optional prefill
+  const emailField = afterpayCheckout.createPaymentFields({
+    type: "email",
+    value: "", // Optional prefill value
+    style: {
+      // Optional styling to match your website
+      variables: {
+        textColor: "#333333",
+        colorTextPlaceholder: "#999999",
+        fontFamily: "Verdana, sans-serif",
+        fontSizeBase: "14px",
+      },
+    },
+  });
+
+  // Mount the fields to the containers
+  document.querySelector("#afterpay-full-name").appendChild(fullNameField);
+  document.querySelector("#afterpay-email").appendChild(emailField);
+}
+
+function setupButtonHandler(afterpayCheckout) {
+  const afterpayButton = document.querySelector("#afterpay-button");
+  afterpayButton.removeAttribute("hidden");
+
+  afterpayButton.addEventListener("click", async () => {
+    try {
+      console.log("Validating payment fields...");
+
+      // Validate the payment fields
+      const isValid = await afterpayCheckout.validate();
+
+      if (isValid) {
+        console.log("Validation successful, starting payment flow...");
+
+        // get the promise reference by invoking createOrder()
+        // do not await this async function since it can cause transient activation issues
+        const createOrderPromise = createOrder();
+
+        // Start payment flow with popup mode
+        await afterpayCheckout.start(
+          { presentationMode: "popup" },
+          createOrderPromise,
+        );
+      } else {
+        console.error("Validation failed");
+        showMessage({
+          text: "Please fill in all required fields correctly.",
+          type: "error",
+        });
+      }
+    } catch (error) {
+      console.error("Payment error:", error);
+      showMessage({
+        text: error.message || "An error occurred during payment. Please try again.",
+        type: "error",
+      });
+    }
+  });
+}
+
+// Create PayPal order
+async function createOrder() {
+  try {
+    console.log("Creating PayPal order...");
+
+    const response = await fetch(
+      "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ currencyCode: "USD" }),
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to create order");
+    }
+
+    const { id } = await response.json();
+    console.log("Order created with ID:", id);
+
+    // Return order ID for the payment session
+    return {
+      orderId: id,
+    };
+  } catch (error) {
+    console.error("Error creating order:", error);
+    showMessage({
+      text: "Failed to create order. Please try again.",
+      type: "error",
+    });
+    throw error;
+  }
+}
+
+// Capture order after approval
+async function captureOrder(orderId) {
+  try {
+    console.log("Capturing order:", orderId);
+
+    const response = await fetch(
+      `/paypal-api/checkout/orders/${orderId}/capture`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+      },
+    );
+
+    if (!response.ok) {
+      throw new Error("Failed to capture order");
+    }
+
+    const data = await response.json();
+    console.log("Order captured successfully:", data);
+
+    return data;
+  } catch (error) {
+    console.error("Error capturing order:", error);
+    throw error;
+  }
+}
+
+// Handle successful payment approval
+async function handleApprove(data) {
+  console.log("Payment approved:", data);
+
+  try {
+    const result = await captureOrder(data.orderId);
+    console.log("Capture successful:", result);
+
+    showMessage({
+      text: `Payment successful! Order ID: ${data.orderId}. Check console for details.`,
+      type: "success",
+    });
+  } catch (error) {
+    console.error("Capture failed:", error);
+    showMessage({
+      text: "Payment approved but capture failed.",
+      type: "error",
+    });
+  }
+}
+
+// Handle payment cancellation
+function handleCancel(data) {
+  console.log("Payment cancelled:", data);
+  showMessage({
+    text: "Payment was cancelled. You can try again.",
+    type: "error",
+  });
+}
+
+// Handle payment errors
+function handleError(error) {
+  console.error("Payment error:", error);
+  showMessage({
+    text: "An error occurred during payment. Please try again or contact support.",
+    type: "error",
+  });
+}
+
+// Get client id from server
+async function getBrowserSafeClientId() {
+  try {
+    const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch client id");
+    }
+
+    const { clientId } = await response.json();
+    return clientId;
+  } catch (error) {
+    console.error("Error fetching client id:", error);
+    throw error;
+  }
+}
+
+// Utility function to show messages to user
+function showMessage({ text, type }) {
+  const messageEl = document.getElementById("message");
+  messageEl.textContent = text;
+  messageEl.className = `message ${type} show`;
+}
