@@ -5,7 +5,7 @@ import eslintPluginUnicorn from "eslint-plugin-unicorn";
 
 export default defineConfig([
   {
-    files: ["src/*.{js,mjs,cjs,ts,mts,cts}"],
+    files: ["src/**/*.{js,mjs,cjs,ts,mts,cts}"],
     plugins: { js },
     extends: ["js/recommended"],
   },

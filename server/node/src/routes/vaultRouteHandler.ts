@@ -109,6 +109,5 @@ export async function createPaymentTokenRouteHandler(
 async function savePaymentTokenToDatabase(
   _paymentTokenResponse: PaymentTokenResponse,
 ) {
-  // example function to teach saving the paymentToken to a database
-  // to be used for future transactions
+  // TODO: implement saving the paymentToken to your database for future transactions
 }
