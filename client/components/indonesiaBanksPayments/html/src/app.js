@@ -3,25 +3,25 @@ async function onPayPalWebSdkLoaded() {
     const clientId = await getBrowserSafeClientId();
     const sdkInstance = await window.paypal.createInstance({
       clientId,
-      testBuyerCountry: "US", // United States for Zip testing
-      components: ["zip-payments"],
+      testBuyerCountry: "ID", // Indonesia for Indonesia Banks testing
+      components: ["indonesia-banks-payments"],
     });
 
-    // Check if Zip is eligible
+    // Check if Indonesia Banks is eligible
     const paymentMethods = await sdkInstance.findEligibleMethods({
-      currencyCode: "USD",
+      currencyCode: "IDR",
     });
 
-    const isZipEligible = paymentMethods.isEligible("zip");
+    const isIndonesiaBanksEligible = paymentMethods.isEligible("indonesia_banks");
 
-    if (isZipEligible) {
-      setupZipPayment(sdkInstance);
+    if (isIndonesiaBanksEligible) {
+      setupIndonesiaBanksPayment(sdkInstance);
     } else {
       showMessage({
-        text: "Zip is not eligible. Please ensure your buyer country is United States and currency is USD.",
+        text: "Indonesia Banks is not eligible. Please ensure your buyer country is Indonesia and currency is IDR.",
         type: "error",
       });
-      console.error("Zip is not eligible");
+      console.error("Indonesia Banks is not eligible");
     }
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
@@ -32,22 +32,22 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupZipPayment(sdkInstance) {
+function setupIndonesiaBanksPayment(sdkInstance) {
   try {
-    // Create Zip checkout session
-    const zipCheckout = sdkInstance.createZipOneTimePaymentSession({
+    // Create Indonesia Banks checkout session
+    const indonesiaBanksCheckout = sdkInstance.createIndonesiaBanksOneTimePaymentSession({
       onApprove: handleApprove,
       onCancel: handleCancel,
       onError: handleError,
     });
 
     // Setup payment fields
-    setupPaymentFields(zipCheckout);
+    setupPaymentFields(indonesiaBanksCheckout);
 
     // Setup button click handler
-    setupButtonHandler(zipCheckout);
+    setupButtonHandler(indonesiaBanksCheckout);
   } catch (error) {
-    console.error("Error setting up Zip payment:", error);
+    console.error("Error setting up Indonesia Banks payment:", error);
     showMessage({
       text: "Failed to setup payment. Please refresh the page.",
       type: "error",
@@ -55,9 +55,9 @@ function setupZipPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(zipCheckout) {
+function setupPaymentFields(indonesiaBanksCheckout) {
   // Create payment field for full name with optional prefill
-  const fullNameField = zipCheckout.createPaymentFields({
+  const fullNameField = indonesiaBanksCheckout.createPaymentFields({
     type: "name",
     value: "", // Optional prefill value
     style: {
@@ -71,33 +71,41 @@ function setupPaymentFields(zipCheckout) {
     },
   });
 
-  // Mount the field to the container
-  document.querySelector("#zip-full-name").appendChild(fullNameField);
+  // Create email field
+  const emailField = indonesiaBanksCheckout.createPaymentFields({
+    type: "email",
+    value: "",
+    style: {
+      variables: {
+        textColor: "#333333",
+        colorTextPlaceholder: "#999999",
+        fontFamily: "Verdana, sans-serif",
+        fontSizeBase: "14px",
+      },
+    },
+  });
+
+  // Mount the fields to the containers
+  document.querySelector("#indonesia-banks-full-name").appendChild(fullNameField);
+  document.querySelector("#indonesia-banks-email").appendChild(emailField);
 }
 
-function setupButtonHandler(zipCheckout) {
-  const zipButton = document.querySelector("#zip-button");
-  zipButton.removeAttribute("hidden");
+function setupButtonHandler(indonesiaBanksCheckout) {
+  const indonesiaBanksButton = document.querySelector("#indonesia-banks-button");
+  indonesiaBanksButton.removeAttribute("hidden");
 
-  zipButton.addEventListener("click", async () => {
+  indonesiaBanksButton.addEventListener("click", async () => {
     try {
       console.log("Validating payment fields...");
 
       // Validate the payment fields
-      const isValid = await zipCheckout.validate();
+      const isValid = await indonesiaBanksCheckout.validate();
 
       if (isValid) {
         console.log("Validation successful, starting payment flow...");
 
-        // get the promise reference by invoking createOrder()
-        // do not await this async function since it can cause transient activation issues
-        const createOrderPromise = createOrder();
-
         // Start payment flow with popup mode
-        await zipCheckout.start(
-          { presentationMode: "popup" },
-          createOrderPromise,
-        );
+        await indonesiaBanksCheckout.start({ presentationMode: "popup" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({
@@ -108,7 +116,7 @@ function setupButtonHandler(zipCheckout) {
     } catch (error) {
       console.error("Payment error:", error);
       showMessage({
-        text: error.message || "An error occurred during payment. Please try again.",
+        text: "An error occurred during payment. Please try again.",
         type: "error",
       });
     }
@@ -125,7 +133,7 @@ async function createOrder() {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currencyCode: "USD" }),
+        body: JSON.stringify({ currencyCode: "IDR" }),
       },
     );
 
@@ -136,10 +144,7 @@ async function createOrder() {
     const { id } = await response.json();
     console.log("Order created with ID:", id);
 
-    // Return order ID for the payment session
-    return {
-      orderId: id,
-    };
+    return { orderId: id };
   } catch (error) {
     console.error("Error creating order:", error);
     showMessage({
