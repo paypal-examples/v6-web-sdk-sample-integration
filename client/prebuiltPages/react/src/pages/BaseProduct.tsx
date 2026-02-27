@@ -5,7 +5,7 @@ import { useQuantityChange } from "../hooks/useQuantityChange";
 import "../styles/Product.css";
 
 interface ProductPageProps {
-  flowType: "one-time-payment" | "save-payment" | "subscription";
+  flowType: "one-time-payment" | "save-payment" | "subscription" | "vault-with-purchase";
 }
 
 const BaseProduct = ({ flowType }: ProductPageProps) => {

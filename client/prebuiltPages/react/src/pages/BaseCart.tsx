@@ -5,7 +5,7 @@ import { useCartTotals } from "../hooks/useCartTotals";
 import "../styles/Cart.css";
 
 interface CartPageProps {
-  flowType: "one-time-payment" | "save-payment" | "subscription";
+  flowType: "one-time-payment" | "save-payment" | "subscription" | "vault-with-purchase";
 }
 
 const BaseCart = ({ flowType }: CartPageProps) => {

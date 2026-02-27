@@ -11,6 +11,9 @@ import BaseCart from "./pages/BaseCart";
 // One-Time Payment flow
 import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
 
+// One-Time Payment with Vault flow
+import VaultWithPurchaseCheckoutPage from "./paymentFlowCheckoutPages/VaultWithPurchaseCheckout";
+
 // Save Payment flow
 import SavePaymentSettings from "./pages/SavePaymentSettings";
 
@@ -120,6 +123,24 @@ function App() {
             />
             <Route
               path="/one-time-payment/error"
+              element={<ErrorBoundaryTestPage />}
+            />
+
+            {/* One-Time Payment with Vault flow */}
+            <Route
+              path="/vault-with-purchase"
+              element={<BaseProduct flowType="vault-with-purchase" />}
+            />
+            <Route
+              path="/vault-with-purchase/cart"
+              element={<BaseCart flowType="vault-with-purchase" />}
+            />
+            <Route
+              path="/vault-with-purchase/checkout"
+              element={<VaultWithPurchaseCheckoutPage />}
+            />
+            <Route
+              path="/vault-with-purchase/error"
               element={<ErrorBoundaryTestPage />}
             />
 
