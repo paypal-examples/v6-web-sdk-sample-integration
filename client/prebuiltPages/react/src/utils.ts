@@ -37,6 +37,21 @@ export const createOrder = async (cart: CartItem[]) => {
   return { orderId: id };
 };
 
+export const createOrderWithVault = async (cart: CartItem[]) => {
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ cart }),
+    },
+  );
+  const { id } = await response.json();
+  return { orderId: id };
+};
+
 export const captureOrder = async ({ orderId }: { orderId: string }) => {
   const response = await fetch(
     `/paypal-api/checkout/orders/${orderId}/capture`,
