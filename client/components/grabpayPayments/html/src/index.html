@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GrabPay Button Popup Flow</title>
+  <link rel="stylesheet" href="/client/shared/styles.css">
+</head>
+<body>
+  <section aria-labelledby="payment-experience">
+    <div class="payment-experience-container full-height">
+      <div class="nextgen-column">
+        <h1 id="payment-experience">GrabPay Button Popup Flow</h1>
+        <form class="form-controls">
+          <fieldset class="border nextgen-formset">
+            <legend class="text-sm sr-only">Controls for "GrabPay" payment flow</legend>
+            <div>
+              <input type="checkbox" id="prefill-full-name" />
+              <label for="prefill-full-name"> Prefill full name field </label>
+            </div>
+          </fieldset>
+          <fieldset class="border nextgen-formset">
+            <div>
+              <label for="update-locale" class="nextgen-dropdown_label">Locale:</label>
+              <select id="update-locale" class="nextgen-dropdown">
+                <option value="en-SG">English (SG)</option>
+                <option value="en-US">English (US)</option>
+                <option value="zh-CN">Chinese (Simplified)</option>
+                <option value="ms-MY">Malay (MY)</option>
+                <option value="id-ID">Indonesian (ID)</option>
+                <option value="th-TH">Thai (TH)</option>
+              </select>
+            </div>
+            <div>
+              <label for="country-code" class="nextgen-dropdown_label">Country:</label>
+              <input type="text" id="country-code" class="nextgen-input_field" value="SG" />
+            </div>
+            <div>
+              <label for="currency-code" class="nextgen-dropdown_label">Currency:</label>
+              <input type="text" id="currency-code" class="nextgen-input_field" value="SGD" />
+            </div>
+          </fieldset>
+        </form>
+        <section class="payment-method-container">
+          <h2>Unbranded GrabPay Payment Button</h2>
+          <p>
+            <grabpay-mark></grabpay-mark>
+            This example uses the <code>grabpay-button</code> web component to launch the popup flow.
+          </p>
+          <div id="grabpay-full-name" class="w-full max-w-96 h-24 min-w-6"></div>
+          <grabpay-button id="grabpay-button" class="w-56" hidden></grabpay-button>
+        </section>
+      </div>
+      <aside class="right-rail">
+        <div class="message-container">
+          <pre id="message"></pre>
+        </div>
+      </aside>
+    </div>
+  </section>
+  <script src="/web-sdk/v6/core"></script>
+  <script type="module" src="app.js"></script>
+</body>
+</html>
