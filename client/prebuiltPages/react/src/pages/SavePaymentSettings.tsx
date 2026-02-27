@@ -205,9 +205,7 @@ const SavePaymentSettings = () => {
               Loading payment methods...
             </div>
           ) : eligibilityError ? (
-            <div
-              style={{ padding: "1rem", textAlign: "center", color: "red" }}
-            >
+            <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
               Failed to load payment options. Please refresh the page.
             </div>
           ) : (

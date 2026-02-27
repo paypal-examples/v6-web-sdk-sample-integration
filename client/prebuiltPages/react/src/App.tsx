@@ -145,10 +145,7 @@ function App() {
             />
 
             {/* Save Payment flow */}
-            <Route
-              path="/save-payment"
-              element={<SavePaymentSettings />}
-            />
+            <Route path="/save-payment" element={<SavePaymentSettings />} />
 
             {/* Subscription flow */}
             <Route

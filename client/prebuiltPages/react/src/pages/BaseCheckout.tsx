@@ -6,7 +6,11 @@ import { useCartTotals } from "../hooks/useCartTotals";
 import "../styles/Checkout.css";
 
 interface CheckoutPageProps {
-  flowType: "one-time-payment" | "save-payment" | "subscription" | "vault-with-purchase";
+  flowType:
+    | "one-time-payment"
+    | "save-payment"
+    | "subscription"
+    | "vault-with-purchase";
   modalState: ModalType;
   onModalClose: () => void;
   getModalContent: (state: ModalType) => ModalContent | null;
