@@ -1,7 +1,7 @@
 {
-  "name": "paypal-vanilla-typescript-example",
+  "name": "paypal-payments-one-time-payment-typescript",
   "version": "1.0.0",
-  "main": "dist/index.js",
+  "main": "src/app.ts",
   "type": "module",
   "scripts": {
     "start": "vite",
@@ -18,14 +18,13 @@
     "@paypal/paypal-js": "^9.3.0"
   },
   "devDependencies": {
-    "@eslint/js": "^9.31.0",
+    "@eslint/js": "^10.0.1",
     "@types/node": "^25.3.0",
-    "eslint": "^9.31.0",
-    "eslint-import-resolver-typescript": "^4.4.4",
-    "eslint-plugin-import-x": "^4.16.1",
+    "eslint": "^10.0.2",
+    "eslint-plugin-unicorn": "^63.0.0",
     "prettier": "^3.8.1",
     "typescript": "^5.9.3",
-    "typescript-eslint": "^8.37.0",
+    "typescript-eslint": "^8.56.1",
     "vite": "^7.3.1"
   }
 }
