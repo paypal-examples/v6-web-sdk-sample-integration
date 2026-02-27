@@ -13,10 +13,66 @@ import { z } from "zod/v4";
 import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
-import { client } from "../paypalServerSdkClient";
+import { client, PAYPAL_BASE_URL } from "../paypalServerSdkClient";
 import { getAllProducts, getProduct } from "../productCatalog";
 
 const ordersController = new OrdersController(client);
+
+const MoneySchema = z.object({
+  currency_code: z.string(),
+  value: z.string(),
+});
+
+const ClientOrderPayloadSchema = z.object({
+  intent: z.string(),
+  processing_instruction: z.string().optional(),
+  purchase_units: z.array(
+    z.object({
+      reference_id: z.string().optional(),
+      description: z.string().optional(),
+      custom_id: z.string().optional(),
+      soft_descriptor: z.string().optional(),
+      amount: z.object({
+        currency_code: z.string(),
+        value: z.string(),
+        breakdown: z
+          .object({
+            item_total: MoneySchema.optional(),
+            tax_total: MoneySchema.optional(),
+            shipping: MoneySchema.optional(),
+            handling: MoneySchema.optional(),
+            insurance: MoneySchema.optional(),
+            shipping_discount: MoneySchema.optional(),
+          })
+          .optional(),
+      }),
+      payee: z
+        .object({
+          merchant_id: z.string().optional(),
+        })
+        .optional(),
+      items: z
+        .array(
+          z.object({
+            name: z.string(),
+            quantity: z.string(),
+            description: z.string().optional(),
+            url: z.string().optional(),
+            category: z.string().optional(),
+            sku: z.string().optional(),
+            unit_amount: MoneySchema,
+            tax: MoneySchema.optional(),
+          }),
+        )
+        .optional(),
+      shipping: z
+        .object({
+          method: z.string().optional(),
+        })
+        .optional(),
+    }),
+  ),
+});
 
 const OneTimePaymentSchema = z
   .object({
@@ -88,28 +144,86 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body,
-  );
+  let orderRequestBody;
 
-  const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
-    purchaseUnits: [
-      {
-        amount: {
-          currencyCode,
-          value: totalAmount,
-          breakdown: {
-            itemTotal: {
-              currencyCode: currencyCode,
-              value: totalAmount,
+  if (request.body.purchase_units) {
+    // Direct API call path for APM-specific payloads (e.g., Scalapay, PIX)
+    // that require fields not fully supported by the SDK
+    try {
+      const parsed = ClientOrderPayloadSchema.parse(request.body);
+
+      // console.log(
+      //   "[createOrderForOneTimePayment] Orders payload sent to v2/checkout/orders:",
+      //   JSON.stringify(parsed, null, 2),
+      // );
+
+      const token =
+        await client.clientCredentialsAuthManager.fetchToken();
+
+      const rawResponse = await fetch(
+        `${PAYPAL_BASE_URL}/v2/checkout/orders`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token.accessToken}`,
+            "PayPal-Request-Id": randomUUID(),
+            Prefer: "return=minimal",
+          },
+          body: JSON.stringify(parsed),
+        },
+      );
+
+      // Handle non-JSON responses
+      const contentType = rawResponse.headers.get("content-type");
+      if (contentType && contentType.includes("application/json")) {
+        const result = await rawResponse.json();
+        // console.log(
+        //   "[createOrderForOneTimePayment] Response:",
+        //   JSON.stringify(result, null, 2),
+        // );
+        return response.status(rawResponse.status).json(result);
+      } else {
+        const text = await rawResponse.text();
+        console.error(
+          "[createOrderForOneTimePayment] Non-JSON response:",
+          text,
+        );
+        return response.status(rawResponse.status).send(text);
+      }
+    } catch (error) {
+      console.error(
+        "[createOrderForOneTimePayment] Error creating order:",
+        error,
+      );
+      return response.status(500).json({
+        error: "Failed to create order",
+        message: error instanceof Error ? error.message : "Unknown error",
+      });
+    }
+  } else {
+    const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
+      request.body,
+    );
+    orderRequestBody = {
+      intent: CheckoutPaymentIntent.Capture,
+      purchaseUnits: [
+        {
+          amount: {
+            currencyCode,
+            value: totalAmount,
+            breakdown: {
+              itemTotal: {
+                currencyCode: currencyCode,
+                value: totalAmount,
+              },
             },
           },
+          items,
         },
-        items,
-      },
-    ],
-  };
+      ],
+    };
+  }
 
   const { result, statusCode } = await ordersController.createOrder({
     body: orderRequestBody,
@@ -412,6 +526,23 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
     body: orderRequestBody,
     paypalRequestId: randomUUID(),
     prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function getOrderRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const schema = z.object({
+    orderId: z.string(),
+  });
+
+  const { orderId } = schema.parse(request.params);
+
+  const { result, statusCode } = await ordersController.getOrder({
+    id: orderId,
   });
 
   response.status(statusCode).json(result);
