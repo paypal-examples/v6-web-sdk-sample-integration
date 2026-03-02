@@ -236,7 +236,7 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
         "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
       )
       .set("Referer", "https://url-from-referer-header.com/")
-      .send({});
+      .send();
 
     expect(response.status).toBe(201);
     expect(response.body).toEqual(
