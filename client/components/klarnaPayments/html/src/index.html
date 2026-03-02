@@ -1,0 +1,185 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Klarna - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #klarna-full-name,
+      #klarna-email {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      .billing-address-container {
+        max-width: 400px;
+        margin-bottom: 12px;
+      }
+
+      .billing-address-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 500;
+        color: #333;
+        font-size: 14px;
+      }
+
+      .billing-address-field {
+        margin-bottom: 10px;
+      }
+
+      .billing-address-input {
+        width: 100%;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: Verdana, sans-serif;
+      }
+
+      .phone-fields {
+        display: flex;
+        gap: 10px;
+      }
+
+      .phone-country-code-input {
+        flex: 0 0 100px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: Verdana, sans-serif;
+      }
+
+      .phone-national-number-input {
+        flex: 1;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+        font-family: Verdana, sans-serif;
+      }
+
+      .billing-address-input:focus,
+      .phone-country-code-input:focus,
+      .phone-national-number-input:focus {
+        outline: none;
+        border-color: #0070ba;
+      }
+
+      klarna-button {
+        max-width: 225px;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+        max-width: 700px;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .message.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Klarna One-Time Payment Integration</h1>
+
+    <div class="payment-container">
+      <div id="klarna-full-name"></div>
+      <div id="klarna-email"></div>
+
+      <div class="billing-address-container">
+        <label class="billing-address-label">Billing Address:</label>
+        <div class="billing-address-field">
+          <input
+            type="text"
+            class="billing-address-input"
+            id="address-line-1"
+            placeholder="Address Line 1"
+          />
+        </div>
+        <div class="billing-address-field">
+          <input
+            type="text"
+            class="billing-address-input"
+            id="admin-area-2"
+            placeholder="City"
+          />
+        </div>
+        <div class="billing-address-field">
+          <input
+            type="text"
+            class="billing-address-input"
+            id="admin-area-1"
+            placeholder="State/Province"
+          />
+        </div>
+        <div class="billing-address-field">
+          <input
+            type="text"
+            class="billing-address-input"
+            id="postal-code"
+            placeholder="Postal Code"
+          />
+        </div>
+        <div class="billing-address-field">
+          <input
+            type="text"
+            class="billing-address-input"
+            id="country-code"
+            placeholder="Country Code (e.g., GB)"
+          />
+        </div>
+        <div class="billing-address-field">
+          <div class="phone-fields">
+            <input
+              type="text"
+              class="phone-country-code-input"
+              id="phone-country-code"
+              placeholder="+44"
+            />
+            <input
+              type="tel"
+              class="phone-national-number-input"
+              id="phone-national-number"
+              placeholder="Phone Number"
+            />
+          </div>
+        </div>
+      </div>
+
+      <klarna-button id="klarna-button" hidden></klarna-button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
