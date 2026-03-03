@@ -36,11 +36,6 @@ const CardFieldsOneTimePaymentCheckout = () => {
             title: "Payment Successful! 🎉",
             message: "Thank you for your purchase!",
           };
-        case "cancel":
-          return {
-            title: "Payment Cancelled",
-            message: "Your payment was cancelled.",
-          };
         case "error":
           return {
             title: "Payment Error",
