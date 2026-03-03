@@ -11,8 +11,11 @@ import BaseCart from "./pages/BaseCart";
 // One-Time Payment flow
 import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
 
+// One-Time Payment with Vault flow
+import VaultWithPurchaseCheckoutPage from "./paymentFlowCheckoutPages/VaultWithPurchaseCheckout";
+
 // Save Payment flow
-import SavePaymentCheckoutPage from "./paymentFlowCheckoutPages/SavePaymentCheckout";
+import SavePaymentSettings from "./pages/SavePaymentSettings";
 
 // Subscription flow
 import SubscriptionCheckoutPage from "./paymentFlowCheckoutPages/SubscriptionCheckout";
@@ -123,23 +126,26 @@ function App() {
               element={<ErrorBoundaryTestPage />}
             />
 
-            {/* Save Payment flow */}
+            {/* One-Time Payment with Vault flow */}
             <Route
-              path="/save-payment"
-              element={<BaseProduct flowType="save-payment" />}
+              path="/vault-with-purchase"
+              element={<BaseProduct flowType="vault-with-purchase" />}
             />
             <Route
-              path="/save-payment/cart"
-              element={<BaseCart flowType="save-payment" />}
+              path="/vault-with-purchase/cart"
+              element={<BaseCart flowType="vault-with-purchase" />}
             />
             <Route
-              path="/save-payment/checkout"
-              element={<SavePaymentCheckoutPage />}
+              path="/vault-with-purchase/checkout"
+              element={<VaultWithPurchaseCheckoutPage />}
             />
             <Route
-              path="/save-payment/error"
+              path="/vault-with-purchase/error"
               element={<ErrorBoundaryTestPage />}
             />
+
+            {/* Save Payment flow */}
+            <Route path="/save-payment" element={<SavePaymentSettings />} />
 
             {/* Subscription flow */}
             <Route
