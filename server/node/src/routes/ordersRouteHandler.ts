@@ -89,7 +89,7 @@ export async function createOrderForOneTimePaymentRouteHandler(
   response: Response,
 ) {
   const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body,
+    request.body ?? {},
   );
 
   const orderRequestBody = {
@@ -137,7 +137,7 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
           request.get("referer") ??
           "https://www.example.com/cancel",
       };
-    }).parse(request.body);
+    }).parse(request.body ?? {});
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -194,7 +194,7 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
           request.get("referer") ??
           "https://www.example.com/cancel",
       };
-    }).parse(request.body);
+    }).parse(request.body ?? {});
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
@@ -245,7 +245,7 @@ export async function createOrderForOneTimePaymentWithShippingRouteHandler(
   response: Response,
 ) {
   const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body,
+    request.body ?? {},
   );
 
   const orderRequestBody = {
@@ -374,7 +374,7 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
           request.get("referer") ??
           "https://www.example.com/cancel",
       };
-    }).parse(request.body);
+    }).parse(request.body ?? {});
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
