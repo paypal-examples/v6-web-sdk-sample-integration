@@ -40,7 +40,7 @@ export default function CheckoutPage() {
     return { orderId: data.id };
   }
 
-  async function captureOrder(orderId: string) {
+  async function captureOrder({ orderId }: { orderId: string }) {
     const response = await fetch(
       `/paypal-api/checkout/orders/${orderId}/capture`,
       {
@@ -157,7 +157,7 @@ export default function CheckoutPage() {
             <PayPalOneTimePaymentButton
               createOrder={createOrder}
               onApprove={async (data) => {
-                await captureOrder(data.orderId);
+                await captureOrder({ orderId: data.orderId });
                 setState({ status: "success", orderId: data.orderId });
               }}
               onError={(error) => {
