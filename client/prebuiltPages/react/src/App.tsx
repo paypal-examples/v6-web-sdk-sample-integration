@@ -10,7 +10,7 @@ import BaseCart from "./pages/BaseCart";
 
 // One-Time Payment flow
 import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
-import CardFieldsCheckout from "./paymentFlowCheckoutPages/CardFieldsCheckout";
+import CardFieldsOneTimePaymentCheckout from "./paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
 
 // Save Payment flow
 import SavePaymentCheckoutPage from "./paymentFlowCheckoutPages/SavePaymentCheckout";
@@ -144,7 +144,7 @@ function App() {
             />
             <Route
               path="/one-time-payment/card-fields/checkout"
-              element={<CardFieldsCheckout />}
+              element={<CardFieldsOneTimePaymentCheckout />}
             />
 
             {/* Save Payment flow */}

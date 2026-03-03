@@ -15,7 +15,7 @@ import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
  *
  * Uses useEligibleMethods to check payment method eligibility for card fields one-time payments.
  */
-const CardFieldsCheckout = () => {
+const CardFieldsOneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
@@ -90,4 +90,4 @@ const CardFieldsCheckout = () => {
   );
 };
 
-export default CardFieldsCheckout;
+export default CardFieldsOneTimePaymentCheckout;
