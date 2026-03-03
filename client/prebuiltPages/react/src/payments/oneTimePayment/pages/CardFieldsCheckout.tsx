@@ -1,0 +1,93 @@
+import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  usePayPal,
+  useEligibleMethods,
+  INSTANCE_LOADING_STATE,
+  PayPalCardFieldsProvider,
+} from "@paypal/react-paypal-js/sdk-v6";
+import type { ModalType, ModalContent } from "../../../types";
+import PayPalCardFieldsOneTimePayment from "../components/PayPalCardFieldsOneTimePayment";
+import BaseCardFieldsCheckout from "../../../pages/BaseCardFieldsCheckout";
+
+/**
+ * Checkout page for one-time payments using card fields.
+ *
+ * Uses useEligibleMethods to check payment method eligibility for card fields one-time payments.
+ */
+const CardFieldsCheckout = () => {
+  const [modalState, setModalState] = useState<ModalType>(null);
+  const { loadingStatus } = usePayPal();
+  const navigate = useNavigate();
+
+  // Fetch eligibility for one-time payment flow
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT",
+    },
+  });
+
+  const getModalContent = useCallback(
+    (state: ModalType): ModalContent | null => {
+      switch (state) {
+        case "success":
+          return {
+            title: "Payment Successful! 🎉",
+            message: "Thank you for your purchase!",
+          };
+        case "cancel":
+          return {
+            title: "Payment Cancelled",
+            message: "Your payment was cancelled.",
+          };
+        case "error":
+          return {
+            title: "Payment Error",
+            message:
+              "There was an error processing your payment. Please try again.",
+          };
+        default:
+          return null;
+      }
+    },
+    [],
+  );
+
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+
+  const handleModalClose = () => {
+    setModalState(null);
+    if (modalState === "success") {
+      navigate("/");
+    }
+  };
+
+  const payPalCardFieldsOneTimePayment = isLoading ? (
+    <div style={{ padding: "1rem", textAlign: "center" }}>
+      Loading card fields...
+    </div>
+  ) : eligibilityError ? (
+    <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+      Failed to load card fields. Please refresh the page.
+    </div>
+  ) : (
+    <>
+      <PayPalCardFieldsProvider>
+        <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
+      </PayPalCardFieldsProvider>
+    </>
+  );
+
+  return (
+    <BaseCardFieldsCheckout
+      flowType="one-time-payment"
+      modalState={modalState}
+      onModalClose={handleModalClose}
+      getModalContent={getModalContent}
+      cardFieldComponents={payPalCardFieldsOneTimePayment}
+    />
+  );
+};
+
+export default CardFieldsCheckout;

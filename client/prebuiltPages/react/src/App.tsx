@@ -11,6 +11,7 @@ import BaseCart from "./pages/BaseCart";
 // One-Time Payment flow
 import OneTimeCheckoutPage from "./payments/oneTimePayment/pages/Checkout";
 import OneTimeStaticButtonsDemo from "./payments/oneTimePayment/pages/StaticButtons";
+import CardFieldsCheckout from "./payments/oneTimePayment/pages/CardFieldsCheckout";
 
 // Save Payment flow
 import SavePaymentCheckoutPage from "./payments/savePayment/pages/Checkout";
@@ -95,6 +96,7 @@ function App() {
           "venmo-payments",
           "paypal-guest-payments",
           "paypal-subscriptions",
+          "card-fields",
         ]}
         pageType="checkout"
       >
@@ -124,6 +126,28 @@ function App() {
             <Route
               path="/one-time-payment/error"
               element={<ErrorBoundaryTestPage />}
+            />
+            <Route
+              path="/one-time-payment/card-fields"
+              element={
+                <BaseProduct
+                  flowType="one-time-payment"
+                  paymentMethod="card-fields"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/card-fields/cart"
+              element={
+                <BaseCart
+                  flowType="one-time-payment"
+                  paymentMethod="card-fields"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/card-fields/checkout"
+              element={<CardFieldsCheckout />}
             />
 
             {/* Save Payment flow */}
