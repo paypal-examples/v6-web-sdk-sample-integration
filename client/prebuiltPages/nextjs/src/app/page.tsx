@@ -1,15 +1,7 @@
 import Link from "next/link";
+import { PRODUCT } from "@/lib/product";
 
-const product = {
-  name: "World Cup Ball",
-  tagline: "Precision. Control. Perfection.",
-  description:
-    "Tournament-grade match ball engineered for peak performance. Thermal-bonded panels deliver consistent flight and true touch in every condition.",
-  price: "$75.00",
-  sku: "1blwyeo8",
-};
-
-export default function Home() {
+const Home = () => {
   return (
     <main className="min-h-screen flex flex-col">
       {/* Navigation */}
@@ -35,18 +27,18 @@ export default function Home() {
             New
           </p>
           <h1 className="text-5xl font-semibold tracking-tight text-[var(--foreground)] mb-4">
-            {product.name}
+            {PRODUCT.name}
           </h1>
           <p className="text-2xl font-light text-[var(--foreground-secondary)] mb-6">
-            {product.tagline}
+            {PRODUCT.tagline}
           </p>
           <p className="text-base leading-relaxed text-[var(--foreground-secondary)] max-w-lg mx-auto mb-10">
-            {product.description}
+            {PRODUCT.description}
           </p>
 
           {/* Price */}
           <p className="text-3xl font-medium text-[var(--foreground)] mb-8">
-            {product.price}
+            ${PRODUCT.price}
           </p>
 
           {/* CTA */}
@@ -67,4 +59,6 @@ export default function Home() {
       </footer>
     </main>
   );
-}
+};
+
+export default Home;

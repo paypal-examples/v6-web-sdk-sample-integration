@@ -6,13 +6,8 @@ import {
   PayPalProvider,
   PayPalOneTimePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-
-const product = {
-  name: "World Cup Ball",
-  price: "75.00",
-  sku: "1blwyeo8",
-  quantity: 1,
-};
+import { PRODUCT } from "@/lib/product";
+import { createOrder, captureOrder } from "@/lib/utils";
 
 const PAYPAL_CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "";
 
@@ -22,34 +17,24 @@ type CheckoutState =
   | { status: "error"; message: string }
   | { status: "cancelled" };
 
-export default function CheckoutPage() {
+const Nav = () => {
+  return (
+    <nav className="w-full px-6 py-4 flex items-center justify-between border-b border-[var(--border)]">
+      <Link
+        href="/"
+        className="text-sm font-medium tracking-tight text-[var(--foreground)] hover:text-[var(--foreground-secondary)] transition-colors"
+      >
+        PayPal Store
+      </Link>
+      <span className="text-xs text-[var(--foreground-secondary)]">
+        Next.js Demo
+      </span>
+    </nav>
+  );
+};
+
+const CheckoutPage = () => {
   const [state, setState] = useState<CheckoutState>({ status: "idle" });
-
-  async function createOrder(): Promise<{ orderId: string }> {
-    const response = await fetch(
-      "/paypal-api/checkout/orders/create-order-for-one-time-payment",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          cart: [{ sku: product.sku, quantity: product.quantity }],
-        }),
-      }
-    );
-    const data = await response.json();
-    return { orderId: data.id };
-  }
-
-  async function captureOrder({ orderId }: { orderId: string }) {
-    const response = await fetch(
-      `/paypal-api/checkout/orders/${orderId}/capture`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-      }
-    );
-    return response.json();
-  }
 
   if (state.status === "success") {
     return (
@@ -111,14 +96,14 @@ export default function CheckoutPage() {
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-sm font-medium text-[var(--foreground)]">
-                  {product.name}
+                  {PRODUCT.name}
                 </p>
                 <p className="text-xs text-[var(--foreground-secondary)]">
-                  Qty: {product.quantity}
+                  Qty: {PRODUCT.quantity}
                 </p>
               </div>
               <p className="text-sm font-medium text-[var(--foreground)]">
-                ${product.price}
+                ${PRODUCT.price}
               </p>
             </div>
 
@@ -128,7 +113,7 @@ export default function CheckoutPage() {
                   Total
                 </span>
                 <span className="text-lg font-semibold text-[var(--foreground)]">
-                  ${product.price}
+                  ${PRODUCT.price}
                 </span>
               </div>
             </div>
@@ -161,6 +146,7 @@ export default function CheckoutPage() {
                 setState({ status: "success", orderId: data.orderId });
               }}
               onError={(error) => {
+                console.error("Payment error:", error);
                 setState({
                   status: "error",
                   message:
@@ -169,7 +155,8 @@ export default function CheckoutPage() {
                       : "Something went wrong. Please try again.",
                 });
               }}
-              onCancel={() => {
+              onCancel={(data) => {
+                console.log("Payment cancelled:", data);
                 setState({ status: "cancelled" });
               }}
               presentationMode="auto"
@@ -189,20 +176,6 @@ export default function CheckoutPage() {
       </section>
     </main>
   );
-}
+};
 
-function Nav() {
-  return (
-    <nav className="w-full px-6 py-4 flex items-center justify-between border-b border-[var(--border)]">
-      <Link
-        href="/"
-        className="text-sm font-medium tracking-tight text-[var(--foreground)] hover:text-[var(--foreground-secondary)] transition-colors"
-      >
-        PayPal Store
-      </Link>
-      <span className="text-xs text-[var(--foreground-secondary)]">
-        Next.js Demo
-      </span>
-    </nav>
-  );
-}
+export default CheckoutPage;

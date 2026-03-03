@@ -15,14 +15,14 @@ This Next.js sample application demonstrates how to integrate a PayPal one-time 
 
 ## Technology Stack
 
-| Technology              | Version | Purpose                                            |
-| ----------------------- | ------- | -------------------------------------------------- |
-| Next.js                 | 15.x    | Full-stack React framework (App Router)            |
-| React                   | 19.x    | UI framework                                       |
-| TypeScript              | 5.8.x   | Type safety                                        |
-| Tailwind CSS            | 4.x     | Styling                                            |
-| @paypal/react-paypal-js | 9.0.1   | React components and hooks for PayPal V6 SDK       |
-| @paypal/paypal-server-sdk | 2.2.0 | Server-side PayPal API calls (shared Express server) |
+| Technology                | Version | Purpose                                              |
+| ------------------------- | ------- | ---------------------------------------------------- |
+| Next.js                   | 15.x    | Full-stack React framework (App Router)              |
+| React                     | 19.x    | UI framework                                         |
+| TypeScript                | 5.8.x   | Type safety                                          |
+| Tailwind CSS              | 4.x     | Styling                                              |
+| @paypal/react-paypal-js   | 9.0.1   | React components and hooks for PayPal V6 SDK         |
+| @paypal/paypal-server-sdk | 2.2.0   | Server-side PayPal API calls (shared Express server) |
 
 ## Prerequisites
 
@@ -57,9 +57,9 @@ The Next.js dev server proxies `/paypal-api` requests to the backend server on p
 
 ## Application Routes
 
-| Route       | Description                                          |
-| ----------- | ---------------------------------------------------- |
-| `/`         | Product showcase page with "Buy Now" CTA             |
+| Route       | Description                                            |
+| ----------- | ------------------------------------------------------ |
+| `/`         | Product showcase page with "Buy Now" CTA               |
 | `/checkout` | Order summary, PayPal button, and inline success state |
 
 ## Project Structure
@@ -91,10 +91,7 @@ nextjs/
 
 ```tsx
 // src/app/checkout/page.tsx
-<PayPalProvider
-  clientId={PAYPAL_CLIENT_ID}
-  components={["paypal-payments"]}
->
+<PayPalProvider clientId={PAYPAL_CLIENT_ID} components={["paypal-payments"]}>
   <PayPalOneTimePaymentButton
     createOrder={createOrder}
     onApprove={handleApprove}
@@ -132,7 +129,7 @@ async function createOrder(): Promise<{ orderId: string }> {
       body: JSON.stringify({
         cart: [{ sku: "1blwyeo8", quantity: 1 }],
       }),
-    }
+    },
   );
   const data = await response.json();
   return { orderId: data.id };
@@ -142,7 +139,7 @@ async function createOrder(): Promise<{ orderId: string }> {
 async function captureOrder(orderId: string) {
   const response = await fetch(
     `/paypal-api/checkout/orders/${orderId}/capture`,
-    { method: "POST", headers: { "Content-Type": "application/json" } }
+    { method: "POST", headers: { "Content-Type": "application/json" } },
   );
   return response.json();
 }
@@ -161,7 +158,7 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 | Endpoint                                                        | Method | Description                                 |
 | --------------------------------------------------------------- | ------ | ------------------------------------------- |
 | `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment |
-| `/paypal-api/checkout/orders/{orderId}/capture`                  | POST   | Captures the approved payment               |
+| `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment               |
 
 ## Deploy on Vercel
 
@@ -186,13 +183,13 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 
 ### Frontend Files
 
-| File                        | Purpose                                          |
-| --------------------------- | ------------------------------------------------ |
-| `src/app/layout.tsx`        | Root layout with metadata                        |
-| `src/app/globals.css`       | Tailwind CSS and design tokens                   |
-| `src/app/page.tsx`          | Product showcase page                            |
-| `src/app/checkout/page.tsx` | Checkout with PayPal button and inline states     |
-| `next.config.ts`            | API proxy rewrites to Express server             |
+| File                        | Purpose                                       |
+| --------------------------- | --------------------------------------------- |
+| `src/app/layout.tsx`        | Root layout with metadata                     |
+| `src/app/globals.css`       | Tailwind CSS and design tokens                |
+| `src/app/page.tsx`          | Product showcase page                         |
+| `src/app/checkout/page.tsx` | Checkout with PayPal button and inline states |
+| `next.config.ts`            | API proxy rewrites to Express server          |
 
 ### Import Paths
 
