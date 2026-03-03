@@ -1,12 +1,14 @@
 import express, { Request, Response } from "express";
-import { join } from "path";
+import path from "node:path";
 import cors from "cors";
 
 import routes from "./routes/index";
 import errorMiddleware from "./middleware/errorMiddleware";
 
 const CLIENT_STATIC_DIRECTORY =
-  process.env.CLIENT_STATIC_DIRECTORY || join(__dirname, "../../../client");
+  process.env.CLIENT_STATIC_DIRECTORY ||
+  // eslint-disable-next-line unicorn/prefer-module
+  path.join(__dirname, "../../../client");
 
 const app = express();
 
@@ -19,8 +21,8 @@ app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
  * Entry point for client examples containing HTML, JS, and CSS
  * ###################################################################### */
 
-app.get("/", (_req: Request, res: Response) => {
-  res.redirect("/client/index.html");
+app.get("/", (_request: Request, response: Response) => {
+  response.redirect("/client/index.html");
 });
 
 app.use(errorMiddleware);
@@ -50,6 +52,6 @@ async function setupNgrokForHTTPS(port: number) {
 
     console.log(`Ingress secure tunnel established at: ${listener.url()}`);
   } catch (error) {
-    console.error("error connecting to ngrok: ", error);
+    console.error("error connecting to ngrok:", error);
   }
 }

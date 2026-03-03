@@ -6,9 +6,9 @@ import {
   INSTANCE_LOADING_STATE,
   PayPalCardFieldsProvider,
 } from "@paypal/react-paypal-js/sdk-v6";
-import type { ModalType, ModalContent } from "../../../types";
-import PayPalCardFieldsOneTimePayment from "../components/PayPalCardFieldsOneTimePayment";
-import BaseCardFieldsCheckout from "../../../pages/BaseCardFieldsCheckout";
+import type { ModalType, ModalContent } from "../types";
+import PayPalCardFieldsOneTimePayment from "../payments/oneTimePayment/components/PayPalCardFieldsOneTimePayment";
+import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
 
 /**
  * Checkout page for one-time payments using card fields.

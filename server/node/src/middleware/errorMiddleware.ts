@@ -2,7 +2,7 @@ import { z, ZodError } from "zod/v4";
 import { ApiError } from "@paypal/paypal-server-sdk";
 import type { Request, Response, NextFunction } from "express";
 
-import { CustomApiError } from "../customApiEndpoints/utils";
+import { CustomApiError } from "../customApiEndpoints/customApiError";
 
 export default async function errorMiddleware(
   error: Error,

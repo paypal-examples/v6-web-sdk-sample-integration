@@ -1,4 +1,6 @@
-import { BASE_URL, CustomApiError, getFullScopeAccessToken } from "./utils";
+import { getFullScopeAccessToken } from "./authorization";
+import { CustomApiError } from "./customApiError";
+import { BASE_URL } from "./constants";
 
 type CreateSubscriptionProductOptions = {
   name: string;

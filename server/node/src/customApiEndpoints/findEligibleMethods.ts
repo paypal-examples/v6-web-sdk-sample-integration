@@ -1,5 +1,7 @@
 import { z } from "zod/v4";
-import { BASE_URL, CustomApiError, getFullScopeAccessToken } from "./utils";
+import { getFullScopeAccessToken } from "./authorization";
+import { CustomApiError } from "./customApiError";
+import { BASE_URL } from "./constants";
 
 const PurchaseUnitSchema = z.object({
   amount: z.object({

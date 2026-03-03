@@ -1,4 +1,5 @@
 import { useState, useCallback } from "react";
+import { useNavigate } from "react-router-dom";
 import {
   usePayPal,
   useEligibleMethods,
@@ -7,20 +8,21 @@ import {
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
   type OnErrorData,
+  PayPalSubscriptionButton,
 } from "@paypal/react-paypal-js/sdk-v6";
-import PayPalSubscriptionButton from "../components/PayPalSubscriptionButton";
-import BaseStaticButtons from "../../../pages/BaseStaticButtons";
-import type { ModalType, ModalContent } from "../../../types";
-import { createSubscription } from "../../../utils";
+import BaseCheckout from "../pages/BaseCheckout";
+import type { ModalType, ModalContent } from "../types";
+import { createSubscription } from "../utils";
 
 /**
- * Static buttons demo for subscription payments.
+ * Checkout page for subscription payments.
  *
  * Uses useEligibleMethods to check payment method eligibility for recurring payments.
  */
-const StaticButtons = () => {
+const Checkout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
+  const navigate = useNavigate();
 
   // Fetch eligibility for recurring/subscription payment flow
   const { error: eligibilityError } = useEligibleMethods({
@@ -81,40 +83,38 @@ const StaticButtons = () => {
     [],
   );
 
-  const renderPaymentButtons = () => {
-    if (isLoading) {
-      return (
-        <div style={{ padding: "1rem", textAlign: "center" }}>
-          Loading payment methods...
-        </div>
-      );
+  const handleModalClose = () => {
+    setModalState(null);
+    if (modalState === "success") {
+      navigate("/");
     }
-
-    if (eligibilityError) {
-      return (
-        <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
-          Failed to load payment options. Please refresh the page.
-        </div>
-      );
-    }
-
-    return (
-      <PayPalSubscriptionButton
-        createSubscription={createSubscription}
-        presentationMode="auto"
-        {...handleSubscriptionCallbacks}
-      />
-    );
   };
 
+  const paymentButtons = isLoading ? (
+    <div style={{ padding: "1rem", textAlign: "center" }}>
+      Loading payment methods...
+    </div>
+  ) : eligibilityError ? (
+    <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+      Failed to load payment options. Please refresh the page.
+    </div>
+  ) : (
+    <PayPalSubscriptionButton
+      createSubscription={createSubscription}
+      presentationMode="auto"
+      {...handleSubscriptionCallbacks}
+    />
+  );
+
   return (
-    <BaseStaticButtons
-      paymentButtons={renderPaymentButtons}
-      getModalContent={getModalContent}
+    <BaseCheckout
+      flowType="subscription"
       modalState={modalState}
-      onModalClose={() => setModalState(null)}
+      onModalClose={handleModalClose}
+      getModalContent={getModalContent}
+      paymentButtons={paymentButtons}
     />
   );
 };
 
-export default StaticButtons;
+export default Checkout;

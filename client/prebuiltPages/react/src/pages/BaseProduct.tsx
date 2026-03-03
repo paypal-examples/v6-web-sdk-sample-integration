@@ -1,4 +1,4 @@
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import ProductDisplay from "../components/ProductDisplay";
 import { useProducts } from "../hooks/useProducts";
 import { useQuantityChange } from "../hooks/useQuantityChange";
@@ -36,31 +36,6 @@ const BaseProduct = ({ flowType, paymentMethod }: ProductPageProps) => {
 
   return (
     <div className="product-page-container">
-      <div
-        style={{
-          marginBottom: "30px",
-          display: "flex",
-          gap: "12px",
-          justifyContent: "center",
-          flexWrap: "wrap",
-        }}
-      >
-        <Link
-          to={`/${flowType}/static-demo`}
-          style={{
-            padding: "0.75rem 1.5rem",
-            backgroundColor: "#0070ba",
-            color: "white",
-            textDecoration: "none",
-            border: "none",
-            borderRadius: "4px",
-            cursor: "pointer",
-          }}
-        >
-          📄 Static Button Demo
-        </Link>
-      </div>
-
       <ProductDisplay
         products={products}
         onQuantityChange={handleQuantityChange}

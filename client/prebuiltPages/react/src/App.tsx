@@ -9,20 +9,20 @@ import BaseProduct from "./pages/BaseProduct";
 import BaseCart from "./pages/BaseCart";
 
 // One-Time Payment flow
-import OneTimeCheckoutPage from "./payments/oneTimePayment/pages/Checkout";
-import OneTimeStaticButtonsDemo from "./payments/oneTimePayment/pages/StaticButtons";
-import CardFieldsCheckout from "./payments/oneTimePayment/pages/CardFieldsCheckout";
+import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
+import CardFieldsCheckout from "./paymentFlowCheckoutPages/CardFieldsCheckout";
 
 // Save Payment flow
-import SavePaymentCheckoutPage from "./payments/savePayment/pages/Checkout";
-import SavePaymentStaticButtonsDemo from "./payments/savePayment/pages/StaticButtons";
+import SavePaymentCheckoutPage from "./paymentFlowCheckoutPages/SavePaymentCheckout";
 
 // Subscription flow
-import SubscriptionCheckoutPage from "./payments/subscription/pages/Checkout";
-import SubscriptionStaticButtonsDemo from "./payments/subscription/pages/StaticButtons";
+import SubscriptionCheckoutPage from "./paymentFlowCheckoutPages/SubscriptionCheckout";
 
 // Error handling demo
 import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
+
+// PayPal Messages demo
+import PayPalMessagesDemo from "./paypalMessages/PayPalMessagesDemo";
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
@@ -97,6 +97,7 @@ function App() {
           "paypal-guest-payments",
           "paypal-subscriptions",
           "card-fields",
+          "paypal-messages",
         ]}
         pageType="checkout"
       >
@@ -118,10 +119,6 @@ function App() {
             <Route
               path="/one-time-payment/checkout"
               element={<OneTimeCheckoutPage />}
-            />
-            <Route
-              path="/one-time-payment/static-demo"
-              element={<OneTimeStaticButtonsDemo />}
             />
             <Route
               path="/one-time-payment/error"
@@ -164,10 +161,6 @@ function App() {
               element={<SavePaymentCheckoutPage />}
             />
             <Route
-              path="/save-payment/static-demo"
-              element={<SavePaymentStaticButtonsDemo />}
-            />
-            <Route
               path="/save-payment/error"
               element={<ErrorBoundaryTestPage />}
             />
@@ -185,14 +178,14 @@ function App() {
               path="/subscription/checkout"
               element={<SubscriptionCheckoutPage />}
             />
-            <Route
-              path="/subscription/static-demo"
-              element={<SubscriptionStaticButtonsDemo />}
-            />
+
             <Route
               path="/subscription/error"
               element={<ErrorBoundaryTestPage />}
             />
+
+            {/* PayPal Messages demo */}
+            <Route path="/paypal-messages" element={<PayPalMessagesDemo />} />
 
             {/* Error handling demo */}
             <Route
