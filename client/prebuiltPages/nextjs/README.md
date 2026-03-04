@@ -5,7 +5,7 @@
 > **Frontend Package**: @paypal/react-paypal-js v9.0.1
 > **Backend Package**: @paypal/paypal-server-sdk v2.2.0 (shared Express server)
 > **Payment Methods**: PayPal (one-time payment)
-> **Demo**: Single-product checkout with inline success state
+> **Demo**: Single-page checkout with product showcase and inline success state
 
 This Next.js sample application demonstrates how to integrate a PayPal one-time payment flow using `@paypal/react-paypal-js` with the App Router and `clientId` initialization.
 
@@ -57,22 +57,22 @@ The Next.js dev server proxies `/paypal-api` requests to the backend server on p
 
 ## Application Routes
 
-| Route       | Description                                            |
-| ----------- | ------------------------------------------------------ |
-| `/`         | Product showcase page with "Buy Now" CTA               |
-| `/checkout` | Order summary, PayPal button, and inline success state |
+| Route | Description                                                                |
+| ----- | -------------------------------------------------------------------------- |
+| `/`   | Product showcase (left) + checkout with PayPal button (right), single page |
 
 ## Project Structure
 
 ```
 nextjs/
 ├── src/
-│   └── app/
-│       ├── layout.tsx              # Root layout with metadata
-│       ├── globals.css             # Tailwind CSS and design tokens
-│       ├── page.tsx                # Product showcase page
-│       └── checkout/
-│           └── page.tsx            # Checkout with PayPalOneTimePaymentButton
+│   ├── app/
+│   │   ├── layout.tsx              # Root layout with metadata
+│   │   ├── globals.css             # Tailwind CSS and design tokens
+│   │   └── page.tsx                # Product showcase + checkout (single page)
+│   └── lib/
+│       ├── product.ts              # Product data constant
+│       └── utils.ts                # API utility functions (createOrder, captureOrder)
 ├── public/                         # Static assets
 ├── next.config.ts                  # Rewrites for API proxy to Express server
 ├── package.json
@@ -90,11 +90,14 @@ nextjs/
 `PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK scripts automatically. This template uses `clientId` initialization (no server-generated client token required).
 
 ```tsx
-// src/app/checkout/page.tsx
+// src/app/page.tsx
 <PayPalProvider clientId={PAYPAL_CLIENT_ID} components={["paypal-payments"]}>
   <PayPalOneTimePaymentButton
     createOrder={createOrder}
     onApprove={handleApprove}
+    onCancel={handleCancel}
+    onError={handleError}
+    onComplete={handleComplete}
     presentationMode="auto"
   />
 </PayPalProvider>
@@ -106,13 +109,14 @@ The `components` prop specifies which payment methods to load:
 
 ### 2. Payment Flow
 
-1. User clicks "Buy Now" on the product page
-2. Checkout page renders `PayPalProvider` with `clientId` and `PayPalOneTimePaymentButton`
+1. Single page renders product checkout
+2. `PayPalProvider` initializes with `clientId` and renders `PayPalOneTimePaymentButton`
 3. User clicks the PayPal button
 4. `createOrder` callback creates an order via the backend API
 5. PayPal opens the checkout experience (popup/modal)
 6. On approval, `onApprove` callback captures the order via the backend
-7. Inline success message is displayed with the order ID
+7. `onComplete` callback logs the payment session state
+8. Inline success message replaces the page with the order ID
 
 ### 3. Order Creation and Capture
 
@@ -183,21 +187,26 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 
 ### Frontend Files
 
-| File                        | Purpose                                       |
-| --------------------------- | --------------------------------------------- |
-| `src/app/layout.tsx`        | Root layout with metadata                     |
-| `src/app/globals.css`       | Tailwind CSS and design tokens                |
-| `src/app/page.tsx`          | Product showcase page                         |
-| `src/app/checkout/page.tsx` | Checkout with PayPal button and inline states |
-| `next.config.ts`            | API proxy rewrites to Express server          |
+| File                  | Purpose                                           |
+| --------------------- | ------------------------------------------------- |
+| `src/app/layout.tsx`  | Root layout with metadata                         |
+| `src/app/globals.css` | Tailwind CSS and design tokens                    |
+| `src/app/page.tsx`    | Product showcase + checkout with PayPal button    |
+| `src/lib/product.ts`  | Product data constant                             |
+| `src/lib/utils.ts`    | API utility functions (createOrder, captureOrder) |
+| `next.config.ts`      | API proxy rewrites to Express server              |
 
 ### Import Paths
 
 ```tsx
-// SDK Provider and components
+// SDK Provider, components, and callback types
 import {
   PayPalProvider,
   PayPalOneTimePaymentButton,
+  type OnApproveDataOneTimePayments,
+  type OnCancelDataOneTimePayments,
+  type OnCompleteData,
+  type OnErrorData,
 } from "@paypal/react-paypal-js/sdk-v6";
 ```
 
