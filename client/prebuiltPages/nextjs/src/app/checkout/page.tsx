@@ -5,6 +5,10 @@ import Link from "next/link";
 import {
   PayPalProvider,
   PayPalOneTimePaymentButton,
+  type OnApproveDataOneTimePayments,
+  type OnCancelDataOneTimePayments,
+  type OnCompleteData,
+  type OnErrorData,
 } from "@paypal/react-paypal-js/sdk-v6";
 import { PRODUCT } from "@/lib/product";
 import { createOrder, captureOrder } from "@/lib/utils";
@@ -141,23 +145,24 @@ const CheckoutPage = () => {
           >
             <PayPalOneTimePaymentButton
               createOrder={createOrder}
-              onApprove={async (data) => {
+              onApprove={async (data: OnApproveDataOneTimePayments) => {
+                console.log("Payment approved:", data);
                 await captureOrder({ orderId: data.orderId });
                 setState({ status: "success", orderId: data.orderId });
               }}
-              onError={(error) => {
-                console.error("Payment error:", error);
+              onError={(data: OnErrorData) => {
+                console.error("Payment error:", data);
                 setState({
                   status: "error",
-                  message:
-                    error instanceof Error
-                      ? error.message
-                      : "Something went wrong. Please try again.",
+                  message: data.message,
                 });
               }}
-              onCancel={(data) => {
+              onCancel={(data: OnCancelDataOneTimePayments) => {
                 console.log("Payment cancelled:", data);
                 setState({ status: "cancelled" });
+              }}
+              onComplete={(data: OnCompleteData) => {
+                console.log("Payment session completed:", data);
               }}
               presentationMode="auto"
             />
