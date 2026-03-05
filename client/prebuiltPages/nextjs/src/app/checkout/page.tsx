@@ -5,6 +5,12 @@ import { useRouter } from "next/navigation";
 import {
   PayPalProvider,
   PayPalOneTimePaymentButton,
+  VenmoOneTimePaymentButton,
+  PayLaterOneTimePaymentButton,
+  PayPalGuestPaymentButton,
+  usePayPal,
+  useEligibleMethods,
+  INSTANCE_LOADING_STATE,
   type OnApproveDataOneTimePayments,
   type OnCancelDataOneTimePayments,
   type OnCompleteData,
@@ -16,6 +22,98 @@ import { createOrder, captureOrder } from "@/lib/utils";
 import { getBrowserSafeClientId } from "@/actions/paypal";
 
 type PaymentStatus = "idle" | "success" | "cancel" | "error";
+
+const PaymentButtons = ({
+  cart,
+  onStatusChange,
+}: {
+  cart: CartItem;
+  onStatusChange: (status: PaymentStatus) => void;
+}) => {
+  const { loadingStatus } = usePayPal();
+  const { error: eligibilityError } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT",
+    },
+  });
+
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+
+  const handleCreateOrder = async () => {
+    return await createOrder([{ sku: cart.sku, quantity: cart.quantity }]);
+  };
+
+  const handlePaymentCallbacks = {
+    onApprove: async (data: OnApproveDataOneTimePayments) => {
+      console.log("Payment approved:", data);
+      const captureResult = await captureOrder({ orderId: data.orderId });
+      console.log("Payment capture result:", captureResult);
+      clearCart();
+      onStatusChange("success");
+    },
+
+    onCancel: (data: OnCancelDataOneTimePayments) => {
+      console.log("Payment cancelled:", data);
+      onStatusChange("cancel");
+    },
+
+    onError: (data: OnErrorData) => {
+      console.error("Payment error:", data);
+      onStatusChange("error");
+    },
+
+    onComplete: (data: OnCompleteData) => {
+      console.log("Payment session completed:", data);
+    },
+  };
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center py-8">
+        <div className="w-6 h-6 border-2 border-[var(--border)] border-t-[var(--accent)] rounded-full animate-spin" />
+        <span className="ml-3 text-sm text-[var(--foreground-secondary)]">
+          Loading payment methods...
+        </span>
+      </div>
+    );
+  }
+
+  if (eligibilityError) {
+    return (
+      <div className="py-8 text-center text-sm text-[var(--error)]">
+        Failed to load payment options. Please refresh the page.
+      </div>
+    );
+  }
+
+  return (
+    <div className="flex flex-col gap-3">
+      <PayPalOneTimePaymentButton
+        createOrder={handleCreateOrder}
+        presentationMode="auto"
+        {...handlePaymentCallbacks}
+      />
+
+      <VenmoOneTimePaymentButton
+        createOrder={handleCreateOrder}
+        presentationMode="auto"
+        {...handlePaymentCallbacks}
+      />
+
+      <PayLaterOneTimePaymentButton
+        createOrder={handleCreateOrder}
+        presentationMode="auto"
+        {...handlePaymentCallbacks}
+      />
+
+      <PayPalGuestPaymentButton
+        createOrder={handleCreateOrder}
+        {...handlePaymentCallbacks}
+      />
+    </div>
+  );
+};
 
 const Checkout = () => {
   const [cart, setCart] = useState<CartItem | null>(null);
@@ -32,33 +130,6 @@ const Checkout = () => {
     setCart(saved);
     getBrowserSafeClientId().then(setClientId);
   }, [router]);
-
-  const handleCreateOrder = async () => {
-    if (!cart) throw new Error("Cart is empty");
-    return await createOrder([{ sku: cart.sku, quantity: cart.quantity }]);
-  };
-
-  const handleApprove = async (data: OnApproveDataOneTimePayments) => {
-    console.log("Payment approved:", data);
-    const captureResult = await captureOrder({ orderId: data.orderId });
-    console.log("Payment capture result:", captureResult);
-    clearCart();
-    setStatus("success");
-  };
-
-  const handleCancel = (data: OnCancelDataOneTimePayments) => {
-    console.log("Payment cancelled:", data);
-    setStatus("cancel");
-  };
-
-  const handleError = (data: OnErrorData) => {
-    console.error("Payment error:", data);
-    setStatus("error");
-  };
-
-  const handleComplete = (data: OnCompleteData) => {
-    console.log("Payment session completed:", data);
-  };
 
   if (!cart || !clientId) return null;
 
@@ -109,20 +180,17 @@ const Checkout = () => {
                 </div>
               </div>
 
-              {/* PayPal Button */}
+              {/* Payment Buttons */}
               <PayPalProvider
                 clientId={clientId}
-                components={["paypal-payments"]}
+                components={[
+                  "paypal-payments",
+                  "venmo-payments",
+                  "paypal-guest-payments",
+                ]}
                 pageType="checkout"
               >
-                <PayPalOneTimePaymentButton
-                  createOrder={handleCreateOrder}
-                  presentationMode="auto"
-                  onApprove={handleApprove}
-                  onCancel={handleCancel}
-                  onError={handleError}
-                  onComplete={handleComplete}
-                />
+                <PaymentButtons cart={cart} onStatusChange={setStatus} />
               </PayPalProvider>
             </>
           ) : (
