@@ -26,7 +26,7 @@ This Next.js sample application demonstrates how to integrate a PayPal one-time 
 
 ## Prerequisites
 
-1. **Node.js** — Version 18 or higher
+1. **Node.js** — Version 20 or higher
 2. **PayPal Developer Account** — Required for sandbox credentials
 3. **Environment Configuration** — See the [root README](../../../README.md) for instructions on setting up your `.env` file with `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET`
 
