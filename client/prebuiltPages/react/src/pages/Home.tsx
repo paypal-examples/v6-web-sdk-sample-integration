@@ -155,7 +155,8 @@ export function HomePage() {
                     lineHeight: "1.6",
                   }}
                 >
-                   Complete a purchase and save the payment method for future use. Demonstrates the vault-with-purchase flow.
+                  Complete a purchase and save the payment method for future
+                  use. Demonstrates the vault-with-purchase flow.
                 </td>
               </tr>
               <tr
