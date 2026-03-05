@@ -164,11 +164,6 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 | `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment |
 | `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment               |
 
-## Deploy on Vercel
-
-- TBD
-
-> **Note:** The Vercel deployment requires a separate backend for order creation and capture. For a fully self-contained deployment, API routes can be added to the Next.js app as a follow-up.
 
 ## Resources
 
