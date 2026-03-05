@@ -13,13 +13,13 @@ import {
 import Nav from "@/components/Nav";
 import { PRODUCT, getCart, clearCart, type CartItem } from "@/lib/product";
 import { createOrder, captureOrder } from "@/lib/utils";
+import { getBrowserSafeClientId } from "@/actions/paypal";
 
 type PaymentStatus = "idle" | "success" | "cancel" | "error";
 
-const CLIENT_ID = process.env.NEXT_PUBLIC_PAYPAL_CLIENT_ID ?? "";
-
 const Checkout = () => {
   const [cart, setCart] = useState<CartItem | null>(null);
+  const [clientId, setClientId] = useState<string | null>(null);
   const [status, setStatus] = useState<PaymentStatus>("idle");
   const router = useRouter();
 
@@ -30,6 +30,7 @@ const Checkout = () => {
       return;
     }
     setCart(saved);
+    getBrowserSafeClientId().then(setClientId);
   }, [router]);
 
   const handleCreateOrder = async () => {
@@ -59,7 +60,7 @@ const Checkout = () => {
     console.log("Payment session completed:", data);
   };
 
-  if (!cart) return null;
+  if (!cart || !clientId) return null;
 
   const subtotal = (parseFloat(PRODUCT.price) * cart.quantity).toFixed(2);
 
@@ -110,7 +111,7 @@ const Checkout = () => {
 
               {/* PayPal Button */}
               <PayPalProvider
-                clientId={CLIENT_ID}
+                clientId={clientId}
                 components={["paypal-payments"]}
                 pageType="checkout"
               >

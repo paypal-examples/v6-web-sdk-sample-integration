@@ -4,13 +4,13 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "next dev --turbopack",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "9.0.1",
-    "next": "^15.3.3",
+    "next": "^16.1.5",
     "react": "^19.0.0",
     "react-dom": "^19.0.0"
   },
