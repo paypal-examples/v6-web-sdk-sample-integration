@@ -7,7 +7,7 @@
 > **Payment Methods**: PayPal (one-time payment)
 > **Demo**: Single-page checkout with product showcase and inline success state
 
-This Next.js sample application demonstrates how to integrate a PayPal one-time payment flow using `@paypal/react-paypal-js` with the App Router and `clientId` initialization.
+This Next.js sample application demonstrates how to integrate the [PayPal JS SDK](https://docs.paypal.ai/developer/how-to/sdk/js/v6/configuration) using `@paypal/react-paypal-js` with the App Router and `clientId` initialization.
 
 ## Supported Payment Methods
 
