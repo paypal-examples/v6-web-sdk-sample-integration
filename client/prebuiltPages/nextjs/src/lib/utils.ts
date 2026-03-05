@@ -1,6 +1,6 @@
-import { PRODUCT } from "./product";
+import type { CartItem } from "./product";
 
-export const createOrder = async () => {
+export const createOrder = async (cart: CartItem[]) => {
   const response = await fetch(
     "/paypal-api/checkout/orders/create-order-for-one-time-payment",
     {
@@ -8,9 +8,7 @@ export const createOrder = async () => {
       headers: {
         "Content-Type": "application/json",
       },
-      body: JSON.stringify({
-        cart: [{ sku: PRODUCT.sku, quantity: PRODUCT.quantity }],
-      }),
+      body: JSON.stringify({ cart }),
     },
   );
 
