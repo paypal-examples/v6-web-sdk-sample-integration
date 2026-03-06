@@ -62,7 +62,7 @@ const PaymentButtons = ({
     },
 
     onError: (data: OnErrorData) => {
-      console.error("Payment error:", data);
+      console.error("Payment error:", data.message ?? data);
       onStatusChange("error");
     },
 
@@ -85,7 +85,8 @@ const PaymentButtons = ({
   if (eligibilityError) {
     return (
       <div className="py-8 text-center text-sm text-[var(--error)]">
-        Failed to load payment options. Please refresh the page.
+        Unable to determine eligible payment methods.{" "}
+        {eligibilityError.message || "Please refresh the page and try again."}
       </div>
     );
   }
@@ -218,7 +219,7 @@ const Checkout = () => {
                     Payment Cancelled
                   </h2>
                   <p className="text-base text-[var(--foreground-secondary)] mb-8">
-                    Your payment was cancelled.
+                    Your payment was not completed. No charges were made.
                   </p>
                 </>
               )}
@@ -229,8 +230,8 @@ const Checkout = () => {
                     Payment Error
                   </h2>
                   <p className="text-base text-[var(--foreground-secondary)] mb-8">
-                    There was an error processing your payment. Please try
-                    again.
+                    Something went wrong while processing your payment. Please
+                    return to the product page and try again.
                   </p>
                 </>
               )}
