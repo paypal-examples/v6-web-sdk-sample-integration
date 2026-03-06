@@ -1,16 +1,16 @@
 import type { CartItem } from "./types";
 
-export const getBrowserSafeClientToken = async () => {
-  const response = await fetch("/paypal-api/auth/browser-safe-client-token", {
+export const getBrowserSafeClientId = async () => {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
     headers: {
       "Content-Type": "application/json",
     },
   });
-  const { accessToken } = await response.json();
+  const { clientId } = await response.json();
 
-  return accessToken;
-};
+  return clientId;
+}
 
 export const fetchProducts = async () => {
   const response = await fetch("/paypal-api/products", {

@@ -162,13 +162,13 @@ react/
 
 1. Loads the core SDK script from PayPal's CDN
 2. Loads the component scripts specified in the `components` prop
-3. Creates an SDK instance with the provided `clientToken`
+3. Creates an SDK instance with the provided `clientId`
 4. Makes the SDK available to child components via React Context
 
 ```tsx
 // src/App.tsx
 <PayPalProvider
-  clientToken={clientToken}
+  clientId={clientId}
   components={[
     "paypal-payments",
     "venmo-payments",
@@ -319,7 +319,7 @@ The Node.js backend handles sensitive PayPal API interactions.
 
 | Endpoint                                                        | Method | Description                                       |
 | --------------------------------------------------------------- | ------ | ------------------------------------------------- |
-| `/paypal-api/auth/browser-safe-client-token`                    | GET    | Fetches authentication token for SDK              |
+| `/paypal-api/auth/browser-safe-client-id`                       | GET    | Fetches client ID for SDK                         |
 | `/paypal-api/products`                                          | GET    | Returns product pricing (SKU → price mapping)     |
 | `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment       |
 | `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment                     |
