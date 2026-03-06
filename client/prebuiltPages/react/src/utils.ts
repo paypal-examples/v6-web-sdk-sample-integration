@@ -10,7 +10,7 @@ export const getBrowserSafeClientId = async () => {
   const { clientId } = await response.json();
 
   return clientId;
-}
+};
 
 export const fetchProducts = async () => {
   const response = await fetch("/paypal-api/products", {
