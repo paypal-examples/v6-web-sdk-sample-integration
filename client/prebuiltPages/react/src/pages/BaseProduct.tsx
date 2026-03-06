@@ -10,9 +10,10 @@ interface ProductPageProps {
     | "save-payment"
     | "subscription"
     | "vault-with-purchase";
+  paymentMethod?: "card-fields";
 }
 
-const BaseProduct = ({ flowType }: ProductPageProps) => {
+const BaseProduct = ({ flowType, paymentMethod }: ProductPageProps) => {
   const { products, setProducts, loading } = useProducts({
     restoreFromCart: true,
   });
@@ -22,7 +23,7 @@ const BaseProduct = ({ flowType }: ProductPageProps) => {
   const handleAddToCart = () => {
     const selectedProducts = products.filter((p) => p.quantity > 0);
     sessionStorage.setItem("cart", JSON.stringify(selectedProducts));
-    navigate(`/${flowType}/cart`);
+    navigate(`/${flowType}${paymentMethod ? `/${paymentMethod}` : ""}/cart`);
   };
 
   const totalItems = products.reduce((sum, p) => sum + p.quantity, 0);
