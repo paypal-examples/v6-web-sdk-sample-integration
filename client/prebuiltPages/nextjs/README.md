@@ -56,7 +56,7 @@ npm run dev
 - **Frontend**: http://localhost:3000
 - **Backend**: http://localhost:8080
 
-The Next.js dev server proxies `/paypal-api` requests to the backend server on port 8080 via `next.config.ts` rewrites.
+All PayPal API calls are handled via Server Actions that communicate directly with the backend server.
 
 ## Application Routes
 
@@ -72,7 +72,7 @@ The Next.js dev server proxies `/paypal-api` requests to the backend server on p
 nextjs/
 ├── src/
 │   ├── actions/
-│   │   └── paypal.ts              # Server Action to fetch clientId
+│   │   └── paypal.ts              # Server Actions (clientId, createOrder, captureOrder)
 │   ├── app/
 │   │   ├── layout.tsx             # Root layout with metadata
 │   │   ├── globals.css            # Tailwind CSS and design tokens
@@ -84,15 +84,13 @@ nextjs/
 │   ├── components/
 │   │   └── Nav.tsx                # Shared navigation component
 │   └── lib/
-│       ├── product.ts             # Product data and cart helpers (sessionStorage)
-│       └── utils.ts               # API utility functions (createOrder, captureOrder)
+│       ├── config.ts              # Shared configuration (API_BASE)
+│       └── product.ts             # Product data and cart helpers (sessionStorage)
 ├── public/                        # Static assets
-├── next.config.ts                 # Rewrites for API proxy to Express server
+├── next.config.ts                 # Next.js configuration
 ├── package.json
 ├── tsconfig.json
 ├── postcss.config.mjs
-├── .env.local                     # PAYPAL_CLIENT_ID (server-side only)
-├── .env.example                   # Environment variable template
 └── README.md
 ```
 
@@ -100,15 +98,22 @@ nextjs/
 
 ### 1. SDK Loading and Initialization
 
-`PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK scripts automatically. The `clientId` is stored server-side and fetched via a Server Action:
+`PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK scripts automatically. The `clientId` is fetched from the shared Express server via a Server Action:
 
 ```tsx
 // src/actions/paypal.ts
 "use server";
 
 export const getBrowserSafeClientId = async () => {
-  const clientId = process.env.PAYPAL_CLIENT_ID;
-  if (!clientId) throw new Error("PAYPAL_CLIENT_ID is not configured");
+  const response = await fetch(
+    "http://localhost:8080/paypal-api/auth/browser-safe-client-id",
+  );
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch client ID: ${response.status}`);
+  }
+
+  const { clientId } = await response.json();
   return clientId;
 };
 ```
@@ -146,13 +151,17 @@ The `components` prop specifies which payment methods to load:
 
 ### 3. Order Creation and Capture
 
-Orders are created and captured through the shared Express server. The Next.js app proxies requests via `next.config.ts` rewrites:
+Orders are created and captured through Server Actions that call the shared Express server directly:
 
 ```tsx
-// src/lib/utils.ts
+// src/actions/paypal.ts
+"use server";
+
+const API_BASE = "http://localhost:8080";
+
 export const createOrder = async (cart: CartItem[]) => {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    `${API_BASE}/paypal-api/checkout/orders/create-order-for-one-time-payment`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -170,7 +179,7 @@ export const createOrder = async (cart: CartItem[]) => {
 
 export const captureOrder = async ({ orderId }: { orderId: string }) => {
   const response = await fetch(
-    `/paypal-api/checkout/orders/${orderId}/capture`,
+    `${API_BASE}/paypal-api/checkout/orders/${orderId}/capture`,
     {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -198,6 +207,7 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 
 | Endpoint                                                        | Method | Description                                 |
 | --------------------------------------------------------------- | ------ | ------------------------------------------- |
+| `/paypal-api/auth/browser-safe-client-id`                       | GET    | Returns the PayPal sandbox client ID        |
 | `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment |
 | `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment               |
 
@@ -218,18 +228,18 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 
 ### Frontend Files
 
-| File                        | Purpose                                           |
-| --------------------------- | ------------------------------------------------- |
-| `src/actions/paypal.ts`     | Server Action to fetch clientId                   |
-| `src/app/layout.tsx`        | Root layout with metadata                         |
-| `src/app/globals.css`       | Tailwind CSS and design tokens                    |
-| `src/app/page.tsx`          | Product page with quantity selector               |
-| `src/app/cart/page.tsx`     | Cart page with item review and quantity update    |
-| `src/app/checkout/page.tsx` | Checkout page with PayPal payment buttons         |
-| `src/components/Nav.tsx`    | Shared navigation component                       |
-| `src/lib/product.ts`        | Product data and cart helpers (sessionStorage)    |
-| `src/lib/utils.ts`          | API utility functions (createOrder, captureOrder) |
-| `next.config.ts`            | API proxy rewrites to Express server              |
+| File                        | Purpose                                              |
+| --------------------------- | ---------------------------------------------------- |
+| `src/actions/paypal.ts`     | Server Actions (clientId, createOrder, captureOrder) |
+| `src/app/layout.tsx`        | Root layout with metadata                            |
+| `src/app/globals.css`       | Tailwind CSS and design tokens                       |
+| `src/app/page.tsx`          | Product page with quantity selector                  |
+| `src/app/cart/page.tsx`     | Cart page with item review and quantity update       |
+| `src/app/checkout/page.tsx` | Checkout page with PayPal payment buttons            |
+| `src/components/Nav.tsx`    | Shared navigation component                          |
+| `src/lib/config.ts`         | Shared configuration (API_BASE)                      |
+| `src/lib/product.ts`        | Product data and cart helpers (sessionStorage)       |
+| `next.config.ts`            | Next.js configuration                                |
 
 ### Import Paths
 

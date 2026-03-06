@@ -18,8 +18,11 @@ import {
 } from "@paypal/react-paypal-js/sdk-v6";
 import Nav from "@/components/Nav";
 import { PRODUCT, getCart, clearCart, type CartItem } from "@/lib/product";
-import { createOrder, captureOrder } from "@/lib/utils";
-import { getBrowserSafeClientId } from "@/actions/paypal";
+import {
+  getBrowserSafeClientId,
+  createOrder,
+  captureOrder,
+} from "@/actions/paypal";
 
 type PaymentStatus = "idle" | "success" | "cancel" | "error";
 
