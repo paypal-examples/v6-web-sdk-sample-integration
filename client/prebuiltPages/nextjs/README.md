@@ -98,28 +98,9 @@ nextjs/
 
 ### 1. SDK Loading and Initialization
 
-`PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK scripts automatically. The `clientId` is fetched from the shared Express server via a Server Action:
+`PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK. The `clientId` is fetched from the Express server via a Server Action (`src/actions/paypal.ts`), then passed to the provider:
 
 ```tsx
-// src/actions/paypal.ts
-"use server";
-
-export const getBrowserSafeClientId = async () => {
-  const response = await fetch(
-    "http://localhost:8080/paypal-api/auth/browser-safe-client-id",
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to fetch client ID: ${response.status}`);
-  }
-
-  const { clientId } = await response.json();
-  return clientId;
-};
-```
-
-```tsx
-// src/app/checkout/page.tsx
 <PayPalProvider
   clientId={clientId}
   components={["paypal-payments", "venmo-payments", "paypal-guest-payments"]}
@@ -143,57 +124,15 @@ The `components` prop specifies which payment methods to load:
 4. `PayPalProvider` initializes with `clientId` fetched via Server Action
 5. `useEligibleMethods` checks payment method eligibility
 6. User clicks a payment button (PayPal, Venmo, Pay Later, or Card)
-7. `createOrder` callback creates an order via the backend API
+7. `createOrder` Server Action creates an order via the backend API
 8. PayPal opens the checkout experience
-9. On approval, `onApprove` callback captures the order via the backend
+9. On approval, `onApprove` captures the order via the `captureOrder` Server Action
 10. `onComplete` callback logs the payment session state
 11. Inline success message replaces the checkout form
 
 ### 3. Order Creation and Capture
 
-Orders are created and captured through Server Actions that call the shared Express server directly:
-
-```tsx
-// src/actions/paypal.ts
-"use server";
-
-const API_BASE = "http://localhost:8080";
-
-export const createOrder = async (cart: CartItem[]) => {
-  const response = await fetch(
-    `${API_BASE}/paypal-api/checkout/orders/create-order-for-one-time-payment`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ cart }),
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to create order: ${response.status}`);
-  }
-
-  const { id } = await response.json();
-  return { orderId: id };
-};
-
-export const captureOrder = async ({ orderId }: { orderId: string }) => {
-  const response = await fetch(
-    `${API_BASE}/paypal-api/checkout/orders/${orderId}/capture`,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-    },
-  );
-
-  if (!response.ok) {
-    throw new Error(`Failed to capture order: ${response.status}`);
-  }
-
-  const data = await response.json();
-  return data;
-};
-```
+All PayPal API calls are consolidated in `src/actions/paypal.ts` as Server Actions that call the shared Express server. See `getBrowserSafeClientId`, `createOrder`, and `captureOrder`.
 
 ## Backend Server
 
@@ -224,48 +163,4 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 
 ## Quick Reference
 
-**Purpose**: Next.js sample demonstrating PayPal V6 SDK one-time payment integration with App Router
-
-### Frontend Files
-
-| File                        | Purpose                                              |
-| --------------------------- | ---------------------------------------------------- |
-| `src/actions/paypal.ts`     | Server Actions (clientId, createOrder, captureOrder) |
-| `src/app/layout.tsx`        | Root layout with metadata                            |
-| `src/app/globals.css`       | Tailwind CSS and design tokens                       |
-| `src/app/page.tsx`          | Product page with quantity selector                  |
-| `src/app/cart/page.tsx`     | Cart page with item review and quantity update       |
-| `src/app/checkout/page.tsx` | Checkout page with PayPal payment buttons            |
-| `src/components/Nav.tsx`    | Shared navigation component                          |
-| `src/lib/config.ts`         | Shared configuration (API_BASE)                      |
-| `src/lib/product.ts`        | Product data and cart helpers (sessionStorage)       |
-| `next.config.ts`            | Next.js configuration                                |
-
-### Import Paths
-
-```tsx
-// SDK Provider, components, hooks, and callback types
-import {
-  PayPalProvider,
-  PayPalOneTimePaymentButton,
-  VenmoOneTimePaymentButton,
-  PayLaterOneTimePaymentButton,
-  PayPalGuestPaymentButton,
-  usePayPal,
-  useEligibleMethods,
-  INSTANCE_LOADING_STATE,
-  type OnApproveDataOneTimePayments,
-  type OnCancelDataOneTimePayments,
-  type OnCompleteData,
-  type OnErrorData,
-} from "@paypal/react-paypal-js/sdk-v6";
-```
-
-### Package Dependencies
-
-| Package                 | Version | Purpose                                      |
-| ----------------------- | ------- | -------------------------------------------- |
-| @paypal/react-paypal-js | 9.0.1   | React components and hooks for PayPal V6 SDK |
-| next                    | 16.x    | Full-stack React framework                   |
-| react                   | 19.x    | UI framework                                 |
-| tailwindcss             | 4.x     | Styling                                      |
+All SDK components and hooks are imported from `@paypal/react-paypal-js/sdk-v6`. See `src/app/checkout/page.tsx` for the full integration example.
