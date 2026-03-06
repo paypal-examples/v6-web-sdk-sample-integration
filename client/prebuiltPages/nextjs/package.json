@@ -6,7 +6,9 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "start": "next start"
+    "start": "next start",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
   },
   "dependencies": {
     "@paypal/react-paypal-js": "9.0.1",
@@ -19,6 +21,7 @@
     "@types/node": "^22.15.0",
     "@types/react": "^19.0.0",
     "@types/react-dom": "^19.0.0",
+    "prettier": "^3.8.1",
     "tailwindcss": "^4.1.8",
     "typescript": "^5.8.0"
   }
