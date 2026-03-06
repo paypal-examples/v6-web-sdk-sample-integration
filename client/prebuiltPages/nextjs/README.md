@@ -164,7 +164,6 @@ The Node.js backend handles sensitive PayPal API interactions. This template reu
 | `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment |
 | `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment               |
 
-
 ## Resources
 
 - [PayPal JS SDK V6 Documentation](https://docs.paypal.ai/payments/methods/paypal/sdk/js/v6/paypal-checkout)
