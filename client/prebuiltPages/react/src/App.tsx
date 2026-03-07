@@ -3,7 +3,7 @@ import { Routes, Route, Link, HashRouter } from "react-router-dom";
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
-import { getBrowserSafeClientToken } from "./utils";
+import { getBrowserSafeClientId } from "./utils";
 import { HomePage } from "./pages/Home";
 import BaseProduct from "./pages/BaseProduct";
 import BaseCart from "./pages/BaseCart";
@@ -80,21 +80,21 @@ function Navigation() {
 }
 
 function App() {
-  const [clientToken, setClientToken] = useState<string | undefined>(undefined);
+  const [clientId, setClientId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const getClientToken = async () => {
-      const clientToken = await getBrowserSafeClientToken();
-      setClientToken(clientToken);
+    const getClientId = async () => {
+      const clientId = await getBrowserSafeClientId();
+      setClientId(clientId);
     };
 
-    getClientToken();
+    getClientId();
   }, []);
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <PayPalProvider
-        clientToken={clientToken}
+        clientId={clientId}
         components={[
           "paypal-payments",
           "venmo-payments",
