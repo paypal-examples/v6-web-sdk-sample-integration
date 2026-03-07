@@ -26,6 +26,7 @@ import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
 
 // PayPal Messages demo
 import PayPalMessagesDemo from "./paypalMessages/PayPalMessagesDemo";
+import CardFieldsSavePaymentSettings from "./pages/CardFieldsSavePaymentSettings";
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
@@ -170,6 +171,10 @@ function App() {
 
             {/* Save Payment flow */}
             <Route path="/save-payment" element={<SavePaymentSettings />} />
+            <Route
+              path="/save-payment/card-fields"
+              element={<CardFieldsSavePaymentSettings />}
+            />
 
             {/* Subscription flow */}
             <Route
