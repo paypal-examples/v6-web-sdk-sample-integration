@@ -294,8 +294,8 @@ const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
 
 Card Fields provides specialized hooks to create payment sessions that work seamlessly with individual card field components:
 
-| Hook                                       | Use Case             |
-| ------------------------------------------ | -------------------- |
+| Hook                                       | Use Case            |
+| ------------------------------------------ | ------------------- |
 | `usePayPalCardFieldsOneTimePaymentSession` | One-time payment    |
 | `usePayPalCardFieldsSavePaymentSession`    | Save payment method |
 
