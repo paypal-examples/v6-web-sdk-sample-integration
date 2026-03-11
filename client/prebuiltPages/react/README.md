@@ -154,6 +154,7 @@ react/
 │       └── savePayment/
 │           └── components/
 │               └── PayPalCardFieldsSavePayment.tsx
+├── index.html
 ├── vite.config.ts                            # Vite config with proxy settings
 ├── package.json
 └── tsconfig.json
