@@ -367,7 +367,7 @@ const CardFieldsPayment = () => {
 2. User clicks the submit button
 3. `createOrder` creates an order via the backend API
 4. `submit(orderId)` processes the card payment with the order ID
-5. `submitResponse` callback provides the payment result
+5. `submitResponse` object gets updated with the payment result
 6. Handle submit response based on payment result
 
 ## Backend Server
