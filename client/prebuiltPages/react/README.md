@@ -74,28 +74,28 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 ## Application Routes
 
-| Route                                   | Description                                         |
-| --------------------------------------- | --------------------------------------------------- |
-| `/`                                     | Home page with navigation                           |
-| `/one-time-payment`                     | One-Time Payment product page                       |
-| `/one-time-payment/cart`                | One-Time Payment cart page                          |
-| `/one-time-payment/checkout`            | One-Time Payment checkout page                      |
-| `/one-time-payment/error`               | One-Time Payment error boundary demo                |
-| `/one-time-payment/card-fields`         | One-Time Payment with Card Fields product page      |
-| `/one-time-payment/card-fields/cart`    | One-Time Payment with Card Fields cart page         |
-| `/one-time-payment/card-fields/checkout`| One-Time Payment with Card Fields checkout page     |
-| `/vault-with-purchase`                  | Vault with Purchase product page                    |
-| `/vault-with-purchase/cart`             | Vault with Purchase cart page                       |
-| `/vault-with-purchase/checkout`         | Vault with Purchase checkout page                   |
-| `/vault-with-purchase/error`            | Vault with Purchase error boundary demo             |
-| `/save-payment`                         | Save Payment product page                           |
-| `/save-payment/card-fields`             | Save Payment with Card Fields product page          |
-| `/subscription`                         | Subscription product page                           |
-| `/subscription/cart`                    | Subscription cart page                              |
-| `/subscription/checkout`                | Subscription checkout page                          |
-| `/subscription/error`                   | Subscription error boundary demo                    |
-| `/paypal-messages`                      | PayPal Messages demo page                           |
-| `/error-boundary-test`                  | Standalone error handling demonstration             |
+| Route                                    | Description                                     |
+| ---------------------------------------- | ----------------------------------------------- |
+| `/`                                      | Home page with navigation                       |
+| `/one-time-payment`                      | One-Time Payment product page                   |
+| `/one-time-payment/cart`                 | One-Time Payment cart page                      |
+| `/one-time-payment/checkout`             | One-Time Payment checkout page                  |
+| `/one-time-payment/error`                | One-Time Payment error boundary demo            |
+| `/one-time-payment/card-fields`          | One-Time Payment with Card Fields product page  |
+| `/one-time-payment/card-fields/cart`     | One-Time Payment with Card Fields cart page     |
+| `/one-time-payment/card-fields/checkout` | One-Time Payment with Card Fields checkout page |
+| `/vault-with-purchase`                   | Vault with Purchase product page                |
+| `/vault-with-purchase/cart`              | Vault with Purchase cart page                   |
+| `/vault-with-purchase/checkout`          | Vault with Purchase checkout page               |
+| `/vault-with-purchase/error`             | Vault with Purchase error boundary demo         |
+| `/save-payment`                          | Save Payment product page                       |
+| `/save-payment/card-fields`              | Save Payment with Card Fields product page      |
+| `/subscription`                          | Subscription product page                       |
+| `/subscription/cart`                     | Subscription cart page                          |
+| `/subscription/checkout`                 | Subscription checkout page                      |
+| `/subscription/error`                    | Subscription error boundary demo                |
+| `/paypal-messages`                       | PayPal Messages demo page                       |
+| `/error-boundary-test`                   | Standalone error handling demonstration         |
 
 ## Project Structure
 
@@ -294,10 +294,10 @@ const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
 
 Card Fields provides specialized hooks to create payment sessions that work seamlessly with individual card field components:
 
-| Hook                                              | Use Case             |
-| ------------------------------------------------- | -------------------- |
-| `usePayPalCardFieldsOneTimePaymentSession`        | One-time payments    |
-| `usePayPalCardFieldsSavePaymentSession`           | Save payment methods |
+| Hook                                       | Use Case             |
+| ------------------------------------------ | -------------------- |
+| `usePayPalCardFieldsOneTimePaymentSession` | One-time payments    |
+| `usePayPalCardFieldsSavePaymentSession`    | Save payment methods |
 
 **Example Usage:**
 
@@ -308,7 +308,7 @@ import {
   PayPalCardCvvField,
   usePayPalCardFieldsOneTimePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
-import { useEffect } from "react"; 
+import { useEffect } from "react";
 
 const CardFieldsPayment = () => {
   const { submit, submitResponse } = usePayPalCardFieldsOneTimePaymentSession();
@@ -329,12 +329,14 @@ const CardFieldsPayment = () => {
 
     const { orderId, state } = submitResponse.data;
 
-    switch(state) {
+    switch (state) {
       case "succeeded":
         captureOrder({ orderId });
         break;
       case "failed":
-        console.error(`One time payment failed: orderId: ${orderId}, message:  ${message}`);
+        console.error(
+          `One time payment failed: orderId: ${orderId}, message:  ${message}`,
+        );
         break;
     }
   }, [submitResponse]);
