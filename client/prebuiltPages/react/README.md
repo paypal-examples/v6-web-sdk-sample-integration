@@ -31,15 +31,15 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 
 ## Technology Stack
 
-| Technology                | Version       | Purpose                                            |
-| ------------------------- | ------------- | -------------------------------------------------- |
-| React                     | 19.2.4        | UI framework                                       |
-| Vite                      | 7.3.1         | Development server and bundler                     |
-| TypeScript                | 5.9.3         | Type safety                                        |
-| React Router DOM          | 7.13.0        | Client-side routing                                |
-| @paypal/react-paypal-js   | 9.0.1         | React hooks and Context provider for PayPal V6 SDK |
-| @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
-| react-error-boundary      | 6.1.0         | Error boundary component for React                 |
+| Technology                | Version | Purpose                                            |
+| ------------------------- | ------- | -------------------------------------------------- |
+| React                     | 19.2.4  | UI framework                                       |
+| Vite                      | 7.3.1   | Development server and bundler                     |
+| TypeScript                | 5.9.3   | Type safety                                        |
+| React Router DOM          | 7.13.0  | Client-side routing                                |
+| @paypal/react-paypal-js   | 9.0.1   | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
+| react-error-boundary      | 6.1.0   | Error boundary component for React                 |
 
 ## Prerequisites
 
@@ -74,28 +74,28 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 ## Application Routes
 
-| Route                            | Description                                      |
-| -------------------------------- | ------------------------------------------------ |
-| `/`                              | Home page with navigation                        |
-| `/one-time-payment`              | One-Time Payment product page                    |
-| `/one-time-payment/cart`         | One-Time Payment cart page                       |
-| `/one-time-payment/checkout`     | One-Time Payment checkout page                   |
-| `/one-time-payment/error`        | One-Time Payment error boundary demo             |
-| `/one-time-payment/card-fields`  | Card Fields One-Time Payment product page        |
-| `/one-time-payment/card-fields/cart` | Card Fields One-Time Payment cart page       |
-| `/one-time-payment/card-fields/checkout` | Card Fields One-Time Payment checkout   |
-| `/save-payment`                  | Save Payment (Vault only) payment method page    |
-| `/save-payment/card-fields`      | Card Fields Save Payment method page             |
-| `/subscription`                  | Subscription product page                        |
-| `/subscription/cart`             | Subscription cart page                           |
-| `/subscription/checkout`         | Subscription checkout page                       |
-| `/subscription/error`            | Subscription error boundary demo                 |
-| `/vault-with-purchase`           | Vault with Purchase (Save + Charge) product page |
-| `/vault-with-purchase/cart`      | Vault with Purchase cart page                    |
-| `/vault-with-purchase/checkout`  | Vault with Purchase checkout page                |
-| `/vault-with-purchase/error`     | Vault with Purchase error boundary demo          |
-| `/paypal-messages`               | PayPal Messages promotional component demo       |
-| `/error-boundary-test`           | Standalone error handling demonstration          |
+| Route                                    | Description                                      |
+| ---------------------------------------- | ------------------------------------------------ |
+| `/`                                      | Home page with navigation                        |
+| `/one-time-payment`                      | One-Time Payment product page                    |
+| `/one-time-payment/cart`                 | One-Time Payment cart page                       |
+| `/one-time-payment/checkout`             | One-Time Payment checkout page                   |
+| `/one-time-payment/error`                | One-Time Payment error boundary demo             |
+| `/one-time-payment/card-fields`          | Card Fields One-Time Payment product page        |
+| `/one-time-payment/card-fields/cart`     | Card Fields One-Time Payment cart page           |
+| `/one-time-payment/card-fields/checkout` | Card Fields One-Time Payment checkout            |
+| `/save-payment`                          | Save Payment (Vault only) payment method page    |
+| `/save-payment/card-fields`              | Card Fields Save Payment method page             |
+| `/subscription`                          | Subscription product page                        |
+| `/subscription/cart`                     | Subscription cart page                           |
+| `/subscription/checkout`                 | Subscription checkout page                       |
+| `/subscription/error`                    | Subscription error boundary demo                 |
+| `/vault-with-purchase`                   | Vault with Purchase (Save + Charge) product page |
+| `/vault-with-purchase/cart`              | Vault with Purchase cart page                    |
+| `/vault-with-purchase/checkout`          | Vault with Purchase checkout page                |
+| `/vault-with-purchase/error`             | Vault with Purchase error boundary demo          |
+| `/paypal-messages`                       | PayPal Messages promotional component demo       |
+| `/error-boundary-test`                   | Standalone error handling demonstration          |
 
 ## Project Structure
 
@@ -241,11 +241,11 @@ type PaymentFlow =
 
 #### paymentFlow by Page Type
 
-| Page Type           | paymentFlow Value       | Description                           |
-| ------------------- | ----------------------- | ------------------------------------- |
-| One-Time            | `ONE_TIME_PAYMENT`      | Standard checkout                     |
-| Subscription        | `RECURRING_PAYMENT`     | Recurring/subscription payments       |
-| Save Payment        | `VAULT_WITHOUT_PAYMENT` | Save payment method without charge    |
+| Page Type           | paymentFlow Value       | Description                              |
+| ------------------- | ----------------------- | ---------------------------------------- |
+| One-Time            | `ONE_TIME_PAYMENT`      | Standard checkout                        |
+| Subscription        | `RECURRING_PAYMENT`     | Recurring/subscription payments          |
+| Save Payment        | `VAULT_WITHOUT_PAYMENT` | Save payment method without charge       |
 | Vault with Purchase | `VAULT_WITH_PAYMENT`    | Save payment method + charge immediately |
 
 #### Example
@@ -282,6 +282,7 @@ See `src/payments/oneTimePayment/pages/Checkout.tsx` for full implementation.
 **Use Case**: E-commerce scenarios where you want to offer customers the option to save their payment method while completing their purchase in one step.
 
 **Implementation**: Uses `VAULT_WITH_PAYMENT` as the paymentFlow value. Routes include:
+
 - `/vault-with-purchase` - Product selection
 - `/vault-with-purchase/cart` - Shopping cart
 - `/vault-with-purchase/checkout` - Payment processing
@@ -294,10 +295,12 @@ See `src/paymentFlowCheckoutPages/VaultWithPurchaseCheckout.tsx` for the full im
 **PayPal Messages** is a promotional messaging component that displays contextual messages to your customers about PayPal products and financing options. It's not a payment method itself, but a marketing tool to increase conversion by informing customers about available payment options.
 
 **Implementation**:
+
 - Component: `src/paypalMessages/PayPalMessages.tsx`
 - Demo page: `/paypal-messages`
 
 PayPal Messages automatically adapts messaging based on:
+
 - Transaction amount
 - Customer eligibility
 - Available financing options
@@ -455,9 +458,9 @@ import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
 
 ### Package Dependencies
 
-| Package                   | Version       | Purpose                                            |
-| ------------------------- | ------------- | -------------------------------------------------- |
-| @paypal/react-paypal-js   | 9.0.1         | React hooks and Context provider for PayPal V6 SDK |
-| @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
-| react-router-dom          | 7.13.0        | Client-side routing                                |
-| react-error-boundary      | 6.1.0         | Error boundary wrapper for error handling          |
+| Package                   | Version | Purpose                                            |
+| ------------------------- | ------- | -------------------------------------------------- |
+| @paypal/react-paypal-js   | 9.0.1   | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
+| react-router-dom          | 7.13.0  | Client-side routing                                |
+| react-error-boundary      | 6.1.0   | Error boundary wrapper for error handling          |
