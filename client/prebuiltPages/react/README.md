@@ -296,8 +296,8 @@ Card Fields provides specialized hooks to create payment sessions that work seam
 
 | Hook                                       | Use Case             |
 | ------------------------------------------ | -------------------- |
-| `usePayPalCardFieldsOneTimePaymentSession` | One-time payments    |
-| `usePayPalCardFieldsSavePaymentSession`    | Save payment methods |
+| `usePayPalCardFieldsOneTimePaymentSession` | One-time payment    |
+| `usePayPalCardFieldsSavePaymentSession`    | Save payment method |
 
 **Example Usage:**
 
