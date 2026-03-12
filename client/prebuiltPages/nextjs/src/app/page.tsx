@@ -1,12 +1,9 @@
-import Nav from "@/components/Nav";
 import AddToBag from "@/components/AddToBag";
 import { PRODUCT } from "@/lib/product";
 
 const Home = () => {
   return (
-    <main className="min-h-screen flex flex-col">
-      <Nav />
-
+    <main className="flex-1 flex flex-col">
       {/* Hero Section */}
       <section className="flex-1 flex flex-col items-center justify-center px-6 py-24">
         <div className="max-w-2xl w-full text-center">
@@ -38,13 +35,6 @@ const Home = () => {
           <AddToBag />
         </div>
       </section>
-
-      {/* Footer */}
-      <footer className="w-full px-6 py-6 border-t border-[var(--border)] text-center">
-        <p className="text-xs text-[var(--foreground-secondary)]">
-          Powered by PayPal &middot; Built with Next.js
-        </p>
-      </footer>
     </main>
   );
 };

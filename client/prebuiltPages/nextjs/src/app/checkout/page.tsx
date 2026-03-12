@@ -16,7 +16,6 @@ import {
   type OnCompleteData,
   type OnErrorData,
 } from "@paypal/react-paypal-js/sdk-v6";
-import Nav from "@/components/Nav";
 import { PRODUCT, getCart, clearCart, type CartItem } from "@/lib/product";
 import {
   getBrowserSafeClientId,
@@ -140,9 +139,7 @@ const Checkout = () => {
   const subtotal = (parseFloat(PRODUCT.price) * cart.quantity).toFixed(2);
 
   return (
-    <main className="min-h-screen flex flex-col">
-      <Nav />
-
+    <main className="flex-1 flex flex-col">
       <section className="flex-1 flex flex-col items-center px-6 py-16">
         <div className="max-w-lg w-full">
           <h1 className="text-3xl font-semibold tracking-tight text-[var(--foreground)] mb-10">
@@ -246,12 +243,6 @@ const Checkout = () => {
           )}
         </div>
       </section>
-
-      <footer className="w-full px-6 py-6 border-t border-[var(--border)] text-center">
-        <p className="text-xs text-[var(--foreground-secondary)]">
-          Powered by PayPal &middot; Built with Next.js
-        </p>
-      </footer>
     </main>
   );
 };
