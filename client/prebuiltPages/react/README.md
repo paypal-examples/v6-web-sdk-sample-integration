@@ -1,8 +1,8 @@
 # PayPal Multi-Flow React Sample Integration
 
 > **SDK Version**: PayPal JS SDK v6
-> **Framework**: React 19.1 + TypeScript
-> **Frontend Package**: @paypal/react-paypal-js v9.0.0-alpha.6
+> **Framework**: React 19.2.4 + TypeScript
+> **Frontend Package**: @paypal/react-paypal-js v9.0.1
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
 > **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card, Subscriptions, Save, Credit
 > **Demo**: Multi-page checkout flows with routing
@@ -32,14 +32,15 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 
 ## Technology Stack
 
-| Technology                | Version       | Purpose                                            |
-| ------------------------- | ------------- | -------------------------------------------------- |
-| React                     | 19.1.0        | UI framework                                       |
-| Vite                      | 7.x           | Development server and bundler                     |
-| TypeScript                | 5.8.x         | Type safety                                        |
-| React Router DOM          | 7.13.0        | Client-side routing                                |
-| @paypal/react-paypal-js   | 9.0.0-alpha.6 | React hooks and Context provider for PayPal V6 SDK |
-| @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
+| Technology                | Version | Purpose                                            |
+| ------------------------- | ------- | -------------------------------------------------- |
+| React                     | 19.2.4  | UI framework                                       |
+| Vite                      | 7.3.1   | Development server and bundler                     |
+| TypeScript                | 5.9.3   | Type safety                                        |
+| React Router DOM          | 7.13.0  | Client-side routing                                |
+| @paypal/react-paypal-js   | 9.0.1   | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
+| react-error-boundary      | 6.1.0   | Error boundary component for React                 |
 
 ## Prerequisites
 
@@ -74,80 +75,80 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 
 ## Application Routes
 
-| Route                                    | Description                                     |
-| ---------------------------------------- | ----------------------------------------------- |
-| `/`                                      | Home page with navigation                       |
-| `/one-time-payment`                      | One-Time Payment product page                   |
-| `/one-time-payment/cart`                 | One-Time Payment cart page                      |
-| `/one-time-payment/checkout`             | One-Time Payment checkout page                  |
-| `/one-time-payment/error`                | One-Time Payment error boundary demo            |
-| `/one-time-payment/card-fields`          | One-Time Payment with Card Fields product page  |
-| `/one-time-payment/card-fields/cart`     | One-Time Payment with Card Fields cart page     |
-| `/one-time-payment/card-fields/checkout` | One-Time Payment with Card Fields checkout page |
-| `/vault-with-purchase`                   | Vault with Purchase product page                |
-| `/vault-with-purchase/cart`              | Vault with Purchase cart page                   |
-| `/vault-with-purchase/checkout`          | Vault with Purchase checkout page               |
-| `/vault-with-purchase/error`             | Vault with Purchase error boundary demo         |
-| `/save-payment`                          | Save Payment product page                       |
-| `/save-payment/card-fields`              | Save Payment with Card Fields product page      |
-| `/subscription`                          | Subscription product page                       |
-| `/subscription/cart`                     | Subscription cart page                          |
-| `/subscription/checkout`                 | Subscription checkout page                      |
-| `/subscription/error`                    | Subscription error boundary demo                |
-| `/paypal-messages`                       | PayPal Messages demo page                       |
-| `/error-boundary-test`                   | Standalone error handling demonstration         |
+| Route                                    | Description                                      |
+| ---------------------------------------- | ------------------------------------------------ |
+| `/`                                      | Home page with navigation                        |
+| `/one-time-payment`                      | One-Time Payment product page                    |
+| `/one-time-payment/cart`                 | One-Time Payment cart page                       |
+| `/one-time-payment/checkout`             | One-Time Payment checkout page                   |
+| `/one-time-payment/error`                | One-Time Payment error boundary demo             |
+| `/one-time-payment/card-fields`          | Card Fields One-Time Payment product page        |
+| `/one-time-payment/card-fields/cart`     | Card Fields One-Time Payment cart page           |
+| `/one-time-payment/card-fields/checkout` | Card Fields One-Time Payment checkout            |
+| `/save-payment`                          | Save Payment (Vault only) payment method page    |
+| `/save-payment/card-fields`              | Card Fields Save Payment method page             |
+| `/subscription`                          | Subscription product page                        |
+| `/subscription/cart`                     | Subscription cart page                           |
+| `/subscription/checkout`                 | Subscription checkout page                       |
+| `/subscription/error`                    | Subscription error boundary demo                 |
+| `/vault-with-purchase`                   | Vault with Purchase (Save + Charge) product page |
+| `/vault-with-purchase/cart`              | Vault with Purchase cart page                    |
+| `/vault-with-purchase/checkout`          | Vault with Purchase checkout page                |
+| `/vault-with-purchase/error`             | Vault with Purchase error boundary demo          |
+| `/paypal-messages`                       | PayPal Messages promotional component demo       |
+| `/error-boundary-test`                   | Standalone error handling demonstration          |
 
 ## Project Structure
 
 ```
 react/
 ├── src/
-│   ├── App.tsx                               # Main app with routing and PayPalProvider
-│   ├── main.tsx                              # React entry point
-│   ├── utils.ts                              # Shared utilities for all payment flows
+│   ├── App.tsx                         # Main app with routing and PayPalProvider
+│   ├── main.tsx                        # React entry point
+│   ├── utils.ts                        # Shared utilities for all payment flows
 │   ├── types/
-│   │   └── index.ts                          # Shared TypeScript interfaces
+│   │   └── index.ts                    # Shared TypeScript interfaces
 │   ├── constants/
-│   │   └── products.ts                       # Client product catalog
-│   ├── hooks/                                # Custom React hooks for code reuse
-│   │   ├── useCartTotals.ts                  # Hook for cart calculations (totalItems, total)
-│   │   ├── useProducts.ts                    # Hook for loading products with prices from server
-│   │   └── useQuantityChange.ts              # Hook for handling product quantity updates
-│   ├── pages/                                # Base components (shared across flows)
-│   │   ├── Home.tsx                          # Landing page with navigation
-│   │   ├── BaseProduct.tsx                   # Base product selection page
-│   │   ├── BaseCart.tsx                      # Base shopping cart page
-│   │   ├── BaseCheckout.tsx                  # Base checkout page
-│   │   ├── BaseCardFieldsCheckout.tsx        # Base checkout page for Card Fields
-│   │   ├── BaseStaticButtons.tsx             # Base static buttons demo page
-│   │   ├── SavePaymentSettings.tsx           # Save Payment page
-│   │   ├── CardFieldsSavePaymentSettings.tsx # Save Payment with Card Fields page
-│   │   └── ErrorBoundary.tsx                 # Error handling demo page
-│   ├── components/                           # Shared UI components
-│   │   ├── ProductDisplay.tsx                # Product grid display
-│   │   ├── PaymentModal.tsx                  # Success/error modal
-│   │   ├── ErrorBoundary.tsx                 # Error boundary component
-│   │   └── ErrorTest.tsx                     # Error test component
-│   ├── styles/                               # Shared CSS
+│   │   └── products.ts                 # Client product catalog
+│   ├── hooks/                          # Custom React hooks for code reuse
+│   │   ├── useCartTotals.ts            # Hook for cart calculations (totalItems, total)
+│   │   ├── useProducts.ts              # Hook for loading products with prices from server
+│   │   └── useQuantityChange.ts        # Hook for handling product quantity updates
+│   ├── pages/                          # Base components (shared across flows)
+│   │   ├── Home.tsx                    # Landing page with navigation
+│   │   ├── BaseProduct.tsx             # Base product selection page
+│   │   ├── BaseCart.tsx                # Base shopping cart page
+│   │   ├── BaseCheckout.tsx            # Base checkout page
+│   │   ├── BaseCardFieldsCheckout.tsx  # Base Card Fields checkout wrapper
+│   │   ├── BaseStaticButtons.tsx       # Base static buttons demo page
+│   │   ├── SavePaymentSettings.tsx     # Save Payment (Vault only) page
+│   │   ├── CardFieldsSavePaymentSettings.tsx # Card Fields Save Payment page
+│   │   └── ErrorBoundary.tsx           # Error handling demo page
+│   ├── components/                     # Shared UI components
+│   │   ├── ProductDisplay.tsx          # Product grid display
+│   │   ├── PaymentModal.tsx            # Success/error modal
+│   │   ├── ErrorBoundary.tsx           # Error boundary component
+│   │   └── ErrorTest.tsx               # Error test component
+│   ├── styles/                         # Shared CSS
 │   │   ├── Cart.css
 │   │   ├── Checkout.css
 │   │   ├── Modal.css
 │   │   ├── Product.css
 │   │   └── StaticButtons.css
-│   ├── images/                               # Product images
+│   ├── images/                         # Product images
 │   │   ├── world-cup.jpg
 │   │   ├── basket-ball.jpeg
 │   │   ├── base-ball.jpeg
 │   │   └── hockey-puck.jpeg
-│   ├── paymentFlowCheckoutPages/             # Flow-specific checkout implementations
-│   │   ├── OneTimePaymentCheckout.tsx
-│   │   ├── CardFieldsOneTimePaymentCheckout.tsx
-│   │   ├── VaultWithPurchaseCheckout.tsx
-│   │   └── SubscriptionCheckout.tsx
-│   ├── paypalMessages/                       # PayPal Messages integration
-│   │   ├── PayPalMessagesDemo.tsx
-│   │   └── PayPalMessages.tsx
-│   └── payments/                             # Payment method-specific components
+│   ├── paymentFlowCheckoutPages/       # Payment flow wrapper components
+│   │   ├── OneTimePaymentCheckout.tsx  # One-Time Payment checkout wrapper
+│   │   ├── CardFieldsOneTimePaymentCheckout.tsx # Card Fields One-Time Payment wrapper
+│   │   ├── VaultWithPurchaseCheckout.tsx # Vault with Purchase checkout wrapper
+│   │   └── SubscriptionCheckout.tsx    # Subscription checkout wrapper
+│   ├── paypalMessages/                 # PayPal Messages feature
+│   │   ├── PayPalMessages.tsx          # PayPal Messages component
+│   │   └── PayPalMessagesDemo.tsx      # PayPal Messages demo page
+│   └── payments/                       # Flow-specific implementations
 │       ├── oneTimePayment/
 │       │   └── components/
 │       │       └── PayPalCardFieldsOneTimePayment.tsx
@@ -155,7 +156,7 @@ react/
 │           └── components/
 │               └── PayPalCardFieldsSavePayment.tsx
 ├── index.html
-├── vite.config.ts                            # Vite config with proxy settings
+├── vite.config.ts                      # Vite config with proxy settings
 ├── package.json
 └── tsconfig.json
 ```
@@ -181,6 +182,7 @@ react/
     "paypal-guest-payments",
     "paypal-subscriptions",
     "card-fields",
+    "paypal-messages",
   ]}
   pageType="checkout"
 >
@@ -188,13 +190,14 @@ react/
 </PayPalProvider>
 ```
 
-The `components` prop specifies which payment methods to load:
+The `components` prop specifies which payment methods and features to load:
 
 - `paypal-payments` - PayPal and Pay Later buttons
 - `venmo-payments` - Venmo button
 - `paypal-guest-payments` - Guest card payment button
 - `paypal-subscriptions` - Subscription buttons
-- `card-fields` - Advanced card payment fields
+- `card-fields` - Card Fields (advanced card payment UI)
+- `paypal-messages` - PayPal Messages promotional component
 
 ### 2. Eligibility
 
@@ -225,11 +228,12 @@ type PaymentFlow =
 
 #### paymentFlow by Page Type
 
-| Page Type    | paymentFlow Value       | Description                        |
-| ------------ | ----------------------- | ---------------------------------- |
-| One-Time     | `ONE_TIME_PAYMENT`      | Standard checkout                  |
-| Subscription | `RECURRING_PAYMENT`     | Recurring/subscription payments    |
-| Save Payment | `VAULT_WITHOUT_PAYMENT` | Save payment method without charge |
+| Page Type           | paymentFlow Value       | Description                              |
+| ------------------- | ----------------------- | ---------------------------------------- |
+| One-Time            | `ONE_TIME_PAYMENT`      | Standard checkout                        |
+| Subscription        | `RECURRING_PAYMENT`     | Recurring/subscription payments          |
+| Save Payment        | `VAULT_WITHOUT_PAYMENT` | Save payment method without charge       |
+| Vault with Purchase | `VAULT_WITH_PAYMENT`    | Save payment method + charge immediately |
 
 #### Example
 
@@ -257,6 +261,38 @@ return <PayPalOneTimePaymentButton ... />;
 ```
 
 See `src/payments/oneTimePayment/pages/Checkout.tsx` for full implementation.
+
+### 2b. Vault with Purchase
+
+**Vault with Purchase** combines vault functionality (saving payment methods) with an immediate charge. Unlike "Save Payment" which only saves without charging, this flow saves the payment method AND charges the customer in a single transaction.
+
+**Use Case**: E-commerce scenarios where you want to offer customers the option to save their payment method while completing their purchase in one step.
+
+**Implementation**: Uses `VAULT_WITH_PAYMENT` as the paymentFlow value. Routes include:
+
+- `/vault-with-purchase` - Product selection
+- `/vault-with-purchase/cart` - Shopping cart
+- `/vault-with-purchase/checkout` - Payment processing
+- `/vault-with-purchase/error` - Error boundary demo
+
+See `src/paymentFlowCheckoutPages/VaultWithPurchaseCheckout.tsx` for the full implementation.
+
+### 2c. PayPal Messages
+
+**PayPal Messages** is a promotional messaging component that displays contextual messages to your customers about PayPal products and financing options. It's not a payment method itself, but a marketing tool to increase conversion by informing customers about available payment options.
+
+**Implementation**:
+
+- Component: `src/paypalMessages/PayPalMessages.tsx`
+- Demo page: `/paypal-messages`
+
+PayPal Messages automatically adapts messaging based on:
+
+- Transaction amount
+- Customer eligibility
+- Available financing options
+
+See `src/paypalMessages/PayPalMessagesDemo.tsx` for a complete example.
 
 ### 3. Payment Session Hooks
 
@@ -483,8 +519,9 @@ import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
 
 ### Package Dependencies
 
-| Package                   | Version       | Purpose                                            |
-| ------------------------- | ------------- | -------------------------------------------------- |
-| @paypal/react-paypal-js   | 9.0.0-alpha.6 | React hooks and Context provider for PayPal V6 SDK |
-| @paypal/paypal-server-sdk | 2.1.0         | Server-side PayPal API calls                       |
-| react-router-dom          | 7.13.0        | Client-side routing                                |
+| Package                   | Version | Purpose                                            |
+| ------------------------- | ------- | -------------------------------------------------- |
+| @paypal/react-paypal-js   | 9.0.1   | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
+| react-router-dom          | 7.13.0  | Client-side routing                                |
+| react-error-boundary      | 6.1.0   | Error boundary wrapper for error handling          |
