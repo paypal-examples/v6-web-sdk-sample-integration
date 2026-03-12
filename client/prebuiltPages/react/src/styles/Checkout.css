@@ -136,6 +136,23 @@
   color: white;
 }
 
+.card-fields-pay-button {
+  width: 100%;
+  background-color: #0070ba;
+  color: white;
+  border: none;
+  padding: 14px;
+  font-size: 1.1em;
+  font-weight: 600;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.2s;
+}
+
+.card-fields-pay-button:hover {
+  background-color: #003087;
+}
 @media (max-width: 968px) {
   .checkout-content {
     grid-template-columns: 1fr;

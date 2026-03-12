@@ -10,9 +10,10 @@ interface CartPageProps {
     | "save-payment"
     | "subscription"
     | "vault-with-purchase";
+  paymentMethod?: "card-fields";
 }
 
-const BaseCart = ({ flowType }: CartPageProps) => {
+const BaseCart = ({ flowType, paymentMethod }: CartPageProps) => {
   const [cartItems, setCartItems] = useState<ProductItem[]>(() => {
     const savedCart = sessionStorage.getItem("cart");
     return savedCart ? JSON.parse(savedCart) : [];
@@ -21,9 +22,9 @@ const BaseCart = ({ flowType }: CartPageProps) => {
 
   useEffect(() => {
     if (!sessionStorage.getItem("cart")) {
-      navigate(`/${flowType}`);
+      navigate(`/${flowType}${paymentMethod ? `/${paymentMethod}` : ""}`);
     }
-  }, [navigate, flowType]);
+  }, [navigate, flowType, paymentMethod]);
 
   const handleQuantityChange = (id: number, newQuantity: number) => {
     const updatedCart = cartItems
@@ -43,11 +44,13 @@ const BaseCart = ({ flowType }: CartPageProps) => {
   };
 
   const handleContinueShopping = () => {
-    navigate(`/${flowType}`);
+    navigate(`/${flowType}${paymentMethod ? `/${paymentMethod}` : ""}`);
   };
 
   const handleCheckout = () => {
-    navigate(`/${flowType}/checkout`);
+    navigate(
+      `/${flowType}${paymentMethod ? `/${paymentMethod}` : ""}/checkout`,
+    );
   };
 
   const { totalItems, total } = useCartTotals(cartItems);

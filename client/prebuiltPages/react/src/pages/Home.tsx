@@ -101,6 +101,41 @@ export function HomePage() {
                   }}
                 >
                   <Link
+                    to="/one-time-payment/card-fields"
+                    style={{
+                      color: "#0070ba",
+                      textDecoration: "none",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    One-Time Payment: Card Fields
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "16px",
+                    color: "#4a5568",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  Standard e-commerce checkout with Card Fields components.
+                  Demonstrates a complete shopping flow from product selection
+                  to payment.
+                </td>
+              </tr>
+              <tr
+                style={{
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "16px",
+                  }}
+                >
+                  <Link
                     to="/vault-with-purchase"
                     style={{
                       color: "#0070ba",
@@ -156,6 +191,41 @@ export function HomePage() {
                 >
                   Save a payment method without making a purchase. Demonstrates
                   the vault-without-payment flow in an account settings context.
+                </td>
+              </tr>
+              <tr
+                style={{
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "16px",
+                  }}
+                >
+                  <Link
+                    to="/save-payment/card-fields"
+                    style={{
+                      color: "#0070ba",
+                      textDecoration: "none",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    Save Payment Method: Card Fields
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "16px",
+                    color: "#4a5568",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  Save a payment method without making a purchase with Card
+                  Fields components. Demonstrates the vault-without-payment flow
+                  in an account settings context.
                 </td>
               </tr>
               <tr

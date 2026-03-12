@@ -3,13 +3,14 @@ import { Routes, Route, Link, HashRouter } from "react-router-dom";
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
-import { getBrowserSafeClientToken } from "./utils";
+import { getBrowserSafeClientId } from "./utils";
 import { HomePage } from "./pages/Home";
 import BaseProduct from "./pages/BaseProduct";
 import BaseCart from "./pages/BaseCart";
 
 // One-Time Payment flow
 import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
+import CardFieldsOneTimePaymentCheckout from "./paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
 
 // One-Time Payment with Vault flow
 import VaultWithPurchaseCheckoutPage from "./paymentFlowCheckoutPages/VaultWithPurchaseCheckout";
@@ -25,6 +26,7 @@ import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
 
 // PayPal Messages demo
 import PayPalMessagesDemo from "./paypalMessages/PayPalMessagesDemo";
+import CardFieldsSavePaymentSettings from "./pages/CardFieldsSavePaymentSettings";
 
 function ErrorFallback({ error, resetErrorBoundary }: FallbackProps) {
   return (
@@ -78,26 +80,27 @@ function Navigation() {
 }
 
 function App() {
-  const [clientToken, setClientToken] = useState<string | undefined>(undefined);
+  const [clientId, setClientId] = useState<string | undefined>(undefined);
 
   useEffect(() => {
-    const getClientToken = async () => {
-      const clientToken = await getBrowserSafeClientToken();
-      setClientToken(clientToken);
+    const getClientId = async () => {
+      const clientId = await getBrowserSafeClientId();
+      setClientId(clientId);
     };
 
-    getClientToken();
+    getClientId();
   }, []);
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <PayPalProvider
-        clientToken={clientToken}
+        clientId={clientId}
         components={[
           "paypal-payments",
           "venmo-payments",
           "paypal-guest-payments",
           "paypal-subscriptions",
+          "card-fields",
           "paypal-messages",
         ]}
         pageType="checkout"
@@ -125,6 +128,28 @@ function App() {
               path="/one-time-payment/error"
               element={<ErrorBoundaryTestPage />}
             />
+            <Route
+              path="/one-time-payment/card-fields"
+              element={
+                <BaseProduct
+                  flowType="one-time-payment"
+                  paymentMethod="card-fields"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/card-fields/cart"
+              element={
+                <BaseCart
+                  flowType="one-time-payment"
+                  paymentMethod="card-fields"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/card-fields/checkout"
+              element={<CardFieldsOneTimePaymentCheckout />}
+            />
 
             {/* One-Time Payment with Vault flow */}
             <Route
@@ -146,6 +171,10 @@ function App() {
 
             {/* Save Payment flow */}
             <Route path="/save-payment" element={<SavePaymentSettings />} />
+            <Route
+              path="/save-payment/card-fields"
+              element={<CardFieldsSavePaymentSettings />}
+            />
 
             {/* Subscription flow */}
             <Route
