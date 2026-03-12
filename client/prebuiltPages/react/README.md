@@ -25,6 +25,7 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 - **Venmo** - Standard Venmo Payments
 - **Pay Later** - PayPal's buy now, pay later option
 - **PayPal Basic Card** - Guest card payments without a PayPal account
+- **PayPal Advanced Card** - Card payments with enhanced features and customization options
 - **PayPal Subscriptions** - Recurring billing subscriptions
 - **PayPal Save** - Vault payment methods without purchase
 - **PayPal Credit** - PayPal Credit one-time and save payments
@@ -149,25 +150,11 @@ react/
 │   │   └── PayPalMessagesDemo.tsx      # PayPal Messages demo page
 │   └── payments/                       # Flow-specific implementations
 │       ├── oneTimePayment/
-│       │   ├── pages/
-│       │   │   ├── Checkout.tsx        # Uses useEligibleMethods with ONE_TIME_PAYMENT
-│       │   │   └── StaticButtons.tsx
 │       │   └── components/
-│       │       ├── PayPalCreditOneTimeButton.tsx
 │       │       └── PayPalCardFieldsOneTimePayment.tsx
-│       ├── savePayment/
-│       │   ├── pages/
-│       │   │   ├── Checkout.tsx
-│       │   │   └── StaticButtons.tsx
-│       │   └── components/
-│       │       ├── PayPalCreditSaveButton.tsx
-│       │       └── PayPalCardFieldsSavePayment.tsx
-│       └── subscription/
-│           ├── pages/
-│           │   ├── Checkout.tsx
-│           │   └── StaticButtons.tsx
+│       └── savePayment/
 │           └── components/
-│               └── PayPalSubscriptionButton.tsx
+│               └── PayPalCardFieldsSavePayment.tsx
 ├── index.html
 ├── vite.config.ts                      # Vite config with proxy settings
 ├── package.json
@@ -339,6 +326,68 @@ const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
 };
 ```
 
+### 3.1 Payment Session Hooks - Card Fields
+
+Card Fields provides specialized hooks to create payment sessions that work seamlessly with individual card field components:
+
+| Hook                                       | Use Case            |
+| ------------------------------------------ | ------------------- |
+| `usePayPalCardFieldsOneTimePaymentSession` | One-time payment    |
+| `usePayPalCardFieldsSavePaymentSession`    | Save payment method |
+
+**Example Usage:**
+
+```tsx
+import {
+  PayPalCardNumberField,
+  PayPalCardExpiryField,
+  PayPalCardCvvField,
+  usePayPalCardFieldsOneTimePaymentSession,
+} from "@paypal/react-paypal-js/sdk-v6";
+import { useEffect } from "react";
+
+const CardFieldsPayment = () => {
+  const { submit, submitResponse } = usePayPalCardFieldsOneTimePaymentSession();
+
+  const handleCreateOrder = async () => {
+    return await createOrder();
+  };
+
+  const handleSubmit = async () => {
+    const { orderId } = await handleCreateOrder();
+    await submit(orderId);
+  };
+
+  useEffect(() => {
+    if (!submitResponse) {
+      return;
+    }
+
+    const { orderId, state } = submitResponse.data;
+
+    switch (state) {
+      case "succeeded":
+        captureOrder({ orderId });
+        break;
+      case "failed":
+        console.error(
+          `One time payment failed: orderId: ${orderId}, message:  ${message}`,
+        );
+        break;
+    }
+  }, [submitResponse]);
+
+  return (
+    <>
+      <PayPalCardNumberField placeholder="Enter card number" />
+      <PayPalCardExpiryField placeholder="MM/YY" />
+      <PayPalCardCvvField placeholder="Enter CVV" />
+      <button onClick={handleSubmit}>Pay</button>
+    </>
+  );
+};
+```
+
 ### 4. Payment Flow
 
 1. User clicks a payment button
@@ -347,6 +396,15 @@ const PayPalButton = (props: UsePayPalOneTimePaymentSessionProps) => {
 4. PayPal opens the checkout experience (popup/modal)
 5. On approval, `onApprove` callback captures the order via the backend
 6. Success/error modal displays the result
+
+### 4.1 Payment Flow - Card Fields
+
+1. Customer enters card information directly into the Card Fields components
+2. User clicks the submit button
+3. `createOrder` creates an order via the backend API
+4. `submit(orderId)` processes the card payment with the order ID
+5. `submitResponse` object gets updated with the payment result
+6. Handle submit response based on payment result
 
 ## Backend Server
 
@@ -442,6 +500,7 @@ The Node.js backend handles sensitive PayPal API interactions.
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import {
   usePayPal,
+  usePayPalCardFields,
   usePayPalOneTimePaymentSession,
   useVenmoOneTimePaymentSession,
   usePayLaterOneTimePaymentSession,
@@ -450,6 +509,8 @@ import {
   usePayPalSavePaymentSession,
   usePayPalCreditOneTimePaymentSession,
   usePayPalCreditSavePaymentSession,
+  usePayPalCardFieldsOneTimePaymentSession,
+  usePayPalCardFieldsSavePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
 
 // Loading state constants
