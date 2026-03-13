@@ -3,8 +3,7 @@
 import { CheckoutPaymentIntent, OrdersController } from "@paypal/paypal-server-sdk";
 import { randomUUID } from "node:crypto";
 import { paypalClient } from "@/lib/paypalClient";
-import { getProduct } from "@/lib/products";
-import type { CartItem } from "@/lib/product";
+import { getProduct, type CartItem } from "@/lib/product";
 
 const ordersController = new OrdersController(paypalClient);
 
