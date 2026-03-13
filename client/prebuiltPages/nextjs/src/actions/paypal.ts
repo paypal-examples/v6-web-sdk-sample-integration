@@ -1,6 +1,9 @@
 "use server";
 
-import { CheckoutPaymentIntent, OrdersController } from "@paypal/paypal-server-sdk";
+import {
+  CheckoutPaymentIntent,
+  OrdersController,
+} from "@paypal/paypal-server-sdk";
 import { randomUUID } from "node:crypto";
 import { paypalClient } from "@/lib/paypalClient";
 import { getProduct, type CartItem } from "@/lib/product";

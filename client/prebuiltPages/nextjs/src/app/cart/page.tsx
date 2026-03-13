@@ -47,7 +47,6 @@ const Cart = () => {
 
   return (
     <main className="flex-1 flex flex-col">
-
       <section className="flex-1 flex flex-col items-center px-6 py-16">
         <div className="max-w-2xl w-full">
           <h1 className="text-3xl font-semibold tracking-tight text-[var(--foreground)] mb-10">
