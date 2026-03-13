@@ -19,7 +19,7 @@
   },
   "license": "Apache-2.0",
   "dependencies": {
-    "@dotenvx/dotenvx": "^1.52.0",
+    "@dotenvx/dotenvx": "^1.54.1",
     "@paypal/paypal-server-sdk": "^2.2.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
