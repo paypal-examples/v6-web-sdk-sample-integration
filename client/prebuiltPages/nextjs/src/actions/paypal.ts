@@ -2,7 +2,7 @@
 
 import { CheckoutPaymentIntent, OrdersController } from "@paypal/paypal-server-sdk";
 import { randomUUID } from "node:crypto";
-import { paypalClient, PAYPAL_SANDBOX_CLIENT_ID } from "@/lib/paypalClient";
+import { paypalClient } from "@/lib/paypalClient";
 import { getProduct } from "@/lib/products";
 import type { CartItem } from "@/lib/product";
 
@@ -12,10 +12,11 @@ const ordersController = new OrdersController(paypalClient);
  * Get the PayPal Client ID for SDK initialization
  */
 export const getBrowserSafeClientId = async () => {
-  if (!PAYPAL_SANDBOX_CLIENT_ID) {
+  const clientId = process.env.PAYPAL_SANDBOX_CLIENT_ID;
+  if (!clientId) {
     throw new Error("PAYPAL_SANDBOX_CLIENT_ID is not defined");
   }
-  return PAYPAL_SANDBOX_CLIENT_ID;
+  return clientId;
 };
 
 /**
@@ -40,17 +41,19 @@ export const createOrder = async (cart: CartItem[]) => {
     };
   });
 
+  const totalAmountStr = totalAmount.toFixed(2);
+
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
     purchaseUnits: [
       {
         amount: {
           currencyCode: "USD",
-          value: totalAmount.toFixed(2),
+          value: totalAmountStr,
           breakdown: {
             itemTotal: {
               currencyCode: "USD",
-              value: totalAmount.toFixed(2),
+              value: totalAmountStr,
             },
           },
         },

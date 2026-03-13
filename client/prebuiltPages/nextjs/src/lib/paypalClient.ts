@@ -1,6 +1,7 @@
 import { Client, Environment, LogLevel } from "@paypal/paypal-server-sdk";
 
-const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
+const PAYPAL_SANDBOX_CLIENT_ID = process.env.PAYPAL_SANDBOX_CLIENT_ID;
+const PAYPAL_SANDBOX_CLIENT_SECRET = process.env.PAYPAL_SANDBOX_CLIENT_SECRET;
 
 if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error(
@@ -25,5 +26,3 @@ export const paypalClient = new Client({
     },
   },
 });
-
-export { PAYPAL_SANDBOX_CLIENT_ID };
