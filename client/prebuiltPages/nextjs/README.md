@@ -31,32 +31,32 @@ This Next.js sample application demonstrates how to integrate the [PayPal JS SDK
 
 1. **Node.js** — Version 20 or higher
 2. **PayPal Developer Account** — Required for sandbox credentials
-3. **Environment Configuration** — See the [root README](../../../README.md) for instructions on setting up your `.env` file with `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET`
+3. **Environment Configuration** — Copy `.env.example` to `.env` in this directory and add your PayPal sandbox credentials:
+   ```bash
+   cp .env.example .env
+   ```
+   Then fill in `PAYPAL_SANDBOX_CLIENT_ID` and `PAYPAL_SANDBOX_CLIENT_SECRET` from the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/).
 
 ## How to Run Locally
 
-This sample requires two servers running concurrently: the shared Node.js backend API and the Next.js frontend.
-
-**Terminal 1 — Start the backend server:**
-
-```bash
-cd server/node
-npm install
-npm start
-```
-
-**Terminal 2 — Start the Next.js application:**
+**Step 1 — Set up environment variables:**
 
 ```bash
 cd client/prebuiltPages/nextjs
+cp .env.example .env
+# Edit .env and add your PAYPAL_SANDBOX_CLIENT_ID and PAYPAL_SANDBOX_CLIENT_SECRET
+```
+
+**Step 2 — Start the Next.js application:**
+
+```bash
 npm install
 npm run dev
 ```
 
 - **Frontend**: http://localhost:3000
-- **Backend**: http://localhost:8080
 
-All PayPal API calls are handled via Server Actions that communicate directly with the backend server.
+> The Next.js app calls the PayPal API directly via server actions — no separate backend server is needed.
 
 ## Application Routes
 
@@ -132,23 +132,18 @@ The `components` prop specifies which payment methods to load:
 
 ### 3. Order Creation and Capture
 
-All PayPal API calls are consolidated in `src/actions/paypal.ts` as Server Actions that call the shared Express server. See `getBrowserSafeClientId`, `createOrder`, and `captureOrder`.
+All PayPal API calls are consolidated in `src/actions/paypal.ts` as Server Actions that call the PayPal API directly using `@paypal/paypal-server-sdk`. See `getBrowserSafeClientId`, `createOrder`, and `captureOrder`.
 
-## Backend Server
+## PayPal API Integration
 
-The Node.js backend handles sensitive PayPal API interactions. This template reuses the shared Express server from the repository root.
+The Next.js app integrates with PayPal directly via server actions in `src/actions/paypal.ts`, using `@paypal/paypal-server-sdk`. No separate backend server is required.
 
-**Location:** `server/node/`
+**Environment variables** (set in `client/prebuiltPages/nextjs/.env`):
 
-**Package:** [@paypal/paypal-server-sdk](https://github.com/paypal/PayPal-TypeScript-Server-SDK) v2.2.0
-
-## Backend API Endpoints Used
-
-| Endpoint                                                        | Method | Description                                 |
-| --------------------------------------------------------------- | ------ | ------------------------------------------- |
-| `/paypal-api/auth/browser-safe-client-id`                       | GET    | Returns the PayPal sandbox client ID        |
-| `/paypal-api/checkout/orders/create-order-for-one-time-payment` | POST   | Creates a PayPal order for one-time payment |
-| `/paypal-api/checkout/orders/{orderId}/capture`                 | POST   | Captures the approved payment               |
+| Variable                      | Description                                                          |
+| ----------------------------- | -------------------------------------------------------------------- |
+| `PAYPAL_SANDBOX_CLIENT_ID`    | PayPal sandbox client ID — used to initialize the PayPal JS SDK      |
+| `PAYPAL_SANDBOX_CLIENT_SECRET`| PayPal sandbox client secret — used server-side to create and capture orders |
 
 ## Resources
 
