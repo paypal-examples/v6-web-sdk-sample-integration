@@ -98,7 +98,7 @@ nextjs/
 
 ### 1. SDK Loading and Initialization
 
-`PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK. The `clientId` is fetched from the Express server via a Server Action (`src/actions/paypal.ts`), then passed to the provider:
+`PayPalProvider` from `@paypal/react-paypal-js` handles loading the PayPal V6 SDK. The `clientId` is fetched via a Server Action (`src/actions/paypal.ts`), then passed to the provider:
 
 ```tsx
 <PayPalProvider
