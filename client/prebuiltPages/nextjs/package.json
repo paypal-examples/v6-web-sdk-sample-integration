@@ -11,6 +11,7 @@
     "format:check": "prettier . --check"
   },
   "dependencies": {
+    "@paypal/paypal-server-sdk": "^2.2.0",
     "@paypal/react-paypal-js": "9.0.1",
     "next": "^16.1.5",
     "react": "^19.0.0",
