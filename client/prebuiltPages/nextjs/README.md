@@ -140,10 +140,10 @@ The Next.js app integrates with PayPal directly via server actions in `src/actio
 
 **Environment variables** (set in `client/prebuiltPages/nextjs/.env`):
 
-| Variable                      | Description                                                          |
-| ----------------------------- | -------------------------------------------------------------------- |
-| `PAYPAL_SANDBOX_CLIENT_ID`    | PayPal sandbox client ID — used to initialize the PayPal JS SDK      |
-| `PAYPAL_SANDBOX_CLIENT_SECRET`| PayPal sandbox client secret — used server-side to create and capture orders |
+| Variable                       | Description                                                                  |
+| ------------------------------ | ---------------------------------------------------------------------------- |
+| `PAYPAL_SANDBOX_CLIENT_ID`     | PayPal sandbox client ID — used to initialize the PayPal JS SDK              |
+| `PAYPAL_SANDBOX_CLIENT_SECRET` | PayPal sandbox client secret — used server-side to create and capture orders |
 
 ## Resources
 
