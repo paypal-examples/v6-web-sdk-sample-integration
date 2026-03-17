@@ -11,13 +11,69 @@ import {
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
 import { z } from "zod/v4";
-import { randomUUID } from "node:crypto";
+import { randomUUID } from "crypto";
 import type { Request, Response } from "express";
 
-import { client } from "../paypalServerSdkClient";
+import { client, PAYPAL_BASE_URL } from "../paypalServerSdkClient";
 import { getAllProducts, getProduct } from "../productCatalog";
 
 const ordersController = new OrdersController(client);
+
+const MoneySchema = z.object({
+  currency_code: z.string(),
+  value: z.string(),
+});
+
+const ClientOrderPayloadSchema = z.object({
+  intent: z.string(),
+  processing_instruction: z.string().optional(),
+  purchase_units: z.array(
+    z.object({
+      reference_id: z.string().optional(),
+      description: z.string().optional(),
+      custom_id: z.string().optional(),
+      soft_descriptor: z.string().optional(),
+      amount: z.object({
+        currency_code: z.string(),
+        value: z.string(),
+        breakdown: z
+          .object({
+            item_total: MoneySchema.optional(),
+            tax_total: MoneySchema.optional(),
+            shipping: MoneySchema.optional(),
+            handling: MoneySchema.optional(),
+            insurance: MoneySchema.optional(),
+            shipping_discount: MoneySchema.optional(),
+          })
+          .optional(),
+      }),
+      payee: z
+        .object({
+          merchant_id: z.string().optional(),
+        })
+        .optional(),
+      items: z
+        .array(
+          z.object({
+            name: z.string(),
+            quantity: z.string(),
+            description: z.string().optional(),
+            url: z.string().optional(),
+            category: z.string().optional(),
+            sku: z.string().optional(),
+            unit_amount: MoneySchema,
+            tax: MoneySchema.optional(),
+          }),
+        )
+        .optional(),
+      shipping: z
+        .object({
+          method: z.string().optional(),
+        })
+        .optional(),
+    }),
+  ),
+});
 
 const OneTimePaymentSchema = z
   .object({
@@ -71,7 +127,7 @@ function calculateCartAmount(
 
   for (const { sku, quantity } of cart) {
     const { name, price } = getProduct(sku);
-    totalAmount += Number.parseFloat(price) * quantity;
+    totalAmount += parseFloat(price) * quantity;
     items.push({
       sku,
       name,
@@ -459,6 +515,23 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
     body: orderRequestBody,
     paypalRequestId: randomUUID(),
     prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function getOrderRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const schema = z.object({
+    orderId: z.string(),
+  });
+
+  const { orderId } = schema.parse(request.params);
+
+  const { result, statusCode } = await ordersController.getOrder({
+    id: orderId,
   });
 
   response.status(statusCode).json(result);
