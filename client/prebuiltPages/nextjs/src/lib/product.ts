@@ -27,3 +27,21 @@ export const saveCart = (item: CartItem): void => {
 export const clearCart = (): void => {
   sessionStorage.removeItem(CART_KEY);
 };
+
+/**
+ * Get a product by SKU
+ * Currently only one product is available
+ */
+export function getProduct(sku: string) {
+  if (sku !== PRODUCT.sku) {
+    throw new Error(`Product not found: ${sku}`);
+  }
+  return PRODUCT;
+}
+
+/**
+ * Get all available products
+ */
+export function getAllProducts() {
+  return [PRODUCT];
+}
