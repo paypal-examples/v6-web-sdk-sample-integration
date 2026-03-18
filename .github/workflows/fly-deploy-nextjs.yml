@@ -1,0 +1,21 @@
+name: Fly Deploy Next.js
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - 'client/prebuiltPages/nextjs/**'
+
+jobs:
+  deploy:
+    name: Deploy Next.js app
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: client/prebuiltPages/nextjs
+    steps:
+      - uses: actions/checkout@v6
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+      - run: flyctl deploy --remote-only --build-arg PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }} --build-arg PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
