@@ -8,7 +8,7 @@ import {
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
   type OnErrorData,
-  type OnApproveDataSubscriptions,
+  type OnApproveDataSubscriptionsPayments,
 } from "@paypal/react-paypal-js/sdk-v6";
 import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent } from "../types";
@@ -35,7 +35,7 @@ const Checkout = () => {
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
   const handleSubscriptionCallbacks = {
-    onApprove: async (data: OnApproveDataSubscriptions) => {
+    onApprove: async (data: OnApproveDataSubscriptionsPayments) => {
       console.log("Subscription approved:", data);
       console.log("Payer ID:", data.payerId);
       setModalState("success");
