@@ -11,6 +11,7 @@ primary_region = 'ord'
 [env]
   HOSTNAME = '0.0.0.0'
   PORT = '3000'
+  LOG_LEVEL = 'warn'
 
 [http_service]
   internal_port = 3000
