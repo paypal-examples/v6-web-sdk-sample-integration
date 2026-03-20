@@ -4,15 +4,15 @@ import {
   usePayPal,
   useEligibleMethods,
   INSTANCE_LOADING_STATE,
-  type OnApproveDataOneTimePayments,
-  type OnErrorData,
-  type OnCompleteData,
-  type OnCancelDataOneTimePayments,
   PayPalOneTimePaymentButton,
   VenmoOneTimePaymentButton,
   PayLaterOneTimePaymentButton,
   PayPalGuestPaymentButton,
   // PayPalCreditOneTimePaymentButton,
+  type OnApproveDataOneTimePayments,
+  type OnErrorData,
+  type OnCompleteData,
+  type OnCancelDataOneTimePayments,
 } from "@paypal/react-paypal-js/sdk-v6";
 import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../types";
