@@ -134,21 +134,20 @@ const OneTimePaymentCheckout = () => {
         {...handlePaymentCallbacks}
       />
 
-      {isPayLaterEligible ? (
+      {isPayLaterEligible && (
         <PayLaterOneTimePaymentButton
           createOrder={handleCreateOrder}
           presentationMode="auto"
           {...handlePaymentCallbacks}
         />
-      ) : (
-        isCreditEligible && (
+      )} 
+        {isCreditEligible && (
           <PayPalCreditOneTimePaymentButton
             createOrder={handleCreateOrder}
             presentationMode="auto"
             {...handlePaymentCallbacks}
           />
-        )
-      )}
+        )}
 
       <PayPalGuestPaymentButton
         createOrder={handleCreateOrder}
