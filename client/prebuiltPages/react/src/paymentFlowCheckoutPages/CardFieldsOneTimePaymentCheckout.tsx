@@ -21,12 +21,17 @@ const CardFieldsOneTimePaymentCheckout = () => {
   const navigate = useNavigate();
 
   // Fetch eligibility for one-time payment flow
-  const { error: eligibilityError } = useEligibleMethods({
-    payload: {
-      currencyCode: "USD",
-      paymentFlow: "ONE_TIME_PAYMENT",
-    },
-  });
+  const { error: eligibilityError, eligiblePaymentMethods } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+        paymentFlow: "ONE_TIME_PAYMENT",
+      },
+    });
+
+  const isEligibilityResolved = !!eligiblePaymentMethods || !!eligibilityError;
+  const isCardFieldsEligible =
+    eligiblePaymentMethods?.isEligible("advanced_cards");
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
@@ -58,21 +63,22 @@ const CardFieldsOneTimePaymentCheckout = () => {
     }
   };
 
-  const payPalCardFieldsOneTimePayment = isLoading ? (
-    <div style={{ padding: "1rem", textAlign: "center" }}>
-      Loading card fields...
-    </div>
-  ) : eligibilityError ? (
-    <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
-      Failed to load card fields. Please refresh the page.
-    </div>
-  ) : (
-    <>
-      <PayPalCardFieldsProvider>
-        <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
-      </PayPalCardFieldsProvider>
-    </>
-  );
+  const payPalCardFieldsOneTimePayment =
+    isLoading || !isEligibilityResolved ? (
+      <div style={{ padding: "1rem", textAlign: "center" }}>
+        Loading card fields...
+      </div>
+    ) : eligibilityError || !isCardFieldsEligible ? (
+      <div style={{ padding: "1rem", textAlign: "center", color: "red" }}>
+        Failed to load card fields. Please refresh the page.
+      </div>
+    ) : (
+      <>
+        <PayPalCardFieldsProvider>
+          <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
+        </PayPalCardFieldsProvider>
+      </>
+    );
 
   return (
     <BaseCardFieldsCheckout
