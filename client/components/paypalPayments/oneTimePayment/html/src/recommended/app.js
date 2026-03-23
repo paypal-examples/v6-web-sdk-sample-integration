@@ -22,10 +22,12 @@ async function onPayPalWebSdkLoaded() {
       clientId,
       components: ["paypal-payments"],
       pageType: "checkout",
+      testBuyerCountry: "CA",
+      locale: "fr-CA",
     });
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
-      currencyCode: "USD",
+      currencyCode: "CAD",
     });
 
     if (paymentMethods.isEligible("paypal")) {
