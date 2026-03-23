@@ -1,0 +1,33 @@
+name: Fly Review App (Next.js)
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, closed]
+    paths:
+      - 'client/prebuiltPages/nextjs/**'
+
+env:
+  FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+  FLY_REGION: ord
+  FLY_ORG: personal
+
+jobs:
+  review:
+    name: Review App
+    runs-on: ubuntu-latest
+
+    concurrency:
+      group: pr-${{ github.event.number }}
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: superfly/fly-pr-review-apps@1.5.0
+        with:
+          path: client/prebuiltPages/nextjs
+          build_secrets: >-
+            PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }}
+            PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
+          secrets: >-
+            PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }}
+            PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
+          memory: 512
