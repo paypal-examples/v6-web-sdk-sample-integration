@@ -1,6 +1,6 @@
 import type { Request, Response, NextFunction } from "express";
 
-export default async function errorMiddleware(
+export default async function crossOriginOpenerPolicyMiddleware(
   request: Request,
   response: Response,
   next: NextFunction,
