@@ -1,10 +1,7 @@
 name: Fly Deploy Next.js
 
 on:
-  push:
-    branches: [main]
-    paths:
-      - 'client/prebuiltPages/nextjs/**'
+  workflow_dispatch:
 
 jobs:
   deploy:
@@ -16,6 +13,22 @@ jobs:
     steps:
       - uses: actions/checkout@v6
       - uses: superfly/flyctl-actions/setup-flyctl@master
-      - run: flyctl deploy --remote-only --build-arg PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }} --build-arg PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
+
+      # Set runtime secrets on Fly.io (available to the running app)
+      - name: Set Fly.io runtime secrets
+        run: >-
+          flyctl secrets set
+          PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }}
+          PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
+          --stage
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+
+      # Deploy with build secrets (available during docker build only, not baked into image)
+      - name: Deploy to Fly.io
+        run: >-
+          flyctl deploy --remote-only
+          --build-secret PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }}
+          --build-secret PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

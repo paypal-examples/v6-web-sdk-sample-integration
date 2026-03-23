@@ -21,13 +21,10 @@ FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build arguments for environment variables needed at build time
-ARG PAYPAL_SANDBOX_CLIENT_ID
-ARG PAYPAL_SANDBOX_CLIENT_SECRET
-ENV PAYPAL_SANDBOX_CLIENT_ID=${PAYPAL_SANDBOX_CLIENT_ID}
-ENV PAYPAL_SANDBOX_CLIENT_SECRET=${PAYPAL_SANDBOX_CLIENT_SECRET}
-
-RUN npm run build
+# Build with mounted secrets (credentials are NOT baked into image layers)
+RUN --mount=type=secret,id=PAYPAL_SANDBOX_CLIENT_ID,env=PAYPAL_SANDBOX_CLIENT_ID \
+    --mount=type=secret,id=PAYPAL_SANDBOX_CLIENT_SECRET,env=PAYPAL_SANDBOX_CLIENT_SECRET \
+    npm run build
 
 
 # Production image - minimal runtime

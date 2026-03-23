@@ -7,6 +7,7 @@ primary_region = 'ord'
 [env]
   HOSTNAME = '0.0.0.0'
   PORT = '3000'
+  NEXT_TELEMETRY_DISABLED = '1'
 
 [http_service]
   internal_port = 3000
@@ -15,6 +16,15 @@ primary_region = 'ord'
   auto_start_machines = true
   min_machines_running = 0
   processes = ['app']
+
+[http_service.checks]
+  [http_service.checks.health]
+    interval = 10000
+    grace_period = "10s"
+    method = "GET"
+    path = "/"
+    protocol = "http"
+    timeout = 2000
 
 [[vm]]
   memory = '1gb'
