@@ -4,6 +4,7 @@ import cors from "cors";
 
 import routes from "./routes/index";
 import errorMiddleware from "./middleware/errorMiddleware";
+import crossOriginOpenerPolicyMiddleware from "./middleware/crossOriginOpenerPolicyMiddleware";
 
 const CLIENT_STATIC_DIRECTORY =
   process.env.CLIENT_STATIC_DIRECTORY ||
@@ -12,6 +13,7 @@ const CLIENT_STATIC_DIRECTORY =
 
 const app = express();
 
+app.use(crossOriginOpenerPolicyMiddleware);
 app.use(cors());
 app.use(express.json());
 app.use(routes);
