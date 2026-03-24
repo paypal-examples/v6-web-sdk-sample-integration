@@ -1,5 +1,3 @@
-# syntax = docker/dockerfile:1
-
 ARG NODE_VERSION=20.19.5
 FROM node:${NODE_VERSION}-slim AS base
 
@@ -21,10 +19,7 @@ FROM base AS build
 COPY --from=deps /app/node_modules ./node_modules
 COPY . .
 
-# Build with mounted secrets (credentials are NOT baked into image layers)
-RUN --mount=type=secret,id=PAYPAL_SANDBOX_CLIENT_ID,env=PAYPAL_SANDBOX_CLIENT_ID \
-    --mount=type=secret,id=PAYPAL_SANDBOX_CLIENT_SECRET,env=PAYPAL_SANDBOX_CLIENT_SECRET \
-    npm run build
+RUN npm run build
 
 
 # Production image - minimal runtime

@@ -24,9 +24,6 @@ jobs:
       - uses: superfly/fly-pr-review-apps@1.5.0
         with:
           path: client/prebuiltPages/nextjs
-          build_secrets: >-
-            PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }}
-            PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
           secrets: >-
             PAYPAL_SANDBOX_CLIENT_ID=${{ secrets.PAYPAL_SANDBOX_CLIENT_ID }}
             PAYPAL_SANDBOX_CLIENT_SECRET=${{ secrets.PAYPAL_SANDBOX_CLIENT_SECRET }}
