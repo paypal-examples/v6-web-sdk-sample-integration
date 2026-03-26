@@ -104,6 +104,8 @@ function App() {
           "paypal-messages",
         ]}
         pageType="checkout"
+        testBuyerCountry="CA"
+        locale="fr-CA"
       >
         <HashRouter>
           <Navigation />

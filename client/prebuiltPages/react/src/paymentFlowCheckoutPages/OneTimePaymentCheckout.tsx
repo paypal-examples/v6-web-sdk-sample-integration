@@ -32,7 +32,7 @@ const OneTimePaymentCheckout = () => {
   const { error: eligibilityError, eligiblePaymentMethods } =
     useEligibleMethods({
       payload: {
-        currencyCode: "USD",
+        currencyCode: "CAD",
         paymentFlow: "ONE_TIME_PAYMENT",
       },
     });
