@@ -1,0 +1,9 @@
+.git
+node_modules
+.next
+.env
+.env.*
+!.env.example
+*.md
+.prettierrc
+.claude
