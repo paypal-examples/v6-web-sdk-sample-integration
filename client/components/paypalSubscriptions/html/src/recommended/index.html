@@ -1,0 +1,35 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PayPal Subscriptions - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>PayPal Subscriptions</h1>
+    <p>
+      This is the recommended integration pattern for the subscription flow with
+      the paypal-subscriptions component.
+    </p>
+
+    <paypal-button id="paypal-button" type="subscribe" hidden></paypal-button>
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>
