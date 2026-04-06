@@ -6,6 +6,7 @@ import {
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
+  ProcessingInstruction,
   ShippingType,
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
@@ -13,7 +14,7 @@ import { z } from "zod/v4";
 import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
-import { client, PAYPAL_BASE_URL } from "../paypalServerSdkClient";
+import { client } from "../paypalServerSdkClient";
 import { getAllProducts, getProduct } from "../productCatalog";
 
 const ordersController = new OrdersController(client);
