@@ -6,6 +6,7 @@ import {
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
+  ProcessingInstruction,
   ShippingType,
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
@@ -13,7 +14,7 @@ import { z } from "zod/v4";
 import { randomUUID } from "node:crypto";
 import type { Request, Response } from "express";
 
-import { client, PAYPAL_BASE_URL } from "../paypalServerSdkClient";
+import { client } from "../paypalServerSdkClient";
 import { getAllProducts, getProduct } from "../productCatalog";
 
 const ordersController = new OrdersController(client);
@@ -92,42 +93,13 @@ export async function createOrderForOneTimePaymentRouteHandler(
     request.body,
   );
   const processingInstruction = z
-    .string()
+    .enum(Object.values(ProcessingInstruction) as [string, ...string[]])
     .optional()
-    .parse(request.body.processingInstruction);
-
-  if (processingInstruction) {
-    const token = await client.clientCredentialsAuthManager.fetchToken();
-    const rawResponse = await fetch(`${PAYPAL_BASE_URL}/v2/checkout/orders`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        Authorization: `Bearer ${token.accessToken}`,
-        "PayPal-Request-Id": randomUUID(),
-        Prefer: "return=minimal",
-      },
-      body: JSON.stringify({
-        intent: "CAPTURE",
-        processing_instruction: processingInstruction,
-        purchase_units: [
-          {
-            amount: {
-              currency_code: currencyCode,
-              value: totalAmount,
-              breakdown: {
-                item_total: { currency_code: currencyCode, value: totalAmount },
-              },
-            },
-          },
-        ],
-      }),
-    });
-    const result = await rawResponse.json();
-    return response.status(rawResponse.status).json(result);
-  }
+    .parse(request.body.processingInstruction) as ProcessingInstruction | undefined;
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
+    ...(processingInstruction && { processingInstruction }),
     purchaseUnits: [
       {
         amount: {

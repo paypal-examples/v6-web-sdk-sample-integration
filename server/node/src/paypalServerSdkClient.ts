@@ -9,8 +9,6 @@ if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
 
 const { logLevel, logBody, logHeaders } = getLoggingConfiguration(LOG_LEVEL);
 
-export const PAYPAL_BASE_URL = "https://api-m.sandbox.paypal.com";
-
 export const client = new Client({
   clientCredentialsAuthCredentials: {
     oAuthClientId: PAYPAL_SANDBOX_CLIENT_ID,
