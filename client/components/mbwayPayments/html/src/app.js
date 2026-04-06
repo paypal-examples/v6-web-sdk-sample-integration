@@ -162,41 +162,13 @@ function validatePhoneFields() {
 async function createOrderWithPhone(phoneData) {
   try {
     console.log("Creating PayPal order for MBWay...");
-    const orderPayload = {
-      intent: "CAPTURE",
-      processing_instruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
-      purchase_units: [
-        {
-          amount: {
-            currency_code: "EUR",
-            value: "10.00",
-            breakdown: {
-              item_total: {
-                currency_code: "EUR",
-                value: "10.00",
-              },
-            },
-          },
-          items: [
-            {
-              name: "Sample Item",
-              quantity: "1",
-              unit_amount: {
-                currency_code: "EUR",
-                value: "10.00",
-              },
-            },
-          ],
-        },
-      ],
-    };
 
     const response = await fetch(
       "/paypal-api/checkout/orders/create-order-for-one-time-payment",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload),
+        body: JSON.stringify({ currencyCode: "EUR", processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL" }),
       },
     );
 

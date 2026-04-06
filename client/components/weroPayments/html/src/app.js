@@ -117,25 +117,13 @@ function setupButtonHandler(weroCheckout) {
 async function createOrder() {
   try {
     console.log("Creating PayPal order for Wero...");
-    const orderPayload = {
-      intent: "CAPTURE",
-      processing_instruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
-      purchase_units: [
-        {
-          amount: {
-            currency_code: "EUR",
-            value: "10.00",
-          },
-        },
-      ],
-    };
 
     const response = await fetch(
       "/paypal-api/checkout/orders/create-order-for-one-time-payment",
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderPayload),
+        body: JSON.stringify({ currencyCode: "EUR", processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL" }),
       },
     );
 
