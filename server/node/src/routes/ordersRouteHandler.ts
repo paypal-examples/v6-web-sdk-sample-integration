@@ -90,7 +90,7 @@ export async function createOrderForOneTimePaymentRouteHandler(
   response: Response,
 ) {
   const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body,
+    request.body ?? {},
   );
   const processingInstruction = z
     .enum(Object.values(ProcessingInstruction) as [string, ...string[]])

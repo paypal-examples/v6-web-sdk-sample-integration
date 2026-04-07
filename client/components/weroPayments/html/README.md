@@ -85,14 +85,6 @@ Before running this demo, you'll need to set up accounts and configure your deve
    ```
    The server will run on `http://localhost:8080`
 
-### Client Setup
-
-1. **Navigate to the main page:**
-   Open your browser and go to `http://localhost:8080`
-
-2. **Select Wero Payments:**
-   Click on the Wero Payments link in the Static Examples section
-
 ## How It Works
 
 ### Geographic Availability
