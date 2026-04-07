@@ -168,7 +168,10 @@ async function createOrderWithPhone(phoneData) {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currencyCode: "EUR", processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL" }),
+        body: JSON.stringify({
+          currencyCode: "EUR",
+          processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
+        }),
       },
     );
 
