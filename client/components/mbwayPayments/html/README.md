@@ -56,7 +56,7 @@ Before running this demo, you'll need to set up accounts and configure your deve
 - Node.js version 20 or higher
 - Server running on port 8080 (see `server/node/` directory)
 
-##   Running the Demo
+## Running the Demo
 
 ### Server Setup
 

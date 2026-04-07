@@ -95,7 +95,9 @@ export async function createOrderForOneTimePaymentRouteHandler(
   const processingInstruction = z
     .enum(Object.values(ProcessingInstruction) as [string, ...string[]])
     .optional()
-    .parse(request.body.processingInstruction) as ProcessingInstruction | undefined;
+    .parse(request.body.processingInstruction) as
+    | ProcessingInstruction
+    | undefined;
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,

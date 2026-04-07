@@ -120,6 +120,7 @@ The integration requires these endpoints (provided by the API server):
 ### Special Order Configuration
 
 Wero requires an order creation payload with:
+
 - `processing_instruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL"` — the order is auto-completed on approval, so no separate capture call is needed
 - EUR currency
 

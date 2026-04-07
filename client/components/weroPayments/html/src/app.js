@@ -90,10 +90,7 @@ function setupButtonHandler(weroCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await weroCheckout.start(
-          { presentationMode: "popup" },
-          createOrder(),
-        );
+        await weroCheckout.start({ presentationMode: "popup" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({
@@ -123,7 +120,10 @@ async function createOrder() {
       {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ currencyCode: "EUR", processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL" }),
+        body: JSON.stringify({
+          currencyCode: "EUR",
+          processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
+        }),
       },
     );
 

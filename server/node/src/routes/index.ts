@@ -65,10 +65,7 @@ router.post(
   createOrderForCardWithThreeDSecureRouteHandler,
 );
 
-router.get(
-  "/paypal-api/checkout/orders/:orderId",
-  getOrderRouteHandler,
-);
+router.get("/paypal-api/checkout/orders/:orderId", getOrderRouteHandler);
 
 router.post(
   "/paypal-api/checkout/orders/:orderId/capture",
