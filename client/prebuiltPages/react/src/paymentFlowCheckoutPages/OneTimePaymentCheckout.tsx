@@ -4,15 +4,15 @@ import {
   usePayPal,
   useEligibleMethods,
   INSTANCE_LOADING_STATE,
-  type OnApproveDataOneTimePayments,
-  type OnErrorData,
-  type OnCompleteData,
-  type OnCancelDataOneTimePayments,
   PayPalOneTimePaymentButton,
   VenmoOneTimePaymentButton,
   PayLaterOneTimePaymentButton,
   PayPalGuestPaymentButton,
-  // PayPalCreditOneTimePaymentButton,
+  PayPalCreditOneTimePaymentButton,
+  type OnApproveDataOneTimePayments,
+  type OnErrorData,
+  type OnCompleteData,
+  type OnCancelDataOneTimePayments,
 } from "@paypal/react-paypal-js/sdk-v6";
 import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../types";
@@ -29,12 +29,13 @@ const OneTimePaymentCheckout = () => {
   const navigate = useNavigate();
 
   // Fetch eligibility for one-time payment flow
-  const { error: eligibilityError } = useEligibleMethods({
-    payload: {
-      currencyCode: "USD",
-      paymentFlow: "ONE_TIME_PAYMENT",
-    },
-  });
+  const { error: eligibilityError, eligiblePaymentMethods } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+        paymentFlow: "ONE_TIME_PAYMENT",
+      },
+    });
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -101,6 +102,8 @@ const OneTimePaymentCheckout = () => {
   );
 
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isPayLaterEligible = eligiblePaymentMethods?.isEligible("paylater");
+  const isCreditEligible = eligiblePaymentMethods?.isEligible("credit");
 
   const handleModalClose = () => {
     setModalState(null);
@@ -131,21 +134,20 @@ const OneTimePaymentCheckout = () => {
         {...handlePaymentCallbacks}
       />
 
-      <PayLaterOneTimePaymentButton
-        createOrder={handleCreateOrder}
-        presentationMode="auto"
-        {...handlePaymentCallbacks}
-      />
-
-      {/*
-        This is an example of the PayPalCreditOneTimePaymentButton.
-        In this example we leverage the PayLaterOneTimePaymentButton instead of Credit.
-      */}
-      {/* <PayPalCreditOneTimePaymentButton
-        createOrder={handleCreateOrder}
-        presentationMode="auto"
-        {...handlePaymentCallbacks}
-      /> */}
+      {isPayLaterEligible && (
+        <PayLaterOneTimePaymentButton
+          createOrder={handleCreateOrder}
+          presentationMode="auto"
+          {...handlePaymentCallbacks}
+        />
+      )}
+      {isCreditEligible && (
+        <PayPalCreditOneTimePaymentButton
+          createOrder={handleCreateOrder}
+          presentationMode="auto"
+          {...handlePaymentCallbacks}
+        />
+      )}
 
       <PayPalGuestPaymentButton
         createOrder={handleCreateOrder}

@@ -4,12 +4,12 @@ import {
   usePayPal,
   useEligibleMethods,
   INSTANCE_LOADING_STATE,
+  PayPalOneTimePaymentButton,
+  PayLaterOneTimePaymentButton,
   type OnApproveDataOneTimePayments,
   type OnErrorData,
   type OnCompleteData,
   type OnCancelDataOneTimePayments,
-  PayPalOneTimePaymentButton,
-  PayLaterOneTimePaymentButton,
 } from "@paypal/react-paypal-js/sdk-v6";
 import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../types";
