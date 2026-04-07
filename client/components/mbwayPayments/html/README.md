@@ -86,26 +86,6 @@ Before running this demo, you'll need to set up accounts and configure your deve
    ```
    The server will run on `http://localhost:8080`
 
-### Client Setup
-
-1. **Navigate to the MBWay demo directory:**
-
-   ```bash
-   cd client/components/mbwayPayments/html
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Start the development server:**
-   ```bash
-   npm start
-   ```
-   The demo will be available at `http://localhost:3000`
-
 ## How It Works
 
 ### Geographic Availability
