@@ -29,13 +29,16 @@ const OneTimePaymentCheckout = () => {
   const navigate = useNavigate();
 
   // Fetch eligibility for one-time payment flow
-  const { error: eligibilityError, eligiblePaymentMethods } =
-    useEligibleMethods({
-      payload: {
-        currencyCode: "USD",
-        paymentFlow: "ONE_TIME_PAYMENT",
-      },
-    });
+  const {
+    error: eligibilityError,
+    eligiblePaymentMethods,
+    isLoading: isEligibilityLoading,
+  } = useEligibleMethods({
+    payload: {
+      currencyCode: "USD",
+      paymentFlow: "ONE_TIME_PAYMENT",
+    },
+  });
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -102,8 +105,10 @@ const OneTimePaymentCheckout = () => {
   );
 
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
-  const isPayLaterEligible = eligiblePaymentMethods?.isEligible("paylater");
-  const isCreditEligible = eligiblePaymentMethods?.isEligible("credit");
+  const isPayLaterEligible =
+    !isEligibilityLoading && eligiblePaymentMethods?.isEligible("paylater");
+  const isCreditEligible =
+    !isEligibilityLoading && eligiblePaymentMethods?.isEligible("credit");
 
   const handleModalClose = () => {
     setModalState(null);
