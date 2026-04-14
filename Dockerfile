@@ -38,6 +38,7 @@ RUN npm install --include=dev
 WORKDIR /app
 COPY server/node ./server/node
 COPY client ./client
+COPY .well-known ./.well-known
 
 # Build all applications and remove dev dependencies
 WORKDIR /app/server/node
