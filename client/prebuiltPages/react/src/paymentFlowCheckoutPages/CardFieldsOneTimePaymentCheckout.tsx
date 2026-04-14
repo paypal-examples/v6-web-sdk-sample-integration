@@ -21,12 +21,20 @@ const CardFieldsOneTimePaymentCheckout = () => {
   const navigate = useNavigate();
 
   // Fetch eligibility for one-time payment flow
-  const { error: eligibilityError } = useEligibleMethods({
+  const {
+    error: eligibilityError,
+    eligiblePaymentMethods,
+    isLoading: isEligibilityLoading,
+  } = useEligibleMethods({
     payload: {
       currencyCode: "USD",
       paymentFlow: "ONE_TIME_PAYMENT",
     },
   });
+
+  const isCardFieldsEligible =
+    !isEligibilityLoading &&
+    eligiblePaymentMethods?.isEligible("advanced_cards");
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
@@ -68,9 +76,11 @@ const CardFieldsOneTimePaymentCheckout = () => {
     </div>
   ) : (
     <>
-      <PayPalCardFieldsProvider>
-        <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
-      </PayPalCardFieldsProvider>
+      {isCardFieldsEligible && (
+        <PayPalCardFieldsProvider>
+          <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
+        </PayPalCardFieldsProvider>
+      )}
     </>
   );
 

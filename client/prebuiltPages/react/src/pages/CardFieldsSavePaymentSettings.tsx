@@ -13,7 +13,11 @@ const SavePaymentSettings = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
 
-  const { error: eligibilityError } = useEligibleMethods({
+  const {
+    error: eligibilityError,
+    eligiblePaymentMethods,
+    isLoading: isEligibilityLoading,
+  } = useEligibleMethods({
     payload: {
       currencyCode: "USD",
       paymentFlow: "VAULT_WITHOUT_PAYMENT",
@@ -21,6 +25,9 @@ const SavePaymentSettings = () => {
   });
 
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isCardFieldsEligible =
+    !isEligibilityLoading &&
+    eligiblePaymentMethods?.isEligible("advanced_cards");
 
   const getModalContent = useCallback(
     (state: ModalType): ModalContent | null => {
@@ -177,9 +184,11 @@ const SavePaymentSettings = () => {
             </div>
           ) : (
             <>
-              <PayPalCardFieldsProvider>
-                <PayPalCardFieldsSavePayment setModalState={setModalState} />
-              </PayPalCardFieldsProvider>
+              {isCardFieldsEligible && (
+                <PayPalCardFieldsProvider>
+                  <PayPalCardFieldsSavePayment setModalState={setModalState} />
+                </PayPalCardFieldsProvider>
+              )}
             </>
           )}
         </div>
