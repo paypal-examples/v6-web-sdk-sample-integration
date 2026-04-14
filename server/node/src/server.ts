@@ -11,6 +11,11 @@ const CLIENT_STATIC_DIRECTORY =
   // eslint-disable-next-line unicorn/prefer-module
   path.join(__dirname, "../../../client");
 
+const WELL_KNOWN_STATIC_DIRECTORY =
+  process.env.WELL_KNOWN_STATIC_DIRECTORY ||
+  // eslint-disable-next-line unicorn/prefer-module
+  path.join(__dirname, "../../../.well-known");
+
 const app = express();
 
 app.use(crossOriginOpenerPolicyMiddleware);
@@ -18,6 +23,7 @@ app.use(cors());
 app.use(express.json());
 app.use(routes);
 app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
+app.use("/.well-known", express.static(WELL_KNOWN_STATIC_DIRECTORY));
 
 /* ######################################################################
  * Entry point for client examples containing HTML, JS, and CSS
