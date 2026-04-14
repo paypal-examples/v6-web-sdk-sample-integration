@@ -60,7 +60,8 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
         requiredShippingContactFields: [],
         total: {
           label: "Demo (Card is not charged)",
-          amount: "100.00",
+          // amount passed to ApplePay must match amount passed into the PayPal Order on the server-side
+          amount: "20.00",
           type: "final",
         },
       };
@@ -171,6 +172,16 @@ async function createOrder() {
       headers: {
         "Content-Type": "application/json",
       },
+      body: JSON.stringify({
+        cart: [
+          {
+            // $20 amount (2 baseballs at $10 each)
+            sku: "3xk9m4n2",
+            quantity: 2,
+          },
+        ],
+        currencyCode: "USD",
+      }),
     },
   );
   const { id } = await response.json();
