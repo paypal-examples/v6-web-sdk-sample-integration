@@ -138,7 +138,6 @@ const ApplePayOneTimePaymentCheckout = () => {
       <ApplePayOneTimePaymentButton
         applePayConfig={applePayConfig}
         applePaySessionVersion={14}
-        domainName="v6-web-sdk-sample-integration-server.fly.dev"
         paymentRequest={{
         countryCode: "US",
         currencyCode: "USD",
