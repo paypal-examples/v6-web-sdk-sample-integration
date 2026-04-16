@@ -136,6 +136,40 @@ export function HomePage() {
                   }}
                 >
                   <Link
+                    to="/one-time-payment/apple-pay"
+                    style={{
+                      color: "#0070ba",
+                      textDecoration: "none",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    One-Time Payment: Apple Pay
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "16px",
+                    color: "#4a5568",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  Apple Pay checkout using the PayPal SDK. Requires HTTPS and
+                  a supported Apple device with Safari.
+                </td>
+              </tr>
+              <tr
+                style={{
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "16px",
+                  }}
+                >
+                  <Link
                     to="/vault-with-purchase"
                     style={{
                       color: "#0070ba",
