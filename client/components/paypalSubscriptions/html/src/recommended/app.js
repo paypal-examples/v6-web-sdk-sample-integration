@@ -30,7 +30,7 @@ async function onPayPalWebSdkLoaded() {
     });
 
     if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
+      configurePayPalButton(sdkInstance);
     }
   } catch (error) {
     renderAlert({
@@ -41,7 +41,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-async function setupPayPalButton(sdkInstance) {
+async function configurePayPalButton(sdkInstance) {
   const paypalPaymentSession =
     sdkInstance.createPayPalSubscriptionPaymentSession({
       async onApprove(data) {

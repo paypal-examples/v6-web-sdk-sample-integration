@@ -13,7 +13,7 @@ async function onPayPalWebSdkLoaded() {
     });
 
     if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
+      configurePayPalButton(sdkInstance);
     }
   } catch (error) {
     console.error(error);
@@ -45,7 +45,7 @@ const paymentSessionOptions = {
   },
 };
 
-async function setupPayPalButton(sdkInstance) {
+async function configurePayPalButton(sdkInstance) {
   const paypalPaymentSession = sdkInstance.createPayPalSavePaymentSession(
     paymentSessionOptions,
   );
