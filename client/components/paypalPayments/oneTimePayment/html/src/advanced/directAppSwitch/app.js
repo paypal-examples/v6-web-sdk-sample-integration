@@ -13,7 +13,7 @@ async function onPayPalWebSdkLoaded() {
     if (paypalPaymentSession.hasReturned()) {
       await paypalPaymentSession.resume();
     } else {
-      setupPayPalButton(paypalPaymentSession);
+      configurePayPalButton(paypalPaymentSession);
     }
   } catch (error) {
     console.error(error);
@@ -45,7 +45,7 @@ const paymentSessionOptions = {
   },
 };
 
-async function setupPayPalButton(paypalPaymentSession) {
+async function configurePayPalButton(paypalPaymentSession) {
   const paypalButton = document.querySelector("#paypal-button");
   paypalButton.removeAttribute("hidden");
 

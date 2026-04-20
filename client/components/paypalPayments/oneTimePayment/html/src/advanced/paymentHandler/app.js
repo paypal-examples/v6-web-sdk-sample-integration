@@ -7,13 +7,13 @@ async function onPayPalWebSdkLoaded() {
       pageType: "checkout",
     });
 
-    setupPayPalButton(sdkInstance);
+    configurePayPalButton(sdkInstance);
   } catch (error) {
     console.error(error);
   }
 }
 
-async function setupPayPalButton(sdkInstance) {
+async function configurePayPalButton(sdkInstance) {
   const paymentSessionOptions = {
     async onApprove(data) {
       console.log("onApprove", data);

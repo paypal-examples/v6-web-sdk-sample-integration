@@ -30,7 +30,7 @@ async function onPayPalWebSdkLoaded() {
     });
 
     if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
+      configurePayPalButton(sdkInstance);
     }
 
     if (paymentMethods.isEligible("paylater")) {
@@ -82,7 +82,7 @@ const paymentSessionOptions = {
   savePayment: true,
 };
 
-async function setupPayPalButton(sdkInstance) {
+async function configurePayPalButton(sdkInstance) {
   const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
     paymentSessionOptions,
   );
