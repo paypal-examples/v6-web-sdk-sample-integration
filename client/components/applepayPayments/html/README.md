@@ -158,7 +158,6 @@ Since Apple Pay requires HTTPS to function, you'll need to create a secure tunne
 - **HTTPS Required**: Apple Pay only works over HTTPS
 - **Domain Verification**: Ensure your domain is properly registered in your vite server config and for Apple Pay in your PayPal developer account
 - **Domain Association File**: Keep your Apple Pay domain association file up to date
-- **Client Token Security**: Use browser-safe client tokens for frontend integration
 
 ## 🐛 Troubleshooting
 
