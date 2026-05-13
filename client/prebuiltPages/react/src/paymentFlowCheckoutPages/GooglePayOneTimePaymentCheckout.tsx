@@ -15,11 +15,12 @@ const GooglePayOneTimePaymentCheckout = () => {
   const lastOrderIdRef = useRef<string | null>(null);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
-  const { eligiblePaymentMethods, error: eligibilityError } = useEligibleMethods({
-    payload: {
-      currencyCode: "USD",
-    },
-  });
+  const { eligiblePaymentMethods, error: eligibilityError } =
+    useEligibleMethods({
+      payload: {
+        currencyCode: "USD",
+      },
+    });
 
   const getGoogleTransactionInfo = useCallback(
     (purchaseAmount: string, countryCode: string) => {
@@ -106,13 +107,11 @@ const GooglePayOneTimePaymentCheckout = () => {
     [],
   );
 
-  const isLoading =
-    loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
 
-  const googlePayConfig =
-    eligiblePaymentMethods?.isEligible("googlepay")
-      ? eligiblePaymentMethods.getDetails("googlepay").config
-      : null;
+  const googlePayConfig = eligiblePaymentMethods?.isEligible("googlepay")
+    ? eligiblePaymentMethods.getDetails("googlepay").config
+    : null;
 
   const handleModalClose = () => {
     setModalState(null);
@@ -147,7 +146,10 @@ const GooglePayOneTimePaymentCheckout = () => {
         onApprove={async (data) => {
           console.log("Google Pay payment approved:", data);
 
-          if (data.status !== "PAYER_ACTION_REQUIRED" && lastOrderIdRef.current) {
+          if (
+            data.status !== "PAYER_ACTION_REQUIRED" &&
+            lastOrderIdRef.current
+          ) {
             const orderId = lastOrderIdRef.current;
             const captureResult = await captureOrder({ orderId });
             console.log("Google Pay capture result:", captureResult);
