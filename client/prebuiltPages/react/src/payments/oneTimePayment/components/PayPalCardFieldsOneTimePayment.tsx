@@ -6,13 +6,10 @@ import {
   usePayPalCardFieldsOneTimePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
 import type { MerchantStyleObject } from "@paypal/react-paypal-js/sdk-v6";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { captureOrder, createOrder } from "../../../utils";
 import { ModalType, ProductItem } from "../../../types";
-import type {
-  FieldsState,
-  TouchedFields,
-} from "../../../paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
+import type { FieldsState } from "../../../paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
 
 type CardFieldName = "number" | "cvv" | "expiry";
 
@@ -31,15 +28,11 @@ const invalidFieldStyle: MerchantStyleObject = {
 interface PayPalCardFieldsOneTimePaymentProps {
   setModalState: (state: ModalType) => void;
   fieldsState: FieldsState;
-  touchedFields: TouchedFields;
-  setAllTouched: () => void;
 }
 
 const PayPalCardFieldsOneTimePayment = ({
   setModalState,
   fieldsState,
-  touchedFields,
-  setAllTouched,
 }: PayPalCardFieldsOneTimePaymentProps) => {
   const { error: cardFieldsError } = usePayPalCardFields();
   const {
@@ -47,14 +40,15 @@ const PayPalCardFieldsOneTimePayment = ({
     submit,
     submitResponse,
   } = usePayPalCardFieldsOneTimePaymentSession();
+  // Tracks whether the buyer has attempted to submit, so errors only appear
+  // after the first Pay click rather than on initial render.
+  const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const getFieldError = (fieldName: CardFieldName): string | null => {
+    if (!hasSubmitted) return null;
     const field = fieldsState[fieldName];
-    const touched = touchedFields[fieldName];
-    if (!touched) return null;
     if (field.isEmpty) return `${FIELD_LABELS[fieldName]} is required`;
-    if (!field.isValid && !field.isPotentiallyValid)
-      return `${FIELD_LABELS[fieldName]} is invalid`;
+    if (!field.isValid) return `${FIELD_LABELS[fieldName]} is invalid`;
     return null;
   };
 
@@ -111,8 +105,17 @@ const PayPalCardFieldsOneTimePayment = ({
   }, [cardFieldsError, submitError]);
 
   const handleSubmit = async () => {
-    console.log("[PayPal Card Fields] submit clicked - field state:", fieldsState);
-    setAllTouched();
+    console.log(
+      "[PayPal Card Fields] submit clicked - field state:",
+      fieldsState,
+    );
+    setHasSubmitted(true);
+    // Client-side gate: prevents the server round-trip for fields that are
+    // clearly empty or invalid based on SDK event state. This is a UX
+    // optimization — if submit() is called with invalid fields, the SDK will
+    // also return state: "failed" with a message, which is handled below in
+    // the submitResponse effect. Both layers catch invalid input; this one
+    // just avoids the unnecessary network call.
     if (!isFormValid) {
       console.log("[PayPal Card Fields] form invalid, blocked submission");
       return;
@@ -137,9 +140,7 @@ const PayPalCardFieldsOneTimePayment = ({
             style={invalidFieldStyle}
           />
           {getFieldError("number") && (
-            <span className="card-field-error">
-              {getFieldError("number")}
-            </span>
+            <span className="card-field-error">{getFieldError("number")}</span>
           )}
         </div>
         <div className="card-field-wrapper">
@@ -149,9 +150,7 @@ const PayPalCardFieldsOneTimePayment = ({
             style={invalidFieldStyle}
           />
           {getFieldError("expiry") && (
-            <span className="card-field-error">
-              {getFieldError("expiry")}
-            </span>
+            <span className="card-field-error">{getFieldError("expiry")}</span>
           )}
         </div>
         <div className="card-field-wrapper">
