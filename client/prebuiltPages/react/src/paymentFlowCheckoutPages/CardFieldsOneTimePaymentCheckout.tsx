@@ -6,9 +6,33 @@ import {
   INSTANCE_LOADING_STATE,
   PayPalCardFieldsProvider,
 } from "@paypal/react-paypal-js/sdk-v6";
+import type { EventPayload, FieldState } from "@paypal/react-paypal-js/sdk-v6";
 import type { ModalType, ModalContent } from "../types";
 import PayPalCardFieldsOneTimePayment from "../payments/oneTimePayment/components/PayPalCardFieldsOneTimePayment";
 import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
+
+type CardFieldName = "number" | "cvv" | "expiry";
+export type FieldsState = Record<CardFieldName, FieldState>;
+export type TouchedFields = Record<CardFieldName, boolean>;
+
+const INITIAL_FIELD: FieldState = {
+  isEmpty: true,
+  isValid: false,
+  isPotentiallyValid: true,
+  isFocused: false,
+};
+
+const INITIAL_FIELDS_STATE: FieldsState = {
+  number: INITIAL_FIELD,
+  cvv: INITIAL_FIELD,
+  expiry: INITIAL_FIELD,
+};
+
+const INITIAL_TOUCHED: TouchedFields = {
+  number: false,
+  cvv: false,
+  expiry: false,
+};
 
 /**
  * Checkout page for one-time payments using card fields.
@@ -17,8 +41,34 @@ import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
  */
 const CardFieldsOneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const [fieldsState, setFieldsState] =
+    useState<FieldsState>(INITIAL_FIELDS_STATE);
+  const [touchedFields, setTouchedFields] =
+    useState<TouchedFields>(INITIAL_TOUCHED);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
+
+  const handleChange = useCallback((event: EventPayload) => {
+    const { number, cvv, expiry } = event.data;
+    console.log("[PayPal Card Fields] change event:", {
+      emittedBy: event.data.emittedBy,
+      fields: { number, cvv, expiry },
+    });
+    setFieldsState({ number, cvv, expiry });
+  }, []);
+
+  const handleBlur = useCallback((event: EventPayload) => {
+    const field = event.data.emittedBy;
+    console.log(`[PayPal Card Fields] blur: ${field}`, event.data[field]);
+    setTouchedFields((prev) => ({
+      ...prev,
+      [field]: true,
+    }));
+  }, []);
+
+  const setAllTouched = useCallback(() => {
+    setTouchedFields({ number: true, cvv: true, expiry: true });
+  }, []);
 
   // Fetch eligibility for one-time payment flow
   const {
@@ -77,8 +127,13 @@ const CardFieldsOneTimePaymentCheckout = () => {
   ) : (
     <>
       {isCardFieldsEligible && (
-        <PayPalCardFieldsProvider>
-          <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
+        <PayPalCardFieldsProvider change={handleChange} blur={handleBlur}>
+          <PayPalCardFieldsOneTimePayment
+            setModalState={setModalState}
+            fieldsState={fieldsState}
+            touchedFields={touchedFields}
+            setAllTouched={setAllTouched}
+          />
         </PayPalCardFieldsProvider>
       )}
     </>

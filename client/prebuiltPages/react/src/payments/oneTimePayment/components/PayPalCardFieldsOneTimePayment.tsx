@@ -5,16 +5,41 @@ import {
   usePayPalCardFields,
   usePayPalCardFieldsOneTimePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
+import type { MerchantStyleObject } from "@paypal/react-paypal-js/sdk-v6";
 import { useEffect } from "react";
 import { captureOrder, createOrder } from "../../../utils";
 import { ModalType, ProductItem } from "../../../types";
+import type {
+  FieldsState,
+  TouchedFields,
+} from "../../../paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
+
+type CardFieldName = "number" | "cvv" | "expiry";
+
+const FIELD_LABELS: Record<CardFieldName, string> = {
+  number: "Card number",
+  cvv: "CVV",
+  expiry: "Expiry",
+};
+
+const invalidFieldStyle: MerchantStyleObject = {
+  "input.invalid": {
+    color: "#d32f2f",
+  },
+};
 
 interface PayPalCardFieldsOneTimePaymentProps {
   setModalState: (state: ModalType) => void;
+  fieldsState: FieldsState;
+  touchedFields: TouchedFields;
+  setAllTouched: () => void;
 }
 
 const PayPalCardFieldsOneTimePayment = ({
   setModalState,
+  fieldsState,
+  touchedFields,
+  setAllTouched,
 }: PayPalCardFieldsOneTimePaymentProps) => {
   const { error: cardFieldsError } = usePayPalCardFields();
   const {
@@ -22,6 +47,21 @@ const PayPalCardFieldsOneTimePayment = ({
     submit,
     submitResponse,
   } = usePayPalCardFieldsOneTimePaymentSession();
+
+  const getFieldError = (fieldName: CardFieldName): string | null => {
+    const field = fieldsState[fieldName];
+    const touched = touchedFields[fieldName];
+    if (!touched) return null;
+    if (field.isEmpty) return `${FIELD_LABELS[fieldName]} is required`;
+    if (!field.isValid && !field.isPotentiallyValid)
+      return `${FIELD_LABELS[fieldName]} is invalid`;
+    return null;
+  };
+
+  const isFormValid =
+    fieldsState.number.isValid &&
+    fieldsState.cvv.isValid &&
+    fieldsState.expiry.isValid;
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -71,6 +111,13 @@ const PayPalCardFieldsOneTimePayment = ({
   }, [cardFieldsError, submitError]);
 
   const handleSubmit = async () => {
+    console.log("[PayPal Card Fields] submit clicked - field state:", fieldsState);
+    setAllTouched();
+    if (!isFormValid) {
+      console.log("[PayPal Card Fields] form invalid, blocked submission");
+      return;
+    }
+    console.log("[PayPal Card Fields] form valid, creating order...");
     const { orderId } = await handleCreateOrder();
     await submit(orderId);
   };
@@ -81,27 +128,42 @@ const PayPalCardFieldsOneTimePayment = ({
         style={{
           display: "flex",
           flexDirection: "column",
-          gap: "1rem",
         }}
       >
-        <PayPalCardNumberField
-          containerStyles={{
-            height: "3rem",
-          }}
-          placeholder="Enter card number"
-        />
-        <PayPalCardExpiryField
-          containerStyles={{
-            height: "3rem",
-          }}
-          placeholder="MM/YY"
-        />
-        <PayPalCardCvvField
-          containerStyles={{
-            height: "3rem",
-          }}
-          placeholder="Enter CVV"
-        />
+        <div className="card-field-wrapper">
+          <PayPalCardNumberField
+            containerStyles={{ height: "3rem" }}
+            placeholder="Enter card number"
+            style={invalidFieldStyle}
+          />
+          {getFieldError("number") && (
+            <span className="card-field-error">
+              {getFieldError("number")}
+            </span>
+          )}
+        </div>
+        <div className="card-field-wrapper">
+          <PayPalCardExpiryField
+            containerStyles={{ height: "3rem" }}
+            placeholder="MM/YY"
+            style={invalidFieldStyle}
+          />
+          {getFieldError("expiry") && (
+            <span className="card-field-error">
+              {getFieldError("expiry")}
+            </span>
+          )}
+        </div>
+        <div className="card-field-wrapper">
+          <PayPalCardCvvField
+            containerStyles={{ height: "3rem" }}
+            placeholder="Enter CVV"
+            style={invalidFieldStyle}
+          />
+          {getFieldError("cvv") && (
+            <span className="card-field-error">{getFieldError("cvv")}</span>
+          )}
+        </div>
       </div>
       {!cardFieldsError && (
         <button className="card-fields-pay-button" onClick={handleSubmit}>

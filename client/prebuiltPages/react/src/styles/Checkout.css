@@ -150,8 +150,25 @@
   transition: background-color 0.2s;
 }
 
-.card-fields-pay-button:hover {
+.card-fields-pay-button:hover:not(:disabled) {
   background-color: #003087;
+}
+
+.card-fields-pay-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.card-field-wrapper {
+  margin-bottom: 0.25rem;
+}
+
+.card-field-error {
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  min-height: 1.2em;
+  display: block;
 }
 @media (max-width: 968px) {
   .checkout-content {
