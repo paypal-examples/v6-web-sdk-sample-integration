@@ -150,13 +150,8 @@
   transition: background-color 0.2s;
 }
 
-.card-fields-pay-button:hover:not(:disabled) {
+.card-fields-pay-button:hover {
   background-color: #003087;
-}
-
-.card-fields-pay-button:disabled {
-  opacity: 0.5;
-  cursor: not-allowed;
 }
 
 .card-field-wrapper {
