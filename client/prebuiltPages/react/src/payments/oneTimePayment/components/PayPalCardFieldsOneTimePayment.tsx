@@ -113,7 +113,7 @@ const PayPalCardFieldsOneTimePayment = ({
     // Client-side gate: prevents the server round-trip for fields that are
     // clearly empty or invalid based on SDK event state. This is a UX
     // optimization — if submit() is called with invalid fields, the SDK will
-    // also return state: "failed" with a message, which is handled below in
+    // also return state: "failed" with a message, which is handled above in
     // the submitResponse effect. Both layers catch invalid input; this one
     // just avoids the unnecessary network call.
     if (!isFormValid) {
