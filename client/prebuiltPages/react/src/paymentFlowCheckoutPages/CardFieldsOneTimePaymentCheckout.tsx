@@ -6,9 +6,26 @@ import {
   INSTANCE_LOADING_STATE,
   PayPalCardFieldsProvider,
 } from "@paypal/react-paypal-js/sdk-v6";
+import type { EventPayload, FieldState } from "@paypal/react-paypal-js/sdk-v6";
 import type { ModalType, ModalContent } from "../types";
 import PayPalCardFieldsOneTimePayment from "../payments/oneTimePayment/components/PayPalCardFieldsOneTimePayment";
 import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
+
+type CardFieldName = "number" | "cvv" | "expiry";
+export type FieldsState = Record<CardFieldName, FieldState>;
+
+const INITIAL_FIELD: FieldState = {
+  isEmpty: true,
+  isValid: false,
+  isPotentiallyValid: true,
+  isFocused: false,
+};
+
+const INITIAL_FIELDS_STATE: FieldsState = {
+  number: INITIAL_FIELD,
+  cvv: INITIAL_FIELD,
+  expiry: INITIAL_FIELD,
+};
 
 /**
  * Checkout page for one-time payments using card fields.
@@ -17,8 +34,19 @@ import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
  */
 const CardFieldsOneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const [fieldsState, setFieldsState] =
+    useState<FieldsState>(INITIAL_FIELDS_STATE);
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
+
+  const handleChange = useCallback((event: EventPayload) => {
+    const { number, cvv, expiry } = event.data;
+    console.log("[PayPal Card Fields] change event:", {
+      emittedBy: event.data.emittedBy,
+      fields: { number, cvv, expiry },
+    });
+    setFieldsState({ number, cvv, expiry });
+  }, []);
 
   // Fetch eligibility for one-time payment flow
   const {
@@ -77,8 +105,11 @@ const CardFieldsOneTimePaymentCheckout = () => {
   ) : (
     <>
       {isCardFieldsEligible && (
-        <PayPalCardFieldsProvider>
-          <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
+        <PayPalCardFieldsProvider change={handleChange}>
+          <PayPalCardFieldsOneTimePayment
+            setModalState={setModalState}
+            fieldsState={fieldsState}
+          />
         </PayPalCardFieldsProvider>
       )}
     </>
