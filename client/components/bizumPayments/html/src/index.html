@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Bizum - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #bizum-full-name,
+      #bizum-phone {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      bizum-button {
+        max-width: 225px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>One-Time Payment Bizum Integration</h1>
+
+    <div class="payment-container">
+      <div id="bizum-full-name"></div>
+      <div id="bizum-phone"></div>
+      <bizum-button id="bizum-button" hidden></bizum-button>
+    </div>
+
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>

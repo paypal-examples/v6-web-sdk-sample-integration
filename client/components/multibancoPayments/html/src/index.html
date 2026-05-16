@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Multibanco - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #multibanco-full-name,
+      #multibanco-email {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      multibanco-button {
+        max-width: 225px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>One-Time Payment Multibanco Integration</h1>
+
+    <div class="payment-container">
+      <div id="multibanco-full-name"></div>
+      <div id="multibanco-email"></div>
+      <multibanco-button id="multibanco-button" hidden></multibanco-button>
+    </div>
+
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>
