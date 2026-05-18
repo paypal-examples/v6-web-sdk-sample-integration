@@ -155,8 +155,8 @@ export function HomePage() {
                     lineHeight: "1.6",
                   }}
                 >
-                  Apple Pay checkout using the PayPal SDK. Requires HTTPS and
-                  a supported Apple device with Safari.
+                  Apple Pay checkout using the PayPal SDK. Requires HTTPS and a
+                  supported Apple device with Safari.
                 </td>
               </tr>
               <tr

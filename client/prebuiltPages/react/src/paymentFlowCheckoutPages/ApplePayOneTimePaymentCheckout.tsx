@@ -96,8 +96,7 @@ const ApplePayOneTimePaymentCheckout = () => {
 
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
   const isHttps =
-    typeof window !== "undefined" &&
-    window.location.protocol === "https:";
+    typeof window !== "undefined" && window.location.protocol === "https:";
   let isApplePayAvailable = false;
   try {
     isApplePayAvailable =
