@@ -36,7 +36,7 @@ try {
   const paymentSessionOptions = getSharedPaymentSessionOptions();
 
   if (paymentMethods.isEligible("paypal")) {
-    setupPayPalButton({ sdkInstance, paymentSessionOptions });
+    configurePayPalButton({ sdkInstance, paymentSessionOptions });
   }
 
   if (paymentMethods.isEligible("paylater")) {
@@ -62,7 +62,7 @@ try {
   console.error(error);
 }
 
-function setupPayPalButton({
+function configurePayPalButton({
   sdkInstance,
   paymentSessionOptions,
 }: {

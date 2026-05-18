@@ -38,11 +38,11 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
     const paypalSdkApplePayPaymentSession =
       sdkInstance.createApplePayOneTimePaymentSession();
 
-    document.getElementById("apple-pay-button-container").innerHTML =
-      '<apple-pay-button id="apple-pay-button" buttonstyle="black" type="buy" locale="en">';
+    const applePayButton = createApplePayButton();
+    applePayButton.addEventListener("click", onClick);
     document
-      .getElementById("apple-pay-button")
-      .addEventListener("click", onClick);
+      .getElementById("apple-pay-button-container")
+      .appendChild(applePayButton);
 
     async function onClick() {
       const paymentRequest = {
@@ -150,6 +150,20 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
   } catch (error) {
     console.error(error);
   }
+}
+
+function createApplePayButton() {
+  const applePayButton = document.createElement("apple-pay-button");
+  applePayButton.id = "apple-pay-button";
+  applePayButton.setAttribute("buttonstyle", "black");
+  applePayButton.setAttribute("type", "buy");
+  applePayButton.setAttribute("locale", "en-US");
+
+  applePayButton.style.setProperty("--apple-pay-button-width", "150px");
+  applePayButton.style.setProperty("--apple-pay-button-height", "40px");
+  applePayButton.style.setProperty("--apple-pay-button-border-radius", "5px");
+
+  return applePayButton;
 }
 
 async function getBrowserSafeClientId() {

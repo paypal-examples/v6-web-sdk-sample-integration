@@ -66,11 +66,10 @@ The key pattern demonstrated here is:
 
 ```javascript
 async function validateAndCreateOrder() {
-  // Run validation and order creation concurrently
-  const [validationResult, createOrderResult] = await Promise.all([
-    runAsyncValidation(), // Your custom validation logic
-    createOrder(), // PayPal order creation
-  ]);
+  // Your custom validation logic that will throw an error if validation fails
+  await runAsyncValidation();
+  // PayPal order creation
+  const createOrderResult = await createOrder();
 
   return createOrderResult;
 }
