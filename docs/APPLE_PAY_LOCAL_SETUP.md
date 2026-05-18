@@ -99,22 +99,28 @@ sudo nginx -t && sudo nginx   # or: sudo nginx -s reload
 
 ## Configure Vite proxy
 
-The Vite dev server needs to proxy `/paypal-api` calls to the real fly.dev server (since the hosts file redirects the domain to localhost). In `client/prebuiltPages/react/vite.config.ts`, add `allowedHosts` and proxy to the server's actual IP:
+The current `client/prebuiltPages/react/vite.config.ts` uses a simple local proxy setup:
 
 ```ts
 server: {
   port: 3000,
-  allowedHosts: ["v6-web-sdk-sample-integration-server.fly.dev"],
   proxy: {
     "/paypal-api": {
-      target: "https://66.241.125.234",  // resolved IP of v6-web-sdk-sample-integration-server.fly.dev
+      target: "http://localhost:8080",
       changeOrigin: true,
       secure: false,
-      headers: { Host: "v6-web-sdk-sample-integration-server.fly.dev" },
     },
   },
 },
 ```
+
+If you see `Blocked request. This host is not allowed.` while testing through `v6-web-sdk-sample-integration-server.fly.dev`, add this temporary local-only override in `vite.config.ts` under `server`:
+
+```ts
+allowedHosts: ["v6-web-sdk-sample-integration-server.fly.dev"],
+```
+
+Restart Vite after applying/removing this local testing override.
 
 ## Code changes
 

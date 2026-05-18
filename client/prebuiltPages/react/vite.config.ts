@@ -10,15 +10,11 @@ export default defineConfig(({ command }) => ({
   },
   server: {
     port: 3000,
-    allowedHosts: ["v6-web-sdk-sample-integration-server.fly.dev"],
     proxy: {
       "/paypal-api": {
-        target: "https://66.241.125.234",
+        target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
-        headers: {
-          Host: "v6-web-sdk-sample-integration-server.fly.dev",
-        },
       },
     },
   },
