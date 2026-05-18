@@ -29,6 +29,7 @@ const ApplePayOneTimePaymentCheckout = () => {
     useEligibleMethods({
       payload: {
         currencyCode: "USD",
+        paymentFlow: "ONE_TIME_PAYMENT",
       },
     });
 
@@ -97,8 +98,15 @@ const ApplePayOneTimePaymentCheckout = () => {
   const isHttps =
     typeof window !== "undefined" &&
     window.location.protocol === "https:";
-  // Skip ApplePaySession check for sandbox/dev testing
-  const isApplePayAvailable = isHttps;
+  let isApplePayAvailable = false;
+  try {
+    isApplePayAvailable =
+      typeof window !== "undefined" &&
+      !!window.ApplePaySession?.canMakePayments() &&
+      isHttps;
+  } catch {
+    isApplePayAvailable = false;
+  }
 
   const handleModalClose = () => {
     setModalState(null);
@@ -137,44 +145,46 @@ const ApplePayOneTimePaymentCheckout = () => {
     <div>
       <ApplePayOneTimePaymentButton
         applePayConfig={applePayConfig}
-        applePaySessionVersion={14}
+        applePaySessionVersion={4}
         paymentRequest={{
-        countryCode: "US",
-        currencyCode: "USD",
-        requiredBillingContactFields: [
-          "name",
-          "phone",
-          "email",
-          "postalAddress",
-        ],
-        requiredShippingContactFields: [],
-        total: {
-          label: "Demo (Card is not charged)",
-          amount: getCartTotal(),
-          type: "final",
-        },
-      }}
-      buttonstyle="black"
-      type="buy"
-      locale="en"
-      createOrder={handleCreateOrder}
-      onApprove={async (data) => {
-        console.log("Apple Pay payment approved:", data);
-        const orderId = data.approveApplePayPayment.id;
-        const captureResult = await captureOrder({ orderId });
-        console.log("Apple Pay capture result:", captureResult);
-        sessionStorage.removeItem("cart");
-        setModalState("success");
-      }}
-      onCancel={() => {
-        console.log("Apple Pay payment cancelled");
-        setModalState("cancel");
-      }}
-      onError={(error) => {
-        console.error("Apple Pay payment error:", error);
-        setModalState("error");
-      }}
-    />
+          countryCode: "US",
+          currencyCode: "USD",
+          requiredBillingContactFields: [
+            "name",
+            "phone",
+            "email",
+            "postalAddress",
+          ],
+          requiredShippingContactFields: [],
+          total: {
+            label: "Demo (Card is not charged)",
+            amount: getCartTotal(),
+            type: "final",
+          },
+        }}
+        buttonstyle="black"
+        type="buy"
+        locale="en"
+        createOrder={handleCreateOrder}
+        onApprove={async (data) => {
+          console.log("Apple Pay payment approved:", data);
+
+          const orderId = data.approveApplePayPayment.id;
+          const captureResult = await captureOrder({ orderId });
+          console.log("Apple Pay capture result:", captureResult);
+
+          sessionStorage.removeItem("cart");
+          setModalState("success");
+        }}
+        onCancel={() => {
+          console.log("Apple Pay payment cancelled");
+          setModalState("cancel");
+        }}
+        onError={(error) => {
+          console.error("Apple Pay payment error:", error);
+          setModalState("error");
+        }}
+      />
     </div>
   ) : (
     <div style={{ padding: "1rem", textAlign: "center" }}>
@@ -185,7 +195,6 @@ const ApplePayOneTimePaymentCheckout = () => {
   return (
     <BaseCheckout
       flowType="one-time-payment"
-      paymentMethod="apple-pay"
       modalState={modalState}
       onModalClose={handleModalClose}
       getModalContent={getModalContent}

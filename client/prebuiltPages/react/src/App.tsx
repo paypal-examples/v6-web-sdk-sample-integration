@@ -81,7 +81,16 @@ function Navigation() {
 }
 
 function App() {
-  const clientId = "AVTrpA5Lv6Jy0SjrczavsR2EpRMqqfZGHas19sqfqjcGX6ZkAE6sHzuilBcUw34hzX-0UqvSqCQ85J6Z";
+  const [clientId, setClientId] = useState<string | undefined>(undefined);
+
+  useEffect(() => {
+    const getClientId = async () => {
+      const clientId = await getBrowserSafeClientId();
+      setClientId(clientId);
+    };
+
+    getClientId();
+  }, []);
 
   return (
     <ErrorBoundary FallbackComponent={ErrorFallback}>
