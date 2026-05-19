@@ -1,11 +1,10 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   usePayPal,
   useEligibleMethods,
   INSTANCE_LOADING_STATE,
   ApplePayOneTimePaymentButton,
-  type ApplePayConfig,
 } from "@paypal/react-paypal-js/sdk-v6";
 import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../types";
@@ -19,9 +18,6 @@ import { captureOrder, createOrder } from "../utils";
  */
 const ApplePayOneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
-  const [applePayConfig, setApplePayConfig] = useState<ApplePayConfig | null>(
-    null,
-  );
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
 
@@ -33,13 +29,9 @@ const ApplePayOneTimePaymentCheckout = () => {
       },
     });
 
-  // Extract Apple Pay config once eligibility is resolved
-  useEffect(() => {
-    if (eligiblePaymentMethods?.isEligible("applepay")) {
-      const details = eligiblePaymentMethods.getDetails("applepay");
-      setApplePayConfig(details.config);
-    }
-  }, [eligiblePaymentMethods]);
+  const applePayConfig = eligiblePaymentMethods?.isEligible("applepay")
+    ? eligiblePaymentMethods.getDetails("applepay").config
+    : null;
 
   const getCartProducts = (): ProductItem[] => {
     const savedCart = sessionStorage.getItem("cart");
