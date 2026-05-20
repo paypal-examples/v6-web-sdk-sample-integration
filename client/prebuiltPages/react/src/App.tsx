@@ -11,6 +11,7 @@ import BaseCart from "./pages/BaseCart";
 // One-Time Payment flow
 import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentCheckout";
 import CardFieldsOneTimePaymentCheckout from "./paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
+import ApplePayOneTimePaymentCheckout from "./paymentFlowCheckoutPages/ApplePayOneTimePaymentCheckout";
 
 // One-Time Payment with Vault flow
 import VaultWithPurchaseCheckoutPage from "./paymentFlowCheckoutPages/VaultWithPurchaseCheckout";
@@ -102,6 +103,7 @@ function App() {
           "paypal-subscriptions",
           "card-fields",
           "paypal-messages",
+          "applepay-payments",
         ]}
         pageType="checkout"
       >
@@ -149,6 +151,28 @@ function App() {
             <Route
               path="/one-time-payment/card-fields/checkout"
               element={<CardFieldsOneTimePaymentCheckout />}
+            />
+            <Route
+              path="/one-time-payment/apple-pay"
+              element={
+                <BaseProduct
+                  flowType="one-time-payment"
+                  paymentMethod="apple-pay"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/apple-pay/cart"
+              element={
+                <BaseCart
+                  flowType="one-time-payment"
+                  paymentMethod="apple-pay"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/apple-pay/checkout"
+              element={<ApplePayOneTimePaymentCheckout />}
             />
 
             {/* One-Time Payment with Vault flow */}
