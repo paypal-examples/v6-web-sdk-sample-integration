@@ -240,6 +240,51 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
   response.status(statusCode).json(result);
 }
 
+export async function createOrderForApplePayOneTimePaymentWithVaultRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
+    request.body ?? {},
+  );
+
+  const orderRequestBody = {
+    intent: CheckoutPaymentIntent.Capture,
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
+        },
+        items,
+      },
+    ],
+    paymentSource: {
+      applePay: {
+        attributes: {
+          vault: {
+            storeInVault: StoreInVaultInstruction.OnSuccess,
+          },
+        },
+      },
+    },
+  };
+
+  const { result, statusCode } = await ordersController.createOrder({
+    body: orderRequestBody,
+    paypalRequestId: randomUUID(),
+    prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
 export async function createOrderForOneTimePaymentWithShippingRouteHandler(
   request: Request,
   response: Response,

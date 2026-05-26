@@ -183,7 +183,7 @@ async function getBrowserSafeClientToken() {
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    "/paypal-api/checkout/orders/create-order-for-apple-pay-one-time-payment-with-vault",
     {
       method: "POST",
       headers: {

@@ -9,6 +9,7 @@ import {
   createOrderForOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentWithVaultRouteHandler,
+  createOrderForApplePayOneTimePaymentWithVaultRouteHandler,
   createOrderForOneTimePaymentWithShippingRouteHandler,
   createOrderForCardWithSingleUseTokenRouteHandler,
   createOrderForCardWithThreeDSecureRouteHandler,
@@ -47,6 +48,11 @@ router.post(
 router.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
   createOrderForPayPalOneTimePaymentWithVaultRouteHandler,
+);
+
+router.post(
+  "/paypal-api/checkout/orders/create-order-for-apple-pay-one-time-payment-with-vault",
+  createOrderForApplePayOneTimePaymentWithVaultRouteHandler,
 );
 
 router.post(
