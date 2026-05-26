@@ -37,9 +37,7 @@ async function onPayPalWebSdkLoaded() {
 async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
   try {
     const paypalSdkApplePayPaymentSession =
-      sdkInstance.createApplePayOneTimePaymentSession({
-        savePayment: true,
-      });
+      sdkInstance.createApplePayOneTimePaymentSession();
 
     const applePayButton = createApplePayButton();
     applePayButton.addEventListener("click", onClick);
