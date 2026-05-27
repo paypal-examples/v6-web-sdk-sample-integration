@@ -153,6 +153,18 @@
 .card-fields-pay-button:hover {
   background-color: #003087;
 }
+
+.card-field-wrapper {
+  margin-bottom: 0.25rem;
+}
+
+.card-field-error {
+  color: #d32f2f;
+  font-size: 0.8rem;
+  margin-top: 4px;
+  min-height: 1.2em;
+  display: block;
+}
 @media (max-width: 968px) {
   .checkout-content {
     grid-template-columns: 1fr;
