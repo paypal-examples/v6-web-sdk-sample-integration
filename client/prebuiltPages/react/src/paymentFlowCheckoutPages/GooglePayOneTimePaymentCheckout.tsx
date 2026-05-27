@@ -10,6 +10,12 @@ import BaseCheckout from "../pages/BaseCheckout";
 import type { ModalType, ModalContent, ProductItem } from "../types";
 import { captureOrder, createOrder } from "../utils";
 
+/**
+ * Checkout page for one-time payments using Google Pay.
+ *
+ * Uses useEligibleMethods to fetch Google Pay config, then renders
+ * GooglePayOneTimePaymentButton which handles the full payment lifecycle.
+ */
 const GooglePayOneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
   const { loadingStatus } = usePayPal();
@@ -19,6 +25,7 @@ const GooglePayOneTimePaymentCheckout = () => {
     useEligibleMethods({
       payload: {
         currencyCode: "USD",
+        paymentFlow: "ONE_TIME_PAYMENT",
       },
     });
 
@@ -137,7 +144,7 @@ const GooglePayOneTimePaymentCheckout = () => {
     <div>
       <GooglePayOneTimePaymentButton
         googlePayConfig={googlePayConfig}
-        transactionInfo={getGoogleTransactionInfo(getCartTotal(), "US")}
+        transactionInfo={getGoogleTransactionInfo(getCartTotal(), googlePayConfig.merchantCountry)}
         environment="TEST"
         createOrder={handleCreateOrder}
         onApprove={async (data) => {
