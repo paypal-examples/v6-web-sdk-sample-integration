@@ -6,18 +6,10 @@ import {
   usePayPalCardFieldsOneTimePaymentSession,
 } from "@paypal/react-paypal-js/sdk-v6";
 import type { MerchantStyleObject } from "@paypal/react-paypal-js/sdk-v6";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { captureOrder, createOrder } from "../../../utils";
 import { ModalType, ProductItem } from "../../../types";
-import type { FieldsState } from "../../../paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
-
-type CardFieldName = "number" | "cvv" | "expiry";
-
-const FIELD_LABELS: Record<CardFieldName, string> = {
-  number: "Card number",
-  cvv: "CVV",
-  expiry: "Expiry",
-};
+import type { CardFieldsValidation } from "../../../hooks/useCardFieldsValidation";
 
 const invalidFieldStyle: MerchantStyleObject = {
   "input.invalid": {
@@ -27,12 +19,12 @@ const invalidFieldStyle: MerchantStyleObject = {
 
 interface PayPalCardFieldsOneTimePaymentProps {
   setModalState: (state: ModalType) => void;
-  fieldsState: FieldsState;
+  validation: CardFieldsValidation;
 }
 
 const PayPalCardFieldsOneTimePayment = ({
   setModalState,
-  fieldsState,
+  validation,
 }: PayPalCardFieldsOneTimePaymentProps) => {
   const { error: cardFieldsError } = usePayPalCardFields();
   const {
@@ -40,22 +32,8 @@ const PayPalCardFieldsOneTimePayment = ({
     submit,
     submitResponse,
   } = usePayPalCardFieldsOneTimePaymentSession();
-  // Tracks whether the buyer has attempted to submit, so errors only appear
-  // after the first Pay click rather than on initial render.
-  const [hasSubmitted, setHasSubmitted] = useState(false);
 
-  const getFieldError = (fieldName: CardFieldName): string | null => {
-    if (!hasSubmitted) return null;
-    const field = fieldsState[fieldName];
-    if (field.isEmpty) return `${FIELD_LABELS[fieldName]} is required`;
-    if (!field.isValid) return `${FIELD_LABELS[fieldName]} is invalid`;
-    return null;
-  };
-
-  const isFormValid =
-    fieldsState.number.isValid &&
-    fieldsState.cvv.isValid &&
-    fieldsState.expiry.isValid;
+  const { getFieldError, isFormValid, markAllTouched } = validation;
 
   const handleCreateOrder = async () => {
     const savedCart = sessionStorage.getItem("cart");
@@ -105,11 +83,7 @@ const PayPalCardFieldsOneTimePayment = ({
   }, [cardFieldsError, submitError]);
 
   const handleSubmit = async () => {
-    console.log(
-      "[PayPal Card Fields] submit clicked - field state:",
-      fieldsState,
-    );
-    setHasSubmitted(true);
+    markAllTouched();
     // Client-side gate: prevents the server round-trip for fields that are
     // clearly empty or invalid based on SDK event state. This is a UX
     // optimization — if submit() is called with invalid fields, the SDK will
@@ -117,10 +91,8 @@ const PayPalCardFieldsOneTimePayment = ({
     // the submitResponse effect. Both layers catch invalid input; this one
     // just avoids the unnecessary network call.
     if (!isFormValid) {
-      console.log("[PayPal Card Fields] form invalid, blocked submission");
       return;
     }
-    console.log("[PayPal Card Fields] form valid, creating order...");
     const { orderId } = await handleCreateOrder();
     await submit(orderId);
   };
