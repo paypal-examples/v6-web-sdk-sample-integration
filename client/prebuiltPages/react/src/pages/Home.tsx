@@ -189,8 +189,9 @@ export function HomePage() {
                     lineHeight: "1.6",
                   }}
                 >
-                  Google Pay checkout using the PayPal SDK with native Google Pay
-                  button integration. Works in Chrome and most modern browsers.
+                  Google Pay checkout using the PayPal SDK with native Google
+                  Pay button integration. Works in Chrome and most modern
+                  browsers.
                 </td>
               </tr>
               <tr

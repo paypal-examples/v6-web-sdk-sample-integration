@@ -144,7 +144,10 @@ const GooglePayOneTimePaymentCheckout = () => {
     <div>
       <GooglePayOneTimePaymentButton
         googlePayConfig={googlePayConfig}
-        transactionInfo={getGoogleTransactionInfo(getCartTotal(), googlePayConfig.merchantCountry)}
+        transactionInfo={getGoogleTransactionInfo(
+          getCartTotal(),
+          googlePayConfig.merchantCountry,
+        )}
         environment="TEST"
         createOrder={handleCreateOrder}
         onApprove={async (data) => {
