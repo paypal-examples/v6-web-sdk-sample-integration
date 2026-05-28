@@ -125,14 +125,24 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
             orderId: createdOrder.orderId,
           });
           console.log(JSON.stringify(orderData, null, 2));
-          console.log("Completed Apple Pay SDK session with STATUS_SUCCESS...");
-          appleSdkApplePayPaymentSession.completePayment({
-            status: window.ApplePaySession.STATUS_SUCCESS,
-          });
-          renderAlert({
-            type: "success",
-            message: "Completed Apple Pay SDK session with STATUS_SUCCESS",
-          });
+          const captureStatus =
+            orderData.purchase_units[0].payments.captures[0].status;
+          if (captureStatus === "COMPLETED" || captureStatus === "PENDING") {
+            console.log(
+              "Completed Apple Pay SDK session with STATUS_SUCCESS...",
+            );
+            appleSdkApplePayPaymentSession.completePayment({
+              status: window.ApplePaySession.STATUS_SUCCESS,
+            });
+            renderAlert({
+              type: "success",
+              message: "Completed Apple Pay SDK session with STATUS_SUCCESS",
+            });
+          } else {
+            appleSdkApplePayPaymentSession.completePayment({
+              status: window.ApplePaySession.STATUS_FAILURE,
+            });
+          }
         } catch (err) {
           console.error(err);
           appleSdkApplePayPaymentSession.completePayment({
