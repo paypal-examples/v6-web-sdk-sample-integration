@@ -126,7 +126,7 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
           });
           console.log(JSON.stringify(orderData, null, 2));
           const captureStatus =
-            orderData.purchase_units[0].payments.captures[0].status;
+            orderData.purchaseUnits?.[0]?.payments?.captures?.[0]?.status;
           if (captureStatus === "COMPLETED" || captureStatus === "PENDING") {
             console.log(
               "Completed Apple Pay SDK session with STATUS_SUCCESS...",
