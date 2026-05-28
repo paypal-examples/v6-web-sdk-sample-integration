@@ -123,7 +123,6 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
           );
           const orderData = await captureOrder({
             orderId: createdOrder.orderId,
-            fundingSource: "applepay",
           });
           console.log(JSON.stringify(orderData, null, 2));
           console.log("Completed Apple Pay SDK session with STATUS_SUCCESS...");
@@ -199,6 +198,14 @@ async function createOrder() {
       }),
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to create order: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
+    );
+  }
+
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
@@ -215,6 +222,14 @@ async function captureOrder({ orderId }) {
       },
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to capture order ${orderId}: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
+    );
+  }
+
   const data = await response.json();
 
   return data;
