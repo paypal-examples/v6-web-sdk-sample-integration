@@ -141,6 +141,10 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
             appleSdkApplePayPaymentSession.completePayment({
               status: window.ApplePaySession.STATUS_FAILURE,
             });
+            renderAlert({
+              type: "warning",
+              message: `Payment was not completed. Capture status: ${captureStatus || "UNKNOWN"}`,
+            });
           }
         } catch (err) {
           console.error(err);
