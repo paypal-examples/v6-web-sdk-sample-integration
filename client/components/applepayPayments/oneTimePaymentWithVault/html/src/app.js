@@ -176,9 +176,9 @@ async function getBrowserSafeClientId() {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new Error(
-      `Failed to get browser-safe client ID: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
-    );
+    const message = `Failed to get browser-safe client ID: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
   }
 
   const { clientId } = await response.json();
@@ -209,9 +209,9 @@ async function createOrder() {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new Error(
-      `Failed to create order: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
-    );
+    const message = `Failed to create order: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
   }
 
   const { id } = await response.json();
@@ -233,9 +233,9 @@ async function captureOrder({ orderId }) {
 
   if (!response.ok) {
     const errorBody = await response.text();
-    throw new Error(
-      `Failed to capture order ${orderId}: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
-    );
+    const message = `Failed to capture order ${orderId}: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
   }
 
   const data = await response.json();
