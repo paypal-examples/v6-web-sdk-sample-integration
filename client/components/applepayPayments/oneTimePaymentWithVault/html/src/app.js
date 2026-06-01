@@ -187,6 +187,14 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to get browser-safe client ID: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
+    );
+  }
+
   const { clientId } = await response.json();
 
   return clientId;

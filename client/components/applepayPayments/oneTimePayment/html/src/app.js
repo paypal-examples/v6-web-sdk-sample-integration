@@ -186,6 +186,14 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to get browser-safe client ID: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
+    );
+  }
+
   const { clientId } = await response.json();
 
   return clientId;
@@ -211,6 +219,14 @@ async function createOrder() {
       }),
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to create order: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
+    );
+  }
+
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
@@ -227,6 +243,14 @@ async function captureOrder({ orderId }) {
       },
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    throw new Error(
+      `Failed to capture order ${orderId}: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`,
+    );
+  }
+
   const data = await response.json();
 
   return data;
