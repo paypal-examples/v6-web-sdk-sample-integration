@@ -124,28 +124,14 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
             orderId: createdOrder.orderId,
           });
           console.log(JSON.stringify(orderData, null, 2));
-          const captureStatus =
-            orderData.purchaseUnits?.[0]?.payments?.captures?.[0]?.status;
-          if (captureStatus === "COMPLETED" || captureStatus === "PENDING") {
-            console.log(
-              "Completed Apple Pay SDK session with STATUS_SUCCESS...",
-            );
-            appleSdkApplePayPaymentSession.completePayment({
-              status: window.ApplePaySession.STATUS_SUCCESS,
-            });
-            renderAlert({
-              type: "success",
-              message: "Completed Apple Pay SDK session with STATUS_SUCCESS",
-            });
-          } else {
-            appleSdkApplePayPaymentSession.completePayment({
-              status: window.ApplePaySession.STATUS_FAILURE,
-            });
-            renderAlert({
-              type: "warning",
-              message: `Payment was not completed. Capture status: ${captureStatus || "UNKNOWN"}`,
-            });
-          }
+          console.log("Completed Apple Pay SDK session with STATUS_SUCCESS...");
+          appleSdkApplePayPaymentSession.completePayment({
+            status: window.ApplePaySession.STATUS_SUCCESS,
+          });
+          renderAlert({
+            type: "success",
+            message: "Completed Apple Pay SDK session with STATUS_SUCCESS",
+          });
         } catch (err) {
           console.error(err);
           appleSdkApplePayPaymentSession.completePayment({
@@ -186,6 +172,14 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    const message = `Failed to get browser-safe client ID: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
+  }
+
   const { clientId } = await response.json();
 
   return clientId;
@@ -211,6 +205,14 @@ async function createOrder() {
       }),
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    const message = `Failed to create order: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
+  }
+
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
@@ -227,6 +229,14 @@ async function captureOrder({ orderId }) {
       },
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    const message = `Failed to capture order ${orderId}: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
+  }
+
   const data = await response.json();
 
   return data;
