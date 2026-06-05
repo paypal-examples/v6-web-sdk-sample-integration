@@ -96,6 +96,7 @@ function App() {
     <ErrorBoundary FallbackComponent={ErrorFallback}>
       <PayPalProvider
         clientId={clientId}
+        environment="sandbox"
         components={[
           "paypal-payments",
           "venmo-payments",
