@@ -76,10 +76,10 @@ Pix International is available in Brazil (BR).
 
 ### Key Fields
 
-| Tax ID Type | Description |
-|-------------|-------------|
-| `BR_CPF` | Individual taxpayer identification (11 digits) |
-| `BR_CNPJ` | Corporate taxpayer identification (14 digits) |
+| Tax ID Type | Description                                    |
+| ----------- | ---------------------------------------------- |
+| `BR_CPF`    | Individual taxpayer identification (11 digits) |
+| `BR_CNPJ`   | Corporate taxpayer identification (14 digits)  |
 
 ### Server-Side Requirements
 
@@ -90,11 +90,13 @@ Pix International is available in Brazil (BR).
 ## Troubleshooting
 
 ### Pix International not eligible
+
 - Verify `testBuyerCountry` is set to `"BR"`
 - Check that `currencyCode` is set to `"BRL"`
 - Ensure Pix is enabled in PayPal account settings
 
 ### Validation fails
+
 - Ensure Tax ID and Tax ID Type are both filled in
 - Verify Tax ID format matches the selected type (CPF: 11 digits, CNPJ: 14 digits)
 

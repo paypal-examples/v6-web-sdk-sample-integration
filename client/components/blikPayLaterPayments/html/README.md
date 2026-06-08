@@ -84,11 +84,13 @@ BLIK Pay Later is available in Poland (PL).
 ## Troubleshooting
 
 ### BLIK Pay Later not eligible
+
 - Verify `testBuyerCountry` is set to `"PL"`
 - Check that `currencyCode` is set to `"PLN"`
 - Ensure BLIK Pay Later is enabled in PayPal account settings
 
 ### Payment popup doesn't open
+
 - Check for popup blockers
 - Verify order creation returns a valid orderId
 - Check browser console for errors
