@@ -31,7 +31,9 @@ const OneTimePaymentSchema = z
         { sku: getAllProducts()[0].sku, quantity: 2 },
         { sku: getAllProducts()[1].sku, quantity: 1 },
       ]),
-    intent: z.enum(CheckoutPaymentIntent).default(CheckoutPaymentIntent.Capture),
+    intent: z
+      .enum(CheckoutPaymentIntent)
+      .default(CheckoutPaymentIntent.Capture),
     currencyCode: z.string().length(3).default("USD"),
     returnUrl: z.url().optional(),
     cancelUrl: z.url().optional(),
@@ -89,9 +91,8 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, intent } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
     intent,
@@ -245,9 +246,8 @@ export async function createOrderForApplePayOneTimePaymentWithVaultRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, intent } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
     intent,
@@ -290,9 +290,8 @@ export async function createOrderForOneTimePaymentWithShippingRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, intent } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
     intent,
@@ -366,9 +365,8 @@ export async function createOrderForCardWithSingleUseTokenRouteHandler(
     })
     .parse({ paymentToken: request.body.paymentToken });
 
-  const { currencyCode, totalAmount, items, intent } = OneTimePaymentSchema.parse(
-    request.body,
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body);
 
   const orderRequestBody = {
     intent,
