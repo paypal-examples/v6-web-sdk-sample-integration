@@ -83,11 +83,13 @@ Scalapay is available in France (FR) and Italy (IT).
 ## Troubleshooting
 
 ### Scalapay not eligible
+
 - Verify `testBuyerCountry` is set to `"FR"` or `"IT"`
 - Check that `currencyCode` is set to `"EUR"`
 - Ensure Scalapay is enabled in PayPal account settings
 
 ### Validation fails
+
 - Ensure full name and email fields are properly mounted
 - Check that phone country code and national number are filled in
 

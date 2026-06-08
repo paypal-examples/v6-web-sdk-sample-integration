@@ -205,7 +205,10 @@ async function handleApprove(data) {
 
 function handleCancel(data) {
   console.log("Payment cancelled:", data);
-  showMessage({ text: "Payment was cancelled. You can try again.", type: "error" });
+  showMessage({
+    text: "Payment was cancelled. You can try again.",
+    type: "error",
+  });
 }
 
 function handleError(error) {

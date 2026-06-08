@@ -65,9 +65,7 @@ function setupPaymentFields(blikpaylaterCheckout) {
     },
   });
 
-  document
-    .querySelector("#blikpaylater-full-name")
-    .appendChild(fullNameField);
+  document.querySelector("#blikpaylater-full-name").appendChild(fullNameField);
 }
 
 function setupButtonHandler(blikpaylaterCheckout) {

@@ -76,10 +76,10 @@ Floa is available in France (FR).
 
 ### Key Fields
 
-| Field | Description |
-|-------|-------------|
-| `dateOfBirth` | Customer date of birth (required by Floa) |
-| `numberOfInstallments` | Number of installments (e.g. 3) |
+| Field                  | Description                               |
+| ---------------------- | ----------------------------------------- |
+| `dateOfBirth`          | Customer date of birth (required by Floa) |
+| `numberOfInstallments` | Number of installments (e.g. 3)           |
 
 ### Server-Side Requirements
 
@@ -90,11 +90,13 @@ Floa is available in France (FR).
 ## Troubleshooting
 
 ### Floa not eligible
+
 - Verify `testBuyerCountry` is set to `"FR"`
 - Check that `currencyCode` is set to `"EUR"`
 - Ensure Floa is enabled in PayPal account settings
 
 ### Validation fails
+
 - Ensure full name field is properly mounted
 - Check that date of birth and number of installments are filled in
 
