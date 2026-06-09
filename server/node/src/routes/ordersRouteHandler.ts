@@ -31,6 +31,9 @@ const OneTimePaymentSchema = z
         { sku: getAllProducts()[0].sku, quantity: 2 },
         { sku: getAllProducts()[1].sku, quantity: 1 },
       ]),
+    intent: z
+      .enum(CheckoutPaymentIntent)
+      .default(CheckoutPaymentIntent.Capture),
     currencyCode: z.string().length(3).default("USD"),
     returnUrl: z.url().optional(),
     cancelUrl: z.url().optional(),
@@ -88,12 +91,11 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
@@ -124,7 +126,7 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, returnUrl, cancelUrl } =
+  const { currencyCode, totalAmount, items, returnUrl, cancelUrl, intent } =
     OneTimePaymentSchema.transform((data) => {
       return {
         ...data,
@@ -140,7 +142,7 @@ export async function createOrderForPayPalOneTimePaymentRouteHandler(
     }).parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
@@ -181,7 +183,7 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, returnUrl, cancelUrl } =
+  const { currencyCode, totalAmount, items, returnUrl, cancelUrl, intent } =
     OneTimePaymentSchema.transform((data) => {
       return {
         ...data,
@@ -197,7 +199,7 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
     }).parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
@@ -244,12 +246,11 @@ export async function createOrderForApplePayOneTimePaymentWithVaultRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
@@ -289,12 +290,11 @@ export async function createOrderForOneTimePaymentWithShippingRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
@@ -365,12 +365,11 @@ export async function createOrderForCardWithSingleUseTokenRouteHandler(
     })
     .parse({ paymentToken: request.body.paymentToken });
 
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body,
-  );
+  const { currencyCode, totalAmount, items, intent } =
+    OneTimePaymentSchema.parse(request.body);
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
@@ -406,7 +405,7 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, returnUrl, cancelUrl } =
+  const { currencyCode, totalAmount, items, returnUrl, cancelUrl, intent } =
     OneTimePaymentSchema.transform((data) => {
       return {
         ...data,
@@ -422,7 +421,7 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
     }).parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent: CheckoutPaymentIntent.Capture,
+    intent,
     purchaseUnits: [
       {
         amount: {
