@@ -178,6 +178,9 @@ async function getBrowserSafeClientToken() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client token");
+  }
   const { accessToken } = await response.json();
 
   return accessToken;

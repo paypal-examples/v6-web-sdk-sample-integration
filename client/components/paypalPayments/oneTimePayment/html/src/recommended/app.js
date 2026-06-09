@@ -176,6 +176,9 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
   const { clientId } = await response.json();
 
   return clientId;
