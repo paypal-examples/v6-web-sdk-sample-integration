@@ -36,6 +36,7 @@ const OneTimePaymentSchema = z
       .enum(CheckoutPaymentIntent)
       .default(CheckoutPaymentIntent.Capture),
     currencyCode: z.string().length(3).default("USD"),
+    processingInstruction: z.enum(ProcessingInstruction).optional(),
     returnUrl: z.url().optional(),
     cancelUrl: z.url().optional(),
   })
@@ -92,11 +93,12 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, intent } =
+  const { currencyCode, totalAmount, items, processingInstruction } =
     OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
-    intent,
+    intent: CheckoutPaymentIntent.Capture,
+    ...(processingInstruction && { processingInstruction }),
     purchaseUnits: [
       {
         amount: {
