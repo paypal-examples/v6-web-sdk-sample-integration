@@ -6,6 +6,7 @@ import {
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
+  ProcessingInstruction,
   ShippingType,
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
@@ -32,6 +33,7 @@ const OneTimePaymentSchema = z
         { sku: getAllProducts()[1].sku, quantity: 1 },
       ]),
     currencyCode: z.string().length(3).default("USD"),
+    processingInstruction: z.enum(ProcessingInstruction).optional(),
     returnUrl: z.url().optional(),
     cancelUrl: z.url().optional(),
   })
@@ -88,12 +90,12 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items } = OneTimePaymentSchema.parse(
-    request.body ?? {},
-  );
+  const { currencyCode, totalAmount, items, processingInstruction } =
+    OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
     intent: CheckoutPaymentIntent.Capture,
+    ...(processingInstruction && { processingInstruction }),
     purchaseUnits: [
       {
         amount: {
@@ -412,6 +414,23 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
     body: orderRequestBody,
     paypalRequestId: randomUUID(),
     prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function getOrderRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const schema = z.object({
+    orderId: z.string(),
+  });
+
+  const { orderId } = schema.parse(request.params);
+
+  const { result, statusCode } = await ordersController.getOrder({
+    id: orderId,
   });
 
   response.status(statusCode).json(result);
