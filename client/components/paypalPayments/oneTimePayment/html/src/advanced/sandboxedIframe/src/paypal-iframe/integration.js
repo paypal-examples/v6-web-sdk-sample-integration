@@ -74,7 +74,7 @@ function setupIframeOriginDisplay() {
   document.querySelector("#iframeDomain").innerHTML = origin;
 }
 
-async function setupPayPalButton(sdkInstance) {
+async function configurePayPalButton(sdkInstance) {
   pageState.paymentSession = sdkInstance.createPayPalOneTimePaymentSession({
     onApprove: async (data) => {
       const orderData = await captureOrder({
@@ -147,7 +147,7 @@ async function onPayPalWebSdkLoaded() {
       pageType: "checkout",
     });
 
-    setupPayPalButton(sdkInstance);
+    configurePayPalButton(sdkInstance);
   } catch (error) {
     console.error(error);
   }

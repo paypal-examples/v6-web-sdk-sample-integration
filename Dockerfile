@@ -1,6 +1,6 @@
 # syntax = docker/dockerfile:1
 
-ARG NODE_VERSION=20.19.5
+ARG NODE_VERSION=20.20.2
 FROM node:${NODE_VERSION}-slim AS base
 
 LABEL fly_launch_runtime="Node.js"
@@ -24,13 +24,13 @@ WORKDIR /app
 # COPY syntax: COPY <source on host> <destination in container>
 # Source: client/... (relative to build context on host machine)
 # Destination: ./client/... (relative to WORKDIR /app, so final path is /app/client/...)
-COPY client/prebuiltPages/react/package.json ./client/prebuiltPages/react/
+COPY client/prebuiltPages/react/package.json client/prebuiltPages/react/package-lock.json* ./client/prebuiltPages/react/
 WORKDIR /app/client/prebuiltPages/react
 RUN npm install --include=dev
 
 # Install dependencies for TypeScript app
 WORKDIR /app
-COPY client/components/paypalPayments/oneTimePayment/typescript/package.json ./client/components/paypalPayments/oneTimePayment/typescript/
+COPY client/components/paypalPayments/oneTimePayment/typescript/package.json client/components/paypalPayments/oneTimePayment/typescript/package-lock.json* ./client/components/paypalPayments/oneTimePayment/typescript/
 WORKDIR /app/client/components/paypalPayments/oneTimePayment/typescript
 RUN npm install --include=dev
 

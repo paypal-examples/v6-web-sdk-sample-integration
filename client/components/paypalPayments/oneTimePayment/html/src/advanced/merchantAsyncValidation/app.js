@@ -12,7 +12,7 @@ async function onPayPalWebSdkLoaded() {
     });
 
     if (paymentMethods.isEligible("paypal")) {
-      setupPayPalButton(sdkInstance);
+      configurePayPalButton(sdkInstance);
     }
   } catch (error) {
     console.error(error);
@@ -44,7 +44,7 @@ const paymentSessionOptions = {
   },
 };
 
-async function setupPayPalButton(sdkInstance) {
+async function configurePayPalButton(sdkInstance) {
   const paypalPaymentSession = sdkInstance.createPayPalOneTimePaymentSession(
     paymentSessionOptions,
   );
@@ -54,12 +54,8 @@ async function setupPayPalButton(sdkInstance) {
 
   // Async promise to be passed into .start()
   async function validateAndCreateOrder() {
-    // Run validation and order creation concurrently for better performance
-    // If order creation depends on validation results, switch to sequential execution
-    const [validationResult, createOrderResult] = await Promise.all([
-      runAsyncValidation(),
-      createOrder(),
-    ]);
+    await runAsyncValidation();
+    const createOrderResult = await createOrder();
 
     return createOrderResult;
   }

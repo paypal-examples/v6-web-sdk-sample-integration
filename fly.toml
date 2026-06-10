@@ -24,4 +24,3 @@ primary_region = 'ord'
 [[vm]]
   memory = '1gb'
   cpus = 1
-  memory_mb = 1024
