@@ -38,11 +38,11 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
     const paypalSdkApplePayPaymentSession =
       sdkInstance.createApplePayOneTimePaymentSession();
 
-    document.getElementById("apple-pay-button-container").innerHTML =
-      '<apple-pay-button id="apple-pay-button" buttonstyle="black" type="buy" locale="en">';
+    const applePayButton = createApplePayButton();
+    applePayButton.addEventListener("click", onClick);
     document
-      .getElementById("apple-pay-button")
-      .addEventListener("click", onClick);
+      .getElementById("apple-pay-button-container")
+      .appendChild(applePayButton);
 
     async function onClick() {
       const paymentRequest = {
@@ -122,7 +122,6 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
           );
           const orderData = await captureOrder({
             orderId: createdOrder.orderId,
-            fundingSource: "applepay",
           });
           console.log(JSON.stringify(orderData, null, 2));
           console.log("Completed Apple Pay SDK session with STATUS_SUCCESS...");
@@ -152,6 +151,20 @@ async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
   }
 }
 
+function createApplePayButton() {
+  const applePayButton = document.createElement("apple-pay-button");
+  applePayButton.id = "apple-pay-button";
+  applePayButton.setAttribute("buttonstyle", "black");
+  applePayButton.setAttribute("type", "buy");
+  applePayButton.setAttribute("locale", "en-US");
+
+  applePayButton.style.setProperty("--apple-pay-button-width", "150px");
+  applePayButton.style.setProperty("--apple-pay-button-height", "40px");
+  applePayButton.style.setProperty("--apple-pay-button-border-radius", "5px");
+
+  return applePayButton;
+}
+
 async function getBrowserSafeClientId() {
   const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
     method: "GET",
@@ -159,6 +172,14 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    const message = `Failed to get browser-safe client ID: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
+  }
+
   const { clientId } = await response.json();
 
   return clientId;
@@ -184,6 +205,14 @@ async function createOrder() {
       }),
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    const message = `Failed to create order: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
+  }
+
   const { id } = await response.json();
   renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
@@ -200,6 +229,14 @@ async function captureOrder({ orderId }) {
       },
     },
   );
+
+  if (!response.ok) {
+    const errorBody = await response.text();
+    const message = `Failed to capture order ${orderId}: ${response.status} ${response.statusText}${errorBody ? ` - ${errorBody}` : ""}`;
+    renderAlert({ type: "danger", message });
+    throw new Error(message);
+  }
+
   const data = await response.json();
 
   return data;

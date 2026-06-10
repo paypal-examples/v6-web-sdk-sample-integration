@@ -8,6 +8,6 @@
   },
   "license": "Apache-2.0",
   "devDependencies": {
-    "prettier": "^3.8.1"
+    "prettier": "^3.8.3"
   }
 }
