@@ -171,36 +171,13 @@ async function createOrderWithTaxInfo(taxInfo) {
   }
 }
 
-async function getOrder(orderId) {
-  const response = await fetch(`/paypal-api/checkout/orders/${orderId}`, {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-  });
 
-  if (!response.ok) {
-    throw new Error("Failed to fetch order details");
-  }
-
-  return response.json();
-}
-
-async function handleApprove(data) {
+function handleApprove(data) {
   console.log("Payment approved:", data);
-
-  try {
-    const orderDetails = await getOrder(data.orderId);
-    console.log("Order details:", orderDetails);
-
-    showMessage({
-      text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
-      type: "success",
-    });
-  } catch (error) {
-    showMessage({
-      text: "Transaction successful but failed to fetch order details.",
-      type: "error",
-    });
-  }
+  showMessage({
+    text: `Payment successful! Order ID: ${data.orderId}.`,
+    type: "success",
+  });
 }
 
 function handleCancel(data) {
