@@ -104,7 +104,7 @@ describe("createSetupTokenForPayPalSavePaymentRouteHandler", () => {
         status: "PAYER_ACTION_REQUIRED",
       }),
     );
-    expect(createSetupTokenMock).toBeCalledWith(
+    expect(createSetupTokenMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
           paymentSource: {
@@ -149,7 +149,7 @@ describe("createSetupTokenForCardSavePaymentRouteHandler", () => {
         status: "PAYER_ACTION_REQUIRED",
       }),
     );
-    expect(createSetupTokenMock).toBeCalledWith(
+    expect(createSetupTokenMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
           paymentSource: {
@@ -195,7 +195,7 @@ describe("createPaymentTokenRouteHandler", () => {
         description: "Payment token saved to database for future transactions",
       }),
     );
-    expect(createPaymentTokenMock).toBeCalledWith(
+    expect(createPaymentTokenMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
           paymentSource: {
