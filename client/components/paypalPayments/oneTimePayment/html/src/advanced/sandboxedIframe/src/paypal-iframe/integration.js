@@ -162,6 +162,9 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
   const { clientId } = await response.json();
 
   return clientId;
@@ -177,6 +180,9 @@ async function createOrder() {
       },
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to create order");
+  }
   const { id } = await response.json();
 
   return { orderId: id };
@@ -192,6 +198,9 @@ async function captureOrder({ orderId }) {
       },
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to capture order");
+  }
   const data = await response.json();
 
   return data;
