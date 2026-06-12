@@ -200,13 +200,49 @@ async function createOrderWithPhone(phoneData) {
   }
 }
 
+// Get order details after approval
+async function getOrder(orderId) {
+  try {
+    console.log("Fetching order details:", orderId);
+
+    const response = await fetch(`/paypal-api/checkout/orders/${orderId}`, {
+      method: "GET",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to fetch order details");
+    }
+
+    const data = await response.json();
+    console.log("Order details fetched successfully:", data);
+
+    return data;
+  } catch (error) {
+    console.error("Error fetching order details:", error);
+    throw error;
+  }
+}
+
 // Handle successful payment approval
-function handleApprove(data) {
+async function handleApprove(data) {
   console.log("Payment approved:", data);
-  showMessage({
-    text: `Payment successful! Order ID: ${data.orderId}.`,
-    type: "success",
-  });
+
+  try {
+    const orderDetails = await getOrder(data.orderId);
+    console.log("Order details:", orderDetails);
+
+    showMessage({
+      text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
+      type: "success",
+    });
+  } catch (error) {
+    console.error("Failed to fetch order details:", error);
+    showMessage({
+      text: "Transaction successful but failed to fetch order details.",
+      type: "error",
+    });
+  }
 }
 
 // Handle payment cancellation
