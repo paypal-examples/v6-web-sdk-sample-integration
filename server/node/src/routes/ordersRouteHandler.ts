@@ -479,6 +479,7 @@ export async function getOrderRouteHandler(
   });
 
   if (statusCode === 200) {
+    // return the minimal amount of Order information back to the browser
     const { id, paymentSource, purchaseUnits, status, links } = result;
     return response.status(200).json({
       id,
