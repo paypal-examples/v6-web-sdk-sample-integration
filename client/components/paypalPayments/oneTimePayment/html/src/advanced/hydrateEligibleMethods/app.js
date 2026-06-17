@@ -183,6 +183,9 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
   const { clientId } = await response.json();
 
   return clientId;
@@ -197,6 +200,9 @@ async function customFindEligibleMethods(findEligibleMethodsPayload) {
       },
       body: JSON.stringify(findEligibleMethodsPayload),
     });
+    if (!response.ok) {
+      throw new Error("Failed to find eligible methods");
+    }
     const jsonResponse = await response.json();
     console.log(jsonResponse);
     renderAlert({
