@@ -477,6 +477,21 @@ export async function getOrderRouteHandler(
     id: orderId,
   });
 
+  if (statusCode === 200) {
+    // return the minimal amount of Order information back to the browser
+    const { id, paymentSource, purchaseUnits, status, links } = result;
+    return response.status(200).json({
+      id,
+      paymentSource,
+      purchaseUnits: purchaseUnits?.map(({ referenceId, payments }) => ({
+        referenceId,
+        payments,
+      })),
+      status,
+      links,
+    });
+  }
+
   response.status(statusCode).json(result);
 }
 
