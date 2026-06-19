@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dragonpay - PayPal Web SDK</title>
+  <link rel="stylesheet" href="/client/shared/styles.css">
+  <style>
+    .payment-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    #dragonpay-full-name {
+      max-width: 400px;
+      height: 80px;
+    }
+
+    #dragonpay-email {
+      max-width: 400px;
+      height: 80px;
+    }
+
+    dragonpay-button {
+      max-width: 225px;
+    }
+
+    .message {
+      padding: 15px;
+      border-radius: 4px;
+      margin-top: 20px;
+      display: none;
+      max-width: 700px;
+    }
+
+    .message.success {
+      background-color: #d4edda;
+      border: 1px solid #c3e6cb;
+      color: #155724;
+    }
+
+    .message.error {
+      background-color: #f8d7da;
+      border: 1px solid #f5c6cb;
+      color: #721c24;
+    }
+
+    .message.show {
+      display: block;
+    }
+
+    .phone-fields {
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      padding: 15px;
+      max-width: 400px;
+    }
+
+    .phone-fields label {
+      display: block;
+      margin-bottom: 8px;
+      font-weight: 500;
+    }
+
+    .phone-inputs {
+      display: flex;
+      gap: 8px;
+    }
+
+    .phone-inputs input {
+      height: 40px;
+      padding: 8px;
+      border: 1px solid #ccc;
+      border-radius: 4px;
+      box-sizing: border-box;
+    }
+
+    #phone-country-code {
+      width: 80px;
+      flex-shrink: 0;
+    }
+
+    #phone-national-number {
+      flex: 1;
+    }
+  </style>
+</head>
+<body>
+  <h1>Dragonpay One-Time Payment Integration</h1>
+
+  <div class="payment-container">
+    <div id="dragonpay-full-name"></div>
+    <div id="dragonpay-email"></div>
+    
+    <fieldset class="phone-fields" id="phone-fields" hidden>
+      <label>Phone Number:</label>
+      <div class="phone-inputs">
+        <input type="text" id="phone-country-code" placeholder="63" />
+        <input type="tel" id="phone-national-number" placeholder="Phone Number" />
+      </div>
+    </fieldset>
+    
+    <dragonpay-button
+      id="dragonpay-button"
+      hidden
+    ></dragonpay-button>
+  </div>
+
+  <div id="message" class="message"></div>
+
+  <script
+    async
+    src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+    onload="onPayPalWebSdkLoaded()"
+  ></script>
+  <script src="app.js"></script>
+</body>
+</html>
