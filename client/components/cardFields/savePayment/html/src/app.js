@@ -10,7 +10,7 @@ async function onPayPalWebSdkLoaded() {
 
     const isCardFieldsEligible = paymentMethods.isEligible("advanced_cards");
     if (isCardFieldsEligible) {
-      setupCardFields(sdkInstance);
+      configureCardFields(sdkInstance);
     }
   } catch (err) {
     renderAlert({
@@ -21,7 +21,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-async function setupCardFields(sdkInstance) {
+async function configureCardFields(sdkInstance) {
   const cardFieldsInstance = sdkInstance.createCardFieldsSavePaymentSession();
 
   const numberField = cardFieldsInstance.createCardFieldsComponent({

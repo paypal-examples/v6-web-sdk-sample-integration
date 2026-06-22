@@ -14,7 +14,7 @@ async function onPayPalWebSdkLoaded() {
     const isBlikPayLaterEligible = paymentMethods.isEligible("blik_pay_later");
 
     if (isBlikPayLaterEligible) {
-      setupBlikPayLaterPayment(sdkInstance);
+      configureBlikPayLaterPayment(sdkInstance);
     } else {
       showMessage({
         text: "BLIK Pay Later is not eligible. Please ensure your buyer country is Poland and currency is PLN.",
@@ -31,7 +31,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupBlikPayLaterPayment(sdkInstance) {
+function configureBlikPayLaterPayment(sdkInstance) {
   try {
     const blikpaylaterCheckout =
       sdkInstance.createBlikPayLaterOneTimePaymentSession({
@@ -40,8 +40,8 @@ function setupBlikPayLaterPayment(sdkInstance) {
         onError: handleError,
       });
 
-    setupPaymentFields(blikpaylaterCheckout);
-    setupButtonHandler(blikpaylaterCheckout);
+    configurePaymentFields(blikpaylaterCheckout);
+    configureButtonHandler(blikpaylaterCheckout);
   } catch (error) {
     console.error("Error setting up BLIK Pay Later payment:", error);
     showMessage({
@@ -51,7 +51,7 @@ function setupBlikPayLaterPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(blikpaylaterCheckout) {
+function configurePaymentFields(blikpaylaterCheckout) {
   const fullNameField = blikpaylaterCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -68,7 +68,7 @@ function setupPaymentFields(blikpaylaterCheckout) {
   document.querySelector("#blikpaylater-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(blikpaylaterCheckout) {
+function configureButtonHandler(blikpaylaterCheckout) {
   const blikpaylaterButton = document.querySelector("#blikpaylater-button");
   blikpaylaterButton.removeAttribute("hidden");
 

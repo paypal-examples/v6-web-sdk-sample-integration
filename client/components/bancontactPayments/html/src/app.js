@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isBancontactEligible = paymentMethods.isEligible("bancontact");
 
     if (isBancontactEligible) {
-      setupBancontactPayment(sdkInstance);
+      configureBancontactPayment(sdkInstance);
     } else {
       renderAlert({
         type: "warning",
@@ -33,7 +33,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupBancontactPayment(sdkInstance) {
+function configureBancontactPayment(sdkInstance) {
   try {
     // Create Bancontact checkout session
     const bancontactCheckout =
@@ -44,10 +44,10 @@ function setupBancontactPayment(sdkInstance) {
       });
 
     // Setup payment fields
-    setupPaymentFields(bancontactCheckout);
+    configurePaymentFields(bancontactCheckout);
 
     // Setup button click handler
-    setupButtonHandler(bancontactCheckout);
+    configureButtonHandler(bancontactCheckout);
   } catch (error) {
     renderAlert({
       type: "danger",
@@ -57,7 +57,7 @@ function setupBancontactPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(bancontactCheckout) {
+function configurePaymentFields(bancontactCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = bancontactCheckout.createPaymentFields({
     type: "name",
@@ -77,7 +77,7 @@ function setupPaymentFields(bancontactCheckout) {
   document.querySelector("#bancontact-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(bancontactCheckout) {
+function configureButtonHandler(bancontactCheckout) {
   const bancontactButton = document.querySelector("#bancontact-button");
   bancontactButton.removeAttribute("hidden");
 

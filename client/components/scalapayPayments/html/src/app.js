@@ -14,7 +14,7 @@ async function onPayPalWebSdkLoaded() {
     const isScalapayEligible = paymentMethods.isEligible("scalapay");
 
     if (isScalapayEligible) {
-      setupScalapayPayment(sdkInstance);
+      configureScalapayPayment(sdkInstance);
     } else {
       showMessage({
         text: "Scalapay is not eligible. Please ensure your buyer country is France and currency is EUR.",
@@ -31,7 +31,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupScalapayPayment(sdkInstance) {
+function configureScalapayPayment(sdkInstance) {
   try {
     const scalapayCheckout = sdkInstance.createScalapayOneTimePaymentSession({
       onApprove: handleApprove,
@@ -39,8 +39,8 @@ function setupScalapayPayment(sdkInstance) {
       onError: handleError,
     });
 
-    setupPaymentFields(scalapayCheckout);
-    setupButtonHandler(scalapayCheckout);
+    configurePaymentFields(scalapayCheckout);
+    configureButtonHandler(scalapayCheckout);
   } catch (error) {
     console.error("Error setting up Scalapay payment:", error);
     showMessage({
@@ -50,7 +50,7 @@ function setupScalapayPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(scalapayCheckout) {
+function configurePaymentFields(scalapayCheckout) {
   const fullNameField = scalapayCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -81,7 +81,7 @@ function setupPaymentFields(scalapayCheckout) {
   document.querySelector("#scalapay-email").appendChild(emailField);
 }
 
-function setupButtonHandler(scalapayCheckout) {
+function configureButtonHandler(scalapayCheckout) {
   const scalapayButton = document.querySelector("#scalapay-button");
   scalapayButton.removeAttribute("hidden");
   document.querySelector("#phone-fields").removeAttribute("hidden");

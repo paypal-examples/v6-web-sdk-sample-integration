@@ -11,7 +11,7 @@ async function onPayPalWebSdkLoaded() {
     });
     const isEligible = paymentMethods.isEligible("fiuu_cash");
     if (isEligible) {
-      setupPayment(sdkInstance);
+      configurePayment(sdkInstance);
     } else {
       showMessage({
         text: "FIUU Cash is not eligible. Please ensure your buyer country is Malaysia and currency is MYR.",
@@ -27,15 +27,15 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupPayment(sdkInstance) {
+function configurePayment(sdkInstance) {
   try {
     const apmCheckout = sdkInstance.createFIUUOneTimePaymentSession({
       onApprove: handleApprove,
       onCancel: handleCancel,
       onError: handleError,
     });
-    setupPaymentFields(apmCheckout);
-    setupButtonHandler(apmCheckout);
+    configurePaymentFields(apmCheckout);
+    configureButtonHandler(apmCheckout);
   } catch (error) {
     showMessage({
       text: "Failed to setup payment. Please refresh the page.",
@@ -44,7 +44,7 @@ function setupPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(apmCheckout) {
+function configurePaymentFields(apmCheckout) {
   const fullNameField = apmCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -60,7 +60,7 @@ function setupPaymentFields(apmCheckout) {
   document.querySelector("#fiuu-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(apmCheckout) {
+function configureButtonHandler(apmCheckout) {
   const apmButton = document.querySelector("#fiuu-button");
   apmButton.removeAttribute("hidden");
   apmButton.addEventListener("click", async () => {

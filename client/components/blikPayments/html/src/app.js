@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isBlikEligible = paymentMethods.isEligible("blik");
 
     if (isBlikEligible) {
-      setupBlikPayment(sdkInstance);
+      configureBlikPayment(sdkInstance);
     } else {
       showMessage({
         text: "BLIK is not eligible. Please ensure your buyer country is Poland and currency is PLN.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupBlikPayment(sdkInstance) {
+function configureBlikPayment(sdkInstance) {
   try {
     // Create BLIK checkout session
     const blikCheckout = sdkInstance.createBlikOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupBlikPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(blikCheckout);
+    configurePaymentFields(blikCheckout);
 
     // Setup button click handler
-    setupButtonHandler(blikCheckout);
+    configureButtonHandler(blikCheckout);
   } catch (error) {
     console.error("Error setting up BLIK payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupBlikPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(blikCheckout) {
+function configurePaymentFields(blikCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = blikCheckout.createPaymentFields({
     type: "name",
@@ -91,7 +91,7 @@ function setupPaymentFields(blikCheckout) {
   document.querySelector("#blik-email").appendChild(emailField);
 }
 
-function setupButtonHandler(blikCheckout) {
+function configureButtonHandler(blikCheckout) {
   const blikButton = document.querySelector("#blik-button");
   blikButton.removeAttribute("hidden");
 

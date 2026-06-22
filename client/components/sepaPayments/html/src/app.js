@@ -7,7 +7,7 @@ async function onPayPalWebSdkLoaded() {
       components: ["sepa-payments"],
     });
 
-    setupSepaPayment(sdkInstance);
+    configureSepaPayment(sdkInstance);
   } catch (error) {
     renderAlert({
       type: "danger",
@@ -17,7 +17,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupSepaPayment(sdkInstance) {
+function configureSepaPayment(sdkInstance) {
   try {
     async function onApprove(data) {
       console.log("Payment approved:", data);
@@ -63,7 +63,7 @@ function setupSepaPayment(sdkInstance) {
     });
 
     // Setup button click handler
-    setupButtonHandler(sepaCheckout);
+    configureButtonHandler(sepaCheckout);
   } catch (error) {
     renderAlert({
       type: "danger",
@@ -73,7 +73,7 @@ function setupSepaPayment(sdkInstance) {
   }
 }
 
-function setupButtonHandler(sepaCheckout) {
+function configureButtonHandler(sepaCheckout) {
   const sepaButton = document.querySelector("#sepa-button");
   sepaButton.removeAttribute("hidden");
 

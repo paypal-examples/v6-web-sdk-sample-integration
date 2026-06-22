@@ -14,7 +14,7 @@ async function onPayPalWebSdkLoaded() {
     const isFloaEligible = paymentMethods.isEligible("floa_pay");
 
     if (isFloaEligible) {
-      setupFloaPayment(sdkInstance);
+      configureFloaPayment(sdkInstance);
     } else {
       showMessage({
         text: "Floa is not eligible. Please ensure your buyer country is France and currency is EUR.",
@@ -31,7 +31,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupFloaPayment(sdkInstance) {
+function configureFloaPayment(sdkInstance) {
   try {
     const floaCheckout = sdkInstance.createFloaOneTimePaymentSession({
       onApprove: handleApprove,
@@ -39,8 +39,8 @@ function setupFloaPayment(sdkInstance) {
       onError: handleError,
     });
 
-    setupPaymentFields(floaCheckout);
-    setupButtonHandler(floaCheckout);
+    configurePaymentFields(floaCheckout);
+    configureButtonHandler(floaCheckout);
   } catch (error) {
     console.error("Error setting up Floa payment:", error);
     showMessage({
@@ -50,7 +50,7 @@ function setupFloaPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(floaCheckout) {
+function configurePaymentFields(floaCheckout) {
   const fullNameField = floaCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -67,7 +67,7 @@ function setupPaymentFields(floaCheckout) {
   document.querySelector("#floa-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(floaCheckout) {
+function configureButtonHandler(floaCheckout) {
   const floaButton = document.querySelector("#floa-button");
   floaButton.removeAttribute("hidden");
   document.querySelector("#floa-extra-fields").removeAttribute("hidden");

@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isEpsEligible = paymentMethods.isEligible("eps");
 
     if (isEpsEligible) {
-      setupEpsPayment(sdkInstance);
+      configureEpsPayment(sdkInstance);
     } else {
       showMessage({
         text: "EPS is not eligible. Please ensure your buyer country is Austria.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupEpsPayment(sdkInstance) {
+function configureEpsPayment(sdkInstance) {
   try {
     // Create EPS checkout session
     const epsCheckout = sdkInstance.createEpsOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupEpsPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(epsCheckout);
+    configurePaymentFields(epsCheckout);
 
     // Setup button click handler
-    setupButtonHandler(epsCheckout);
+    configureButtonHandler(epsCheckout);
   } catch (error) {
     console.error("Error setting up EPS payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupEpsPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(epsCheckout) {
+function configurePaymentFields(epsCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = epsCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(epsCheckout) {
   document.querySelector("#eps-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(epsCheckout) {
+function configureButtonHandler(epsCheckout) {
   const epsButton = document.querySelector("#eps-button");
   epsButton.removeAttribute("hidden");
 

@@ -35,13 +35,16 @@ async function onPayPalWebSdkLoaded() {
     if (paymentMethods.isEligible("paylater")) {
       const paylaterPaymentMethodDetails =
         paymentMethods.getDetails("paylater");
-      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+      configurePayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
     }
 
     if (paymentMethods.isEligible("credit")) {
       const paypalCreditPaymentMethodDetails =
         paymentMethods.getDetails("credit");
-      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+      configurePayPalCreditButton(
+        sdkInstance,
+        paypalCreditPaymentMethodDetails,
+      );
     }
   } catch (error) {
     renderAlert({
@@ -107,7 +110,10 @@ async function configurePayPalButton(sdkInstance) {
   });
 }
 
-async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
+async function configurePayLaterButton(
+  sdkInstance,
+  paylaterPaymentMethodDetails,
+) {
   const paylaterPaymentSession =
     sdkInstance.createPayLaterOneTimePaymentSession(paymentSessionOptions);
 
@@ -137,7 +143,7 @@ async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
   });
 }
 
-async function setupPayPalCreditButton(
+async function configurePayPalCreditButton(
   sdkInstance,
   paypalCreditPaymentMethodDetails,
 ) {
