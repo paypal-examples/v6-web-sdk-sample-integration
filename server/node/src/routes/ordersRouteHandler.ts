@@ -71,7 +71,7 @@ function calculateCartAmount(
 
   for (const { sku, quantity } of cart) {
     const { name, price } = getProduct(sku);
-    totalAmount += Number.parseFloat(price) * quantity;
+    totalAmount += Number(price) * quantity;
     items.push({
       sku,
       name,
