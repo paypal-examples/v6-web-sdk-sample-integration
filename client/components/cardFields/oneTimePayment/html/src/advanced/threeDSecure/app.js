@@ -88,9 +88,8 @@ async function onPayClick(cardFieldsInstance) {
         renderAlert({
           type: "danger",
           message: liabilityShift
-          ? `Payment failed 3D Secure check: "liabilityShift: ${liabilityShift}"`
-          : `Validation or processing failure: ${message ?? ""}`
-
+            ? `Payment failed 3D Secure check: "liabilityShift: ${liabilityShift}"`
+            : `Validation or processing failure: ${message ?? ""}`,
         });
         break;
       }
