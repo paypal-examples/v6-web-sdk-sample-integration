@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isMBWayEligible = paymentMethods.isEligible("mbway");
 
     if (isMBWayEligible) {
-      setupMBWayPayment(sdkInstance);
+      configureMBWayPayment(sdkInstance);
     } else {
       showMessage({
         text: "MBWay is not eligible. Please ensure your buyer country is Portugal and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupMBWayPayment(sdkInstance) {
+function configureMBWayPayment(sdkInstance) {
   try {
     // Create MBWay checkout session
     const mbwayCheckout = sdkInstance.createMbWayOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupMBWayPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(mbwayCheckout);
+    configurePaymentFields(mbwayCheckout);
 
     // Setup button click handler
-    setupButtonHandler(mbwayCheckout);
+    configureButtonHandler(mbwayCheckout);
   } catch (error) {
     console.error("Error setting up MBWay payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupMBWayPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(mbwayCheckout) {
+function configurePaymentFields(mbwayCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = mbwayCheckout.createPaymentFields({
     type: "name",
@@ -91,7 +91,7 @@ function setupPaymentFields(mbwayCheckout) {
   document.querySelector("#mbway-email").appendChild(emailField);
 }
 
-function setupButtonHandler(mbwayCheckout) {
+function configureButtonHandler(mbwayCheckout) {
   const mbwayButton = document.querySelector("#mbway-button");
   mbwayButton.removeAttribute("hidden");
 

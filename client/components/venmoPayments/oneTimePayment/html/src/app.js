@@ -12,7 +12,7 @@ async function onPayPalWebSdkLoaded() {
     });
 
     if (paymentMethods.isEligible("venmo")) {
-      setupVenmoButton(sdkInstance);
+      configureVenmoButton(sdkInstance);
     } else {
       renderAlert({ type: "danger", message: "Venmo is not eligible" });
     }
@@ -46,7 +46,7 @@ const paymentSessionOptions = {
   },
 };
 
-async function setupVenmoButton(sdkInstance) {
+async function configureVenmoButton(sdkInstance) {
   const venmoPaymentSession = sdkInstance.createVenmoOneTimePaymentSession(
     paymentSessionOptions,
   );

@@ -11,7 +11,7 @@ async function onPayPalWebSdkLoaded() {
     });
     const isEligible = paymentMethods.isEligible("indomaret");
     if (isEligible) {
-      setupPayment(sdkInstance);
+      configurePayment(sdkInstance);
     } else {
       showMessage({
         text: "Indomaret is not eligible. Please ensure your buyer country is Indonesia and currency is IDR.",
@@ -27,15 +27,15 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupPayment(sdkInstance) {
+function configurePayment(sdkInstance) {
   try {
     const apmCheckout = sdkInstance.createIndomaretOneTimePaymentSession({
       onApprove: handleApprove,
       onCancel: handleCancel,
       onError: handleError,
     });
-    setupPaymentFields(apmCheckout);
-    setupButtonHandler(apmCheckout);
+    configurePaymentFields(apmCheckout);
+    configureButtonHandler(apmCheckout);
   } catch (error) {
     showMessage({
       text: "Failed to setup payment. Please refresh the page.",
@@ -44,7 +44,7 @@ function setupPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(apmCheckout) {
+function configurePaymentFields(apmCheckout) {
   const fullNameField = apmCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -73,7 +73,7 @@ function setupPaymentFields(apmCheckout) {
   document.querySelector("#indomaret-email").appendChild(emailField);
 }
 
-function setupButtonHandler(apmCheckout) {
+function configureButtonHandler(apmCheckout) {
   const apmButton = document.querySelector("#indomaret-button");
   apmButton.removeAttribute("hidden");
   document.querySelector("#phone-fields").removeAttribute("hidden");

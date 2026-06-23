@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isP24Eligible = paymentMethods.isEligible("p24");
 
     if (isP24Eligible) {
-      setupP24Payment(sdkInstance);
+      configureP24Payment(sdkInstance);
     } else {
       showMessage({
         text: "P24 (Przelewy24) is not eligible. Please ensure your buyer country is Poland and currency is PLN.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupP24Payment(sdkInstance) {
+function configureP24Payment(sdkInstance) {
   try {
     // Create P24 checkout session
     const p24Checkout = sdkInstance.createP24OneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupP24Payment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(p24Checkout);
+    configurePaymentFields(p24Checkout);
 
     // Setup button click handler
-    setupButtonHandler(p24Checkout);
+    configureButtonHandler(p24Checkout);
   } catch (error) {
     console.error("Error setting up P24 payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupP24Payment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(p24Checkout) {
+function configurePaymentFields(p24Checkout) {
   // Create payment field for full name with optional prefill
   const fullNameField = p24Checkout.createPaymentFields({
     type: "name",
@@ -91,7 +91,7 @@ function setupPaymentFields(p24Checkout) {
   document.querySelector("#p24-email").appendChild(emailField);
 }
 
-function setupButtonHandler(p24Checkout) {
+function configureButtonHandler(p24Checkout) {
   const p24Button = document.querySelector("#p24-button");
   p24Button.removeAttribute("hidden");
 

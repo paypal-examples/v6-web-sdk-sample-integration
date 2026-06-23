@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isIdealEligible = paymentMethods.isEligible("ideal");
 
     if (isIdealEligible) {
-      setupIdealPayment(sdkInstance);
+      configureIdealPayment(sdkInstance);
     } else {
       showMessage({
         text: "iDEAL is not eligible. Please ensure your buyer country is Netherlands.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupIdealPayment(sdkInstance) {
+function configureIdealPayment(sdkInstance) {
   try {
     // Create iDEAL checkout session
     const idealCheckout = sdkInstance.createIdealOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupIdealPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(idealCheckout);
+    configurePaymentFields(idealCheckout);
 
     // Setup button click handler
-    setupButtonHandler(idealCheckout);
+    configureButtonHandler(idealCheckout);
   } catch (error) {
     console.error("Error setting up iDEAL payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupIdealPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(idealCheckout) {
+function configurePaymentFields(idealCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = idealCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(idealCheckout) {
   document.querySelector("#ideal-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(idealCheckout) {
+function configureButtonHandler(idealCheckout) {
   const idealButton = document.querySelector("#ideal-button");
   idealButton.removeAttribute("hidden");
 

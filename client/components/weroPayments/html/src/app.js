@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isWeroEligible = paymentMethods.isEligible("wero");
 
     if (isWeroEligible) {
-      setupWeroPayment(sdkInstance);
+      configureWeroPayment(sdkInstance);
     } else {
       showMessage({
         text: "Wero is not eligible. Please ensure your buyer country is Germany and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupWeroPayment(sdkInstance) {
+function configureWeroPayment(sdkInstance) {
   try {
     // Create Wero checkout session
     const weroCheckout = sdkInstance.createWeroOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupWeroPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(weroCheckout);
+    configurePaymentFields(weroCheckout);
 
     // Setup button click handler
-    setupButtonHandler(weroCheckout);
+    configureButtonHandler(weroCheckout);
   } catch (error) {
     console.error("Error setting up Wero payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupWeroPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(weroCheckout) {
+function configurePaymentFields(weroCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = weroCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(weroCheckout) {
   document.querySelector("#wero-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(weroCheckout) {
+function configureButtonHandler(weroCheckout) {
   const weroButton = document.querySelector("#wero-button");
   weroButton.removeAttribute("hidden");
 

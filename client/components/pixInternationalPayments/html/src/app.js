@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
       paymentMethods.isEligible("pix_international");
 
     if (isPixInternationalEligible) {
-      setupPixInternationalPayment(sdkInstance);
+      configurePixInternationalPayment(sdkInstance);
     } else {
       showMessage({
         text: "Pix International is not eligible. Please ensure your buyer country is Brazil and currency is BRL.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupPixInternationalPayment(sdkInstance) {
+function configurePixInternationalPayment(sdkInstance) {
   try {
     const pixInternationalCheckout =
       sdkInstance.createPixInternationalOneTimePaymentSession({
@@ -41,8 +41,8 @@ function setupPixInternationalPayment(sdkInstance) {
         onError: handleError,
       });
 
-    setupPaymentFields(pixInternationalCheckout);
-    setupButtonHandler(pixInternationalCheckout);
+    configurePaymentFields(pixInternationalCheckout);
+    configureButtonHandler(pixInternationalCheckout);
   } catch (error) {
     console.error("Error setting up Pix International payment:", error);
     showMessage({
@@ -52,7 +52,7 @@ function setupPixInternationalPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(pixInternationalCheckout) {
+function configurePaymentFields(pixInternationalCheckout) {
   const fullNameField = pixInternationalCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -85,7 +85,7 @@ function setupPaymentFields(pixInternationalCheckout) {
   document.querySelector("#pix-international-email").appendChild(emailField);
 }
 
-function setupButtonHandler(pixInternationalCheckout) {
+function configureButtonHandler(pixInternationalCheckout) {
   const pixInternationalButton = document.querySelector(
     "#pix-international-button",
   );

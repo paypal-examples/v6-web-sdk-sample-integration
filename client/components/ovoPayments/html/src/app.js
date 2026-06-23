@@ -11,7 +11,7 @@ async function onPayPalWebSdkLoaded() {
     });
     const isEligible = paymentMethods.isEligible("ovo");
     if (isEligible) {
-      setupAPMPayment(sdkInstance);
+      configureAPMPayment(sdkInstance);
     } else {
       showMessage({
         text: "OVO is not eligible. Please ensure your buyer country is Indonesia and currency is IDR.",
@@ -27,15 +27,15 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupAPMPayment(sdkInstance) {
+function configureAPMPayment(sdkInstance) {
   try {
     const apmCheckout = sdkInstance.createOvoOneTimePaymentSession({
       onApprove: handleApprove,
       onCancel: handleCancel,
       onError: handleError,
     });
-    setupPaymentFields(apmCheckout);
-    setupButtonHandler(apmCheckout);
+    configurePaymentFields(apmCheckout);
+    configureButtonHandler(apmCheckout);
   } catch (error) {
     console.error("Error setting up payment:", error);
     showMessage({
@@ -45,7 +45,7 @@ function setupAPMPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(apmCheckout) {
+function configurePaymentFields(apmCheckout) {
   const fullNameField = apmCheckout.createPaymentFields({
     type: "name",
     value: "",
@@ -74,7 +74,7 @@ function setupPaymentFields(apmCheckout) {
   document.querySelector("#ovo-email").appendChild(emailField);
 }
 
-function setupButtonHandler(apmCheckout) {
+function configureButtonHandler(apmCheckout) {
   const apmButton = document.querySelector("#ovo-button");
   apmButton.removeAttribute("hidden");
   document.querySelector("#phone-fields").removeAttribute("hidden");

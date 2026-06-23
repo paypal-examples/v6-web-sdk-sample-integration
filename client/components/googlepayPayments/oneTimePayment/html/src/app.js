@@ -24,7 +24,7 @@ async function onPayPalWebSdkLoaded() {
     if (paymentMethods.isEligible("googlepay")) {
       const googlePayPaymentMethodDetails =
         paymentMethods.getDetails("googlepay");
-      setupGooglePayButton(sdkInstance, googlePayPaymentMethodDetails);
+      configureGooglePayButton(sdkInstance, googlePayPaymentMethodDetails);
     } else {
       renderAlert({ type: "warning", message: "GooglePay is not eligible" });
     }
@@ -147,7 +147,7 @@ async function onGooglePayButtonClick(
   }
 }
 
-async function setupGooglePayButton(
+async function configureGooglePayButton(
   sdkInstance,
   googlePayPaymentMethodDetails,
 ) {

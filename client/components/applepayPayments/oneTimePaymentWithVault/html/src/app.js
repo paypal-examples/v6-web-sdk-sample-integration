@@ -25,7 +25,7 @@ async function onPayPalWebSdkLoaded() {
     if (paymentMethods.isEligible("applepay")) {
       const applePayPaymentMethodDetails =
         paymentMethods.getDetails("applepay");
-      setupApplePayButton(sdkInstance, applePayPaymentMethodDetails);
+      configureApplePayButton(sdkInstance, applePayPaymentMethodDetails);
     } else {
       renderAlert({ type: "warning", message: "ApplePay is not eligible" });
     }
@@ -34,7 +34,10 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-async function setupApplePayButton(sdkInstance, applePayPaymentMethodDetails) {
+async function configureApplePayButton(
+  sdkInstance,
+  applePayPaymentMethodDetails,
+) {
   try {
     const paypalSdkApplePayPaymentSession =
       sdkInstance.createApplePayOneTimePaymentSession();

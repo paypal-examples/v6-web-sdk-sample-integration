@@ -49,13 +49,13 @@ async function onPayPalWebSdkLoaded() {
     startGuestPaymentSession(checkoutButton, paypalGuestPaymentSession);
 
     // also setup the button to start checkout on click
-    setupGuestPaymentButton(checkoutButton, paypalGuestPaymentSession);
+    configureGuestPaymentButton(checkoutButton, paypalGuestPaymentSession);
   } catch (error) {
     console.error(error);
   }
 }
 
-async function setupGuestPaymentButton(
+async function configureGuestPaymentButton(
   checkoutButton,
   paypalGuestPaymentSession,
 ) {
