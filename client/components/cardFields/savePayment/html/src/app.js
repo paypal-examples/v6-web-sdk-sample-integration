@@ -44,6 +44,7 @@ async function setupCardFields(sdkInstance) {
   document.querySelector("#paypal-card-fields-expiry").appendChild(expiryField);
 
   const payButton = document.querySelector("#save-payment-method-button");
+  payButton.removeAttribute("hidden");
   payButton.addEventListener("click", () => onPayClick(cardFieldsInstance));
 }
 
@@ -55,10 +56,6 @@ async function onPayClick(cardFieldsInstance) {
 
     switch (state) {
       case "succeeded": {
-        const { vaultSetupToken, ...liabilityShift } = data;
-        // 3DS may or may not have occurred; Use liabilityShift
-        // to determine if the payment should be captured
-
         const paymentToken = await createPaymentToken({
           vaultSetupToken,
         });
@@ -69,7 +66,6 @@ async function onPayClick(cardFieldsInstance) {
           type: "success",
           message: "Payment method saved!",
         });
-
         break;
       }
       case "canceled": {

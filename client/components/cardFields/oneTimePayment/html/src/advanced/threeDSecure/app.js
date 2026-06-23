@@ -45,6 +45,7 @@ function setupCardFields(sdkInstance) {
   document.querySelector("#paypal-card-fields-expiry").appendChild(expiryField);
 
   const payButton = document.querySelector("#pay-button");
+  payButton.removeAttribute("hidden");
   payButton.addEventListener("click", () => onPayClick(cardFieldsInstance));
 }
 
@@ -60,12 +61,8 @@ async function onPayClick(cardFieldsInstance) {
 
     switch (state) {
       case "succeeded": {
-        const { orderId, ...liabilityShift } = data;
-        // 3DS may or may not have occurred; Use liabilityShift
-        // to determine if the payment should be captured
-
         const orderData = await captureOrder({
-          orderId: data.orderId,
+          orderId,
         });
 
         renderAlert({
@@ -73,7 +70,6 @@ async function onPayClick(cardFieldsInstance) {
           message: "Order successfully captured!",
         });
         console.log("Capture result", orderData);
-
         break;
       }
       case "canceled": {
@@ -85,11 +81,16 @@ async function onPayClick(cardFieldsInstance) {
         break;
       }
       case "failed": {
-        // Validation or processing failure. data.message may be present
+        // Validation or processing failure
         console.error("Card submission failed", data);
+
+        const { message, liabilityShift } = data;
         renderAlert({
           type: "danger",
-          message: `Validation or processing failure: ${data.message ?? ""}`,
+          message: liabilityShift
+          ? `Payment failed 3D Secure check: "liabilityShift: ${liabilityShift}"`
+          : `Validation or processing failure: ${message ?? ""}`
+
         });
         break;
       }
