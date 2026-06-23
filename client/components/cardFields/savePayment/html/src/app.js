@@ -13,7 +13,11 @@ async function onPayPalWebSdkLoaded() {
       setupCardFields(sdkInstance);
     }
   } catch (err) {
-    console.error("SDK init failed", err);
+    renderAlert({
+      type: "danger",
+      message: "Failed to initialize the PayPal Web SDK",
+    });
+    console.error(error);
   }
 }
 
@@ -40,6 +44,7 @@ async function setupCardFields(sdkInstance) {
   document.querySelector("#paypal-card-fields-expiry").appendChild(expiryField);
 
   const payButton = document.querySelector("#save-payment-method-button");
+  payButton.removeAttribute("hidden");
   payButton.addEventListener("click", () => onPayClick(cardFieldsInstance));
 }
 
@@ -51,29 +56,32 @@ async function onPayClick(cardFieldsInstance) {
 
     switch (state) {
       case "succeeded": {
-        const { vaultSetupToken, ...liabilityShift } = data;
-        // 3DS may or may not have occurred; Use liabilityShift
-        // to determine if the payment should be captured
-        //
-
         const paymentToken = await createPaymentToken({
           vaultSetupToken,
         });
         console.log("Payment method saved", paymentToken);
         console.log("vault setup token:", vaultSetupToken);
 
-        // TODO: show success UI, redirect, etc.
+        renderAlert({
+          type: "success",
+          message: "Payment method saved!",
+        });
         break;
       }
       case "canceled": {
-        // Buyer dismissed 3DS modal or canceled the flow
-        // TODO: show non-blocking message & allow retry
+        renderAlert({
+          type: "warning",
+          message: "Save payment flow canceled.",
+        });
         break;
       }
       case "failed": {
         // Validation or processing failure. data.message may be present
         console.error("Card submission failed", data);
-        // TODO: surface error to buyer, allow retry
+        renderAlert({
+          type: "danger",
+          message: `Validation or processing failure: ${data.message ?? ""}`,
+        });
         break;
       }
       default: {
@@ -81,8 +89,12 @@ async function onPayClick(cardFieldsInstance) {
         console.warn("Unhandled submit state", state, data);
       }
     }
-  } catch (err) {
-    console.error("Payment flow error", err);
+  } catch (error) {
+    renderAlert({
+      type: "danger",
+      message: `Payment flow error: ${error.message}`,
+    });
+    console.error("Payment flow error", error);
     // TODO: Show generic error and allow retry
   }
 }
@@ -134,4 +146,14 @@ async function createPaymentToken({ vaultSetupToken }) {
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }
