@@ -1,8 +1,8 @@
 # PayPal Multi-Flow React Sample Integration
 
 > **SDK Version**: PayPal JS SDK v6
-> **Framework**: React 19.2.4 + TypeScript
-> **Frontend Package**: @paypal/react-paypal-js v10.0.0
+> **Framework**: React 19.2.5 + TypeScript
+> **Frontend Package**: @paypal/react-paypal-js v10.1.0
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
 > **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card, Subscriptions, Save, Credit, Apple Pay, Google Pay
 > **Demo**: Multi-page checkout flows with routing
@@ -36,13 +36,13 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 
 | Technology                | Version | Purpose                                            |
 | ------------------------- | ------- | -------------------------------------------------- |
-| React                     | 19.2.4  | UI framework                                       |
+| React                     | 19.2.5  | UI framework                                       |
 | Vite                      | 7.3.1   | Development server and bundler                     |
 | TypeScript                | 5.9.3   | Type safety                                        |
 | React Router DOM          | 7.13.0  | Client-side routing                                |
-| @paypal/react-paypal-js   | 10.0.0  | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/react-paypal-js   | 10.1.0  | React hooks and Context provider for PayPal V6 SDK |
 | @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
-| react-error-boundary      | 6.1.0   | Error boundary component for React                 |
+| react-error-boundary      | 6.1.1   | Error boundary component for React                 |
 
 ## Prerequisites
 
@@ -583,7 +583,7 @@ import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
 
 | Package                   | Version | Purpose                                            |
 | ------------------------- | ------- | -------------------------------------------------- |
-| @paypal/react-paypal-js   | 10.0.0  | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/react-paypal-js   | 10.1.0  | React hooks and Context provider for PayPal V6 SDK |
 | @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
 | react-router-dom          | 7.13.0  | Client-side routing                                |
-| react-error-boundary      | 6.1.0   | Error boundary wrapper for error handling          |
+| react-error-boundary      | 6.1.1   | Error boundary wrapper for error handling          |
