@@ -119,6 +119,7 @@ Paysafecard requires an order creation payload with:
 ### Currency Configuration
 
 Paysafecard requires:
+
 - EUR (Euro) currency
 - Germany (DE) or other European countries as the buyer country
 

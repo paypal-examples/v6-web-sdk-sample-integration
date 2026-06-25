@@ -1,6 +1,6 @@
 /**
  * Dragonpay One-Time Payment Integration
- * 
+ *
  * This module handles Dragonpay payment processing using PayPal's v6 Web SDK.
  * Dragonpay requires full name, email, and phone number fields with popup-based payment confirmation.
  */
@@ -42,7 +42,6 @@ async function onPayPalWebSdkLoaded() {
 
     // Setup Dragonpay payment flow
     await setupDragonpayPayment(sdkInstance, currencyCode);
-
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -137,11 +136,11 @@ async function setupDragonpayPayment(sdkInstance, currencyCode) {
   const dragonpayCheckout = sdkInstance.createDragonpayOneTimePaymentSession({
     onApprove: async (data) => {
       console.log("Payment approved:", data);
-      
+
       try {
         const orderDetails = await getOrder(data.orderId);
         console.log("Order details:", orderDetails);
-        
+
         showMessage({
           text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
           type: "success",
@@ -192,7 +191,7 @@ async function setupDragonpayPayment(sdkInstance, currencyCode) {
   // Setup button click handler
   const dragonpayButton = document.querySelector("#dragonpay-button");
   dragonpayButton.removeAttribute("hidden");
-  
+
   dragonpayButton.addEventListener("click", async () => {
     try {
       console.log("Validating payment fields...");
@@ -208,7 +207,7 @@ async function setupDragonpayPayment(sdkInstance, currencyCode) {
         // Start payment with popup presentation and phone data
         await dragonpayCheckout.start(
           { presentationMode: "popup" },
-          createDragonpayOrder(currencyCode, phoneData)
+          createDragonpayOrder(currencyCode, phoneData),
         );
       } else {
         console.error("Validation failed");
@@ -217,11 +216,12 @@ async function setupDragonpayPayment(sdkInstance, currencyCode) {
           type: "error",
         });
       }
-
     } catch (error) {
       console.error("Error processing payment:", error);
       showMessage({
-        text: error.message || "An error occurred during payment. Please try again.",
+        text:
+          error.message ||
+          "An error occurred during payment. Please try again.",
         type: "error",
       });
     }
@@ -234,8 +234,12 @@ async function setupDragonpayPayment(sdkInstance, currencyCode) {
  * @throws {Error} If validation fails
  */
 function validatePhoneNumber() {
-  const phoneCountryCode = document.querySelector("#phone-country-code").value.trim();
-  const phoneNationalNumber = document.querySelector("#phone-national-number").value.trim();
+  const phoneCountryCode = document
+    .querySelector("#phone-country-code")
+    .value.trim();
+  const phoneNationalNumber = document
+    .querySelector("#phone-national-number")
+    .value.trim();
 
   const errors = [];
 
@@ -249,7 +253,7 @@ function validatePhoneNumber() {
 
   return {
     phoneCountryCode,
-    phoneNationalNumber
+    phoneNationalNumber,
   };
 }
 

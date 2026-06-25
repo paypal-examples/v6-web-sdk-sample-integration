@@ -12,8 +12,7 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: "THB",
     });
 
-    const isThailandBanksEligible =
-      paymentMethods.isEligible("thailand_banks");
+    const isThailandBanksEligible = paymentMethods.isEligible("thailand_banks");
 
     if (isThailandBanksEligible) {
       setupThailandBanksPayment(sdkInstance);

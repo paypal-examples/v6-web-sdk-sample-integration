@@ -49,6 +49,7 @@ payseraPayments/html/
 ### Server-Side
 
 The order creation endpoint (`/create-order-for-one-time-payment`) must:
+
 - Support EUR currency
 - Include `processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL"` in the request body
 - Return an order ID
@@ -59,13 +60,14 @@ The order creation endpoint (`/create-order-for-one-time-payment`) must:
 const sdkInstance = await window.paypal.createInstance({
   clientId: "your-client-id",
   components: ["paysera-payments"],
-  testBuyerCountry: "LT"
+  testBuyerCountry: "LT",
 });
 ```
 
 ## Testing
 
 1. Ensure your `.env` file has valid credentials:
+
    ```
    PAYPAL_CLIENT_ID=your_sandbox_client_id
    PAYPAL_CLIENT_SECRET=your_sandbox_client_secret
@@ -81,19 +83,23 @@ const sdkInstance = await window.paypal.createInstance({
 ## Troubleshooting
 
 ### "Paysera is not eligible for the selected currency"
+
 - Ensure you're using EUR as the currency
 - Verify your merchant account is enabled for Paysera
 
 ### "validation failed"
+
 - Make sure both the full name and email fields are filled out correctly
 - Check browser console for validation error details
 
 ### SDK initialization errors
+
 - Verify your PayPal credentials are correct in `.env`
 - Ensure your merchant account has Paysera enabled
 - Check that you're using the correct client ID for the environment
 
 ### Order creation errors
+
 - Verify the processing instruction is included: `ORDER_COMPLETE_ON_PAYMENT_APPROVAL`
 - Check server logs for API response details
 - Ensure EUR currency is being used

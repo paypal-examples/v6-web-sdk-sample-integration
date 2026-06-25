@@ -1,6 +1,6 @@
 /**
  * Lithuania Banks One-Time Payment Integration
- * 
+ *
  * This module handles Lithuania Banks payment processing using PayPal's v6 Web SDK.
  * Lithuania Banks requires a full name field and uses popup-based payment confirmation.
  */
@@ -31,7 +31,8 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: currencyCode,
     });
 
-    const isLithuaniaBanksEligible = paymentMethods.isEligible("lithuania_banks");
+    const isLithuaniaBanksEligible =
+      paymentMethods.isEligible("lithuania_banks");
 
     if (!isLithuaniaBanksEligible) {
       showMessage({
@@ -43,7 +44,6 @@ async function onPayPalWebSdkLoaded() {
 
     // Setup Lithuania Banks payment flow
     await setupLithuaniaBanksPayment(sdkInstance, currencyCode);
-
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -79,7 +79,6 @@ async function createOrder(currencyCode) {
     const { id } = await response.json();
     console.log("Order created:", id);
     return { orderId: id };
-
   } catch (error) {
     console.error("Error creating order:", error);
     showMessage({
@@ -98,13 +97,12 @@ async function createOrder(currencyCode) {
 async function getOrder(orderId) {
   try {
     const response = await fetch(`/paypal-api/checkout/orders/${orderId}`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
-
   } catch (error) {
     console.error("Error fetching order:", error);
     throw error;
@@ -118,41 +116,42 @@ async function getOrder(orderId) {
  */
 async function setupLithuaniaBanksPayment(sdkInstance, currencyCode) {
   // Create Lithuania Banks payment session
-  const lithuaniabanksCheckout = sdkInstance.createLithuaniaBanksOneTimePaymentSession({
-    onApprove: async (data) => {
-      console.log("Payment approved:", data);
-      
-      try {
-        const orderDetails = await getOrder(data.orderId);
-        console.log("Order details:", orderDetails);
-        
+  const lithuaniabanksCheckout =
+    sdkInstance.createLithuaniaBanksOneTimePaymentSession({
+      onApprove: async (data) => {
+        console.log("Payment approved:", data);
+
+        try {
+          const orderDetails = await getOrder(data.orderId);
+          console.log("Order details:", orderDetails);
+
+          showMessage({
+            text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+          showMessage({
+            text: "Transaction successful but failed to fetch order details.",
+            type: "error",
+          });
+        }
+      },
+      onCancel: (data) => {
+        console.log("Payment cancelled:", data);
         showMessage({
-          text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
-          type: "success",
-        });
-      } catch (error) {
-        console.error("Error fetching order details:", error);
-        showMessage({
-          text: "Transaction successful but failed to fetch order details.",
+          text: "Payment was cancelled. You can try again.",
           type: "error",
         });
-      }
-    },
-    onCancel: (data) => {
-      console.log("Payment cancelled:", data);
-      showMessage({
-        text: "Payment was cancelled. You can try again.",
-        type: "error",
-      });
-    },
-    onError: (error) => {
-      console.error("Payment error:", error);
-      showMessage({
-        text: "An error occurred during payment. Please try again or contact support.",
-        type: "error",
-      });
-    },
-  });
+      },
+      onError: (error) => {
+        console.error("Payment error:", error);
+        showMessage({
+          text: "An error occurred during payment. Please try again or contact support.",
+          type: "error",
+        });
+      },
+    });
 
   // Create and render full name field
   const fullnameField = lithuaniabanksCheckout.createPaymentFields({
@@ -165,7 +164,7 @@ async function setupLithuaniaBanksPayment(sdkInstance, currencyCode) {
   // Setup button click handler
   const lithuaniabanksButton = document.querySelector("#lithuaniabanks-button");
   lithuaniabanksButton.removeAttribute("hidden");
-  
+
   lithuaniabanksButton.addEventListener("click", async () => {
     try {
       console.log("Validating payment fields...");
@@ -178,7 +177,7 @@ async function setupLithuaniaBanksPayment(sdkInstance, currencyCode) {
         // Start payment with popup presentation
         await lithuaniabanksCheckout.start(
           { presentationMode: "popup" },
-          createOrder(currencyCode)
+          createOrder(currencyCode),
         );
       } else {
         console.error("Validation failed");
@@ -187,11 +186,12 @@ async function setupLithuaniaBanksPayment(sdkInstance, currencyCode) {
           type: "error",
         });
       }
-
     } catch (error) {
       console.error("Error processing payment:", error);
       showMessage({
-        text: error.message || "An error occurred during payment. Please try again.",
+        text:
+          error.message ||
+          "An error occurred during payment. Please try again.",
         type: "error",
       });
     }

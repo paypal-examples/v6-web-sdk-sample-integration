@@ -1,155 +1,160 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Boleto Bancario - PayPal Web SDK</title>
-  <link rel="stylesheet" href="/client/shared/styles.css">
-  <style>
-    .payment-container {
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Boleto Bancario - PayPal Web SDK</title>
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
 
-    #boletobancario-full-name {
-      max-width: 400px;
-      height: 80px;
-    }
+      #boletobancario-full-name {
+        max-width: 400px;
+        height: 80px;
+      }
 
-    #boletobancario-email {
-      max-width: 400px;
-      height: 80px;
-    }
+      #boletobancario-email {
+        max-width: 400px;
+        height: 80px;
+      }
 
-    boletobancario-button {
-      max-width: 225px;
-    }
+      boletobancario-button {
+        max-width: 225px;
+      }
 
-    .message {
-      padding: 15px;
-      border-radius: 4px;
-      margin-top: 20px;
-      display: none;
-      max-width: 700px;
-    }
+      .message {
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+        max-width: 700px;
+      }
 
-    .message.success {
-      background-color: #d4edda;
-      border: 1px solid #c3e6cb;
-      color: #155724;
-    }
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
 
-    .message.error {
-      background-color: #f8d7da;
-      border: 1px solid #f5c6cb;
-      color: #721c24;
-    }
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
 
-    .message.show {
-      display: block;
-    }
+      .message.show {
+        display: block;
+      }
 
-    .additional-info {
-      border: 1px solid #ddd;
-      border-radius: 4px;
-      padding: 15px;
-      margin-top: 15px;
-      max-width: 400px;
-    }
+      .additional-info {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 15px;
+        max-width: 400px;
+      }
 
-    .additional-info legend {
-      font-weight: bold;
-      padding: 0 5px;
-    }
+      .additional-info legend {
+        font-weight: bold;
+        padding: 0 5px;
+      }
 
-    .field-group {
-      margin-bottom: 15px;
-    }
+      .field-group {
+        margin-bottom: 15px;
+      }
 
-    .field-group label {
-      display: block;
-      margin-bottom: 5px;
-      font-weight: 500;
-    }
+      .field-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
 
-    .field-group input,
-    .field-group select {
-      width: 100%;
-      height: 40px;
-      padding: 8px;
-      border: 1px solid #ccc;
-      border-radius: 4px;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-    }
+      .field-group input,
+      .field-group select {
+        width: 100%;
+        height: 40px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        margin-bottom: 8px;
+        box-sizing: border-box;
+      }
 
-    .tax-fields {
-      display: flex;
-      gap: 8px;
-    }
+      .tax-fields {
+        display: flex;
+        gap: 8px;
+      }
 
-    .tax-fields input {
-      flex: 1;
-    }
+      .tax-fields input {
+        flex: 1;
+      }
 
-    .tax-fields select {
-      width: 150px;
-      flex-shrink: 0;
-    }
-  </style>
-</head>
-<body>
-  <h1>Boleto Bancario One-Time Payment Integration</h1>
+      .tax-fields select {
+        width: 150px;
+        flex-shrink: 0;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Boleto Bancario One-Time Payment Integration</h1>
 
-  <div class="payment-container">
-    <div id="boletobancario-full-name"></div>
-    <div id="boletobancario-email"></div>
-    
-    <fieldset class="additional-info" id="custom-fields" hidden>
-      <legend>Additional Information</legend>
-      
-      <div class="field-group">
-        <label for="expiry-date">Expiry Date:</label>
-        <input type="date" id="expiry-date" placeholder="Expiry Date" />
-      </div>
-      
-      <div class="field-group">
-        <label>Billing Address:</label>
-        <input type="text" id="address-line-1" placeholder="Address Line 1" />
-        <input type="text" id="address-line-2" placeholder="Address Line 2" />
-        <input type="text" id="admin-area-1" placeholder="Admin Area 1" />
-        <input type="text" id="admin-area-2" placeholder="Admin Area 2" />
-        <input type="text" id="postal-code" placeholder="Postal Code" />
-        <input type="text" id="country-code" placeholder="Country Code (e.g., BR)" value="BR" />
-      </div>
-      
-      <div class="field-group">
-        <label>Tax Information:</label>
-        <div class="tax-fields">
-          <input type="text" id="tax-id" placeholder="Tax ID (CPF/CNPJ)" />
-          <select id="tax-id-type">
-            <option value="">Select Type</option>
-            <option value="BR_CPF">CPF</option>
-            <option value="BR_CNPJ">CNPJ</option>
-          </select>
+    <div class="payment-container">
+      <div id="boletobancario-full-name"></div>
+      <div id="boletobancario-email"></div>
+
+      <fieldset class="additional-info" id="custom-fields" hidden>
+        <legend>Additional Information</legend>
+
+        <div class="field-group">
+          <label for="expiry-date">Expiry Date:</label>
+          <input type="date" id="expiry-date" placeholder="Expiry Date" />
         </div>
-      </div>
-    </fieldset>
-    
-    <boletobancario-button
-      id="boletobancario-button"
-      hidden
-    ></boletobancario-button>
-  </div>
 
-  <div id="message" class="message"></div>
+        <div class="field-group">
+          <label>Billing Address:</label>
+          <input type="text" id="address-line-1" placeholder="Address Line 1" />
+          <input type="text" id="address-line-2" placeholder="Address Line 2" />
+          <input type="text" id="admin-area-1" placeholder="Admin Area 1" />
+          <input type="text" id="admin-area-2" placeholder="Admin Area 2" />
+          <input type="text" id="postal-code" placeholder="Postal Code" />
+          <input
+            type="text"
+            id="country-code"
+            placeholder="Country Code (e.g., BR)"
+            value="BR"
+          />
+        </div>
 
-  <script
-    async
-    src="https://www.sandbox.paypal.com/web-sdk/v6/core"
-    onload="onPayPalWebSdkLoaded()"
-  ></script>
-  <script src="app.js"></script>
-</body>
+        <div class="field-group">
+          <label>Tax Information:</label>
+          <div class="tax-fields">
+            <input type="text" id="tax-id" placeholder="Tax ID (CPF/CNPJ)" />
+            <select id="tax-id-type">
+              <option value="">Select Type</option>
+              <option value="BR_CPF">CPF</option>
+              <option value="BR_CNPJ">CNPJ</option>
+            </select>
+          </div>
+        </div>
+      </fieldset>
+
+      <boletobancario-button
+        id="boletobancario-button"
+        hidden
+      ></boletobancario-button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <script src="app.js"></script>
+  </body>
 </html>

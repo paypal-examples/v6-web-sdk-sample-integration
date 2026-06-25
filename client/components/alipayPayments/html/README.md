@@ -119,6 +119,7 @@ Alipay requires an order creation payload with:
 ### Currency Configuration
 
 Alipay requires:
+
 - USD currency (for cross-border payments)
 - China (CN) as the buyer country for testing
 

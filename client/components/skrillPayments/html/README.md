@@ -119,6 +119,7 @@ Skrill requires an order creation payload with:
 ### Currency Configuration
 
 Skrill requires:
+
 - EUR (Euro) currency
 - Germany (DE) or other European countries as the buyer country
 

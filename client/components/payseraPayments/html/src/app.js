@@ -1,6 +1,6 @@
 /**
  * Paysera One-Time Payment Integration
- * 
+ *
  * This module handles Paysera payment processing using PayPal's v6 Web SDK.
  * Paysera requires full name and email fields and uses popup-based payment confirmation.
  */
@@ -43,7 +43,6 @@ async function onPayPalWebSdkLoaded() {
 
     // Setup Paysera payment flow
     await setupPayseraPayment(sdkInstance, currencyCode);
-
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -79,7 +78,6 @@ async function createOrder(currencyCode) {
     const { id } = await response.json();
     console.log("Order created:", id);
     return { orderId: id };
-
   } catch (error) {
     console.error("Error creating order:", error);
     showMessage({
@@ -98,13 +96,12 @@ async function createOrder(currencyCode) {
 async function getOrder(orderId) {
   try {
     const response = await fetch(`/paypal-api/checkout/orders/${orderId}`);
-    
+
     if (!response.ok) {
       throw new Error(`HTTP error! status: ${response.status}`);
     }
 
     return await response.json();
-
   } catch (error) {
     console.error("Error fetching order:", error);
     throw error;
@@ -121,11 +118,11 @@ async function setupPayseraPayment(sdkInstance, currencyCode) {
   const payseraCheckout = sdkInstance.createPayseraOneTimePaymentSession({
     onApprove: async (data) => {
       console.log("Payment approved:", data);
-      
+
       try {
         const orderDetails = await getOrder(data.orderId);
         console.log("Order details:", orderDetails);
-        
+
         showMessage({
           text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
           type: "success",
@@ -173,7 +170,7 @@ async function setupPayseraPayment(sdkInstance, currencyCode) {
   // Setup button click handler
   const payseraButton = document.querySelector("#paysera-button");
   payseraButton.removeAttribute("hidden");
-  
+
   payseraButton.addEventListener("click", async () => {
     try {
       console.log("Validating payment fields...");
@@ -186,7 +183,7 @@ async function setupPayseraPayment(sdkInstance, currencyCode) {
         // Start payment with popup presentation
         await payseraCheckout.start(
           { presentationMode: "popup" },
-          createOrder(currencyCode)
+          createOrder(currencyCode),
         );
       } else {
         console.error("Validation failed");
@@ -195,11 +192,12 @@ async function setupPayseraPayment(sdkInstance, currencyCode) {
           type: "error",
         });
       }
-
     } catch (error) {
       console.error("Error processing payment:", error);
       showMessage({
-        text: error.message || "An error occurred during payment. Please try again.",
+        text:
+          error.message ||
+          "An error occurred during payment. Please try again.",
         type: "error",
       });
     }

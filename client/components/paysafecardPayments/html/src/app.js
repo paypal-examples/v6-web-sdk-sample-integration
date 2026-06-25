@@ -73,9 +73,7 @@ function setupPaymentFields(paysafecardCheckout) {
   });
 
   // Mount the field to the container
-  document
-    .querySelector("#paysafecard-full-name")
-    .appendChild(fullNameField);
+  document.querySelector("#paysafecard-full-name").appendChild(fullNameField);
 }
 
 function setupButtonHandler(paysafecardCheckout) {

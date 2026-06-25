@@ -1,6 +1,6 @@
 /**
  * Boleto Bancario One-Time Payment Integration
- * 
+ *
  * This module handles Boleto Bancario payment processing using PayPal's v6 Web SDK.
  * Boleto Bancario requires full name and email fields and uses popup-based payment confirmation.
  */
@@ -30,7 +30,8 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: currencyCode,
     });
 
-    const isBoletobancarioEligible = paymentMethods.isEligible("boletobancario");
+    const isBoletobancarioEligible =
+      paymentMethods.isEligible("boletobancario");
 
     if (!isBoletobancarioEligible) {
       showMessage({
@@ -42,7 +43,6 @@ async function onPayPalWebSdkLoaded() {
 
     // Setup Boleto Bancario payment flow
     await setupBoletobancarioPayment(sdkInstance, currencyCode);
-
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -87,41 +87,42 @@ async function getOrder(orderId) {
  */
 async function setupBoletobancarioPayment(sdkInstance, currencyCode) {
   // Create Boleto Bancario payment session
-  const boletobancarioCheckout = sdkInstance.createBoletobancarioOneTimePaymentSession({
-    onApprove: async (data) => {
-      console.log("Payment approved:", data);
-      
-      try {
-        const orderDetails = await getOrder(data.orderId);
-        console.log("Order details:", orderDetails);
-        
+  const boletobancarioCheckout =
+    sdkInstance.createBoletobancarioOneTimePaymentSession({
+      onApprove: async (data) => {
+        console.log("Payment approved:", data);
+
+        try {
+          const orderDetails = await getOrder(data.orderId);
+          console.log("Order details:", orderDetails);
+
+          showMessage({
+            text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
+            type: "success",
+          });
+        } catch (error) {
+          console.error("Error fetching order details:", error);
+          showMessage({
+            text: "Transaction successful but failed to fetch order details.",
+            type: "error",
+          });
+        }
+      },
+      onCancel: (data) => {
+        console.log("Payment cancelled:", data);
         showMessage({
-          text: `Payment successful! Order ID: ${data.orderId}. Check console for order details.`,
-          type: "success",
-        });
-      } catch (error) {
-        console.error("Error fetching order details:", error);
-        showMessage({
-          text: "Transaction successful but failed to fetch order details.",
+          text: "Payment was cancelled. You can try again.",
           type: "error",
         });
-      }
-    },
-    onCancel: (data) => {
-      console.log("Payment cancelled:", data);
-      showMessage({
-        text: "Payment was cancelled. You can try again.",
-        type: "error",
-      });
-    },
-    onError: (error) => {
-      console.error("Payment error:", error);
-      showMessage({
-        text: "An error occurred during payment. Please try again or contact support.",
-        type: "error",
-      });
-    },
-  });
+      },
+      onError: (error) => {
+        console.error("Payment error:", error);
+        showMessage({
+          text: "An error occurred during payment. Please try again or contact support.",
+          type: "error",
+        });
+      },
+    });
 
   // Create and render full name field
   const fullnameField = boletobancarioCheckout.createPaymentFields({
@@ -145,7 +146,7 @@ async function setupBoletobancarioPayment(sdkInstance, currencyCode) {
   // Setup button click handler
   const boletobancarioButton = document.querySelector("#boletobancario-button");
   boletobancarioButton.removeAttribute("hidden");
-  
+
   boletobancarioButton.addEventListener("click", async () => {
     try {
       console.log("Validating payment fields...");
@@ -162,7 +163,7 @@ async function setupBoletobancarioPayment(sdkInstance, currencyCode) {
         // Call the function to get the promise
         await boletobancarioCheckout.start(
           { presentationMode: "popup" },
-          createBoletobancarioOrder(currencyCode, billingData)
+          createBoletobancarioOrder(currencyCode, billingData),
         );
       } else {
         console.error("Validation failed");
@@ -171,11 +172,12 @@ async function setupBoletobancarioPayment(sdkInstance, currencyCode) {
           type: "error",
         });
       }
-
     } catch (error) {
       console.error("Error processing payment:", error);
       showMessage({
-        text: error.message || "An error occurred during payment. Please try again.",
+        text:
+          error.message ||
+          "An error occurred during payment. Please try again.",
         type: "error",
       });
     }
@@ -223,7 +225,7 @@ function validateBillingAddress() {
     countryCode,
     taxId,
     taxIdType,
-    expiryDate
+    expiryDate,
   };
 }
 
@@ -265,13 +267,13 @@ async function createBoletobancarioOrder(currencyCode, billingData) {
         adminArea2: billingData.adminArea2,
         adminArea1: billingData.adminArea1,
         postalCode: billingData.postalCode,
-        countryCode: billingData.countryCode
+        countryCode: billingData.countryCode,
       },
       taxInfo: {
         taxId: billingData.taxId,
         taxIdType: billingData.taxIdType,
       },
-      expiryDate: billingData.expiryDate
+      expiryDate: billingData.expiryDate,
     };
   } catch (error) {
     console.error("Error creating order:", error);

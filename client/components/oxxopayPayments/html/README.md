@@ -122,6 +122,7 @@ The OxxoPay session options also include an `expiryDate`, which sets the deadlin
 ### Currency Configuration
 
 OxxoPay requires:
+
 - MXN (Mexican Peso) currency
 - Mexico (MX) as the buyer country
 

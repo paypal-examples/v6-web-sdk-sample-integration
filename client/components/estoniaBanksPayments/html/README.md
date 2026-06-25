@@ -119,6 +119,7 @@ Estonia Banks requires an order creation payload with:
 ### Currency Configuration
 
 Estonia Banks requires:
+
 - EUR (Euro) currency
 - Estonia (EE) as the buyer country
 

@@ -51,6 +51,7 @@ boletobancarioPayments/html/
 ### Server-Side
 
 The order creation endpoint (`/paypal-api/checkout/orders/create-order-for-one-time-payment`) must:
+
 - Support BRL currency
 - Include `processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL"` in the request body
 - Return an order ID
@@ -61,13 +62,14 @@ The order creation endpoint (`/paypal-api/checkout/orders/create-order-for-one-t
 const sdkInstance = await window.paypal.createInstance({
   clientId: "your-client-id",
   components: ["boletobancario-payments"],
-  testBuyerCountry: "BR"
+  testBuyerCountry: "BR",
 });
 ```
 
 ## Testing
 
 1. Ensure your `.env` file has valid credentials:
+
    ```
    PAYPAL_CLIENT_ID=your_sandbox_client_id
    PAYPAL_CLIENT_SECRET=your_sandbox_client_secret
@@ -78,15 +80,16 @@ const sdkInstance = await window.paypal.createInstance({
    - **Expiry Date**: When the boleto expires
    - **Billing Address**: Complete address (line 1, line 2, admin areas, postal code, country)
    - **Tax Information**: Tax ID (CPF or CNPJ) and type
-5. Enter test data (e.g., "John Doe" and "john.doe@example.com")
-6. Click the Boleto Bancario button to initiate payment
+4. Enter test data (e.g., "John Doe" and "john.doe@example.com")
+5. Click the Boleto Bancario button to initiate payment
+6. Complete the payment in the popup window
 7. Complete the payment in the popup window
-8. Complete the payment in the popup window
-7. View the order details after completion
+8. View the order details after completion
 
 ## Troubleshooting
 
 ### "Boleto Bancario is not eligible for the selected currency"
+
 - Ensure youall required fields are filled out correctly:
   - Full name and email (SDK fields)
   - Expiry date
@@ -95,15 +98,18 @@ const sdkInstance = await window.paypal.createInstance({
 - Verify your merchant account is enabled for Boleto Bancario
 
 ### "validation failed"
+
 - Make sure both the full name and email fields are filled out correctly
 - Check browser console for validation error details
 
 ### SDK initialization errors
+
 - Verify your PayPal credentials are correct in `.env`
 - Ensure your merchant account has Boleto Bancario enabled
 - Check that you're using the correct client ID for the environment
 
 ### Order creation errors
+
 - Verify the processing instruction is included: `ORDER_COMPLETE_ON_PAYMENT_APPROVAL`
 - Check server logs for API response details
 - Ensure BRL currency is being used

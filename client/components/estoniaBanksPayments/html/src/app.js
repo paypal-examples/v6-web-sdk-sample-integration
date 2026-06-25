@@ -35,12 +35,13 @@ async function onPayPalWebSdkLoaded() {
 function setupEstoniaBanksPayment(sdkInstance) {
   try {
     // Create Estonia Banks checkout session
-    const estoniaBanksCheckout =
-      sdkInstance.createEstoniaOneTimePaymentSession({
+    const estoniaBanksCheckout = sdkInstance.createEstoniaOneTimePaymentSession(
+      {
         onApprove: handleApprove,
         onCancel: handleCancel,
         onError: handleError,
-      });
+      },
+    );
 
     // Setup payment fields
     setupPaymentFields(estoniaBanksCheckout);
@@ -73,9 +74,7 @@ function setupPaymentFields(estoniaBanksCheckout) {
   });
 
   // Mount the field to the container
-  document
-    .querySelector("#estonia-banks-full-name")
-    .appendChild(fullNameField);
+  document.querySelector("#estonia-banks-full-name").appendChild(fullNameField);
 }
 
 function setupButtonHandler(estoniaBanksCheckout) {

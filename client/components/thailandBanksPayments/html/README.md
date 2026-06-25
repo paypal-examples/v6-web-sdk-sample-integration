@@ -119,6 +119,7 @@ Thailand Banks requires an order creation payload with:
 ### Currency Configuration
 
 Thailand Banks requires:
+
 - THB (Thai Baht) currency
 - Thailand (TH) as the buyer country
 
