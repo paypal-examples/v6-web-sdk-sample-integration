@@ -2,156 +2,22 @@
 
 This example demonstrates how to integrate Thailand Banks payments using PayPal's v6 Web SDK. Thailand Banks is a popular payment method in Thailand that allows customers to pay using their local banking apps.
 
-## Architecture Overview
+## Payment method details
 
-This sample demonstrates a complete Thailand Banks integration flow:
+| Property                | Value                                      |
+| ----------------------- | ------------------------------------------ |
+| Currency                | `THB`                                      |
+| Buyer country (sandbox) | Thailand (`TH`)                            |
+| SDK component           | `thailand-banks-payments`                  |
+| Eligibility key         | `thailand_banks`                           |
+| Session method          | `createThailandBanksOneTimePaymentSession` |
 
-1. Initialize PayPal Web SDK with the Thailand Banks component
-2. Check eligibility for Thailand Banks payment method
-3. Create Thailand Banks payment session with required payment fields
-4. Validate customer name before initiating payment
-5. Create a PayPal order for Thailand Banks payment
-6. Authorize the payment through Thailand Banks popup flow
-7. Handle payment approval, cancellation, and errors
+## Testing & eligibility
 
-## Features
+Set `testBuyerCountry` to `TH` and `currencyCode` to `THB`, and enable **Thailand Banks** on your sandbox merchant account. The button only renders when the SDK reports **Thailand Banks** as eligible for your merchant account; otherwise the page shows a "not eligible" message.
 
-- Thailand Banks one-time payment integration
-- Full name field validation via PayPal SDK payment fields
-- Popup payment flow
-- Eligibility checking for Thailand Banks
-- Error handling and user feedback
-- THB (Thai Baht) currency support
+## Common setup & flow
 
-## Prerequisites
-
-Before running this demo, you'll need to set up accounts and configure your development environment.
-
-### 1. PayPal Developer Account Setup
-
-1. **PayPal Developer Account**
-   - Visit [developer.paypal.com](https://developer.paypal.com)
-   - Sign up for a developer account or log in with existing credentials
-   - Navigate to the **Apps & Credentials** section in your dashboard
-
-2. **Create a PayPal Application** (or configure the default application)
-   - Click **Create App**
-   - Name your app
-   - Select **Merchant** under **Type**
-   - Choose the **Sandbox** account for testing
-   - Click **Create App** at the bottom of the modal
-   - Note your **Client ID** and **Secret key** under **API credentials** for later configuration of the `.env` file
-
-3. **Enable Thailand Banks Payment**
-   - Visit [sandbox.paypal.com](https://www.sandbox.paypal.com)
-   - Log in with your **Sandbox** merchant account credentials
-   - Navigate to **Account Settings** by clicking the profile icon in the top right corner
-   - Select **Payment methods** from the left sidebar
-   - Find **Thailand Banks** in the payment methods and enable it
-   - Ensure your account is configured to accept **THB (Thai Baht)** currency
-
-### 2. System Requirements
-
-- Node.js version 20 or higher
-- Server running on port 8080 (see `server/node/` directory)
-
-## Running the Demo
-
-### Server Setup
-
-1. **Navigate to the server directory:**
-
-   ```bash
-   cd server/node
-   ```
-
-2. **Install dependencies:**
-
-   ```bash
-   npm install
-   ```
-
-3. **Configure environment variables:**
-   Create a `.env` file in the root directory using your client credentials from the previous Create Application step:
-
-   ```env
-   PAYPAL_SANDBOX_CLIENT_ID=your_paypal_sandbox_client_id
-   PAYPAL_SANDBOX_CLIENT_SECRET=your_paypal_sandbox_client_secret
-   ```
-
-4. **Start the server:**
-   ```bash
-   npm start
-   ```
-   The server will run on `http://localhost:8080`
-
-## How It Works
-
-### Geographic Availability
-
-Thailand Banks is available in Thailand.
-
-### Client-Side Flow
-
-1. **SDK Initialization**: Loads PayPal Web SDK with the Thailand Banks component using a client ID fetched from the server's `/paypal-api/auth/browser-safe-client-id` endpoint. `testBuyerCountry` is set to `"TH"` for sandbox testing.
-2. **Eligibility Check**: Verifies Thailand Banks is eligible for the merchant with THB currency.
-3. **Session Creation**: Creates a Thailand Banks payment session (`createThailandBanksOneTimePaymentSession`) with event callbacks for handling payment lifecycle events.
-4. **Field Setup**: Mounts the required full name field provided by the SDK.
-5. **Validation**: Validates the name field before initiating the payment flow.
-6. **Order & Payment Flow**: Opens a popup window where the customer authorizes the payment through their banking app. The order is created server-side via `/paypal-api/checkout/orders/create-order-for-one-time-payment`.
-7. **Completion**: Processes the payment result by fetching order details via `/paypal-api/checkout/orders/:orderId`, or handles cancellation and error scenarios appropriately.
-
-### Server-Side Requirements
-
-The integration requires these endpoints (provided by the API server):
-
-- `GET /paypal-api/auth/browser-safe-client-id` - Return client ID
-- `POST /paypal-api/checkout/orders/create-order-for-one-time-payment` - Create order with THB currency and `ORDER_COMPLETE_ON_PAYMENT_APPROVAL` processing instruction
-- `GET /paypal-api/checkout/orders/:orderId` - Fetch order details after approval
-
-### Special Order Configuration
-
-Thailand Banks requires an order creation payload with:
-
-- `processing_instruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL"` — the order is auto-completed on approval, so no separate capture call is needed
-- THB (Thai Baht) currency
-
-### Currency Configuration
-
-Thailand Banks requires:
-
-- THB (Thai Baht) currency
-- Thailand (TH) as the buyer country
-
-## Troubleshooting
-
-### Thailand Banks not eligible
-
-- Verify `testBuyerCountry` is set to `"TH"`
-- Check that `currencyCode` is set to `"THB"` (Thai Baht)
-- Ensure Thailand Banks is enabled for the merchant in PayPal account settings
-- Verify your PayPal account is configured to accept THB currency
-
-### Validation fails
-
-- Ensure the full name field is properly mounted with JavaScript
-- Check that the name field has valid input
-- Ensure the field is visible in the DOM
-
-### Payment popup doesn't open
-
-- Check for popup blockers
-- Verify order creation returns a valid orderId
-- Ensure proper event handler setup
-- Check browser console for errors
-
-### Order creation fails
-
-- Verify API server is running on port 8080
-- Check server logs for errors
-- **Ensure currency_code is set to `"THB"`** — this is critical for Thailand Banks
-
-## Documentation
-
-- [PayPal Developer Documentation](https://developer.paypal.com/docs/)
-- [PayPal Developer Community](https://developer.paypal.com/community/)
+Setup, prerequisites, the end-to-end integration flow, server endpoints, and
+troubleshooting are shared by every local payment method and documented once in
+the [Local Payment Methods guide](../../README.md).
