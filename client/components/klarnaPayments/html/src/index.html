@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Klarna - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #klarna-full-name,
+      #klarna-email {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      .billing-form {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        max-width: 400px;
+        margin-top: 20px;
+      }
+
+      .billing-form input {
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        font-size: 14px;
+      }
+
+      .billing-form input:focus {
+        outline: none;
+        border-color: #0070ba;
+      }
+
+      klarna-button {
+        max-width: 225px;
+        margin-top: 20px;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+        max-width: 700px;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .message.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Klarna One-Time Payment Integration</h1>
+
+    <div class="payment-container">
+      <!-- Name Field -->
+      <div id="klarna-full-name"></div>
+
+      <!-- Email Field -->
+      <div id="klarna-email"></div>
+
+      <!-- Billing Address Form -->
+      <div class="billing-form">
+        <h3>Billing Address</h3>
+        <input
+          type="text"
+          id="address-line1"
+          placeholder="Address Line 1"
+          value="123 Main Street"
+          required
+        />
+        <input
+          type="text"
+          id="admin-area2"
+          placeholder="City"
+          value="London"
+          required
+        />
+        <input
+          type="text"
+          id="admin-area1"
+          placeholder="State/Province"
+          value="Greater London"
+          required
+        />
+        <input
+          type="text"
+          id="postal-code"
+          placeholder="Postal Code"
+          value="SW1A 1AA"
+          required
+        />
+        <input
+          type="text"
+          id="country-code"
+          placeholder="Country Code (e.g., GB)"
+          value="GB"
+          required
+        />
+        <input
+          type="text"
+          id="phone-country-code"
+          placeholder="Phone Country Code"
+          value="44"
+          required
+        />
+        <input
+          type="text"
+          id="phone-national-number"
+          placeholder="Phone Number"
+          value="7123456789"
+          required
+        />
+      </div>
+
+      <klarna-button id="klarna-button" hidden></klarna-button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>
