@@ -1,0 +1,125 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PayPal Payments - Saved Payment Methods Flow - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      .buttons-container {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+      }
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+      .note {
+        max-width: 50rem;
+        padding: 0.75rem 1rem;
+        background-color: #f0f7ff;
+        border-left: 3px solid #0070ba;
+        border-radius: 4px;
+        font-size: 14px;
+        line-height: 1.5;
+      }
+      .vault-config {
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        max-width: 25rem;
+        margin-bottom: 1.5rem;
+      }
+      .custom-field {
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+      .field-label {
+        font-family: Verdana, sans-serif;
+        font-size: 14px;
+        color: #333333;
+        font-weight: 500;
+      }
+      .field-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        padding: 0 12px;
+        font-family: Verdana, sans-serif;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+      .field-input:focus {
+        outline: none;
+        border-color: #0070ba;
+      }
+      #set-vault-config {
+        max-width: 225px;
+        height: 48px;
+        border: none;
+        border-radius: 4px;
+        background-color: #0070ba;
+        color: #ffffff;
+        font-family: Verdana, sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        cursor: pointer;
+      }
+    </style>
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+  </head>
+
+  <body>
+    <h1>PayPal Saved Payment Methods</h1>
+    <p>
+      This is the recommended integration pattern for the returning buyer flow where the vaulted payment method is previewed, allowing the buyer to click and edit the payment method as needed.
+    </p>
+    <p class="note">
+      Need a Vault ID or Customer ID to try this flow? Run the
+      <a href="/client/components/paypalPayments/savePayment/html/src/index.html">PayPal Save Payment (vault without purchase)</a>
+      example first — after approving, it returns a <code>customerId</code> and a <code>paymentTokenId</code> (vault ID).
+      <strong>Only one is needed</strong>: enter either the vault ID or the target customer ID below (not both).
+    </p>
+
+    <div class="vault-config">
+      <div class="custom-field">
+        <label class="field-label" for="vault-id">Vault ID:</label>
+        <input type="text" id="vault-id" class="field-input" placeholder="Enter vault ID" />
+      </div>
+      <div class="custom-field">
+        <label class="field-label" for="target-customer-id">Target Customer ID:</label>
+        <input
+          type="text"
+          id="target-customer-id"
+          class="field-input"
+          placeholder="Enter target customer ID"
+        />
+      </div>
+      <button type="button" id="set-vault-config">Set</button>
+    </div>
+
+    <div class="buttons-container">
+      <paypal-saved-payment-methods id="saved-payment-method" hidden></paypal-saved-payment-methods>
+      <paypal-message
+        id="paypal-message"
+        auto-bootstrap
+        amount="100.00"
+        logo-type="TEXT"
+        offer-types="PAY_LATER_SHORT_TERM"
+      ></paypal-message>
+    </div>
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>
