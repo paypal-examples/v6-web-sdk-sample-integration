@@ -31,6 +31,11 @@ const paymentSessionOptions = {
       data.vaultSetupToken,
     );
     console.log("Create payment token response: ", createPaymentTokenResponse);
+    const { paymentTokenId, customerId } = createPaymentTokenResponse;
+    renderAlert({
+      type: "success",
+      message: `Vaulted! Use these for the saved payment methods flow — customerId: ${customerId} | paymentTokenId (vaultId): ${paymentTokenId}`,
+    });
   },
   onCancel(data) {
     renderAlert({ type: "warning", message: "onCancel() callback called" });

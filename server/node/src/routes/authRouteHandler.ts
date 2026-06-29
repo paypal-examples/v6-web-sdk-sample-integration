@@ -9,17 +9,28 @@ const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
 const oAuthAuthorizationController = new OAuthAuthorizationController(client);
 
 export async function clientTokenRouteHandler(
-  _request: Request,
+  request: Request,
   response: Response,
 ) {
   const auth = Buffer.from(
     `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
   ).toString("base64");
 
+  const { targetCustomerId, vaultId } = request.query;
+  let claimKey = "vault_id";
+  if (vaultId && typeof vaultId === "string" && vaultId.startsWith("B-")) {
+    claimKey = "billing_agreement_id";
+  }
+
   const fieldParameters = {
     response_type: "client_token",
     // the Fastlane component requires this domains[] parameter
     ...(DOMAINS ? { "domains[]": DOMAINS } : {}),
+    // Saved Payment Methods requires either vaultId or targetCustomerId
+    ...(targetCustomerId && typeof targetCustomerId === "string" ? { target_customer_id: targetCustomerId } : {}),
+    ...(vaultId && typeof vaultId === "string"
+      ? { [claimKey]: vaultId }
+      : {}),
   };
 
   const { result, statusCode } =

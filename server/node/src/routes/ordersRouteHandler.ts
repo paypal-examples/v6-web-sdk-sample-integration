@@ -2,6 +2,7 @@ import {
   CheckoutPaymentIntent,
   OrdersCardVerificationMethod,
   OrdersController,
+  OrderRequest,
   PaypalExperienceUserAction,
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
@@ -39,6 +40,7 @@ const OneTimePaymentSchema = z
     processingInstruction: z.enum(ProcessingInstruction).optional(),
     returnUrl: z.url().optional(),
     cancelUrl: z.url().optional(),
+    vaultId: z.string().optional(),
   })
   .transform((data) => {
     const { items, totalAmount } = calculateCartAmount(
@@ -235,6 +237,60 @@ export async function createOrderForPayPalOneTimePaymentWithVaultRouteHandler(
       },
     },
   };
+
+  const { result, statusCode } = await ordersController.createOrder({
+    body: orderRequestBody,
+    paypalRequestId: randomUUID(),
+    prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function createOrderForSavedPaymentMethodsRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { currencyCode, totalAmount, items, intent, processingInstruction, vaultId } =
+    OneTimePaymentSchema.parse(request.body ?? {});
+
+  const orderRequestBody = {
+    intent,
+    ...(processingInstruction && { processingInstruction }),
+    purchaseUnits: [
+      {
+        amount: {
+          currencyCode,
+          value: totalAmount,
+          breakdown: {
+            itemTotal: {
+              currencyCode: currencyCode,
+              value: totalAmount,
+            },
+          },
+        },
+        items,
+      },
+    ],
+    ...(vaultId && {
+      paymentSource: {
+        paypal: {
+          vaultId
+        }
+      }
+    }),
+    // `clientConfiguration` is a newer field not yet modeled by the
+    // installed @paypal/paypal-server-sdk OrderApplicationContext type,
+    // so the body is asserted to OrderRequest below.
+    applicationContext: {
+      clientConfiguration: {
+        productCode: "EXPRESS_CHECKOUT",
+        experience: {
+          productFlow: "BUYER_APPROVAL_BILLING_AGREEMENT_WITH_PURCHASE"
+        }
+      }
+    }
+  } as OrderRequest;
 
   const { result, statusCode } = await ordersController.createOrder({
     body: orderRequestBody,

@@ -94,9 +94,14 @@ export async function createPaymentTokenRouteHandler(
     // PayPal recommends storing this value in your database
     // and NOT returning it back to the browser.
     await savePaymentTokenToDatabase(result);
+    // NOTE: returning the paymentTokenId and customerId to the browser
+    // here is for local testing/development of the saved payment methods
+    // flow only. In production, keep these server-side.
     response.status(statusCode).json({
       status: "SUCCESS",
       description: "Payment token saved to database for future transactions",
+      paymentTokenId: result.id,
+      customerId: result.customer?.id,
     });
   } else {
     response.status(statusCode).json({
