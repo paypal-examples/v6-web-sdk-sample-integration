@@ -41,7 +41,7 @@ async function onPayPalWebSdkLoaded() {
     }
 
     // Setup Dragonpay payment flow
-    await setupDragonpayPayment(sdkInstance, currencyCode);
+    await configureDragonpayPayment(sdkInstance, currencyCode);
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -131,7 +131,7 @@ async function getOrder(orderId) {
  * @param {Object} sdkInstance - PayPal SDK instance
  * @param {string} currencyCode - Currency code
  */
-async function setupDragonpayPayment(sdkInstance, currencyCode) {
+async function configureDragonpayPayment(sdkInstance, currencyCode) {
   // Create Dragonpay payment session
   const dragonpayCheckout = sdkInstance.createDragonpayOneTimePaymentSession({
     onApprove: async (data) => {

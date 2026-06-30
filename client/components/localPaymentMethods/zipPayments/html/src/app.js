@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isZipEligible = paymentMethods.isEligible("zip");
 
     if (isZipEligible) {
-      setupZipPayment(sdkInstance);
+      configureZipPayment(sdkInstance);
     } else {
       showMessage({
         text: "Zip is not eligible. Please ensure your buyer country and currency are supported.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupZipPayment(sdkInstance) {
+function configureZipPayment(sdkInstance) {
   try {
     // Create Zip checkout session
     const zipCheckout = sdkInstance.createZipOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupZipPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(zipCheckout);
+    configurePaymentFields(zipCheckout);
 
     // Setup button click handler
-    setupButtonHandler(zipCheckout);
+    configureButtonHandler(zipCheckout);
   } catch (error) {
     console.error("Error setting up Zip payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupZipPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(zipCheckout) {
+function configurePaymentFields(zipCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = zipCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(zipCheckout) {
   document.querySelector("#zip-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(zipCheckout) {
+function configureButtonHandler(zipCheckout) {
   const zipButton = document.querySelector("#zip-button");
   zipButton.removeAttribute("hidden");
 

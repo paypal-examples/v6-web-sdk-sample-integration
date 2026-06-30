@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isVerkkopankkiEligible = paymentMethods.isEligible("verkkopankki");
 
     if (isVerkkopankkiEligible) {
-      setupVerkkopankkiPayment(sdkInstance);
+      configureVerkkopankkiPayment(sdkInstance);
     } else {
       showMessage({
         text: "Verkkopankki is not eligible. Please ensure your buyer country is Finland and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupVerkkopankkiPayment(sdkInstance) {
+function configureVerkkopankkiPayment(sdkInstance) {
   try {
     // Create Verkkopankki checkout session
     const verkkopankkiCheckout =
@@ -43,10 +43,10 @@ function setupVerkkopankkiPayment(sdkInstance) {
       });
 
     // Setup payment fields
-    setupPaymentFields(verkkopankkiCheckout);
+    configurePaymentFields(verkkopankkiCheckout);
 
     // Setup button click handler
-    setupButtonHandler(verkkopankkiCheckout);
+    configureButtonHandler(verkkopankkiCheckout);
   } catch (error) {
     console.error("Error setting up Verkkopankki payment:", error);
     showMessage({
@@ -56,7 +56,7 @@ function setupVerkkopankkiPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(verkkopankkiCheckout) {
+function configurePaymentFields(verkkopankkiCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = verkkopankkiCheckout.createPaymentFields({
     type: "name",
@@ -92,7 +92,7 @@ function setupPaymentFields(verkkopankkiCheckout) {
   document.querySelector("#verkkopankki-email").appendChild(emailField);
 }
 
-function setupButtonHandler(verkkopankkiCheckout) {
+function configureButtonHandler(verkkopankkiCheckout) {
   const verkkopankkiButton = document.querySelector("#verkkopankki-button");
   verkkopankkiButton.removeAttribute("hidden");
 

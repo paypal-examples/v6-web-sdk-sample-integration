@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isTwintEligible = paymentMethods.isEligible("twint");
 
     if (isTwintEligible) {
-      setupTwintPayment(sdkInstance);
+      configureTwintPayment(sdkInstance);
     } else {
       showMessage({
         text: "Twint is not eligible. Please ensure your buyer country is Switzerland and currency is CHF.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupTwintPayment(sdkInstance) {
+function configureTwintPayment(sdkInstance) {
   try {
     // Create Twint checkout session
     const twintCheckout = sdkInstance.createTwintOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupTwintPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(twintCheckout);
+    configurePaymentFields(twintCheckout);
 
     // Setup button click handler
-    setupButtonHandler(twintCheckout);
+    configureButtonHandler(twintCheckout);
   } catch (error) {
     console.error("Error setting up Twint payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupTwintPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(twintCheckout) {
+function configurePaymentFields(twintCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = twintCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(twintCheckout) {
   document.querySelector("#twint-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(twintCheckout) {
+function configureButtonHandler(twintCheckout) {
   const twintButton = document.querySelector("#twint-button");
   twintButton.removeAttribute("hidden");
 

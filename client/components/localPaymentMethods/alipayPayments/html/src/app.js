@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isAlipayEligible = paymentMethods.isEligible("alipay");
 
     if (isAlipayEligible) {
-      setupAlipayPayment(sdkInstance);
+      configureAlipayPayment(sdkInstance);
     } else {
       showMessage({
         text: "Alipay is not eligible. Please ensure your buyer country is China and currency is USD.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupAlipayPayment(sdkInstance) {
+function configureAlipayPayment(sdkInstance) {
   try {
     // Create Alipay checkout session
     const alipayCheckout = sdkInstance.createAlipayOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupAlipayPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(alipayCheckout);
+    configurePaymentFields(alipayCheckout);
 
     // Setup button click handler
-    setupButtonHandler(alipayCheckout);
+    configureButtonHandler(alipayCheckout);
   } catch (error) {
     console.error("Error setting up Alipay payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupAlipayPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(alipayCheckout) {
+function configurePaymentFields(alipayCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = alipayCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(alipayCheckout) {
   document.querySelector("#alipay-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(alipayCheckout) {
+function configureButtonHandler(alipayCheckout) {
   const alipayButton = document.querySelector("#alipay-button");
   alipayButton.removeAttribute("hidden");
 

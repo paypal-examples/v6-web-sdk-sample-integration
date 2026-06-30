@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isSkrillEligible = paymentMethods.isEligible("skrill");
 
     if (isSkrillEligible) {
-      setupSkrillPayment(sdkInstance);
+      configureSkrillPayment(sdkInstance);
     } else {
       showMessage({
         text: "Skrill is not eligible. Please ensure your buyer country is Germany and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupSkrillPayment(sdkInstance) {
+function configureSkrillPayment(sdkInstance) {
   try {
     // Create Skrill checkout session
     const skrillCheckout = sdkInstance.createSkrillOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupSkrillPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(skrillCheckout);
+    configurePaymentFields(skrillCheckout);
 
     // Setup button click handler
-    setupButtonHandler(skrillCheckout);
+    configureButtonHandler(skrillCheckout);
   } catch (error) {
     console.error("Error setting up Skrill payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupSkrillPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(skrillCheckout) {
+function configurePaymentFields(skrillCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = skrillCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(skrillCheckout) {
   document.querySelector("#skrill-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(skrillCheckout) {
+function configureButtonHandler(skrillCheckout) {
   const skrillButton = document.querySelector("#skrill-button");
   skrillButton.removeAttribute("hidden");
 

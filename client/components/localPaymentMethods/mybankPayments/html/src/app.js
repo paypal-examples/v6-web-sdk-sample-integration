@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isMybankEligible = paymentMethods.isEligible("mybank");
 
     if (isMybankEligible) {
-      setupMybankPayment(sdkInstance);
+      configureMybankPayment(sdkInstance);
     } else {
       showMessage({
         text: "MyBank is not eligible. Please ensure your buyer country is Italy and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupMybankPayment(sdkInstance) {
+function configureMybankPayment(sdkInstance) {
   try {
     // Create MyBank checkout session
     const mybankCheckout = sdkInstance.createMyBankOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupMybankPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(mybankCheckout);
+    configurePaymentFields(mybankCheckout);
 
     // Setup button click handler
-    setupButtonHandler(mybankCheckout);
+    configureButtonHandler(mybankCheckout);
   } catch (error) {
     console.error("Error setting up MyBank payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupMybankPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(mybankCheckout) {
+function configurePaymentFields(mybankCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = mybankCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(mybankCheckout) {
   document.querySelector("#mybank-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(mybankCheckout) {
+function configureButtonHandler(mybankCheckout) {
   const mybankButton = document.querySelector("#mybank-button");
   mybankButton.removeAttribute("hidden");
 

@@ -43,7 +43,7 @@ async function onPayPalWebSdkLoaded() {
     }
 
     // Setup OxxoPay payment flow
-    await setupOxxopayPayment(sdkInstance, currencyCode);
+    await configureOxxopayPayment(sdkInstance, currencyCode);
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -58,7 +58,7 @@ async function onPayPalWebSdkLoaded() {
  * @param {Object} sdkInstance - PayPal SDK instance
  * @param {string} currencyCode - Currency code (MXN)
  */
-async function setupOxxopayPayment(sdkInstance, currencyCode) {
+async function configureOxxopayPayment(sdkInstance, currencyCode) {
   // Create OxxoPay payment session
   const oxxoCheckout = sdkInstance.createOxxopayOneTimePaymentSession({
     onApprove: handleApprove,

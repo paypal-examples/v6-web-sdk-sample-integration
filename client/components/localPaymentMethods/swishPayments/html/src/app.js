@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isSwishEligible = paymentMethods.isEligible("swish");
 
     if (isSwishEligible) {
-      setupSwishPayment(sdkInstance);
+      configureSwishPayment(sdkInstance);
     } else {
       showMessage({
         text: "Swish is not eligible. Please ensure your buyer country is Sweden and currency is SEK.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupSwishPayment(sdkInstance) {
+function configureSwishPayment(sdkInstance) {
   try {
     // Create Swish checkout session
     const swishCheckout = sdkInstance.createSwishOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupSwishPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(swishCheckout);
+    configurePaymentFields(swishCheckout);
 
     // Setup button click handler
-    setupButtonHandler(swishCheckout);
+    configureButtonHandler(swishCheckout);
   } catch (error) {
     console.error("Error setting up Swish payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupSwishPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(swishCheckout) {
+function configurePaymentFields(swishCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = swishCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(swishCheckout) {
   document.querySelector("#swish-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(swishCheckout) {
+function configureButtonHandler(swishCheckout) {
   const swishButton = document.querySelector("#swish-button");
   swishButton.removeAttribute("hidden");
 

@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isAfterpayEligible = paymentMethods.isEligible("afterpay");
 
     if (isAfterpayEligible) {
-      setupAfterpayPayment(sdkInstance);
+      configureAfterpayPayment(sdkInstance);
     } else {
       showMessage({
         text: "Afterpay is not eligible. Please ensure your buyer country and currency are supported.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupAfterpayPayment(sdkInstance) {
+function configureAfterpayPayment(sdkInstance) {
   try {
     // Create Afterpay checkout session
     const afterpayCheckout = sdkInstance.createAfterpayOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupAfterpayPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(afterpayCheckout);
+    configurePaymentFields(afterpayCheckout);
 
     // Setup button click handler
-    setupButtonHandler(afterpayCheckout);
+    configureButtonHandler(afterpayCheckout);
   } catch (error) {
     console.error("Error setting up Afterpay payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupAfterpayPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(afterpayCheckout) {
+function configurePaymentFields(afterpayCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = afterpayCheckout.createPaymentFields({
     type: "name",
@@ -91,7 +91,7 @@ function setupPaymentFields(afterpayCheckout) {
   document.querySelector("#afterpay-email").appendChild(emailField);
 }
 
-function setupButtonHandler(afterpayCheckout) {
+function configureButtonHandler(afterpayCheckout) {
   const afterpayButton = document.querySelector("#afterpay-button");
   afterpayButton.removeAttribute("hidden");
 

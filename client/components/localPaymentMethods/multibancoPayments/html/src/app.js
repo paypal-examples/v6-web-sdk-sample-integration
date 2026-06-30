@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isMultibancoEligible = paymentMethods.isEligible("multibanco");
 
     if (isMultibancoEligible) {
-      setupMultibancoPayment(sdkInstance);
+      configureMultibancoPayment(sdkInstance);
     } else {
       showMessage({
         text: "Multibanco is not eligible. Please ensure your buyer country is Portugal and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupMultibancoPayment(sdkInstance) {
+function configureMultibancoPayment(sdkInstance) {
   try {
     // Create Multibanco checkout session
     const multibancoCheckout =
@@ -43,10 +43,10 @@ function setupMultibancoPayment(sdkInstance) {
       });
 
     // Setup payment fields
-    setupPaymentFields(multibancoCheckout);
+    configurePaymentFields(multibancoCheckout);
 
     // Setup button click handler
-    setupButtonHandler(multibancoCheckout);
+    configureButtonHandler(multibancoCheckout);
   } catch (error) {
     console.error("Error setting up Multibanco payment:", error);
     showMessage({
@@ -56,7 +56,7 @@ function setupMultibancoPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(multibancoCheckout) {
+function configurePaymentFields(multibancoCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = multibancoCheckout.createPaymentFields({
     type: "name",
@@ -76,7 +76,7 @@ function setupPaymentFields(multibancoCheckout) {
   document.querySelector("#multibanco-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(multibancoCheckout) {
+function configureButtonHandler(multibancoCheckout) {
   const multibancoButton = document.querySelector("#multibanco-button");
   multibancoButton.removeAttribute("hidden");
 

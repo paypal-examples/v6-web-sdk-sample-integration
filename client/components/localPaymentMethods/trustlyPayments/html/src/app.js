@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isTrustlyEligible = paymentMethods.isEligible("trustly");
 
     if (isTrustlyEligible) {
-      setupTrustlyPayment(sdkInstance);
+      configureTrustlyPayment(sdkInstance);
     } else {
       showMessage({
         text: "Trustly is not eligible. Please ensure your buyer country is Sweden and currency is SEK.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupTrustlyPayment(sdkInstance) {
+function configureTrustlyPayment(sdkInstance) {
   try {
     // Create Trustly checkout session
     const trustlyCheckout = sdkInstance.createTrustlyOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupTrustlyPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(trustlyCheckout);
+    configurePaymentFields(trustlyCheckout);
 
     // Setup button click handler
-    setupButtonHandler(trustlyCheckout);
+    configureButtonHandler(trustlyCheckout);
   } catch (error) {
     console.error("Error setting up Trustly payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupTrustlyPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(trustlyCheckout) {
+function configurePaymentFields(trustlyCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = trustlyCheckout.createPaymentFields({
     type: "name",
@@ -90,7 +90,7 @@ function setupPaymentFields(trustlyCheckout) {
   document.querySelector("#trustly-email").appendChild(emailField);
 }
 
-function setupButtonHandler(trustlyCheckout) {
+function configureButtonHandler(trustlyCheckout) {
   const trustlyButton = document.querySelector("#trustly-button");
   trustlyButton.removeAttribute("hidden");
 

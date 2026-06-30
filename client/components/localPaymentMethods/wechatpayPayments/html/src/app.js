@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isWechatpayEligible = paymentMethods.isEligible("wechatpay");
 
     if (isWechatpayEligible) {
-      setupWechatpayPayment(sdkInstance);
+      configureWechatpayPayment(sdkInstance);
     } else {
       showMessage({
         text: "WechatPay is not eligible. Please ensure your buyer country is China and currency is CNY.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupWechatpayPayment(sdkInstance) {
+function configureWechatpayPayment(sdkInstance) {
   try {
     // Create WechatPay checkout session
     const wechatpayCheckout = sdkInstance.createWechatpayOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupWechatpayPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(wechatpayCheckout);
+    configurePaymentFields(wechatpayCheckout);
 
     // Setup button click handler
-    setupButtonHandler(wechatpayCheckout);
+    configureButtonHandler(wechatpayCheckout);
   } catch (error) {
     console.error("Error setting up WechatPay payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupWechatpayPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(wechatpayCheckout) {
+function configurePaymentFields(wechatpayCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = wechatpayCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(wechatpayCheckout) {
   document.querySelector("#wechatpay-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(wechatpayCheckout) {
+function configureButtonHandler(wechatpayCheckout) {
   const wechatpayButton = document.querySelector("#wechatpay-button");
   wechatpayButton.removeAttribute("hidden");
 

@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isEstoniaBanksEligible = paymentMethods.isEligible("estonia_banks");
 
     if (isEstoniaBanksEligible) {
-      setupEstoniaBanksPayment(sdkInstance);
+      configureEstoniaBanksPayment(sdkInstance);
     } else {
       showMessage({
         text: "Estonia Banks is not eligible. Please ensure your buyer country is Estonia and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupEstoniaBanksPayment(sdkInstance) {
+function configureEstoniaBanksPayment(sdkInstance) {
   try {
     // Create Estonia Banks checkout session
     const estoniaBanksCheckout = sdkInstance.createEstoniaOneTimePaymentSession(
@@ -44,10 +44,10 @@ function setupEstoniaBanksPayment(sdkInstance) {
     );
 
     // Setup payment fields
-    setupPaymentFields(estoniaBanksCheckout);
+    configurePaymentFields(estoniaBanksCheckout);
 
     // Setup button click handler
-    setupButtonHandler(estoniaBanksCheckout);
+    configureButtonHandler(estoniaBanksCheckout);
   } catch (error) {
     console.error("Error setting up Estonia Banks payment:", error);
     showMessage({
@@ -57,7 +57,7 @@ function setupEstoniaBanksPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(estoniaBanksCheckout) {
+function configurePaymentFields(estoniaBanksCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = estoniaBanksCheckout.createPaymentFields({
     type: "name",
@@ -77,7 +77,7 @@ function setupPaymentFields(estoniaBanksCheckout) {
   document.querySelector("#estonia-banks-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(estoniaBanksCheckout) {
+function configureButtonHandler(estoniaBanksCheckout) {
   const estoniaBanksButton = document.querySelector("#estonia-banks-button");
   estoniaBanksButton.removeAttribute("hidden");
 

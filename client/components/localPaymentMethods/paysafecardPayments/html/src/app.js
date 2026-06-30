@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isPaysafecardEligible = paymentMethods.isEligible("paysafecard");
 
     if (isPaysafecardEligible) {
-      setupPaysafecardPayment(sdkInstance);
+      configurePaysafecardPayment(sdkInstance);
     } else {
       showMessage({
         text: "Paysafecard is not eligible. Please ensure your buyer country is Germany and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupPaysafecardPayment(sdkInstance) {
+function configurePaysafecardPayment(sdkInstance) {
   try {
     // Create Paysafecard checkout session
     const paysafecardCheckout =
@@ -43,10 +43,10 @@ function setupPaysafecardPayment(sdkInstance) {
       });
 
     // Setup payment fields
-    setupPaymentFields(paysafecardCheckout);
+    configurePaymentFields(paysafecardCheckout);
 
     // Setup button click handler
-    setupButtonHandler(paysafecardCheckout);
+    configureButtonHandler(paysafecardCheckout);
   } catch (error) {
     console.error("Error setting up Paysafecard payment:", error);
     showMessage({
@@ -56,7 +56,7 @@ function setupPaysafecardPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(paysafecardCheckout) {
+function configurePaymentFields(paysafecardCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = paysafecardCheckout.createPaymentFields({
     type: "name",
@@ -76,7 +76,7 @@ function setupPaymentFields(paysafecardCheckout) {
   document.querySelector("#paysafecard-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(paysafecardCheckout) {
+function configureButtonHandler(paysafecardCheckout) {
   const paysafecardButton = document.querySelector("#paysafecard-button");
   paysafecardButton.removeAttribute("hidden");
 

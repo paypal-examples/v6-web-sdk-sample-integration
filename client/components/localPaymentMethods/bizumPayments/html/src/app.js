@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isBizumEligible = paymentMethods.isEligible("bizum");
 
     if (isBizumEligible) {
-      setupBizumPayment(sdkInstance);
+      configureBizumPayment(sdkInstance);
     } else {
       showMessage({
         text: "Bizum is not eligible. Please ensure your buyer country is Spain and currency is EUR.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupBizumPayment(sdkInstance) {
+function configureBizumPayment(sdkInstance) {
   try {
     // Create Bizum checkout session
     const bizumCheckout = sdkInstance.createBizumOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupBizumPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(bizumCheckout);
+    configurePaymentFields(bizumCheckout);
 
     // Setup button click handler
-    setupButtonHandler(bizumCheckout);
+    configureButtonHandler(bizumCheckout);
   } catch (error) {
     console.error("Error setting up Bizum payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupBizumPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(bizumCheckout) {
+function configurePaymentFields(bizumCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = bizumCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(bizumCheckout) {
   document.querySelector("#bizum-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(bizumCheckout) {
+function configureButtonHandler(bizumCheckout) {
   const bizumButton = document.querySelector("#bizum-button");
   bizumButton.removeAttribute("hidden");
 

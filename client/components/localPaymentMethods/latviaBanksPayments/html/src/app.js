@@ -42,7 +42,7 @@ async function onPayPalWebSdkLoaded() {
     }
 
     // Setup Latvia Banks payment flow
-    await setupLatviaBanksPayment(sdkInstance, currencyCode);
+    await configureLatviaBanksPayment(sdkInstance, currencyCode);
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -113,7 +113,7 @@ async function getOrder(orderId) {
  * @param {Object} sdkInstance - PayPal SDK instance
  * @param {string} currencyCode - Currency code
  */
-async function setupLatviaBanksPayment(sdkInstance, currencyCode) {
+async function configureLatviaBanksPayment(sdkInstance, currencyCode) {
   // Create Latvia Banks payment session
   const latviabanksCheckout =
     sdkInstance.createLatviaBanksOneTimePaymentSession({

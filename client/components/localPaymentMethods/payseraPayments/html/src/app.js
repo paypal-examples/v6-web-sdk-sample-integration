@@ -42,7 +42,7 @@ async function onPayPalWebSdkLoaded() {
     }
 
     // Setup Paysera payment flow
-    await setupPayseraPayment(sdkInstance, currencyCode);
+    await configurePayseraPayment(sdkInstance, currencyCode);
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -113,7 +113,7 @@ async function getOrder(orderId) {
  * @param {Object} sdkInstance - PayPal SDK instance
  * @param {string} currencyCode - Currency code
  */
-async function setupPayseraPayment(sdkInstance, currencyCode) {
+async function configurePayseraPayment(sdkInstance, currencyCode) {
   // Create Paysera payment session
   const payseraCheckout = sdkInstance.createPayseraOneTimePaymentSession({
     onApprove: async (data) => {

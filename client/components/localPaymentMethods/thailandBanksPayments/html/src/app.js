@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isThailandBanksEligible = paymentMethods.isEligible("thailand_banks");
 
     if (isThailandBanksEligible) {
-      setupThailandBanksPayment(sdkInstance);
+      configureThailandBanksPayment(sdkInstance);
     } else {
       showMessage({
         text: "Thailand Banks is not eligible. Please ensure your buyer country is Thailand and currency is THB.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupThailandBanksPayment(sdkInstance) {
+function configureThailandBanksPayment(sdkInstance) {
   try {
     // Create Thailand Banks checkout session
     const thailandBanksCheckout =
@@ -43,10 +43,10 @@ function setupThailandBanksPayment(sdkInstance) {
       });
 
     // Setup payment fields
-    setupPaymentFields(thailandBanksCheckout);
+    configurePaymentFields(thailandBanksCheckout);
 
     // Setup button click handler
-    setupButtonHandler(thailandBanksCheckout);
+    configureButtonHandler(thailandBanksCheckout);
   } catch (error) {
     console.error("Error setting up Thailand Banks payment:", error);
     showMessage({
@@ -56,7 +56,7 @@ function setupThailandBanksPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(thailandBanksCheckout) {
+function configurePaymentFields(thailandBanksCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = thailandBanksCheckout.createPaymentFields({
     type: "name",
@@ -78,7 +78,7 @@ function setupPaymentFields(thailandBanksCheckout) {
     .appendChild(fullNameField);
 }
 
-function setupButtonHandler(thailandBanksCheckout) {
+function configureButtonHandler(thailandBanksCheckout) {
   const thailandBanksButton = document.querySelector("#thailand-banks-button");
   thailandBanksButton.removeAttribute("hidden");
 

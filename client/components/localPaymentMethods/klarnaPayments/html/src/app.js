@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isKlarnaEligible = paymentMethods.isEligible("klarna");
 
     if (isKlarnaEligible) {
-      setupKlarnaPayment(sdkInstance);
+      configureKlarnaPayment(sdkInstance);
     } else {
       showMessage({
         text: "Klarna is not eligible. Please ensure your buyer country and currency are supported.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupKlarnaPayment(sdkInstance) {
+function configureKlarnaPayment(sdkInstance) {
   try {
     // Create Klarna checkout session
     const klarnaCheckout = sdkInstance.createKlarnaOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupKlarnaPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(klarnaCheckout);
+    configurePaymentFields(klarnaCheckout);
 
     // Setup button click handler
-    setupButtonHandler(klarnaCheckout);
+    configureButtonHandler(klarnaCheckout);
   } catch (error) {
     console.error("Error setting up Klarna payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupKlarnaPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(klarnaCheckout) {
+function configurePaymentFields(klarnaCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = klarnaCheckout.createPaymentFields({
     type: "name",
@@ -91,7 +91,7 @@ function setupPaymentFields(klarnaCheckout) {
   document.querySelector("#klarna-email").appendChild(emailField);
 }
 
-function setupButtonHandler(klarnaCheckout) {
+function configureButtonHandler(klarnaCheckout) {
   const klarnaButton = document.querySelector("#klarna-button");
   klarnaButton.removeAttribute("hidden");
 

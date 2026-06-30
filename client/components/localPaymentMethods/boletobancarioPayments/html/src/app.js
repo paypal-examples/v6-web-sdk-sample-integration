@@ -42,7 +42,7 @@ async function onPayPalWebSdkLoaded() {
     }
 
     // Setup Boleto Bancario payment flow
-    await setupBoletobancarioPayment(sdkInstance, currencyCode);
+    await configureBoletobancarioPayment(sdkInstance, currencyCode);
   } catch (error) {
     console.error("Error initializing PayPal SDK:", error);
     showMessage({
@@ -85,7 +85,7 @@ async function getOrder(orderId) {
  * @param {Object} sdkInstance - PayPal SDK instance
  * @param {string} currencyCode - Currency code
  */
-async function setupBoletobancarioPayment(sdkInstance, currencyCode) {
+async function configureBoletobancarioPayment(sdkInstance, currencyCode) {
   // Create Boleto Bancario payment session
   const boletobancarioCheckout =
     sdkInstance.createBoletobancarioOneTimePaymentSession({

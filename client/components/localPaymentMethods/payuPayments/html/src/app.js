@@ -15,7 +15,7 @@ async function onPayPalWebSdkLoaded() {
     const isPayuEligible = paymentMethods.isEligible("payu");
 
     if (isPayuEligible) {
-      setupPayuPayment(sdkInstance);
+      configurePayuPayment(sdkInstance);
     } else {
       showMessage({
         text: "PayU is not eligible. Please ensure your buyer country and currency are supported.",
@@ -32,7 +32,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-function setupPayuPayment(sdkInstance) {
+function configurePayuPayment(sdkInstance) {
   try {
     // Create PayU checkout session
     const payuCheckout = sdkInstance.createPayuOneTimePaymentSession({
@@ -42,10 +42,10 @@ function setupPayuPayment(sdkInstance) {
     });
 
     // Setup payment fields
-    setupPaymentFields(payuCheckout);
+    configurePaymentFields(payuCheckout);
 
     // Setup button click handler
-    setupButtonHandler(payuCheckout);
+    configureButtonHandler(payuCheckout);
   } catch (error) {
     console.error("Error setting up PayU payment:", error);
     showMessage({
@@ -55,7 +55,7 @@ function setupPayuPayment(sdkInstance) {
   }
 }
 
-function setupPaymentFields(payuCheckout) {
+function configurePaymentFields(payuCheckout) {
   // Create payment field for full name with optional prefill
   const fullNameField = payuCheckout.createPaymentFields({
     type: "name",
@@ -75,7 +75,7 @@ function setupPaymentFields(payuCheckout) {
   document.querySelector("#payu-full-name").appendChild(fullNameField);
 }
 
-function setupButtonHandler(payuCheckout) {
+function configureButtonHandler(payuCheckout) {
   const payuButton = document.querySelector("#payu-button");
   payuButton.removeAttribute("hidden");
 
