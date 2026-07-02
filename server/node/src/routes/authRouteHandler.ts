@@ -29,7 +29,7 @@ export async function clientTokenRouteHandler(
     // Saved Payment Methods requires either vaultId or targetCustomerId
     ...(targetCustomerId && typeof targetCustomerId === "string" ? { target_customer_id: targetCustomerId } : {}),
     ...(vaultId && typeof vaultId === "string"
-      ? { [claimKey]: vaultId }
+      ? { "claims[]": `${claimKey}:${vaultId}` }
       : {}),
   };
 
