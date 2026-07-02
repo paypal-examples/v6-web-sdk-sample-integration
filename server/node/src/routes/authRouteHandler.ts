@@ -30,7 +30,9 @@ export async function clientTokenRouteHandler(
     ...(targetCustomerId && typeof targetCustomerId === "string"
       ? { target_customer_id: targetCustomerId }
       : {}),
-    ...(vaultId && typeof vaultId === "string" ? { [claimKey]: vaultId } : {}),
+    ...(vaultId && typeof vaultId === "string"
+      ? { "claims[]": `${claimKey}:${vaultId}` }
+      : {}),
   };
 
   const { result, statusCode } =

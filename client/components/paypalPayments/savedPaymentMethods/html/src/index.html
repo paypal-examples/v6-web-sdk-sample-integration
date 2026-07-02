@@ -7,8 +7,24 @@
     <style>
       .buttons-container {
         display: flex;
-        flex-direction: column;
+        flex-direction: row;
+        align-items: center;
+        flex-wrap: wrap;
         gap: 0.75rem;
+      }
+      .buttons-container img {
+        width: 45px;
+        height: auto;
+        display: block;
+      }
+      .buttons-container span {
+        font-weight: bold;
+      }
+      #paypal-message {
+        flex-basis: 100%;
+        /* wordmark width + flex gap, so the message's left edge lines up
+           with the "PayPal" label above it */
+        margin-left: calc(45px + 0.75rem);
       }
       alert-component {
         max-width: 50rem;
@@ -55,7 +71,8 @@
         outline: none;
         border-color: #0070ba;
       }
-      #set-vault-config {
+      #set-vault-config,
+      #submit-button {
         max-width: 225px;
         height: 48px;
         border: none;
@@ -66,6 +83,14 @@
         font-size: 14px;
         font-weight: 500;
         cursor: pointer;
+      }
+      #submit-button {
+        width: 225px;
+        margin-top: 1.5rem;
+      }
+      #submit-button:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
       }
     </style>
     <link rel="stylesheet" href="/client/shared/styles.css" />
@@ -101,6 +126,8 @@
     </div>
 
     <div class="buttons-container">
+      <img src="https://www.paypalobjects.com/js-sdk-logos/2.3.2/paypal-mark.svg" alt="PayPal" width="45" />
+      <span>PayPal</span>
       <paypal-saved-payment-methods id="saved-payment-method" hidden></paypal-saved-payment-methods>
       <paypal-message
         id="paypal-message"
@@ -110,6 +137,9 @@
         offer-types="PAY_LATER_SHORT_TERM"
       ></paypal-message>
     </div>
+
+    <button type="button" id="submit-button">Submit Order</button>
+
     <alert-component></alert-component>
 
     <script src="app.js"></script>
