@@ -445,7 +445,8 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
       card: {
         attributes: {
           verification: {
-            // use "ScaAlways" to test 3D Secure
+            // use "ScaAlways" to always trigger 3D Secure for testing purposes
+            // use "ScaWhenRequired" to only trigger 3D Secure when required by the card issuer
             // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/test/
             method: OrdersCardVerificationMethod.ScaAlways,
           },
