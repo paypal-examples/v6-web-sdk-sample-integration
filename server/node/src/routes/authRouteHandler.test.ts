@@ -1,10 +1,11 @@
-import { beforeEach, describe, expect, test, vi } from "vitest";
+import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 import request from "supertest";
 import express, { type Express } from "express";
 
 import {
   clientTokenRouteHandler,
   clientIdRouteHandler,
+  lpmClientIdRouteHandler,
 } from "./authRouteHandler";
 
 vi.mock("@paypal/paypal-server-sdk", async () => {
@@ -61,9 +62,14 @@ describe("clientIdRouteHandler", () => {
   let app: Express;
 
   beforeEach(() => {
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "test-default-client-id");
     app = express();
     app.use(express.json());
     app.get("/paypal-api/auth/browser-safe-client-id", clientIdRouteHandler);
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
   });
 
   test("should return a successful response", async () => {
@@ -77,5 +83,69 @@ describe("clientIdRouteHandler", () => {
         clientId: expect.any(String),
       }),
     );
+  });
+});
+
+describe("lpmClientIdRouteHandler", () => {
+  let app: Express;
+
+  beforeEach(() => {
+    app = express();
+    app.use(express.json());
+    app.get(
+      "/paypal-api/auth/lpm-client-id/:lpmName",
+      lpmClientIdRouteHandler,
+    );
+  });
+
+  afterEach(() => {
+    vi.unstubAllEnvs();
+  });
+
+  test("should return the LPM-specific client ID when configured", async () => {
+    vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "mbway-test-client-id");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/lpm-client-id/mbway",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ clientId: "mbway-test-client-id" });
+  });
+
+  test("should fall back to default client ID when LPM-specific credential is not set", async () => {
+    vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/lpm-client-id/mbway",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ clientId: "default-test-client-id" });
+  });
+
+  test("should fall back to default client ID for unknown LPM name", async () => {
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/lpm-client-id/unknown_lpm",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ clientId: "default-test-client-id" });
+  });
+
+  test("should be case-insensitive for LPM name", async () => {
+    vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "mbway-test-client-id");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/lpm-client-id/MBWAY",
+    );
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual({ clientId: "mbway-test-client-id" });
   });
 });

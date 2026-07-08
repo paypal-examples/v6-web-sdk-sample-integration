@@ -1,0 +1,48 @@
+/* ─── Global reset + typography ─────────────────────────────────────────────
+   PayPal uses a humanist sans-serif stack. We mirror that here so every page
+   in the React demo inherits a consistent font rather than falling back to the
+   browser default (Times New Roman on most systems).                          */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  font-family: "PayPal Sans", "Helvetica Neue", Helvetica, Arial, sans-serif;
+  font-size: 16px;
+  line-height: 1.5;
+  color: #2c2e2f;
+  background-color: #f5f5f5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+/* Inherit font into inputs, buttons and code elements that browsers override */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  font-size: inherit;
+}
+
+code,
+pre {
+  font-family:
+    "Fira Code", "Cascadia Code", "Source Code Pro", ui-monospace, monospace;
+  font-size: 0.875em;
+}
+
+a {
+  color: #0070ba;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

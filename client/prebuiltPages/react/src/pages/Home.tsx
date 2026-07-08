@@ -376,6 +376,42 @@ export function HomePage() {
                   }}
                 >
                   <Link
+                    to="/local-payment-methods"
+                    style={{
+                      color: "#0070ba",
+                      textDecoration: "none",
+                      fontSize: "16px",
+                      fontWeight: "500",
+                    }}
+                  >
+                    Local Payment Methods
+                  </Link>
+                </td>
+                <td
+                  style={{
+                    padding: "16px",
+                    color: "#4a5568",
+                    fontSize: "14px",
+                    lineHeight: "1.6",
+                  }}
+                >
+                  Region-specific payment methods (iDEAL, Klarna, BLIK,
+                  Bancontact, and many more) via the v6 SDK React wrapper. Each
+                  demo loads only its own SDK component with the method's
+                  sandbox currency and buyer country.
+                </td>
+              </tr>
+              <tr
+                style={{
+                  borderBottom: "1px solid #e2e8f0",
+                }}
+              >
+                <td
+                  style={{
+                    padding: "16px",
+                  }}
+                >
+                  <Link
                     to="/error-boundary-test"
                     style={{
                       color: "#0070ba",
