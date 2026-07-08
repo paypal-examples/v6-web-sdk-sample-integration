@@ -78,7 +78,7 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 ## Exploring the Sample
 
 Run the app and open the Home page (`/`) — it links to every flow. To read the code, browse
-`client/prebuiltPages/react/src/`: the per-flow checkout wrappers live in
+`client/prebuiltPages/react/src/`: the per-flow checkout wrappers that leverage the `react-paypal-js` package live in
 `src/paymentFlowCheckoutPages/`, routing and SDK setup in `src/App.tsx`.
 
 ## How It Works
@@ -177,7 +177,7 @@ const { error: eligibilityError, eligiblePaymentMethods } = useEligibleMethods({
 });
 
 if (eligibilityError) {
-  return <div>Failed to load payment options.</div>;
+  return <div>Failed to load eligible payment methods.</div>;
 }
 
 const isPayLaterEligible = eligiblePaymentMethods?.isEligible("paylater");
