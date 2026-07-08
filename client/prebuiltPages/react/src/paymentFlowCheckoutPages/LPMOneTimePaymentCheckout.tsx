@@ -11,7 +11,7 @@ import * as LPMExports from "@paypal/react-paypal-js/sdk-v6/local-payment-method
 
 import CodeDrawer from "../components/CodeDrawer";
 import {
-  getBrowserSafeClientId,
+  getLpmCredentials,
   createLpmOrder,
   getOrder,
   fetchEligibleMethods,
@@ -321,8 +321,11 @@ const LPMOneTimePaymentCheckout = () => {
   const entry = getLPMDemoEntry(lpm);
 
   useEffect(() => {
-    getBrowserSafeClientId().then(setClientId).catch(console.error);
-  }, []);
+    if (!entry) return;
+    getLpmCredentials(entry.lpm)
+      .then((creds) => setClientId(creds.clientId))
+      .catch(console.error);
+  }, [entry]);
 
   // Eligibility check — mirrors legacy `sdkInstance.findEligibleMethods({ currencyCode })`.
   // We call our server endpoint which proxies the PayPal v2/payments/find-eligible-methods API.

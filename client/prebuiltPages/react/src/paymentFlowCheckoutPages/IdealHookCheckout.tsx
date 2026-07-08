@@ -7,7 +7,7 @@ import {
 } from "@paypal/react-paypal-js/sdk-v6/local-payment-methods";
 
 import CodeDrawer from "../components/CodeDrawer";
-import { getBrowserSafeClientId, createLpmOrder, getOrder } from "../utils";
+import { getLpmCredentials, createLpmOrder, getOrder } from "../utils";
 import { getLPMDemoEntry } from "../constants/lpm";
 import { generateAllInOneCode, generateHookCode } from "../constants/lpmCode";
 
@@ -236,7 +236,9 @@ const IdealHookCheckout = () => {
   const idealEntry = getLPMDemoEntry("ideal")!;
 
   useEffect(() => {
-    getBrowserSafeClientId().then(setClientId).catch(console.error);
+    getLpmCredentials("ideal")
+      .then((creds) => setClientId(creds.clientId))
+      .catch(console.error);
   }, []);
 
   return (

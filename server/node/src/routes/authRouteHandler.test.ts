@@ -102,50 +102,69 @@ describe("lpmClientIdRouteHandler", () => {
     vi.unstubAllEnvs();
   });
 
-  test("should return the LPM-specific client ID when configured", async () => {
+  test("should return the LPM-specific credentials when configured", async () => {
     vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "mbway-test-client-id");
+    vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_SECRET", "mbway-test-secret");
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "default-test-secret");
 
     const response = await request(app).get(
       "/paypal-api/auth/lpm-client-id/mbway",
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ clientId: "mbway-test-client-id" });
+    expect(response.body).toEqual({
+      clientId: "mbway-test-client-id",
+      clientSecret: "mbway-test-secret",
+    });
   });
 
-  test("should fall back to default client ID when LPM-specific credential is not set", async () => {
+  test("should fall back to default credentials when LPM-specific credential is not set", async () => {
     vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "");
+    vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_SECRET", "");
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "default-test-secret");
 
     const response = await request(app).get(
       "/paypal-api/auth/lpm-client-id/mbway",
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ clientId: "default-test-client-id" });
+    expect(response.body).toEqual({
+      clientId: "default-test-client-id",
+      clientSecret: "default-test-secret",
+    });
   });
 
-  test("should fall back to default client ID for unknown LPM name", async () => {
+  test("should fall back to default credentials for unknown LPM name", async () => {
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "default-test-secret");
 
     const response = await request(app).get(
       "/paypal-api/auth/lpm-client-id/unknown_lpm",
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ clientId: "default-test-client-id" });
+    expect(response.body).toEqual({
+      clientId: "default-test-client-id",
+      clientSecret: "default-test-secret",
+    });
   });
 
-  test("should be case-insensitive for LPM name", async () => {
+  test("should handle camelCase LPM names correctly", async () => {
     vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "mbway-test-client-id");
+    vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_SECRET", "mbway-test-secret");
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "default-test-secret");
 
     const response = await request(app).get(
-      "/paypal-api/auth/lpm-client-id/MBWAY",
+      "/paypal-api/auth/lpm-client-id/mbway",
     );
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({ clientId: "mbway-test-client-id" });
+    expect(response.body).toEqual({
+      clientId: "mbway-test-client-id",
+      clientSecret: "mbway-test-secret",
+    });
   });
 });

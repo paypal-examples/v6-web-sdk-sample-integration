@@ -15,6 +15,27 @@ export const getBrowserSafeClientId = async () => {
   return clientId;
 };
 
+/**
+ * Fetches LPM-specific PayPal credentials (clientId + clientSecret).
+ * Falls back to default credentials if the LPM doesn't have a dedicated app.
+ */
+export const getLpmCredentials = async (lpmName: string) => {
+  const response = await fetch(
+    `/paypal-api/auth/lpm-client-id/${encodeURIComponent(lpmName)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error(`Failed to fetch LPM credentials for ${lpmName}`);
+  }
+  const { clientId, clientSecret } = await response.json();
+  return { clientId, clientSecret };
+};
+
 export const fetchProducts = async () => {
   const response = await fetch("/paypal-api/products", {
     method: "GET",
