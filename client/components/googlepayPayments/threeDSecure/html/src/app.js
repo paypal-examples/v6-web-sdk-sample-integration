@@ -100,26 +100,23 @@ async function onPaymentAuthorized(
     });
 
     // When the order requires Strong Customer Authentication (e.g. 3D Secure),
-    // confirmOrder returns a status of PAYER_ACTION_REQUIRED. Launch the 3DS
-    // flow with initiatePayerAction, then fetch the order to read the
-    // authentication result.
+    // confirmOrder returns a status of PAYER_ACTION_REQUIRED. The 3DS modal can
+    // only open once the Google Pay payment sheet has closed, and that sheet
+    // stays open until this onPaymentAuthorized callback resolves. So we do NOT
+    // await the 3DS flow here: we kick it off with completeThreeDSecureAndCapture
+    // and immediately return SUCCESS, which closes the Google Pay sheet and lets
+    // the 3DS modal take over. Awaiting initiatePayerAction here would leave the
+    // Google Pay window open on top of (and blocking) the 3DS modal.
     if (status === "PAYER_ACTION_REQUIRED") {
-      await googlePaySession.initiatePayerAction({ orderId: id });
-
-      // The 3DS authentication result (liability_shift, and the enrollment /
-      // authentication statuses) lives on the order, not in the SDK response.
-      // This example only logs it; a production integration may use it to
-      // decide whether to capture. See PayPal's recommended action table:
-      // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/response-parameters/
-      const orderDetails = await getOrder({ orderId: id });
-      console.log(
-        "3DS authentication result:",
-        orderDetails?.paymentSource?.googlePay?.card?.authenticationResult,
-      );
+      renderAlert({
+        type: "info",
+        message: "3D Secure authentication required...",
+      });
+      completeThreeDSecureAndCapture({ googlePaySession, orderId: id });
+      return { transactionState: "SUCCESS" };
     }
 
-    // Always capture. A production integration may instead
-    // gate this on the authentication result above.
+    // No additional authentication required — capture the order.
     const orderData = await captureOrder({ orderId: id });
     console.log(JSON.stringify(orderData, null, 2));
 
@@ -142,6 +139,44 @@ async function onPaymentAuthorized(
         message: err.message,
       },
     };
+  }
+}
+
+// Runs the 3D Secure flow after the Google Pay payment sheet has closed. This is
+// invoked WITHOUT await from onPaymentAuthorized (see the note there), so it owns
+// its own error handling rather than relying on that callback's try/catch.
+async function completeThreeDSecureAndCapture({ googlePaySession, orderId }) {
+  try {
+    // Opens the 3DS authentication modal and resolves once the buyer completes
+    // it; rejects if they cancel or authentication errors.
+    await googlePaySession.initiatePayerAction({ orderId });
+
+    // The 3DS authentication result (liability_shift, and the enrollment /
+    // authentication statuses) lives on the order, not in the SDK response.
+    // This example only logs it; a production integration may use it to
+    // decide whether to capture. See PayPal's recommended action table:
+    // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/response-parameters/
+    const orderDetails = await getOrder({ orderId });
+    console.log(
+      "3DS authentication result:",
+      orderDetails?.paymentSource?.googlePay?.card?.authenticationResult,
+    );
+
+    // Always capture. A production integration may instead
+    // gate this on the authentication result above.
+    const orderData = await captureOrder({ orderId });
+    console.log(JSON.stringify(orderData, null, 2));
+
+    renderAlert({
+      type: "success",
+      message: "Completed order with GooglePay",
+    });
+  } catch (err) {
+    console.error("3D Secure authentication error:", err);
+    renderAlert({
+      type: "danger",
+      message: "3D Secure authentication error",
+    });
   }
 }
 
@@ -239,7 +274,6 @@ async function createOrder() {
     throw new Error("Failed to create order");
   }
   const { id } = await response.json();
-  renderAlert({ type: "info", message: `Order successfully created: ${id}` });
 
   return id;
 }
