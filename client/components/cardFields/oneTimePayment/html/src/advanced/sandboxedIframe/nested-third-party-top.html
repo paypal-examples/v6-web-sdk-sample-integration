@@ -1,0 +1,73 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Nested third-party top-level simulation</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      .frame-wrapper {
+        border: 2px dashed #b33;
+        border-radius: 8px;
+        padding: 8px;
+        margin-top: 1rem;
+      }
+      .frame-wrapper figcaption {
+        font-size: 0.8rem;
+        color: #555;
+        margin-bottom: 8px;
+      }
+      #merchant-frame {
+        width: 100%;
+        min-height: 340px;
+        border: 0;
+      }
+      code {
+        background: #f2f2f2;
+        padding: 1px 4px;
+        border-radius: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Third-party top-level page</h1>
+
+    <p>
+      This page plays the role of the
+      <strong>third-party top-level document</strong> that the merchant does
+      <em>not</em> control. Load it from a
+      <strong>different origin</strong> than the merchant frame to make the
+      cross-origin relationship real, e.g. open it via
+      <code>http://127.0.0.1:8080</code> while the merchant frame below is
+      served from <code>http://localhost:8080</code>.
+    </p>
+
+    <p>
+      The iframe below embeds the merchant's own Card Fields + 3DS app:
+      <code>allow="payment"</code>, and <strong>no</strong> <code>sandbox</code>
+      attribute.
+    </p>
+
+    <p>
+      Resulting topology:
+      <code>127.0.0.1 (top, third-party)</code> &gt;
+      <code>localhost merchant frame</code> &gt;
+      <code>paypal.com Card Fields + 3DS</code>
+    </p>
+
+    <figure class="frame-wrapper">
+      <figcaption>
+        Everything below renders inside the merchant frame, which is itself
+        nested inside this third-party top-level page.
+      </figcaption>
+      <!-- Absolute cross-origin URL on purpose: the merchant frame is a
+           different origin (localhost) than this top page (127.0.0.1). -->
+      <iframe
+        id="merchant-frame"
+        title="Merchant Card Fields 3D Secure app"
+        allow="payment"
+        src="http://localhost:8080/client/components/cardFields/oneTimePayment/html/src/advanced/threeDSecure/index.html"
+      ></iframe>
+    </figure>
+  </body>
+</html>
