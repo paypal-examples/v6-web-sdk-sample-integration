@@ -111,6 +111,8 @@ const DropdownOneTimePaymentCheckout = () => {
   );
 
   const isLoading = loadingStatus === INSTANCE_LOADING_STATE.PENDING;
+  const isVenmoEligible =
+    !isEligibilityLoading && eligiblePaymentMethods?.isEligible("venmo");
   const isPayLaterEligible =
     !isEligibilityLoading && eligiblePaymentMethods?.isEligible("paylater");
   const isCreditEligible =
@@ -123,8 +125,8 @@ const DropdownOneTimePaymentCheckout = () => {
     }
   };
 
-  // Build the list of eligible methods to offer in the dropdown. PayPal, Venmo,
-  // and Guest are always available; Pay Later and PayPal Credit are added only
+  // Build the list of eligible methods to offer in the dropdown.
+  // Venmo, Pay Later and PayPal Credit are added only
   // when eligible — the same predicates the stacked checkout uses.
   const paymentMethodOptions: PaymentMethodOption[] = [
     {
@@ -138,17 +140,21 @@ const DropdownOneTimePaymentCheckout = () => {
         />
       ),
     },
-    {
-      key: "venmo",
-      label: "Venmo",
-      button: (
-        <VenmoOneTimePaymentButton
-          createOrder={handleCreateOrder}
-          presentationMode="auto"
-          {...handlePaymentCallbacks}
-        />
-      ),
-    },
+    ...(isVenmoEligible
+      ? [
+          {
+            key: "venmo",
+            label: "Venmo",
+            button: (
+              <VenmoOneTimePaymentButton
+                createOrder={handleCreateOrder}
+                presentationMode="auto"
+                {...handlePaymentCallbacks}
+              />
+            ),
+          },
+        ]
+      : []),
     ...(isPayLaterEligible
       ? [
           {
