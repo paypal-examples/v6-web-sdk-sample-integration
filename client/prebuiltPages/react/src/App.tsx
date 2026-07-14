@@ -212,7 +212,10 @@ function App() {
             <Route
               path="/one-time-payment/dropdown/cart"
               element={
-                <BaseCart flowType="one-time-payment" paymentMethod="dropdown" />
+                <BaseCart
+                  flowType="one-time-payment"
+                  paymentMethod="dropdown"
+                />
               }
             />
             <Route
