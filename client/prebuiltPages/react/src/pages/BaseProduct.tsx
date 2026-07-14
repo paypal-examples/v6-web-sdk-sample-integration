@@ -10,7 +10,7 @@ interface ProductPageProps {
     | "save-payment"
     | "subscription"
     | "vault-with-purchase";
-  paymentMethod?: "card-fields" | "apple-pay" | "google-pay";
+  paymentMethod?: "card-fields" | "apple-pay" | "google-pay" | "dropdown";
 }
 
 const BaseProduct = ({ flowType, paymentMethod }: ProductPageProps) => {

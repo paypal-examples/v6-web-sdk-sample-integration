@@ -13,6 +13,7 @@ import OneTimeCheckoutPage from "./paymentFlowCheckoutPages/OneTimePaymentChecko
 import CardFieldsOneTimePaymentCheckout from "./paymentFlowCheckoutPages/CardFieldsOneTimePaymentCheckout";
 import ApplePayOneTimePaymentCheckout from "./paymentFlowCheckoutPages/ApplePayOneTimePaymentCheckout";
 import GooglePayOneTimePaymentCheckout from "./paymentFlowCheckoutPages/GooglePayOneTimePaymentCheckout";
+import DropdownOneTimePaymentCheckout from "./paymentFlowCheckoutPages/DropdownOneTimePaymentCheckout";
 
 // One-Time Payment with Vault flow
 import VaultWithPurchaseCheckoutPage from "./paymentFlowCheckoutPages/VaultWithPurchaseCheckout";
@@ -198,6 +199,25 @@ function App() {
             <Route
               path="/one-time-payment/google-pay/checkout"
               element={<GooglePayOneTimePaymentCheckout />}
+            />
+            <Route
+              path="/one-time-payment/dropdown"
+              element={
+                <BaseProduct
+                  flowType="one-time-payment"
+                  paymentMethod="dropdown"
+                />
+              }
+            />
+            <Route
+              path="/one-time-payment/dropdown/cart"
+              element={
+                <BaseCart flowType="one-time-payment" paymentMethod="dropdown" />
+              }
+            />
+            <Route
+              path="/one-time-payment/dropdown/checkout"
+              element={<DropdownOneTimePaymentCheckout />}
             />
 
             {/* One-Time Payment with Vault flow */}
