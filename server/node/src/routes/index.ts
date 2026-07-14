@@ -9,9 +9,11 @@ import {
   createOrderForOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentWithVaultRouteHandler,
+  createOrderForApplePayOneTimePaymentWithVaultRouteHandler,
   createOrderForOneTimePaymentWithShippingRouteHandler,
   createOrderForCardWithSingleUseTokenRouteHandler,
   createOrderForCardWithThreeDSecureRouteHandler,
+  getOrderRouteHandler,
   captureOrderRouteHandler,
 } from "./ordersRouteHandler";
 
@@ -50,6 +52,11 @@ router.post(
 );
 
 router.post(
+  "/paypal-api/checkout/orders/create-order-for-apple-pay-one-time-payment-with-vault",
+  createOrderForApplePayOneTimePaymentWithVaultRouteHandler,
+);
+
+router.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment-with-shipping",
   createOrderForOneTimePaymentWithShippingRouteHandler,
 );
@@ -63,6 +70,8 @@ router.post(
   "/paypal-api/checkout/orders/create-order-for-card-one-time-payment-with-3ds",
   createOrderForCardWithThreeDSecureRouteHandler,
 );
+
+router.get("/paypal-api/checkout/orders/:orderId", getOrderRouteHandler);
 
 router.post(
   "/paypal-api/checkout/orders/:orderId/capture",

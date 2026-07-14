@@ -42,13 +42,16 @@ async function onPayPalWebSdkLoaded() {
     if (paymentMethods.isEligible("paylater")) {
       const paylaterPaymentMethodDetails =
         paymentMethods.getDetails("paylater");
-      setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
+      configurePayLaterButton(sdkInstance, paylaterPaymentMethodDetails);
     }
 
     if (paymentMethods.isEligible("credit")) {
       const paypalCreditPaymentMethodDetails =
         paymentMethods.getDetails("credit");
-      setupPayPalCreditButton(sdkInstance, paypalCreditPaymentMethodDetails);
+      configurePayPalCreditButton(
+        sdkInstance,
+        paypalCreditPaymentMethodDetails,
+      );
     }
   } catch (error) {
     renderAlert({
@@ -114,7 +117,10 @@ async function configurePayPalButton(sdkInstance) {
   });
 }
 
-async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
+async function configurePayLaterButton(
+  sdkInstance,
+  paylaterPaymentMethodDetails,
+) {
   const paylaterPaymentSession =
     sdkInstance.createPayLaterOneTimePaymentSession(paymentSessionOptions);
 
@@ -144,7 +150,7 @@ async function setupPayLaterButton(sdkInstance, paylaterPaymentMethodDetails) {
   });
 }
 
-async function setupPayPalCreditButton(
+async function configurePayPalCreditButton(
   sdkInstance,
   paypalCreditPaymentMethodDetails,
 ) {
@@ -183,6 +189,9 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
   const { clientId } = await response.json();
 
   return clientId;
@@ -197,6 +206,9 @@ async function customFindEligibleMethods(findEligibleMethodsPayload) {
       },
       body: JSON.stringify(findEligibleMethodsPayload),
     });
+    if (!response.ok) {
+      throw new Error("Failed to find eligible methods");
+    }
     const jsonResponse = await response.json();
     console.log(jsonResponse);
     renderAlert({

@@ -1,0 +1,322 @@
+async function onPayPalWebSdkLoaded() {
+  try {
+    const clientId = await getBrowserSafeClientId();
+    const sdkInstance = await window.paypal.createInstance({
+      clientId,
+      components: ["googlepay-payments"],
+      pageType: "checkout",
+    });
+
+    const isGooglePaySDKAvailable =
+      window.google && google.payments.api.PaymentsClient;
+
+    if (!isGooglePaySDKAvailable) {
+      return renderAlert({
+        type: "warning",
+        message: "GooglePay SDK is not available",
+      });
+    }
+
+    const paymentMethods = await sdkInstance.findEligibleMethods({
+      currencyCode: "USD",
+    });
+
+    if (paymentMethods.isEligible("googlepay")) {
+      const googlePayPaymentMethodDetails =
+        paymentMethods.getDetails("googlepay");
+      configureGooglePayButton(sdkInstance, googlePayPaymentMethodDetails);
+    } else {
+      renderAlert({ type: "warning", message: "GooglePay is not eligible" });
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+function getGoogleTransactionInfo(purchaseAmount, countryCode) {
+  const totalAmount = parseFloat(purchaseAmount);
+  const subtotal = (totalAmount * 0.9).toFixed(2);
+  const tax = (totalAmount * 0.1).toFixed(2);
+
+  return {
+    displayItems: [
+      {
+        label: "Subtotal",
+        type: "SUBTOTAL",
+        price: subtotal,
+      },
+      {
+        label: "Tax",
+        type: "TAX",
+        price: tax,
+      },
+    ],
+    countryCode: countryCode,
+    currencyCode: "USD",
+    totalPriceStatus: "FINAL",
+    totalPrice: purchaseAmount,
+    totalPriceLabel: "Total",
+  };
+}
+
+async function getGooglePaymentDataRequest(purchaseAmount, googlePayConfig) {
+  const {
+    allowedPaymentMethods,
+    merchantInfo,
+    apiVersion,
+    apiVersionMinor,
+    countryCode,
+  } = googlePayConfig;
+
+  const baseRequest = {
+    apiVersion,
+    apiVersionMinor,
+  };
+  const paymentDataRequest = Object.assign({}, baseRequest);
+
+  paymentDataRequest.allowedPaymentMethods = allowedPaymentMethods;
+  paymentDataRequest.transactionInfo = getGoogleTransactionInfo(
+    purchaseAmount,
+    countryCode,
+  );
+
+  paymentDataRequest.merchantInfo = merchantInfo;
+  paymentDataRequest.callbackIntents = ["PAYMENT_AUTHORIZATION"];
+
+  return paymentDataRequest;
+}
+
+async function onPaymentAuthorized(
+  purchaseAmount,
+  paymentData,
+  googlePaySession,
+) {
+  try {
+    const id = await createOrder();
+
+    const { status } = await googlePaySession.confirmOrder({
+      orderId: id,
+      paymentMethodData: paymentData.paymentMethodData,
+    });
+
+    // When the order requires Strong Customer Authentication (e.g. 3D Secure),
+    // confirmOrder returns a status of PAYER_ACTION_REQUIRED. The 3DS modal can
+    // only open once the Google Pay payment sheet has closed, and that sheet
+    // stays open until this onPaymentAuthorized callback resolves. So we do NOT
+    // await the 3DS flow here: we kick it off with completeThreeDSecureAndCapture
+    // and immediately return SUCCESS, which closes the Google Pay sheet and lets
+    // the 3DS modal take over. Awaiting initiatePayerAction here would leave the
+    // Google Pay window open on top of (and blocking) the 3DS modal.
+    if (status === "PAYER_ACTION_REQUIRED") {
+      renderAlert({
+        type: "info",
+        message: "3D Secure authentication required...",
+      });
+      completeThreeDSecureAndCapture({ googlePaySession, orderId: id });
+      return { transactionState: "SUCCESS" };
+    }
+
+    // No additional authentication required — capture the order.
+    const orderData = await captureOrder({ orderId: id });
+    console.log(JSON.stringify(orderData, null, 2));
+
+    renderAlert({
+      type: "success",
+      message: "Completed order with GooglePay",
+    });
+
+    return { transactionState: "SUCCESS" };
+  } catch (err) {
+    console.error("Payment authorization error:", err);
+    renderAlert({
+      type: "danger",
+      message: "Payment authorization error",
+    });
+
+    return {
+      transactionState: "ERROR",
+      error: {
+        message: err.message,
+      },
+    };
+  }
+}
+
+// Runs the 3D Secure flow after the Google Pay payment sheet has closed. This is
+// invoked WITHOUT await from onPaymentAuthorized (see the note there), so it owns
+// its own error handling rather than relying on that callback's try/catch.
+async function completeThreeDSecureAndCapture({ googlePaySession, orderId }) {
+  try {
+    // Opens the 3DS authentication modal and resolves once the buyer completes
+    // it; rejects if they cancel or authentication errors.
+    await googlePaySession.initiatePayerAction({ orderId });
+
+    // The 3DS authentication result (liability_shift, and the enrollment /
+    // authentication statuses) lives on the order, not in the SDK response.
+    // This example only logs it; a production integration may use it to
+    // decide whether to capture. See PayPal's recommended action table:
+    // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/response-parameters/
+    const orderDetails = await getOrder({ orderId });
+    console.log(
+      "3DS authentication result:",
+      orderDetails?.paymentSource?.googlePay?.card?.authenticationResult,
+    );
+
+    // Always capture. A production integration may instead
+    // gate this on the authentication result above.
+    const orderData = await captureOrder({ orderId });
+    console.log(JSON.stringify(orderData, null, 2));
+
+    renderAlert({
+      type: "success",
+      message: "Completed order with GooglePay",
+    });
+  } catch (err) {
+    console.error("3D Secure authentication error:", err);
+    renderAlert({
+      type: "danger",
+      message: "3D Secure authentication error",
+    });
+  }
+}
+
+async function onGooglePayButtonClick(
+  purchaseAmount,
+  paymentsClient,
+  googlePayConfig,
+) {
+  try {
+    const paymentDataRequest = await getGooglePaymentDataRequest(
+      purchaseAmount,
+      googlePayConfig,
+    );
+
+    await paymentsClient.loadPaymentData(paymentDataRequest);
+  } catch (error) {
+    console.error(error);
+    renderAlert({
+      type: "danger",
+      message: "GooglePay failed to load payment data",
+    });
+  }
+}
+
+async function configureGooglePayButton(
+  sdkInstance,
+  googlePayPaymentMethodDetails,
+) {
+  const googlePaySession = sdkInstance.createGooglePayOneTimePaymentSession();
+  const purchaseAmount = "10.00";
+
+  try {
+    const paymentsClient = new google.payments.api.PaymentsClient({
+      environment: "TEST", // Change to "PRODUCTION" for live transactions
+      paymentDataCallbacks: {
+        onPaymentAuthorized: (paymentData) =>
+          onPaymentAuthorized(purchaseAmount, paymentData, googlePaySession),
+      },
+    });
+
+    const googlePayConfig = googlePaySession.formatConfigForPaymentRequest(
+      googlePayPaymentMethodDetails.config,
+    );
+
+    const isReadyToPay = await paymentsClient.isReadyToPay({
+      allowedPaymentMethods: googlePayConfig.allowedPaymentMethods,
+      apiVersion: googlePayConfig.apiVersion,
+      apiVersionMinor: googlePayConfig.apiVersionMinor,
+    });
+
+    if (isReadyToPay.result) {
+      const button = paymentsClient.createButton({
+        onClick: () =>
+          onGooglePayButtonClick(
+            purchaseAmount,
+            paymentsClient,
+            googlePayConfig,
+          ),
+      });
+
+      document.getElementById("googlepay-button-container").appendChild(button);
+    }
+  } catch (error) {
+    console.error("Setup error:", error);
+    renderAlert({ type: "danger", message: "GooglePay setup error" });
+  }
+}
+
+async function getBrowserSafeClientId() {
+  const response = await fetch("/paypal-api/auth/browser-safe-client-id", {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
+  const { clientId } = await response.json();
+
+  return clientId;
+}
+
+async function createOrder() {
+  const response = await fetch(
+    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to create order");
+  }
+  const { id } = await response.json();
+
+  return id;
+}
+
+async function getOrder({ orderId }) {
+  const response = await fetch(`/paypal-api/checkout/orders/${orderId}`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch order");
+  }
+  const data = await response.json();
+
+  return data;
+}
+
+async function captureOrder({ orderId }) {
+  const response = await fetch(
+    `/paypal-api/checkout/orders/${orderId}/capture`,
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    },
+  );
+  if (!response.ok) {
+    throw new Error("Failed to capture order");
+  }
+  const data = await response.json();
+
+  return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
+}

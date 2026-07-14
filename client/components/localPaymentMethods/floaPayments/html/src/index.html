@@ -1,0 +1,114 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Floa - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #floa-full-name {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      .custom-field {
+        max-width: 400px;
+        display: flex;
+        flex-direction: column;
+        gap: 4px;
+      }
+
+      .field-label {
+        font-family: Verdana, sans-serif;
+        font-size: 14px;
+        color: #333333;
+        font-weight: 500;
+      }
+
+      .field-input {
+        width: 100%;
+        height: 48px;
+        border: 1px solid #d1d5db;
+        border-radius: 4px;
+        padding: 0 12px;
+        font-family: Verdana, sans-serif;
+        font-size: 14px;
+        box-sizing: border-box;
+      }
+
+      .field-input:focus {
+        outline: none;
+        border-color: #0070ba;
+      }
+
+      floa-button {
+        max-width: 225px;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+        max-width: 700px;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .message.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Floa One-Time Payment Integration</h1>
+
+    <div class="payment-container">
+      <div id="floa-full-name"></div>
+      <div id="floa-extra-fields" hidden>
+        <div class="custom-field">
+          <label class="field-label" for="date-of-birth">Date of Birth:</label>
+          <input type="date" id="date-of-birth" class="field-input" />
+        </div>
+        <div class="custom-field" style="margin-top: 8px">
+          <label class="field-label" for="number-of-installments"
+            >Number of Installments:</label
+          >
+          <input
+            type="number"
+            id="number-of-installments"
+            class="field-input"
+            min="1"
+            placeholder="e.g. 3"
+          />
+        </div>
+      </div>
+      <floa-button id="floa-button" hidden></floa-button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>

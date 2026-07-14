@@ -25,7 +25,9 @@
       <div class="card-field" id="paypal-card-fields-cvv"></div>
       <div class="card-field" id="paypal-card-fields-expiry"></div>
     </div>
-    <button id="pay-button" class="pay-button">Pay</button>
+    <button id="pay-button" class="pay-button" hidden>Pay</button>
+    <alert-component></alert-component>
+
     <script src="app.js"></script>
 
     <script
@@ -33,5 +35,7 @@
       src="https://www.sandbox.paypal.com/web-sdk/v6/core"
       onload="onPayPalWebSdkLoaded()"
     ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
   </body>
 </html>

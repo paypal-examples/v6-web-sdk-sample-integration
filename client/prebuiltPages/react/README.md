@@ -1,10 +1,10 @@
 # PayPal Multi-Flow React Sample Integration
 
 > **SDK Version**: PayPal JS SDK v6
-> **Framework**: React 19.2.4 + TypeScript
-> **Frontend Package**: @paypal/react-paypal-js v9.0.1
+> **Framework**: React 19.2.5 + TypeScript
+> **Frontend Package**: @paypal/react-paypal-js v10.1.0
 > **Backend Package**: @paypal/paypal-server-sdk v2.1.0
-> **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card, Subscriptions, Save, Credit
+> **Payment Methods**: PayPal, Venmo, Pay Later, Guest Card, Subscriptions, Save, Credit, Apple Pay, Google Pay
 > **Demo**: Multi-page checkout flows with routing
 
 This React sample application demonstrates how to integrate different PayPal payment flows using PayPal's React component library, `react-paypal-js`.
@@ -29,18 +29,20 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 - **PayPal Subscriptions** - Recurring billing subscriptions
 - **PayPal Save** - Vault payment methods without purchase
 - **PayPal Credit** - PayPal Credit one-time and save payments
+- **Apple Pay** - Native Apple Pay one-time payment flow in Safari
+- **Google Pay** - Native Google Pay one-time payment flow in Chrome and other modern browsers
 
 ## Technology Stack
 
 | Technology                | Version | Purpose                                            |
 | ------------------------- | ------- | -------------------------------------------------- |
-| React                     | 19.2.4  | UI framework                                       |
+| React                     | 19.2.5  | UI framework                                       |
 | Vite                      | 7.3.1   | Development server and bundler                     |
 | TypeScript                | 5.9.3   | Type safety                                        |
 | React Router DOM          | 7.13.0  | Client-side routing                                |
-| @paypal/react-paypal-js   | 9.0.1   | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/react-paypal-js   | 10.1.0  | React hooks and Context provider for PayPal V6 SDK |
 | @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
-| react-error-boundary      | 6.1.0   | Error boundary component for React                 |
+| react-error-boundary      | 6.1.1   | Error boundary component for React                 |
 
 ## Prerequisites
 
@@ -85,6 +87,12 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 | `/one-time-payment/card-fields`          | Card Fields One-Time Payment product page        |
 | `/one-time-payment/card-fields/cart`     | Card Fields One-Time Payment cart page           |
 | `/one-time-payment/card-fields/checkout` | Card Fields One-Time Payment checkout            |
+| `/one-time-payment/apple-pay`            | Apple Pay one-time payment product page          |
+| `/one-time-payment/apple-pay/cart`       | Apple Pay one-time payment cart page             |
+| `/one-time-payment/apple-pay/checkout`   | Apple Pay one-time payment checkout              |
+| `/one-time-payment/google-pay`           | Google Pay one-time payment product page         |
+| `/one-time-payment/google-pay/cart`      | Google Pay one-time payment cart page            |
+| `/one-time-payment/google-pay/checkout`  | Google Pay one-time payment checkout             |
 | `/save-payment`                          | Save Payment (Vault only) payment method page    |
 | `/save-payment/card-fields`              | Card Fields Save Payment method page             |
 | `/subscription`                          | Subscription product page                        |
@@ -143,6 +151,8 @@ react/
 │   ├── paymentFlowCheckoutPages/       # Payment flow wrapper components
 │   │   ├── OneTimePaymentCheckout.tsx  # One-Time Payment checkout wrapper
 │   │   ├── CardFieldsOneTimePaymentCheckout.tsx # Card Fields One-Time Payment wrapper
+│   │   ├── ApplePayOneTimePaymentCheckout.tsx # Apple Pay one-time payment wrapper
+│   │   ├── GooglePayOneTimePaymentCheckout.tsx # Google Pay one-time payment wrapper
 │   │   ├── VaultWithPurchaseCheckout.tsx # Vault with Purchase checkout wrapper
 │   │   └── SubscriptionCheckout.tsx    # Subscription checkout wrapper
 │   ├── paypalMessages/                 # PayPal Messages feature
@@ -183,6 +193,7 @@ react/
     "paypal-subscriptions",
     "card-fields",
     "paypal-messages",
+    "applepay-payments",
   ]}
   pageType="checkout"
 >
@@ -198,6 +209,35 @@ The `components` prop specifies which payment methods and features to load:
 - `paypal-subscriptions` - Subscription buttons
 - `card-fields` - Card Fields (advanced card payment UI)
 - `paypal-messages` - PayPal Messages promotional component
+- `applepay-payments` - Apple Pay button and one-time payment session support
+- `googlepay-payments` - Google Pay button and one-time payment session support
+
+### Apple Pay Requirements
+
+The Apple Pay demo requires:
+
+1. Safari on a supported Apple device
+2. HTTPS origin (Apple Pay is blocked on insecure origins)
+3. Apple Pay merchant/domain setup for the testing domain
+4. Apple Pay JS loaded in `index.html`
+
+```html
+<script
+  crossorigin
+  src="https://applepay.cdn-apple.com/jsapi/1.latest/apple-pay-sdk.js"
+></script>
+```
+
+### Google Pay Requirements
+
+The Google Pay demo requires:
+
+1. Chrome or another modern browser that supports the Google Pay API
+2. Google Pay JS loaded in `index.html` (must execute before the React bundle so `window.google.payments.api` is available when `useGooglePayOneTimePaymentSession` mounts)
+
+```html
+<script defer src="https://pay.google.com/gp/p/js/pay.js"></script>
+```
 
 ### 2. Eligibility
 
@@ -303,6 +343,8 @@ Each payment button uses a specialized hook to create a payment session:
 | `usePayPalOneTimePaymentSession`       | PayPal              |
 | `useVenmoOneTimePaymentSession`        | Venmo               |
 | `usePayLaterOneTimePaymentSession`     | Pay Later           |
+| `useApplePayOneTimePaymentSession`     | Apple Pay           |
+| `useGooglePayOneTimePaymentSession`    | Google Pay          |
 | `usePayPalGuestPaymentSession`         | Basic Card          |
 | `usePayPalSubscriptionPaymentSession`  | Subscriptions       |
 | `usePayPalSavePaymentSession`          | Save Payment Method |
@@ -406,6 +448,24 @@ const CardFieldsPayment = () => {
 5. `submitResponse` object gets updated with the payment result
 6. Handle submit response based on payment result
 
+### 4.2 Payment Flow - Apple Pay
+
+1. Check availability (`ApplePaySession.canMakePayments()`) and HTTPS
+2. Fetch eligibility/config with `useEligibleMethods` for `ONE_TIME_PAYMENT`
+3. Render `ApplePayOneTimePaymentButton` with `applePayConfig`
+4. During Apple Pay authorization, `createOrder` runs
+5. `validateMerchant` and `confirmOrder` are handled by `useApplePayOneTimePaymentSession` internally
+6. In `onApprove`, capture with `data.approveApplePayPayment.id`
+
+### 4.3 Payment Flow - Google Pay
+
+1. Fetch eligibility/config with `useEligibleMethods` for `ONE_TIME_PAYMENT`
+2. Read the raw config via `eligiblePaymentMethods.getDetails("googlepay").config` (the React component formats it internally)
+3. Render `GooglePayOneTimePaymentButton` with `googlePayConfig` and a `transactionInfo` payload
+4. On button click, `createOrder` runs to create the PayPal order
+5. The Google Pay payment sheet opens; on authorization, `useGooglePayOneTimePaymentSession` confirms the order with PayPal
+6. In `onApprove`, capture with `data.id` (unless `status === "PAYER_ACTION_REQUIRED"`, which signals 3DS)
+
 ## Backend Server
 
 The Node.js backend handles sensitive PayPal API interactions.
@@ -445,6 +505,8 @@ The Node.js backend handles sensitive PayPal API interactions.
 ## Resources
 
 - [PayPal JS SDK V6 Documentation](https://docs.paypal.ai/payments/methods/paypal/sdk/js/v6/paypal-checkout)
+- [PayPal JS SDK V6 Apple Pay Documentation](https://docs.paypal.ai/payments/methods/digital-wallets/apple-pay)
+- [PayPal JS SDK V6 Google Pay Documentation](https://docs.paypal.ai/payments/methods/digital-wallets/google-pay)
 - [@paypal/react-paypal-js on npm](https://www.npmjs.com/package/@paypal/react-paypal-js)
 - [@paypal/paypal-server-sdk on GitHub](https://github.com/paypal/PayPal-TypeScript-Server-SDK)
 - [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/)
@@ -521,7 +583,7 @@ import { INSTANCE_LOADING_STATE } from "@paypal/react-paypal-js/sdk-v6";
 
 | Package                   | Version | Purpose                                            |
 | ------------------------- | ------- | -------------------------------------------------- |
-| @paypal/react-paypal-js   | 9.0.1   | React hooks and Context provider for PayPal V6 SDK |
+| @paypal/react-paypal-js   | 10.1.0  | React hooks and Context provider for PayPal V6 SDK |
 | @paypal/paypal-server-sdk | 2.1.0   | Server-side PayPal API calls                       |
 | react-router-dom          | 7.13.0  | Client-side routing                                |
-| react-error-boundary      | 6.1.0   | Error boundary wrapper for error handling          |
+| react-error-boundary      | 6.1.1   | Error boundary wrapper for error handling          |

@@ -10,14 +10,18 @@ async function onPayPalWebSdkLoaded() {
 
     const isCardFieldsEligible = paymentMethods.isEligible("advanced_cards");
     if (isCardFieldsEligible) {
-      await setupCardFields(sdkInstance);
+      configureCardFields(sdkInstance);
     }
-  } catch (err) {
-    console.error("SDK init failed", err);
+  } catch (error) {
+    renderAlert({
+      type: "danger",
+      message: "Failed to initialize the PayPal Web SDK",
+    });
+    console.error(error);
   }
 }
 
-async function setupCardFields(sdkInstance) {
+function configureCardFields(sdkInstance) {
   const cardFieldsInstance =
     sdkInstance.createCardFieldsOneTimePaymentSession();
 
@@ -41,12 +45,13 @@ async function setupCardFields(sdkInstance) {
   document.querySelector("#paypal-card-fields-expiry").appendChild(expiryField);
 
   const payButton = document.querySelector("#pay-button");
+  payButton.removeAttribute("hidden");
   payButton.addEventListener("click", () => onPayClick(cardFieldsInstance));
 }
 
 async function onPayClick(cardFieldsInstance) {
   try {
-    const orderId = await createOrder(); // returns a string id
+    const { orderId } = await createOrder();
 
     const { data, state } = await cardFieldsInstance.submit(orderId, {
       billingAddress: {
@@ -56,25 +61,32 @@ async function onPayClick(cardFieldsInstance) {
 
     switch (state) {
       case "succeeded": {
-        const { orderId, ...liabilityShift } = data;
-        // 3DS may or may not have occurred; Use liabilityShift
-        // to determine if the payment should be captured
-
         const orderData = await captureOrder({
-          orderId: data.orderId,
+          orderId,
         });
-        // TODO: show success UI, redirect, etc.
+
+        renderAlert({
+          type: "success",
+          message: "Order successfully captured!",
+        });
+        console.log("Capture result", orderData);
         break;
       }
       case "canceled": {
         // Buyer dismissed 3DS modal or canceled the flow
-        // TODO: show non-blocking message & allow retry
+        renderAlert({
+          type: "warning",
+          message: "Payment canceled.",
+        });
         break;
       }
       case "failed": {
         // Validation or processing failure. data.message may be present
         console.error("Card submission failed", data);
-        // TODO: surface error to buyer, allow retry
+        renderAlert({
+          type: "danger",
+          message: `Validation or processing failure: ${data.message ?? ""}`,
+        });
         break;
       }
       default: {
@@ -82,9 +94,11 @@ async function onPayClick(cardFieldsInstance) {
         console.warn("Unhandled submit state", state, data);
       }
     }
-  } catch (err) {
-    console.error("Payment flow error", err);
-    // TODO: Show generic error and allow retry
+  } catch (error) {
+    renderAlert({
+      type: "danger",
+      message: `Payment flow error: ${error.message}`,
+    });
   }
 }
 
@@ -95,6 +109,9 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
   const { clientId } = await response.json();
 
   return clientId;
@@ -110,9 +127,12 @@ async function createOrder() {
       },
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to create order");
+  }
   const { id } = await response.json();
 
-  return id; // return the string orderId
+  return { orderId: id };
 }
 
 async function captureOrder({ orderId }) {
@@ -125,7 +145,20 @@ async function captureOrder({ orderId }) {
       },
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to capture order");
+  }
   const data = await response.json();
 
   return data;
+}
+
+function renderAlert({ type, message }) {
+  const alertComponentElement = document.querySelector("alert-component");
+  if (!alertComponentElement) {
+    return;
+  }
+
+  alertComponentElement.setAttribute("type", type);
+  alertComponentElement.innerText = message;
 }

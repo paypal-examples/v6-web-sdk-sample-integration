@@ -75,6 +75,9 @@ async function getBrowserSafeClientToken() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client token");
+  }
   const { accessToken } = await response.json();
 
   return accessToken;
@@ -90,6 +93,9 @@ async function createVaultSetupToken() {
       },
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to create vault setup token");
+  }
   const { id } = await response.json();
   renderAlert({
     type: "info",
@@ -107,6 +113,9 @@ async function createPaymentToken(vaultSetupToken) {
     },
     body: JSON.stringify({ vaultSetupToken }),
   });
+  if (!response.ok) {
+    throw new Error("Failed to create payment token");
+  }
   const data = await response.json();
 
   return data;

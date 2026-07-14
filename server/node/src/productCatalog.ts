@@ -29,10 +29,12 @@ export const PRODUCT_CATALOG: Record<string, Product> = {
 };
 
 export function getProduct(sku: string): Product {
-  if (!PRODUCT_CATALOG[sku]) {
+  const product = PRODUCT_CATALOG[sku];
+
+  if (!product) {
     throw new Error(`Product with SKU ${sku} not found`);
   }
-  return PRODUCT_CATALOG[sku];
+  return product;
 }
 
 export function getAllProducts(): Product[] {
