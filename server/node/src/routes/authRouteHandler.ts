@@ -66,3 +66,172 @@ export function clientIdRouteHandler(_request: Request, response: Response) {
   }
   response.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
 }
+
+/*
+ * Maps LPM registry key (camelCase) to its environment variable name.
+ * Each APM can have a dedicated sandbox application with its own credentials.
+ * Falls back to the default PAYPAL_SANDBOX_CLIENT_ID when no LPM-specific credential is set.
+ */
+const LPM_ENV_MAP: Record<string, { clientId: string; clientSecret: string }> = {
+  mbway: {
+    clientId: "MBWAY_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "MBWAY_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  twint: {
+    clientId: "TWINT_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "TWINT_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  bizum: {
+    clientId: "BIZUM_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "BIZUM_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  oxxopay: {
+    clientId: "OXXOPAY_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "OXXOPAY_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  boletobancario: {
+    clientId: "BOLETO_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "BOLETO_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  swish: {
+    clientId: "SWISH_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "SWISH_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  payu: {
+    clientId: "PAYU_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "PAYU_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  verkkopankki: {
+    clientId: "VERKKOPANKKI_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "VERKKOPANKKI_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  alfamart: {
+    clientId: "ALFAMART_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "ALFAMART_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  wero: {
+    clientId: "WERO_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "WERO_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  doku: {
+    clientId: "DOKU_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "DOKU_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  indomaret: {
+    clientId: "INDOMARET_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "INDOMARET_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  indonesiaBanks: {
+    clientId: "INDONESIA_BANKS_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "INDONESIA_BANKS_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  jeniuspay: {
+    clientId: "JENIUSPAY_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "JENIUSPAY_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  kredivo: {
+    clientId: "KREDIVO_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "KREDIVO_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  linkaja: {
+    clientId: "LINKAJA_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "LINKAJA_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  ovo: {
+    clientId: "OVO_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "OVO_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  paysafecard: {
+    clientId: "PAYSAFECARD_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "PAYSAFECARD_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  skrill: {
+    clientId: "SKRILL_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "SKRILL_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  thailandBanks: {
+    clientId: "THAILAND_BANKS_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "THAILAND_BANKS_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  blik: {
+    clientId: "BLIK_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "BLIK_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  dragonpay: {
+    clientId: "DRAGONPAY_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "DRAGONPAY_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  scalapay: {
+    clientId: "SCALAPAY_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "SCALAPAY_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  estonia: {
+    clientId: "ESTONIA_BANKS_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "ESTONIA_BANKS_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  floa: {
+    clientId: "FLOA_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "FLOA_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  gopay: {
+    clientId: "GOPAY_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "GOPAY_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  latviaBanks: {
+    clientId: "LATVIA_BANKS_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "LATVIA_BANKS_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  lithuaniaBanks: {
+    clientId: "LITHUANIA_BANKS_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "LITHUANIA_BANKS_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  paysera: {
+    clientId: "PAYSERA_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "PAYSERA_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+  pixInternational: {
+    clientId: "PIX_INTERNATIONAL_PAYPAL_SANDBOX_CLIENT_ID",
+    clientSecret: "PIX_INTERNATIONAL_PAYPAL_SANDBOX_CLIENT_SECRET",
+  },
+};
+
+/*
+ * Returns the PayPal credentials for a specific LPM (Local Payment Method).
+ * Each LPM can have a dedicated sandbox application credential configured via
+ * per-LPM environment variables (e.g. MBWAY_PAYPAL_SANDBOX_CLIENT_ID/SECRET).
+ * Falls back to the default PAYPAL_SANDBOX_CLIENT_ID/SECRET when not configured.
+ */
+export function lpmClientIdRouteHandler(request: Request, response: Response) {
+  const lpmName = String(request.params.lpmName ?? "").trim() || undefined;
+
+  if (!lpmName) {
+    response.status(400).json({ error: "LPM name is required" });
+    return;
+  }
+
+  const environmentMap = Object.prototype.hasOwnProperty.call(
+    LPM_ENV_MAP,
+    lpmName,
+  )
+    ? LPM_ENV_MAP[lpmName]
+    : undefined;
+
+  const lpmClientId = environmentMap
+    ? process.env[environmentMap.clientId]
+    : undefined;
+  const lpmClientSecret = environmentMap
+    ? process.env[environmentMap.clientSecret]
+    : undefined;
+
+  const clientId = lpmClientId || process.env.PAYPAL_SANDBOX_CLIENT_ID;
+  const clientSecret =
+    lpmClientSecret || process.env.PAYPAL_SANDBOX_CLIENT_SECRET;
+
+  if (!clientId || !clientSecret) {
+    throw new Error(
+      "PAYPAL_SANDBOX_CLIENT_ID and PAYPAL_SANDBOX_CLIENT_SECRET environment variables are not defined",
+    );
+  }
+
+  response.status(200).json({ clientId, clientSecret });
+}

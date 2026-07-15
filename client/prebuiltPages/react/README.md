@@ -31,6 +31,7 @@ Browse all available examples at the [Examples Index](https://v6-web-sdk-sample-
 - **PayPal Credit** - PayPal Credit one-time and save payments
 - **Apple Pay** - Native Apple Pay one-time payment flow in Safari
 - **Google Pay** - Native Google Pay one-time payment flow in Chrome and other modern browsers
+- **Local Payment Methods (LPM)** - ~50 region-specific methods (iDEAL, Bancontact, BLIK, Trustly, Klarna, etc.) via a single registry-driven generic checkout page, plus an advanced iDEAL hook + standalone-button example
 
 ## Technology Stack
 
@@ -104,6 +105,9 @@ The Vite dev server proxies `/paypal-api` requests to the backend server on port
 | `/vault-with-purchase/checkout`          | Vault with Purchase checkout page                |
 | `/vault-with-purchase/error`             | Vault with Purchase error boundary demo          |
 | `/paypal-messages`                       | PayPal Messages promotional component demo       |
+| `/local-payment-methods`                 | Local Payment Methods (LPM) landing/list page    |
+| `/local-payment-methods/ideal-hook`      | iDEAL advanced hook + standalone button example  |
+| `/local-payment-methods/:lpm`            | Generic one-time-payment checkout for any LPM    |
 | `/error-boundary-test`                   | Standalone error handling demonstration          |
 
 ## Project Structure
@@ -465,6 +469,64 @@ const CardFieldsPayment = () => {
 4. On button click, `createOrder` runs to create the PayPal order
 5. The Google Pay payment sheet opens; on authorization, `useGooglePayOneTimePaymentSession` confirms the order with PayPal
 6. In `onApprove`, capture with `data.id` (unless `status === "PAYER_ACTION_REQUIRED"`, which signals 3DS)
+
+## Local Payment Methods (LPM)
+
+The LPM demo mirrors the vanilla-JS examples in
+`client/components/localPaymentMethods/`, using the React wrapper's LPM API.
+Unlike the other flows, all ~50 methods are served by a single **registry-driven**
+page rather than one file per method.
+
+**Key files:**
+
+| File                                                         | Purpose                                                                                                                                                        |
+| ------------------------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `src/constants/lpm.ts`                                       | Maps each `LPM_REGISTRY` key to its demo `currency` + eligibility key (sourced from the vanilla `localPaymentMethods/README.md`), producing `LPM_DEMO_ENTRIES` |
+| `src/constants/lpmSamples.ts`                                | Sample session-field values (phone/billing/tax/etc.) required by certain LPMs                                                                                  |
+| `src/pages/LocalPaymentMethods.tsx`                          | Landing table listing every supported method                                                                                                                   |
+| `src/paymentFlowCheckoutPages/LPMOneTimePaymentCheckout.tsx` | Generic checkout page — recommended all-in-one button pattern                                                                                                  |
+| `src/paymentFlowCheckoutPages/IdealHookCheckout.tsx`         | Advanced hook + standalone `IdealPaymentButton` pattern                                                                                                        |
+
+**How it works:**
+
+1. The generic page reads the `:lpm` route param and looks up its config.
+2. It mounts a **dedicated** `PayPalProvider` imported from
+   `@paypal/react-paypal-js/sdk-v6/local-payment-methods` — the LPM subpath ships
+   its own React context bundle, so it **must not** reuse the app-wide provider in
+   `App.tsx` (doing so throws "must be used within a PayPalProvider").
+3. The provider loads only that method's SDK component (e.g. `ideal-payments`)
+   with the method's `testBuyerCountry`.
+4. It renders the all-in-one `<XxxOneTimePaymentButton>`, which draws the required
+   fields (name, email…) and the button. `createOrder` posts to the one-time-payment
+   endpoint with the method's `currencyCode` and
+   `processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL"`; `onApprove`
+   captures the order.
+5. The iDEAL hook example demonstrates the advanced pattern: destructure
+   `NameField`, `handleClick`, `isPending`, `error` from
+   `useIdealOneTimePaymentSession` and place the field and standalone
+   `<IdealPaymentButton>` anywhere in the layout.
+
+> **⚠️ Temporary dependency step (unpublished package).**
+> The LPM React API is not yet published to npm (it ships in `@paypal/react-paypal-js`
+> **10.1.1**, tracked in [paypal-js#926](https://github.com/paypal/paypal-js/pull/926)).
+> Until it is released, consume it locally via `npm link`:
+>
+> ```bash
+> # 1. Build & register the local package (in the paypal-js checkout)
+> cd paypal-js/packages/react-paypal-js
+> npm run build && npm link
+>
+> # 2. Link it into this demo
+> cd client/prebuiltPages/react
+> npm link @paypal/react-paypal-js
+> ```
+>
+> The linked monorepo ships its own `@types/react@17`, which conflicts with this
+> demo's React 19 types under `tsc`. Two compensations are already in place:
+> `vite.config.ts` adds `resolve.dedupe: ["react", "react-dom"]` (runtime) and
+> `tsconfig.json` adds `paths` forcing `react`/`react-dom` to this package's
+> `@types` (compile time). **Once 10.1.1 is published, bump the dependency in
+> `package.json`, run `npm install`, and remove the `paths` block and this note.**
 
 ## Backend Server
 

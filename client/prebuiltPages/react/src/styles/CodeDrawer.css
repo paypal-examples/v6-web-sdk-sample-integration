@@ -1,0 +1,175 @@
+/* ─── Overlay ────────────────────────────────────────────────────────────── */
+.code-drawer-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 500;
+  animation: cdOverlayIn 0.2s ease;
+}
+
+@keyframes cdOverlayIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ─── Panel ──────────────────────────────────────────────────────────────── */
+.code-drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: min(720px, 100vw);
+  background: #1e1e2e;
+  display: flex;
+  flex-direction: column;
+  z-index: 501;
+  box-shadow: -6px 0 32px rgba(0, 0, 0, 0.5);
+  animation: cdSlideIn 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+  overflow: hidden;
+}
+
+@keyframes cdSlideIn {
+  from {
+    transform: translateX(100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+/* ─── Header ─────────────────────────────────────────────────────────────── */
+.code-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 20px;
+  background: #181825;
+  border-bottom: 1px solid #313244;
+  flex-shrink: 0;
+  gap: 12px;
+}
+
+.code-drawer-title {
+  color: #cdd6f4;
+  font-size: 0.9rem;
+  font-weight: 600;
+  margin: 0;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.code-drawer-close {
+  background: none;
+  border: none;
+  color: #a6adc8;
+  font-size: 1.35rem;
+  cursor: pointer;
+  padding: 4px 8px;
+  border-radius: 4px;
+  line-height: 1;
+  flex-shrink: 0;
+  transition:
+    color 0.15s,
+    background 0.15s;
+}
+
+.code-drawer-close:hover {
+  color: #cdd6f4;
+  background: #313244;
+}
+
+/* ─── Tabs ───────────────────────────────────────────────────────────────── */
+.code-drawer-tabs {
+  display: flex;
+  background: #181825;
+  border-bottom: 1px solid #313244;
+  flex-shrink: 0;
+  overflow-x: auto;
+}
+
+.code-drawer-tab {
+  padding: 10px 18px;
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  color: #a6adc8;
+  cursor: pointer;
+  font-size: 0.82rem;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  white-space: nowrap;
+  transition: color 0.15s;
+}
+
+.code-drawer-tab:hover {
+  color: #cdd6f4;
+}
+
+.code-drawer-tab.active {
+  color: #89b4fa;
+  border-bottom-color: #89b4fa;
+}
+
+/* ─── Code body ──────────────────────────────────────────────────────────── */
+.code-drawer-body {
+  flex: 1;
+  overflow: auto;
+  position: relative;
+  background: #1e1e2e;
+}
+
+.code-drawer-copy {
+  position: sticky;
+  top: 12px;
+  float: right;
+  margin: 12px 12px 0 0;
+  background: #313244;
+  border: 1px solid #45475a;
+  color: #cdd6f4;
+  padding: 5px 12px;
+  border-radius: 6px;
+  font-size: 0.75rem;
+  cursor: pointer;
+  font-family:
+    system-ui,
+    -apple-system,
+    sans-serif;
+  transition: background 0.15s;
+  z-index: 1;
+}
+
+.code-drawer-copy:hover {
+  background: #45475a;
+}
+
+.code-drawer-copy.copied {
+  color: #a6e3a1;
+  border-color: #a6e3a1;
+}
+
+.code-drawer-code {
+  display: block;
+  clear: both;
+  margin: 0;
+  padding: 16px 20px 32px;
+  font-family:
+    "Fira Code", "Cascadia Code", "Source Code Pro", ui-monospace, monospace;
+  font-size: 0.8rem;
+  line-height: 1.65;
+  color: #cdd6f4;
+  background: transparent;
+  white-space: pre;
+  overflow-x: auto;
+  tab-size: 4;
+}

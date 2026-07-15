@@ -14,6 +14,18 @@
     "noEmit": true,
     "jsx": "react-jsx",
 
+    /* Force a single React type source. Required because @paypal/react-paypal-js
+     * is consumed via `npm link` from the sibling paypal-js monorepo, which ships
+     * its own @types/react@17. Without these paths, tsc resolves the linked
+     * package's `.d.ts` against React 17's global JSX and drops the SDK web
+     * component augmentations (e.g. <paypal-message>). */
+    "ignoreDeprecations": "6.0",
+    "baseUrl": ".",
+    "paths": {
+      "react": ["./node_modules/@types/react"],
+      "react-dom": ["./node_modules/@types/react-dom"]
+    },
+
     /* Linting */
     "strict": true,
     "noUnusedLocals": true,
