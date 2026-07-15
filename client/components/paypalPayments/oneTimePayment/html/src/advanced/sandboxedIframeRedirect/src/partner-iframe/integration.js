@@ -168,7 +168,7 @@ async function createRedirectOrder() {
   const merchantReturnUrl = getReturnToUrl();
 
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
+    "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect-rest",
     {
       method: "POST",
       headers: {
