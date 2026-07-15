@@ -16,7 +16,6 @@ import {
   getOrderRouteHandler,
   captureOrderRouteHandler,
 } from "./ordersRouteHandler";
-import { createOrderForPayPalOneTimePaymentWithRedirectRestRouteHandler } from "./createOrderForPayPalOneTimePaymentWithRedirectRestRouteHandler";
 
 import {
   createSetupTokenForPayPalSavePaymentRouteHandler,
@@ -45,11 +44,6 @@ router.post(
 router.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect",
   createOrderForPayPalOneTimePaymentRouteHandler,
-);
-
-router.post(
-  "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-redirect-rest",
-  createOrderForPayPalOneTimePaymentWithRedirectRestRouteHandler,
 );
 
 router.post(
