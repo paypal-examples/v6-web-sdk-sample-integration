@@ -1,0 +1,91 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Partner Redirect Iframe Example</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>"
+    />
+
+    <style>
+      :root {
+        --theme-color-text: #0a1b0f;
+        --theme-color-background: #f7fcf9;
+        --theme-color-primary: #334037;
+        --theme-color-secondary: #93e3ab;
+        --theme-color-accent: #62dc87;
+      }
+
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        color: var(--theme-color-text);
+      }
+
+      #stateDebug {
+        padding: 5px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background: var(--theme-color-secondary);
+        z-index: 100;
+      }
+
+      #mainContainer {
+        padding: 10px;
+      }
+
+      #iframeWrapper {
+        border: none;
+        width: 100%;
+        height: 300px;
+      }
+
+      .stateValue {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <script async src="/app.js" onload="onLoad()"></script>
+
+    <div id="mainContainer">
+      <h1>Partner Redirect Iframe Example</h1>
+
+      <p>
+        The parent page is an example merchant page. Within the merchant page,
+        an iframe uses the PayPal web SDK with the
+        <code>redirect</code> presentation mode. Because the iframe is sandboxed
+        and cross-origin, it cannot navigate the top-level page on its own, so
+        it hands the redirect URL to this merchant page via
+        <code>postMessage</code> and this page performs the full-page navigation
+        on the iframe's behalf.
+      </p>
+
+      <div id="stateDebug">
+        <div>Merchant Page State</div>
+        <ul>
+          <li>
+            <span>merchant page domain:</span>
+            <span id="merchantDomain" class="stateValue"></span>
+          </li>
+          <li>
+            <span>last message from iframe: </span>
+            <span id="postMessageStatus" class="stateValue"
+              >No messages 😴</span
+            >
+          </li>
+        </ul>
+      </div>
+
+      <iframe
+        id="iframeWrapper"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"
+        allow="payment"
+      ></iframe>
+    </div>
+  </body>
+</html>

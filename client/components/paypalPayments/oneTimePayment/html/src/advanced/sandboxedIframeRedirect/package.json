@@ -1,0 +1,20 @@
+{
+  "name": "v6-web-sdk-sample-html-iframe-redirect",
+  "version": "1.0.0",
+  "description": "In this example, we serve a merchant page with an embedded iframe on a different domain. The iframe uses the `redirect` presentation mode, which requires the merchant (parent) page to perform the full-page navigation on the iframe's behalf via `postMessage`.",
+  "scripts": {
+    "merchant-page": "vite --config vite-merchant-example.config.js",
+    "partner-iframe": "vite --config vite-partner-iframe.config.js",
+    "start": "concurrently \"npm run merchant-page\" \"npm run partner-iframe\"",
+    "format": "prettier . --write",
+    "format:check": "prettier . --check"
+  },
+  "license": "Apache-2.0",
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },
+  "dependencies": {
+    "concurrently": "^9.1.2",
+    "vite": "^7.0.4"
+  }
+}
