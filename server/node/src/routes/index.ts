@@ -15,6 +15,7 @@ import {
   createOrderForCardWithThreeDSecureRouteHandler,
   getOrderRouteHandler,
   captureOrderRouteHandler,
+  captureAchWalletOrderRouteHandler,
 } from "./ordersRouteHandler";
 
 import {
@@ -76,6 +77,11 @@ router.get("/paypal-api/checkout/orders/:orderId", getOrderRouteHandler);
 router.post(
   "/paypal-api/checkout/orders/:orderId/capture",
   captureOrderRouteHandler,
+);
+
+router.post(
+  "/paypal-api/checkout/orders/:orderId/capture-ach-wallet",
+  captureAchWalletOrderRouteHandler,
 );
 
 router.post(
