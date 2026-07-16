@@ -262,7 +262,7 @@ async function getBrowserSafeClientId() {
 
 async function createOrder() {
   const response = await fetch(
-    "/paypal-api/checkout/orders/create-order-for-one-time-payment",
+    "/paypal-api/checkout/orders/create-order-for-googlepay-one-time-payment-with-3ds",
     {
       method: "POST",
       headers: {
