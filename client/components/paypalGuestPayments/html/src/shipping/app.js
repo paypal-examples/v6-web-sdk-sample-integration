@@ -6,13 +6,13 @@ async function onPayPalWebSdkLoaded() {
       components: ["paypal-guest-payments"],
     });
 
-    setupGuestPaymentButton(sdkInstance);
+    configureGuestPaymentButton(sdkInstance);
   } catch (error) {
     console.error(error);
   }
 }
 
-async function setupGuestPaymentButton(sdkInstance) {
+async function configureGuestPaymentButton(sdkInstance) {
   try {
     const eligiblePaymentMethods = await sdkInstance.findEligibleMethods({
       currencyCode: "USD",

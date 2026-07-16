@@ -71,7 +71,7 @@ function calculateCartAmount(
 
   for (const { sku, quantity } of cart) {
     const { name, price } = getProduct(sku);
-    totalAmount += Number.parseFloat(price) * quantity;
+    totalAmount += Number(price) * quantity;
     items.push({
       sku,
       name,
@@ -444,6 +444,8 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
       card: {
         attributes: {
           verification: {
+            // use "ScaAlways" to test 3D Secure
+            // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/test/
             method: OrdersCardVerificationMethod.ScaAlways,
           },
         },
