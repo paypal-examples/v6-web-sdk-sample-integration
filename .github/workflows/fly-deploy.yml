@@ -8,7 +8,7 @@ on:
 
 jobs:
   deploy:
-    name: Deploy app
+    name: Deploy Autonoma.app
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
