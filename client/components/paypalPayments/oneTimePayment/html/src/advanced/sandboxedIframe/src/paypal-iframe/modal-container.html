@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PayPal Modal Container</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <style>
+      :root {
+        --theme-color-text: #e5f5ea;
+        --theme-color-background: rebeccapurple;
+        --theme-color-primary: #becbc2;
+        --theme-color-secondary: #1c6d36;
+        --theme-color-accent: #239f48;
+      }
+
+      html {
+        background: var(--theme-color-background);
+      }
+
+      body {
+        font-family: sans-serif;
+        color: var(--theme-color-text);
+      }
+
+      .stateValue {
+        font-family: monospace;
+      }
+
+      #config {
+        padding-bottom: 10px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="stateDebug">
+      <div>Iframe Modal ContainerPage State</div>
+      <ul>
+        <li>
+          <span>iframe domain:</span>
+          <span id="iframeDomain" class="stateValue"></span>
+        </li>
+        <li>
+          <span>last message from parent: </span>
+          <span id="postMessageStatus" class="stateValue">No messages 😴</span>
+        </li>
+      </ul>
+    </div>
+
+    <script src="/modal-container.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+  </body>
+</html>

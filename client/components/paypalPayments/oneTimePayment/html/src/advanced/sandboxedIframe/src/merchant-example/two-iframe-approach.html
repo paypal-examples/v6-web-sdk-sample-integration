@@ -1,0 +1,171 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>PayPal two iframe approach</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>💸</text></svg>"
+    />
+
+    <style>
+      :root {
+        --theme-color-text: #0a1b0f;
+        --theme-color-background: #f7fcf9;
+        --theme-color-primary: #334037;
+        --theme-color-secondary: #93e3ab;
+        --theme-color-accent: #62dc87;
+        --theme-color-overlay-cta: #ffffff;
+        --theme-color-overlay-background: #000000aa;
+        --theme-color-overlay-background-close-text: #cccccc;
+      }
+
+      body {
+        margin: 0;
+        font-family: sans-serif;
+        color: var(--theme-color-text);
+      }
+
+      button {
+        border: none;
+        font-size: 1em;
+        padding: 10px;
+        border-radius: 5px;
+      }
+
+      #stateDebug {
+        padding: 5px;
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        background: var(--theme-color-secondary);
+        z-index: 100;
+      }
+
+      #mainContainer {
+        padding: 10px;
+      }
+
+      #extraHeight {
+        background: var(--theme-color-background);
+        height: 1000px;
+        width: 100%;
+      }
+
+      #overlayContainer {
+        background: none;
+        border: none;
+        overflow: visible;
+        text-align: center;
+      }
+
+      #overlayContainerLogo {
+        margin-bottom: 10px;
+      }
+
+      #overlayCloseButtonCTA {
+        background: var(--theme-color-overlay-cta);
+        cursor: pointer;
+        border-radius: 20px;
+        padding: 10px 20px;
+      }
+
+      #overlayCloseButtonBackdrop {
+        background: none;
+        color: var(--theme-color-overlay-background-close-text);
+        position: fixed;
+        top: 0;
+        right: 0;
+        font-size: 1.5em;
+        cursor: pointer;
+      }
+
+      #overlayContainer::backdrop {
+        background: var(--theme-color-overlay-background);
+      }
+
+      #iframeButton {
+        border: none;
+        width: 100%;
+        height: 300px;
+      }
+
+      #iframeModalContainer {
+        border: none;
+        width: 100%;
+        height: 100px;
+      }
+
+      #iframeModalContainer.fullWindow {
+        position: absolute;
+        top: 0;
+        left: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      .stateValue {
+        font-family: monospace;
+      }
+    </style>
+  </head>
+  <body>
+    <script async src="/two-iframe-approach.js" onload="onLoad()"></script>
+
+    <div id="mainContainer">
+      <h1>PayPal two iframe approach</h1>
+
+      <p>
+        The parent page is an example merchant page. Within the merchant page,
+        there are two different iframes that each use the PayPal Web SDK. One is
+        for the button and the second one is for the modal presentation mode
+        container. The merchant page and iframes communicate about the state of
+        the payment flow via postMessage.
+      </p>
+
+      <div id="stateDebug">
+        <div>Merchant Page State</div>
+        <li>
+          <span>merchant page domain:</span>
+          <span id="merchantDomain" class="stateValue"></span>
+        </li>
+        <li>
+          <span>last message from iframe: </span>
+          <span id="postMessageStatus" class="stateValue">No messages 😴</span>
+        </li>
+        <li>
+          <span>selected presentationMode from iframe: </span>
+          <span id="presentationMode" class="stateValue">Not set 🤔</span>
+        </li>
+      </div>
+
+      <iframe
+        id="iframeButton"
+        src="http://localhost:3000/button-iframe.html?origin=http://localhost:3001"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"
+        allow="payment"
+      ></iframe>
+
+      <iframe
+        id="iframeModalContainer"
+        src="http://localhost:3000/modal-container.html?origin=http://localhost:3001"
+        sandbox="allow-scripts allow-same-origin allow-popups allow-forms allow-downloads"
+        allow="payment"
+      ></iframe>
+
+      <div id="extraHeight">Some extra height follows...</div>
+    </div>
+
+    <dialog id="overlayContainer">
+      <div id="overlayContainerLogo">
+        <img
+          src="https://www.paypalobjects.com/js-sdk-logos/2.2.7/paypal-white.svg"
+        />
+      </div>
+      <button id="overlayCloseButtonCTA">Close</button>
+      <button id="overlayCloseButtonBackdrop">X</button>
+    </dialog>
+  </body>
+</html>
