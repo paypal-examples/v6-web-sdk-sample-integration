@@ -16,6 +16,7 @@ import type { Request, Response } from "express";
 
 import { client } from "../paypalServerSdkClient";
 import { getAllProducts, getProduct } from "../productCatalog";
+import { createOrderForGooglePayWithThreeDSecure } from "../customApiEndpoints/createOrderForGooglePayWithThreeDSecure";
 
 const ordersController = new OrdersController(client);
 
@@ -444,7 +445,8 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
       card: {
         attributes: {
           verification: {
-            // use "ScaAlways" to test 3D Secure
+            // use "ScaAlways" to always trigger 3D Secure for testing purposes
+            // use "ScaWhenRequired" to only trigger 3D Secure when required by the card issuer
             // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/test/
             method: OrdersCardVerificationMethod.ScaAlways,
           },
@@ -461,6 +463,27 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
     body: orderRequestBody,
     paypalRequestId: randomUUID(),
     prefer: "return=minimal",
+  });
+
+  response.status(statusCode).json(result);
+}
+
+export async function createOrderForGooglePayWithThreeDSecureRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { currencyCode, totalAmount, intent } = OneTimePaymentSchema.parse(
+    request.body ?? {},
+  );
+
+  // Forcing 3DS for Google Pay requires setting
+  // payment_source.google_pay.attributes.verification.method = SCA_ALWAYS,
+  // which the typed SDK does not model. This delegates to a raw REST call.
+  // See the note in createOrderForGooglePayWithThreeDSecure for details.
+  const { statusCode, result } = await createOrderForGooglePayWithThreeDSecure({
+    intent,
+    currencyCode,
+    value: totalAmount,
   });
 
   response.status(statusCode).json(result);
