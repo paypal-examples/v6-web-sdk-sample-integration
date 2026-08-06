@@ -67,7 +67,7 @@ function modalPresentationModePostMessageHandler(event) {
   }
 }
 
-function setupPostMessageListener() {
+function configurePostMessageListener() {
   window.addEventListener("message", (event) => {
     // It's very important to check that the `origin` is expected to prevent XSS attacks!
     if (event.origin !== "http://localhost:3000") {
@@ -90,7 +90,7 @@ function setupPostMessageListener() {
   });
 }
 
-function setupOverlay() {
+function configureOverlay() {
   const overlay = document.getElementById("overlayContainer");
 
   const hideOverlay = () => {
@@ -110,8 +110,8 @@ function onLoad() {
     return;
   }
 
-  setupOverlay();
-  setupPostMessageListener();
+  configureOverlay();
+  configurePostMessageListener();
 
   window.setupComplete = true;
 }

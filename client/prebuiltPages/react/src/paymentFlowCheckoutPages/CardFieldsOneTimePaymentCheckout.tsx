@@ -9,6 +9,7 @@ import {
 import type { ModalType, ModalContent } from "../types";
 import PayPalCardFieldsOneTimePayment from "../payments/oneTimePayment/components/PayPalCardFieldsOneTimePayment";
 import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
+import { useCardFieldsValidation } from "../hooks/useCardFieldsValidation";
 
 /**
  * Checkout page for one-time payments using card fields.
@@ -17,6 +18,7 @@ import BaseCardFieldsCheckout from "../pages/BaseCardFieldsCheckout";
  */
 const CardFieldsOneTimePaymentCheckout = () => {
   const [modalState, setModalState] = useState<ModalType>(null);
+  const validation = useCardFieldsValidation();
   const { loadingStatus } = usePayPal();
   const navigate = useNavigate();
 
@@ -77,8 +79,11 @@ const CardFieldsOneTimePaymentCheckout = () => {
   ) : (
     <>
       {isCardFieldsEligible && (
-        <PayPalCardFieldsProvider>
-          <PayPalCardFieldsOneTimePayment setModalState={setModalState} />
+        <PayPalCardFieldsProvider {...validation.handlers}>
+          <PayPalCardFieldsOneTimePayment
+            setModalState={setModalState}
+            validation={validation}
+          />
         </PayPalCardFieldsProvider>
       )}
     </>

@@ -1,0 +1,120 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>OxxoPay - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      .payment-container {
+        display: flex;
+        flex-direction: column;
+        gap: 12px;
+      }
+
+      #oxxopay-full-name {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      #oxxopay-email {
+        max-width: 400px;
+        height: 80px;
+      }
+
+      oxxopay-button {
+        max-width: 225px;
+      }
+
+      .additional-info {
+        border: 1px solid #ddd;
+        border-radius: 4px;
+        padding: 15px;
+        margin-top: 15px;
+        max-width: 400px;
+      }
+
+      .additional-info legend {
+        font-weight: bold;
+        padding: 0 5px;
+      }
+
+      .field-group {
+        margin-bottom: 15px;
+      }
+
+      .field-group label {
+        display: block;
+        margin-bottom: 5px;
+        font-weight: 500;
+      }
+
+      .field-group input {
+        width: 100%;
+        height: 40px;
+        padding: 8px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+        box-sizing: border-box;
+      }
+
+      .message {
+        padding: 15px;
+        border-radius: 4px;
+        margin-top: 20px;
+        display: none;
+        max-width: 700px;
+      }
+
+      .message.success {
+        background-color: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+      }
+
+      .message.error {
+        background-color: #f8d7da;
+        border: 1px solid #f5c6cb;
+        color: #721c24;
+      }
+
+      .message.show {
+        display: block;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>OxxoPay One-Time Payment Integration</h1>
+
+    <p>
+      <oxxopay-mark></oxxopay-mark>
+      This example uses the <code>oxxopay-button</code> web component to launch
+      the popup flow.
+    </p>
+
+    <div class="payment-container">
+      <div id="oxxopay-full-name"></div>
+      <div id="oxxopay-email"></div>
+
+      <fieldset class="additional-info" id="custom-fields" hidden>
+        <legend>Additional Information</legend>
+
+        <div class="field-group">
+          <label for="expiry-date">Expiry Date:</label>
+          <input type="date" id="expiry-date" placeholder="Expiry Date" />
+        </div>
+      </fieldset>
+
+      <oxxopay-button id="oxxopay-button" hidden></oxxopay-button>
+    </div>
+
+    <div id="message" class="message"></div>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <script src="app.js"></script>
+  </body>
+</html>

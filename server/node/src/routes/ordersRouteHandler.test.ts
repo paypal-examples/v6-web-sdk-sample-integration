@@ -100,7 +100,7 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
         status: "CREATED",
       }),
     );
-    expect(createOrderMock).toBeCalledWith(
+    expect(createOrderMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
           intent: "CAPTURE",
@@ -139,6 +139,8 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
           },
         ],
         currencyCode: "EUR",
+        intent: "AUTHORIZE",
+        processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
       });
 
     expect(response.status).toBe(201);
@@ -148,10 +150,11 @@ describe("createOrderForOneTimePaymentRouteHandler", () => {
         status: "CREATED",
       }),
     );
-    expect(createOrderMock).toBeCalledWith(
+    expect(createOrderMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
-          intent: "CAPTURE",
+          intent: "AUTHORIZE",
+          processingInstruction: "ORDER_COMPLETE_ON_PAYMENT_APPROVAL",
           purchaseUnits: [
             {
               amount: {
@@ -245,7 +248,7 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
         status: "CREATED",
       }),
     );
-    expect(createOrderMock).toBeCalledWith(
+    expect(createOrderMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
           intent: "CAPTURE",
@@ -303,7 +306,7 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
         status: "CREATED",
       }),
     );
-    expect(createOrderMock).toBeCalledWith(
+    expect(createOrderMock).toHaveBeenCalledWith(
       expect.objectContaining({
         body: {
           intent: "CAPTURE",
@@ -363,7 +366,7 @@ describe("captureOrderRouteHandler", () => {
         status: "COMPLETED",
       }),
     );
-    expect(captureOrderMock).toBeCalledWith(
+    expect(captureOrderMock).toHaveBeenCalledWith(
       expect.objectContaining({
         id: expect.any(String),
       }),

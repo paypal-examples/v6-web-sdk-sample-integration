@@ -132,6 +132,9 @@ async function createOrder(paymentToken) {
       }),
     },
   );
+  if (!response.ok) {
+    throw new Error("Failed to create order");
+  }
   const orderResponse = await response.json();
 
   return orderResponse;

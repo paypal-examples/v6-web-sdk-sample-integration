@@ -7,7 +7,7 @@ if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
   throw new Error("Missing API credentials");
 }
 
-const { logLevel, logBody, logHeaders } = getLoggingConfiguration(LOG_LEVEL);
+const { logLevel, logBody, logHeaders } = getLoggingConfig(LOG_LEVEL);
 
 export const client = new Client({
   clientCredentialsAuthCredentials: {
@@ -27,7 +27,7 @@ export const client = new Client({
   },
 });
 
-function getLoggingConfiguration(logLevel?: string) {
+function getLoggingConfig(logLevel?: string) {
   switch (logLevel) {
     case "error": {
       return {

@@ -6,6 +6,7 @@ import {
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
   PaypalWalletContextShippingPreference,
+  ProcessingInstruction,
   ShippingType,
   StoreInVaultInstruction,
 } from "@paypal/paypal-server-sdk";
@@ -35,6 +36,7 @@ const OneTimePaymentSchema = z
       .enum(CheckoutPaymentIntent)
       .default(CheckoutPaymentIntent.Capture),
     currencyCode: z.string().length(3).default("USD"),
+    processingInstruction: z.enum(ProcessingInstruction).optional(),
     returnUrl: z.url().optional(),
     cancelUrl: z.url().optional(),
   })
@@ -69,7 +71,7 @@ function calculateCartAmount(
 
   for (const { sku, quantity } of cart) {
     const { name, price } = getProduct(sku);
-    totalAmount += Number.parseFloat(price) * quantity;
+    totalAmount += Number(price) * quantity;
     items.push({
       sku,
       name,
@@ -91,11 +93,12 @@ export async function createOrderForOneTimePaymentRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, intent } =
+  const { currencyCode, totalAmount, items, intent, processingInstruction } =
     OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
     intent,
+    ...(processingInstruction && { processingInstruction }),
     purchaseUnits: [
       {
         amount: {
@@ -441,6 +444,8 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
       card: {
         attributes: {
           verification: {
+            // use "ScaAlways" to test 3D Secure
+            // https://developer.paypal.com/docs/checkout/advanced/customize/3d-secure/test/
             method: OrdersCardVerificationMethod.ScaAlways,
           },
         },
@@ -457,6 +462,38 @@ export async function createOrderForCardWithThreeDSecureRouteHandler(
     paypalRequestId: randomUUID(),
     prefer: "return=minimal",
   });
+
+  response.status(statusCode).json(result);
+}
+
+export async function getOrderRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const schema = z.object({
+    orderId: z.string(),
+  });
+
+  const { orderId } = schema.parse(request.params);
+
+  const { result, statusCode } = await ordersController.getOrder({
+    id: orderId,
+  });
+
+  if (statusCode === 200) {
+    // return the minimal amount of Order information back to the browser
+    const { id, paymentSource, purchaseUnits, status, links } = result;
+    return response.status(200).json({
+      id,
+      paymentSource,
+      purchaseUnits: purchaseUnits?.map(({ referenceId, payments }) => ({
+        referenceId,
+        payments,
+      })),
+      status,
+      links,
+    });
+  }
 
   response.status(statusCode).json(result);
 }

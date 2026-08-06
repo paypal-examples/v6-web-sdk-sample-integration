@@ -13,7 +13,7 @@ async function onPayPalWebSdkLoaded() {
     });
 
     if (paymentMethods.isEligible("ach")) {
-      setupBankAchButton(sdkInstance);
+      configureBankAchButton(sdkInstance);
     } else {
       renderAlert({ type: "warning", message: "Bank ACH is not eligible" });
     }
@@ -22,7 +22,7 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
-async function setupBankAchButton(sdkInstance) {
+async function configureBankAchButton(sdkInstance) {
   const bankAchPaymentSession = sdkInstance.createBankAchOneTimePaymentSession({
     async onApprove(data) {
       console.log("onApprove", data);
@@ -80,6 +80,9 @@ async function getBrowserSafeClientId() {
       "Content-Type": "application/json",
     },
   });
+  if (!response.ok) {
+    throw new Error("Failed to fetch client id");
+  }
   const { clientId } = await response.json();
 
   return clientId;

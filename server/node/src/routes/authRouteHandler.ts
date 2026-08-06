@@ -19,7 +19,7 @@ export async function clientTokenRouteHandler(
   const fieldParameters = {
     response_type: "client_token",
     // the Fastlane component requires this domains[] parameter
-    ...(DOMAINS ? { "domains[]": DOMAINS } : {}),
+    ...(DOMAINS && { "domains[]": DOMAINS }),
   };
 
   const { result, statusCode } =

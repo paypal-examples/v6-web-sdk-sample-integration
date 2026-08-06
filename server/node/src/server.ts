@@ -40,10 +40,10 @@ const hostname = process.env.HOSTNAME ?? "localhost";
 
 app.listen({ port, hostname }, async () => {
   console.log(`Node.js web server listening at: http://${hostname}:${port}`);
-  await setupNgrokForHTTPS(port);
+  await configureNgrokForHTTPS(port);
 });
 
-async function setupNgrokForHTTPS(port: number) {
+async function configureNgrokForHTTPS(port: number) {
   const { NGROK_AUTHTOKEN } = process.env;
 
   if (!NGROK_AUTHTOKEN) {
