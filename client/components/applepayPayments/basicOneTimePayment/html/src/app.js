@@ -88,9 +88,9 @@ function configureApplePayButton(applePayPaymentSession) {
 
 async function onApplePayButtonClick(applePayPaymentSession) {
   try {
-    const checkoutSessionOptionsPromise = createOrder(
-      currentCurrencyCode,
-    ).then(({ orderId }) => ({ orderId }));
+    const checkoutSessionOptionsPromise = createOrder(currentCurrencyCode).then(
+      ({ orderId }) => ({ orderId }),
+    );
     // The Web SDK drives the entire Apple Pay sheet (merchant validation,
     // payment method selection, and authorization) on your behalf.
     await applePayPaymentSession.start({}, checkoutSessionOptionsPromise);
