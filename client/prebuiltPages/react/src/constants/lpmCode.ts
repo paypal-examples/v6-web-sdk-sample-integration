@@ -36,6 +36,16 @@ const SAMPLE_TAX: Record<string, { taxId: string; taxIdType: string }> = {
   ID: { taxId: "1234567890123456", taxIdType: "ID_NIK" },
 };
 
+/** Sample BIC (bank identifier code) keyed by buyer country. */
+const SAMPLE_BIC: Record<string, string> = {
+  CO: "BCOLCOBBXXX",
+};
+
+/** Sample buyer identification keyed by buyer country. */
+const SAMPLE_IDENTIFICATION: Record<string, { idNumber: string; type: string }> = {
+  CO: { idNumber: "123456789", type: "CC" },
+};
+
 /**
  * Builds the session-field fragment to be RETURNED from `createOrder` in the
  * all-in-one button pattern (fields merged into the order promise object).
@@ -83,6 +93,21 @@ function buildSessionFieldsReturn(entry: LPMDemoEntry): string {
       case "numberOfInstallments":
         lines.push(`        numberOfInstallments: 3,`);
         break;
+      case "bic": {
+        const bic = SAMPLE_BIC[country] ?? "BCOLCOBBXXX";
+        lines.push(`        bic: "${bic}",`);
+        break;
+      }
+      case "identification": {
+        const idn = SAMPLE_IDENTIFICATION[country] ?? {
+          idNumber: "123456789",
+          type: "CC",
+        };
+        lines.push(
+          `        identification: { idNumber: "${idn.idNumber}", type: "${idn.type}" },`,
+        );
+        break;
+      }
     }
   }
   return lines.length > 0 ? `\n${lines.join("\n")}` : "";
@@ -135,6 +160,21 @@ function buildSessionFieldsHookProps(entry: LPMDemoEntry): string {
       case "numberOfInstallments":
         lines.push(`        numberOfInstallments: 3,`);
         break;
+      case "bic": {
+        const bic = SAMPLE_BIC[country] ?? "BCOLCOBBXXX";
+        lines.push(`        bic: "${bic}",`);
+        break;
+      }
+      case "identification": {
+        const idn = SAMPLE_IDENTIFICATION[country] ?? {
+          idNumber: "123456789",
+          type: "CC",
+        };
+        lines.push(
+          `        identification: { idNumber: "${idn.idNumber}", type: "${idn.type}" },`,
+        );
+        break;
+      }
     }
   }
   return lines.length > 0 ? `\n${lines.join("\n")}` : "";

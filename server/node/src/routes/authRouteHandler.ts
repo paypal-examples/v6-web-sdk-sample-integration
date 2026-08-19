@@ -202,7 +202,7 @@ const LPM_ENV_MAP: Record<string, { clientId: string; clientSecret: string }> = 
  * Falls back to the default PAYPAL_SANDBOX_CLIENT_ID/SECRET when not configured.
  */
 export function lpmClientIdRouteHandler(request: Request, response: Response) {
-  const lpmName = String(request.params.lpmName ?? "").trim() || undefined;
+  const lpmName = String(request.params.lpmName ?? "").trim().toLowerCase() || undefined;
 
   if (!lpmName) {
     response.status(400).json({ error: "LPM name is required" });

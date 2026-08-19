@@ -74,7 +74,7 @@ const ALL_LPMS: LPMEntry[] = [
   { key: "estonia",          displayName: "Estonia Banks",    currency: "EUR", buyerCountry: "EE", buttonTag: "estonia-button" },
   { key: "gopay",            displayName: "GoPay",            currency: "IDR", buyerCountry: "ID", buttonTag: "gopay-button" },
   { key: "alipay",           displayName: "Alipay",           currency: "USD", buyerCountry: "CN", buttonTag: "alipay-button" },
-  { key: "indonesiaBanks",   displayName: "Indonesia Banks",  currency: "IDR", buyerCountry: "ID", buttonTag: "indonesia-banks-button" },
+  { key: "indonesiaBanks",   displayName: "Indonesia Banks",  currency: "IDR", buyerCountry: "ID", buttonTag: "indonesiabanks-button" },
   { key: "kredivo",          displayName: "Kredivo",          currency: "IDR", buyerCountry: "ID", buttonTag: "kredivo-button" },
   { key: "linkaja",          displayName: "LinkAja",          currency: "IDR", buyerCountry: "ID", buttonTag: "linkaja-button" },
   { key: "ovo",              displayName: "OVO",              currency: "IDR", buyerCountry: "ID", buttonTag: "ovo-button" },
@@ -93,12 +93,35 @@ const ALL_LPMS: LPMEntry[] = [
   { key: "dragonpay",        displayName: "Dragonpay",        currency: "PHP", buyerCountry: "PH", buttonTag: "dragonpay-button" },
   { key: "fpx",              displayName: "FPX",              currency: "MYR", buyerCountry: "MY", buttonTag: "fpx-button" },
   { key: "indomaret",        displayName: "Indomaret",        currency: "IDR", buyerCountry: "ID", buttonTag: "indomaret-button" },
-  { key: "thailandBanks",    displayName: "Thailand Banks",   currency: "THB", buyerCountry: "TH", buttonTag: "thailand-banks-button" },
+  { key: "thailandBanks",    displayName: "Thailand Banks",   currency: "THB", buyerCountry: "TH", buttonTag: "thailandbanks-button" },
   { key: "alfamart",         displayName: "Alfamart",         currency: "IDR", buyerCountry: "ID", buttonTag: "alfamart-button" },
   { key: "zip",              displayName: "Zip",              currency: "AUD", buyerCountry: "AU", buttonTag: "zip-button" },
-  { key: "latviaBanks",      displayName: "Latvia Banks",     currency: "EUR", buyerCountry: "LV", buttonTag: "latvia-banks-button" },
+  { key: "latviaBanks",      displayName: "Latvia Banks",     currency: "EUR", buyerCountry: "LV", buttonTag: "latviabanks-button" },
   { key: "fiuu",             displayName: "FIUU",             currency: "MYR", buyerCountry: "MY", buttonTag: "fiuu-button" },
-  { key: "lithuaniaBanks",   displayName: "Lithuania Banks",  currency: "EUR", buyerCountry: "LT", buttonTag: "lithuania-banks-button" },
+  { key: "lithuaniaBanks",   displayName: "Lithuania Banks",  currency: "EUR", buyerCountry: "LT", buttonTag: "lithuaniabanks-button" },
+  // ── 22 LPMs onboarded for DTLAMBO-662 ──────────────────────────────────────
+  { key: "airtelKenya",      displayName: "Airtel Kenya",     currency: "USD", buyerCountry: "KE", buttonTag: "airtelkenya-button" },
+  { key: "airtelTanzania",   displayName: "Airtel Tanzania",  currency: "USD", buyerCountry: "TZ", buttonTag: "airtel-tanzania-button" },
+  { key: "pesalink",         displayName: "PesaLink",         currency: "USD", buyerCountry: "KE", buttonTag: "pesalink-button" },
+  { key: "halopesa",         displayName: "HaloPesa",         currency: "USD", buyerCountry: "TZ", buttonTag: "halopesa-button" },
+  { key: "spei",             displayName: "SPEI",             currency: "MXN", buyerCountry: "MX", buttonTag: "spei-button" },
+  { key: "picpay",           displayName: "PicPay",           currency: "BRL", buyerCountry: "BR", buttonTag: "picpay-button" },
+  { key: "nigeriaBanks",     displayName: "Nigeria Banks",    currency: "USD", buyerCountry: "NG", buttonTag: "nigeria-banks-button" },
+  { key: "opay",             displayName: "OPay",             currency: "USD", buyerCountry: "NG", buttonTag: "opay-button" },
+  { key: "naverpay",         displayName: "Naver Pay",        currency: "USD", buyerCountry: "KR", buttonTag: "naverpay-button" },
+  { key: "codi",             displayName: "CoDi",             currency: "MXN", buyerCountry: "MX", buttonTag: "codi-button" },
+  { key: "payattitude",      displayName: "Payattitude",      currency: "USD", buyerCountry: "NG", buttonTag: "payattitude-button" },
+  { key: "dimo",             displayName: "Dimo",             currency: "BRL", buyerCountry: "BR", buttonTag: "dimo-button" },
+  { key: "pse",              displayName: "PSE",              currency: "USD", buyerCountry: "CO", buttonTag: "pse-button" },
+  { key: "qrph",             displayName: "QRPh",             currency: "PHP", buyerCountry: "PH", buttonTag: "qrph-button" },
+  { key: "vietqr",           displayName: "VietQR",           currency: "USD", buyerCountry: "VN", buttonTag: "vietqr-button" },
+  { key: "mixxByYas",        displayName: "Mixx by Yas",      currency: "USD", buyerCountry: "TG", buttonTag: "mixx-by-yas-button" },
+  { key: "breB",             displayName: "Bre-B",            currency: "USD", buyerCountry: "CO", buttonTag: "bre-b-button" },
+  { key: "promptpayQr",      displayName: "PromptPay",        currency: "THB", buyerCountry: "TH", buttonTag: "promptpay-qr-button" },
+  { key: "nequi",            displayName: "Nequi",            currency: "USD", buyerCountry: "CO", buttonTag: "nequi-button" },
+  { key: "truemoney",        displayName: "TrueMoney",        currency: "THB", buyerCountry: "TH", buttonTag: "truemoney-button" },
+  { key: "nupay",            displayName: "NuPay",            currency: "USD", buyerCountry: "IN", buttonTag: "nupay-button" },
+  { key: "shopeepay",        displayName: "ShopeePay",        currency: "IDR", buyerCountry: "ID", buttonTag: "shopeepay-button" },
 ];
 
 // ─── Timing ───────────────────────────────────────────────────────────────────
@@ -122,7 +145,7 @@ test.describe("LPM React wrapper – payment flow", () => {
       const mockAmount = "205.00";
 
       // ── Step 0: mock the order-fetch endpoint ─────────────────────────────
-      await page.route(`**/paypal-api/checkout/orders/${mockOrderId}`, (route) => {
+      await page.route(`**/paypal-api/checkout/orders/${mockOrderId}`, (route: { fulfill: (arg0: { status: number; contentType: string; body: string; }) => void; }) => {
         route.fulfill({
           status: 200,
           contentType: "application/json",

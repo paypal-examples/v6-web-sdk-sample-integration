@@ -151,14 +151,14 @@ describe("lpmClientIdRouteHandler", () => {
     });
   });
 
-  test("should handle camelCase LPM names correctly", async () => {
+  test("should be case-insensitive for LPM names", async () => {
     vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_ID", "mbway-test-client-id");
     vi.stubEnv("MBWAY_PAYPAL_SANDBOX_CLIENT_SECRET", "mbway-test-secret");
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_ID", "default-test-client-id");
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "default-test-secret");
 
     const response = await request(app).get(
-      "/paypal-api/auth/lpm-client-id/mbway",
+      "/paypal-api/auth/lpm-client-id/MBWAY",
     );
 
     expect(response.status).toBe(200);

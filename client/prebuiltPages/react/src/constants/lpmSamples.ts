@@ -17,6 +17,7 @@ type BillingAddress = {
   countryCode: string;
 };
 type TaxInfo = { taxId: string; taxIdType: string };
+type Identification = { idNumber: string; type: string };
 
 export interface LPMSessionExtras {
   phone?: Phone;
@@ -24,6 +25,8 @@ export interface LPMSessionExtras {
   taxInfo?: TaxInfo;
   dateOfBirth?: string;
   numberOfInstallments?: number;
+  bic?: string;
+  identification?: Identification;
 }
 
 // Reasonable per-country sample phone numbers, falling back to a generic value.
@@ -32,6 +35,21 @@ const SAMPLE_PHONE_BY_COUNTRY: Record<string, Phone> = {
   BR: { countryCode: "55", nationalNumber: "11987654321" },
   PT: { countryCode: "351", nationalNumber: "912345678" },
   IT: { countryCode: "39", nationalNumber: "3123456789" },
+  KE: { countryCode: "254", nationalNumber: "712345678" },
+  NG: { countryCode: "234", nationalNumber: "8012345678" },
+  CO: { countryCode: "57", nationalNumber: "3001234567" },
+  TH: { countryCode: "66", nationalNumber: "812345678" },
+  IN: { countryCode: "91", nationalNumber: "9123456789" },
+};
+
+// Per-country sample BIC (bank identifier code) for LPMs requiring it.
+const SAMPLE_BIC_BY_COUNTRY: Record<string, string> = {
+  CO: "BCOLCOBBXXX",
+};
+
+// Per-country sample buyer identification document for LPMs requiring it.
+const SAMPLE_IDENTIFICATION_BY_COUNTRY: Record<string, Identification> = {
+  CO: { idNumber: "123456789", type: "CC" },
 };
 
 // Per-country sample tax id + type for LPMs requiring tax info.
@@ -83,6 +101,15 @@ export function buildSampleSessionExtras(
         break;
       case "numberOfInstallments":
         extras.numberOfInstallments = 3;
+        break;
+      case "bic":
+        extras.bic = SAMPLE_BIC_BY_COUNTRY[country] ?? "BCOLCOBBXXX";
+        break;
+      case "identification":
+        extras.identification = SAMPLE_IDENTIFICATION_BY_COUNTRY[country] ?? {
+          idNumber: "123456789",
+          type: "CC",
+        };
         break;
     }
   }

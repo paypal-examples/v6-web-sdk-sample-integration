@@ -43,10 +43,10 @@ export default defineConfig({
     // making the page fill most monitors.
     launchOptions: {
       args: [
-        "--start-maximized",
+        // "--start-maximized",
         // Automatically open Chrome DevTools for every new tab.
         // After the first run, Chrome remembers the last active panel (Network).
-        "--auto-open-devtools-for-tabs",
+        // "--auto-open-devtools-for-tabs",
       ],
     },
   },

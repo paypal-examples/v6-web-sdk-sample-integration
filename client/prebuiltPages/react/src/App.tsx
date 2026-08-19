@@ -94,6 +94,9 @@ function Navigation() {
 
 function App() {
   const [clientId, setClientId] = useState<string | undefined>(undefined);
+  // Set VITE_SDK_BASE_URL (e.g. https://www.te-unlimitapm.qa.paypal.com) to
+  // point the v6 SDK script at a QA/stage host instead of sandbox.paypal.com.
+  const sdkBaseUrl = import.meta.env.VITE_SDK_BASE_URL as string | undefined;
 
   useEffect(() => {
     const getClientId = async () => {
@@ -109,6 +112,7 @@ function App() {
       <PayPalProvider
         clientId={clientId}
         environment="sandbox"
+        {...(sdkBaseUrl ? { sdkBaseUrl } : {})}
         components={[
           "paypal-payments",
           "venmo-payments",

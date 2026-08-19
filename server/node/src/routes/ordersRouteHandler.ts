@@ -520,3 +520,56 @@ export async function captureOrderRouteHandler(
 
   response.status(statusCode).json(result);
 }
+
+export async function confirmPaymentSourceRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  try {
+    const schema = z.object({
+      orderId: z.string(),
+      sourceId: z.string().optional(),
+    });
+
+    console.log("confirmPaymentSource request body:", request.body);
+    const { orderId, sourceId } = schema.parse(request.body);
+    console.log("Parsed orderId:", orderId, "sourceId:", sourceId);
+
+    // Confirm payment source on the order
+    const { result, statusCode } = await ordersController.confirmPaymentSource({
+      id: orderId,
+      paypalRequestId: randomUUID(),
+      body: {
+        paymentSource: sourceId
+          ? {
+              localPayment: {
+                sourceId,
+              },
+            }
+          : undefined,
+      },
+    });
+
+    console.log("confirmPaymentSource result:", result);
+    response.status(statusCode).json(result);
+  } catch (error) {
+    console.error("Error confirming payment source:", error);
+
+    // Handle Zod validation errors
+    if (error instanceof z.ZodError) {
+      console.error("Validation errors:", error.errors);
+      return response.status(400).json({
+        error: "Invalid request",
+        details: error.errors,
+      });
+    }
+
+    // Handle PayPal API errors
+    const errorMessage = error instanceof Error ? error.message : "Unknown error";
+    console.error("API error message:", errorMessage);
+    response.status(500).json({
+      error: "Failed to confirm payment source",
+      message: errorMessage,
+    });
+  }
+}
