@@ -10,7 +10,7 @@ interface CartPageProps {
     | "save-payment"
     | "subscription"
     | "vault-with-purchase";
-  paymentMethod?: "card-fields" | "apple-pay" | "google-pay";
+  paymentMethod?: "card-fields" | "apple-pay" | "google-pay" | "dropdown";
 }
 
 const BaseCart = ({ flowType, paymentMethod }: CartPageProps) => {

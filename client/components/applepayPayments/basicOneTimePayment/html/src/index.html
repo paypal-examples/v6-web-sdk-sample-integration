@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>One-Time Payment - Basic Apple Pay - PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+
+      .payment-config {
+        display: flex;
+        gap: 1rem;
+        align-items: flex-end;
+        margin-bottom: 1.5rem;
+      }
+
+      .payment-config-item {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+      }
+
+      .payment-config-field {
+        height: 40px;
+        padding: 0 0.5rem;
+        border: 1px solid #ccc;
+        border-radius: 4px;
+      }
+
+      .payment-method-radio-group {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        margin-bottom: 1.5rem;
+      }
+
+      .payment-method-radio-group[hidden] {
+        display: none;
+      }
+
+      .payment-method-radio-option {
+        display: flex;
+        align-items: center;
+        gap: 0.625rem;
+        padding: 0.75rem;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        cursor: pointer;
+        width: 20rem;
+      }
+
+      .payment-method-radio-option:has(input:checked) {
+        border-color: #003087;
+      }
+
+      #apple-pay-button {
+        width: 20rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Basic One-Time Payment Apple Pay Integration</h1>
+    <p>
+      This example demonstrates the Basic Apple Pay flow, where the PayPal Web
+      SDK manages the Apple Pay session for you instead of requiring you to
+      drive the Apple Pay JS APIs directly.
+    </p>
+
+    <div class="payment-config">
+      <div class="payment-config-item">
+        <label for="country-select">Country</label>
+        <select id="country-select" class="payment-config-field">
+          <option value="US">US</option>
+          <option value="MX">MX</option>
+          <option value="BR">BR</option>
+        </select>
+      </div>
+      <div class="payment-config-item">
+        <label for="currency-display">Currency</label>
+        <input
+          id="currency-display"
+          class="payment-config-field"
+          type="text"
+          readonly
+          value="USD"
+        />
+      </div>
+    </div>
+
+    <div
+      id="payment-method-radio-group"
+      class="payment-method-radio-group"
+      hidden
+    >
+      <label class="payment-method-radio-option">
+        <input type="radio" name="payment-method" value="apple-pay" checked />
+        <apple-pay-mark></apple-pay-mark>
+      </label>
+    </div>
+
+    <div id="apple-pay-button-container"></div>
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+    <!--
+      Note: unlike the recommended ApplePay integration, the Basic ApplePay
+      flow is managed entirely by the PayPal Web SDK, so Apple's own
+      apple-pay-sdk.js script is not required here.
+    -->
+
+    <!-- Provides the <apple-pay-mark> custom element used above -->
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/brand"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>

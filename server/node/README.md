@@ -350,7 +350,7 @@ Accepts serveral optional parameters like currency and customer country code. Ch
 **Responses:**
 
 - `200 Created`  
-   Returns the eligible payment methods.
+  Returns the eligible payment methods.
 
   ```json
   {
