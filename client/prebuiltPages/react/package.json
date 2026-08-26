@@ -13,7 +13,7 @@
     "typecheck": "tsc --build --noEmit"
   },
   "dependencies": {
-    "@paypal/react-paypal-js": "^10.3.0",
+    "@paypal/react-paypal-js": "^10.4.0",
     "react": "19.2.8",
     "react-dom": "19.2.8",
     "react-error-boundary": "6.1.2",
@@ -21,6 +21,7 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.39.4",
+    "@types/applepayjs": "^14.0.9",
     "@types/react": "^19.2.18",
     "@types/react-dom": "^19.2.4",
     "@vitejs/plugin-react": "^6.0.5",

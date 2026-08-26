@@ -93,7 +93,8 @@ const ApplePayOneTimePaymentCheckout = () => {
   try {
     isApplePayAvailable =
       typeof window !== "undefined" &&
-      !!window.ApplePaySession?.canMakePayments() &&
+      typeof ApplePaySession !== "undefined" &&
+      ApplePaySession.canMakePayments() &&
       isHttps;
   } catch {
     isApplePayAvailable = false;
