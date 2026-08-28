@@ -1,0 +1,15 @@
+{
+  "name": "v6-web-sdk-lpm-functional-tests",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Playwright functional tests for LPM React demo",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:ui": "playwright test --ui"
+  },
+  "devDependencies": {
+    "@playwright/test": "^1.61.1"
+  }
+}

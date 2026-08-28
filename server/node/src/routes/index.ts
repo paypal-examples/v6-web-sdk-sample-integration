@@ -3,6 +3,7 @@ import { Router } from "express";
 import {
   clientTokenRouteHandler,
   clientIdRouteHandler,
+  lpmClientIdRouteHandler,
 } from "./authRouteHandler";
 
 import {
@@ -15,6 +16,7 @@ import {
   createOrderForCardWithThreeDSecureRouteHandler,
   getOrderRouteHandler,
   captureOrderRouteHandler,
+  confirmPaymentSourceRouteHandler,
 } from "./ordersRouteHandler";
 
 import {
@@ -35,6 +37,11 @@ router.get(
 );
 
 router.get("/paypal-api/auth/browser-safe-client-id", clientIdRouteHandler);
+
+router.get(
+  "/paypal-api/auth/lpm-client-id/:lpmName",
+  lpmClientIdRouteHandler,
+);
 
 router.post(
   "/paypal-api/checkout/orders/create-order-for-one-time-payment",
@@ -72,6 +79,11 @@ router.post(
 );
 
 router.get("/paypal-api/checkout/orders/:orderId", getOrderRouteHandler);
+
+router.post(
+  "/paypal-api/checkout/orders/confirm-payment-source",
+  confirmPaymentSourceRouteHandler,
+);
 
 router.post(
   "/paypal-api/checkout/orders/:orderId/capture",

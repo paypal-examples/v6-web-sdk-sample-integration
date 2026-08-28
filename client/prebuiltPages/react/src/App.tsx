@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Routes, Route, Link, HashRouter } from "react-router-dom";
+import { Routes, Route, Link, HashRouter, useParams } from "react-router-dom";
 import { PayPalProvider } from "@paypal/react-paypal-js/sdk-v6";
 import { ErrorBoundary, FallbackProps } from "react-error-boundary";
 
@@ -23,6 +23,17 @@ import SavePaymentSettings from "./pages/SavePaymentSettings";
 
 // Subscription flow
 import SubscriptionCheckoutPage from "./paymentFlowCheckoutPages/SubscriptionCheckout";
+
+// Local Payment Methods (LPM) flow
+import LocalPaymentMethods from "./pages/LocalPaymentMethods";
+import LPMOneTimePaymentCheckout from "./paymentFlowCheckoutPages/LPMOneTimePaymentCheckout";
+import IdealHookCheckout from "./paymentFlowCheckoutPages/IdealHookCheckout";
+
+// Wrapper that forces remount of checkout page on LPM navigation change
+const KeyedLPMCheckout = () => {
+  const { lpm } = useParams<{ lpm: string }>();
+  return <LPMOneTimePaymentCheckout key={lpm} />;
+};
 
 // Error handling demo
 import ErrorBoundaryTestPage from "./pages/ErrorBoundary";
@@ -84,6 +95,9 @@ function Navigation() {
 
 function App() {
   const [clientId, setClientId] = useState<string | undefined>(undefined);
+  // Set VITE_SDK_BASE_URL (e.g. https://www.te-unlimitapm.qa.paypal.com) to
+  // point the v6 SDK script at a QA/stage host instead of sandbox.paypal.com.
+  const sdkBaseUrl = import.meta.env.VITE_SDK_BASE_URL as string | undefined;
 
   useEffect(() => {
     const getClientId = async () => {
@@ -99,6 +113,7 @@ function App() {
       <PayPalProvider
         clientId={clientId}
         environment="sandbox"
+        {...(sdkBaseUrl ? { sdkBaseUrl } : {})}
         components={[
           "paypal-payments",
           "venmo-payments",
@@ -270,6 +285,19 @@ function App() {
             {/* PayPal Messages demo */}
             <Route path="/paypal-messages" element={<PayPalMessagesDemo />} />
 
+            {/* Local Payment Methods (LPM) flow */}
+            <Route
+              path="/local-payment-methods"
+              element={<LocalPaymentMethods />}
+            />
+            <Route
+              path="/local-payment-methods/ideal-hook"
+              element={<IdealHookCheckout />}
+            />
+            <Route
+              path="/local-payment-methods/:lpm"
+              element={<KeyedLPMCheckout />}
+            />
             {/* Error handling demo */}
             <Route
               path="/error-boundary-test"
