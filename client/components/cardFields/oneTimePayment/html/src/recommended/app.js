@@ -55,7 +55,7 @@ async function onPayClick(cardFieldsInstance) {
 
     const { data, state } = await cardFieldsInstance.submit(orderId, {
       billingAddress: {
-        postalCode: "95131",
+        countryCode: "US",
       },
     });
 
