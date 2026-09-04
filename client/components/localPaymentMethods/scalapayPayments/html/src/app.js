@@ -93,7 +93,7 @@ function configureButtonHandler(scalapayCheckout) {
 
       if (isValid) {
         await scalapayCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderWithPhone(phoneData),
         );
       } else {

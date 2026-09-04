@@ -106,10 +106,7 @@ function configureButtonHandler(klarnaCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await klarnaCheckout.start(
-          { presentationMode: "popup" },
-          createOrder(),
-        );
+        await klarnaCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

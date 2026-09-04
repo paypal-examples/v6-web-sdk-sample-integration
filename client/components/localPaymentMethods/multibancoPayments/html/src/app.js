@@ -92,7 +92,7 @@ function configureButtonHandler(multibancoCheckout) {
 
         // Start payment flow with popup mode
         await multibancoCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

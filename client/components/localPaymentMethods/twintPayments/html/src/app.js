@@ -90,7 +90,7 @@ function configureButtonHandler(twintCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await twintCheckout.start({ presentationMode: "popup" }, createOrder());
+        await twintCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

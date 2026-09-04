@@ -67,7 +67,7 @@ function configureButtonHandler(apmCheckout) {
     try {
       const isValid = await apmCheckout.validate();
       if (isValid) {
-        await apmCheckout.start({ presentationMode: "popup" }, createOrder());
+        await apmCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         showMessage({
           text: "Please fill in all required fields correctly.",

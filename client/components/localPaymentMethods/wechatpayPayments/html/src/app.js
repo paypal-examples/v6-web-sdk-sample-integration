@@ -91,7 +91,7 @@ function configureButtonHandler(wechatpayCheckout) {
 
         // Start payment flow with popup mode
         await wechatpayCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

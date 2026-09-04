@@ -162,7 +162,7 @@ async function configureBoletobancarioPayment(sdkInstance, currencyCode) {
         // Start payment with popup presentation and billing data
         // Call the function to get the promise
         await boletobancarioCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createBoletobancarioOrder(currencyCode, billingData),
         );
       } else {

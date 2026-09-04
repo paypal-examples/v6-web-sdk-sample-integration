@@ -102,7 +102,7 @@ function configureButtonHandler(bancontactCheckout) {
 
         // Start payment flow with popup mode
         await bancontactCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderPromise,
         );
       } else {

@@ -79,7 +79,7 @@ function configureButtonHandler(floaCheckout) {
 
       if (isValid) {
         await floaCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderWithFormData(formData),
         );
       } else {

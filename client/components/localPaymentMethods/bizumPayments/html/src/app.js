@@ -90,7 +90,7 @@ function configureButtonHandler(bizumCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await bizumCheckout.start({ presentationMode: "popup" }, createOrder());
+        await bizumCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

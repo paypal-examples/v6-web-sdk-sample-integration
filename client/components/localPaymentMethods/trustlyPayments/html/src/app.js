@@ -106,7 +106,7 @@ function configureButtonHandler(trustlyCheckout) {
 
         // Start payment flow with popup mode
         await trustlyCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

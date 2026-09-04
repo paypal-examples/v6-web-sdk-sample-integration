@@ -98,7 +98,7 @@ function configureButtonHandler(sepaCheckout) {
 
         // Start payment flow with popup mode
         await sepaCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderPromise,
         );
       } else {

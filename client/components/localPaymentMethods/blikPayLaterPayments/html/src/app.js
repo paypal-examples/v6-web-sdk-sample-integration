@@ -78,7 +78,7 @@ function configureButtonHandler(blikpaylaterCheckout) {
 
       if (isValid) {
         await blikpaylaterCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

@@ -90,7 +90,7 @@ function configureButtonHandler(swishCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await swishCheckout.start({ presentationMode: "popup" }, createOrder());
+        await swishCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

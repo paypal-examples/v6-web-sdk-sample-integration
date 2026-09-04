@@ -175,7 +175,7 @@ async function configureLatviaBanksPayment(sdkInstance, currencyCode) {
         console.log("Validation successful, starting payment flow...");
         // Start payment with popup presentation
         await latviabanksCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(currencyCode),
         );
       } else {

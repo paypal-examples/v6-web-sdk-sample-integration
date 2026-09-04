@@ -106,7 +106,7 @@ function configureButtonHandler(p24Checkout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await p24Checkout.start({ presentationMode: "popup" }, createOrder());
+        await p24Checkout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

@@ -95,7 +95,7 @@ function configureButtonHandler(idealCheckout) {
 
         // Start payment flow with popup mode
         await idealCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderPromise,
         );
       } else {

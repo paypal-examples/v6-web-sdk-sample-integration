@@ -108,7 +108,7 @@ function configureButtonHandler(verkkopankkiCheckout) {
 
         // Start payment flow with popup mode
         await verkkopankkiCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

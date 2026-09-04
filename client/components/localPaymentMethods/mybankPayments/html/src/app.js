@@ -90,10 +90,7 @@ function configureButtonHandler(mybankCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await mybankCheckout.start(
-          { presentationMode: "popup" },
-          createOrder(),
-        );
+        await mybankCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

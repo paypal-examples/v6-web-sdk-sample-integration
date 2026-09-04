@@ -107,7 +107,7 @@ function configureButtonHandler(afterpayCheckout) {
 
         // Start payment flow with popup mode
         await afterpayCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

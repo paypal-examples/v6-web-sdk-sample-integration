@@ -99,7 +99,7 @@ function configureButtonHandler(pixInternationalCheckout) {
 
       if (isValid) {
         await pixInternationalCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderWithTaxInfo(taxInfo),
         );
       } else {

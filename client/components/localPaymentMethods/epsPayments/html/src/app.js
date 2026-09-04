@@ -90,7 +90,7 @@ function configureButtonHandler(epsCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await epsCheckout.start({ presentationMode: "popup" }, createOrder());
+        await epsCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

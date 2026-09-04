@@ -206,7 +206,7 @@ async function configureDragonpayPayment(sdkInstance, currencyCode) {
         console.log("Validation successful, starting payment flow...");
         // Start payment with popup presentation and phone data
         await dragonpayCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createDragonpayOrder(currencyCode, phoneData),
         );
       } else {

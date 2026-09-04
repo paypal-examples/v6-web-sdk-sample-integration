@@ -92,7 +92,7 @@ function configureButtonHandler(paysafecardCheckout) {
 
         // Start payment flow with popup mode
         await paysafecardCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

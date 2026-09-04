@@ -94,7 +94,7 @@ function configureButtonHandler(thailandBanksCheckout) {
 
         // Start payment flow with popup mode
         await thailandBanksCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {
