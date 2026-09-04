@@ -182,7 +182,7 @@ async function configurePayseraPayment(sdkInstance, currencyCode) {
         console.log("Validation successful, starting payment flow...");
         // Start payment with popup presentation
         await payseraCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(currencyCode),
         );
       } else {

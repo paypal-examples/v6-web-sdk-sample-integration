@@ -91,7 +91,7 @@ function configureButtonHandler(alipayCheckout) {
 
         // Start payment flow with popup mode
         await alipayCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

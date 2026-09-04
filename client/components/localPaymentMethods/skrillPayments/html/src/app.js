@@ -91,7 +91,7 @@ function configureButtonHandler(skrillCheckout) {
 
         // Start payment flow with popup mode
         await skrillCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

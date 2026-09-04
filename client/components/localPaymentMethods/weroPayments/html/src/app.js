@@ -90,7 +90,7 @@ function configureButtonHandler(weroCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await weroCheckout.start({ presentationMode: "popup" }, createOrder());
+        await weroCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

@@ -93,7 +93,7 @@ function configureButtonHandler(estoniaBanksCheckout) {
 
         // Start payment flow with popup mode
         await estoniaBanksCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

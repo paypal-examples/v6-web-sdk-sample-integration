@@ -112,7 +112,7 @@ function configureButtonHandler(mbwayCheckout) {
 
         // Start payment flow with popup mode and phone data
         await mbwayCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderWithPhone(phoneData),
         );
       } else {

@@ -106,7 +106,7 @@ function configureButtonHandler(blikCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await blikCheckout.start({ presentationMode: "popup" }, createOrder());
+        await blikCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({

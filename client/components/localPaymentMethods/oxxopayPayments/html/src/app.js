@@ -101,7 +101,7 @@ async function configureOxxopayPayment(sdkInstance, currencyCode) {
         // Start payment with popup presentation. The session options are
         // resolved once the order is created, supplying the expiry date.
         await oxxoCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOxxopayOrder(currencyCode, expiryData),
         );
       } else {

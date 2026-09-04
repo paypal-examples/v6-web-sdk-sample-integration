@@ -91,7 +91,7 @@ function configureButtonHandler(mybankCheckout) {
 
         // Start payment flow with popup mode
         await mybankCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

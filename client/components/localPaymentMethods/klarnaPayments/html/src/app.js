@@ -107,7 +107,7 @@ function configureButtonHandler(klarnaCheckout) {
 
         // Start payment flow with popup mode
         await klarnaCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrder(),
         );
       } else {

@@ -84,7 +84,7 @@ function configureButtonHandler(apmCheckout) {
       const isValid = await apmCheckout.validate();
       if (isValid) {
         await apmCheckout.start(
-          { presentationMode: "popup" },
+          { presentationMode: "auto" },
           createOrderWithPhone(phoneData),
         );
       } else {

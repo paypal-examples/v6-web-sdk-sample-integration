@@ -90,7 +90,7 @@ function configureButtonHandler(zipCheckout) {
         console.log("Validation successful, starting payment flow...");
 
         // Start payment flow with popup mode
-        await zipCheckout.start({ presentationMode: "popup" }, createOrder());
+        await zipCheckout.start({ presentationMode: "auto" }, createOrder());
       } else {
         console.error("Validation failed");
         showMessage({
