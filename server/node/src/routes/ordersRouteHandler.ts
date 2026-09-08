@@ -520,3 +520,78 @@ export async function captureOrderRouteHandler(
 
   response.status(statusCode).json(result);
 }
+
+/**
+ * Persists the buyer's authorization (consent) record to comply with NACHA.
+ *
+ * PayPal does not store the authorization on your behalf, so you must store it
+ * for every ACH transaction. Storage is hosted by the merchant. This demo just
+ * logs the record to the console.
+ *
+ * @param authorizationRecord - The consent record to persist
+ */
+async function storeConsent(authorizationRecord: Record<string, unknown>) {
+  console.log(
+    "Storing ACH authorization (consent) record for NACHA compliance:",
+    authorizationRecord,
+  );
+}
+
+/**
+ * Single endpoint for the ACH wallet flow: retrieves the order details, stores
+ * the buyer's authorization (consent) record for NACHA compliance, then captures
+ * the payment. The order status must be APPROVED before you capture.
+ *
+ * @param request - Express request; `params.orderId` is the approved order ID
+ * @param response - Express response
+ */
+export async function captureAchWalletOrderRouteHandler(
+  request: Request,
+  response: Response,
+) {
+  const { orderId } = z.object({ orderId: z.string() }).parse(request.params);
+
+  // 1. Retrieve order details to build the NACHA authorization record.
+  const { result: orderDetails, statusCode: getStatusCode } =
+    await ordersController.getOrder({ id: orderId });
+
+  if (getStatusCode !== 200) {
+    return response.status(getStatusCode).json(orderDetails);
+  }
+
+  // 2. Store the buyer's authorization (consent) record for NACHA compliance.
+  // The ACH debit details live under payment_source.bank.ach_debit, which the
+  // server SDK's PaymentSourceResponse type does not model, so we read it
+  // defensively.
+  const achDebit = (
+    orderDetails.paymentSource as
+      | {
+          bank?: {
+            achDebit?: {
+              bankName?: string;
+              lastDigits?: string;
+              accountHolderName?: string;
+            };
+          };
+        }
+      | undefined
+  )?.bank?.achDebit;
+  await storeConsent({
+    orderId,
+    bankName: achDebit?.bankName,
+    lastDigits: achDebit?.lastDigits,
+    accountHolderName: achDebit?.accountHolderName,
+    amount: orderDetails.purchaseUnits?.[0]?.amount?.value,
+    currencyCode: orderDetails.purchaseUnits?.[0]?.amount?.currencyCode,
+    authorizedAt: new Date().toISOString(),
+  });
+
+  // 3. Capture the payment.
+  const { result, statusCode } = await ordersController.captureOrder({
+    id: orderId,
+    prefer: "return=minimal",
+    paypalRequestId: randomUUID(),
+  });
+
+  response.status(statusCode).json(result);
+}

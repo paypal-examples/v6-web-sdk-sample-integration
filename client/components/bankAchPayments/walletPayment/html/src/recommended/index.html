@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>
+      Bank ACH Wallet Payments - One-time Payment Flow - PayPal Web SDK
+    </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <style>
+      alert-component {
+        max-width: 50rem;
+        margin-top: 4rem;
+      }
+
+      bank-ach-wallet-payments {
+        display: block;
+        max-width: 30rem;
+        margin-top: 2rem;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>Bank ACH Wallet Payments</h1>
+    <p>
+      This is the recommended integration pattern for accepting ACH direct debit
+      payments with the PayPal-hosted <code>bank-ach-wallet-payments</code>
+      element. Buyers can link a bank account through Open Banking or pay with a
+      bank account saved in their PayPal Wallet.
+    </p>
+
+    <!-- The bank-ach-wallet-payments element renders the email-capture,
+         saved-account mandate, and open banking flow -->
+    <bank-ach-wallet-payments hidden></bank-ach-wallet-payments>
+    <alert-component></alert-component>
+
+    <script src="app.js"></script>
+
+    <script
+      async
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+      onload="onPayPalWebSdkLoaded()"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>
