@@ -1,14 +1,17 @@
 import { useCallback, useMemo, useState } from "react";
 import type { EventPayload, FieldState } from "@paypal/react-paypal-js/sdk-v6";
 
-export type CardFieldName = "number" | "cvv" | "expiry";
-export type FieldsState = Record<CardFieldName, FieldState>;
+export type CardFieldName = "number" | "cvv" | "expiry" | "name";
+export type FieldsState = Record<Exclude<CardFieldName, "name">, FieldState> & {
+  name?: FieldState;
+};
 type TouchedFields = Record<CardFieldName, boolean>;
 
 const FIELD_LABELS: Record<CardFieldName, string> = {
   number: "Card number",
   cvv: "CVV",
   expiry: "Expiry",
+  name: "Name",
 };
 
 const INITIAL_FIELD: FieldState = {
@@ -22,12 +25,14 @@ const INITIAL_FIELDS_STATE: FieldsState = {
   number: INITIAL_FIELD,
   cvv: INITIAL_FIELD,
   expiry: INITIAL_FIELD,
+  name: INITIAL_FIELD,
 };
 
 const INITIAL_TOUCHED: TouchedFields = {
   number: false,
   cvv: false,
   expiry: false,
+  name: false,
 };
 
 export type CardFieldsValidation = ReturnType<typeof useCardFieldsValidation>;
@@ -40,8 +45,14 @@ export const useCardFieldsValidation = () => {
   const [hasSubmitted, setHasSubmitted] = useState(false);
 
   const syncFieldsState = useCallback((event: EventPayload) => {
-    const { number, cvv, expiry } = event.data;
-    setFieldsState({ number, cvv, expiry });
+    const { number, cvv, expiry, name } = event.data;
+    setFieldsState((prev) => ({
+      ...prev,
+      number,
+      cvv,
+      expiry,
+      ...(name && { name }),
+    }));
   }, []);
 
   const handleBlur = useCallback(
@@ -73,6 +84,15 @@ export const useCardFieldsValidation = () => {
     (fieldName: CardFieldName): string | null => {
       if (!touchedFields[fieldName] && !hasSubmitted) return null;
       const field = fieldsState[fieldName];
+      if (!field) {
+        if (fieldName === "name") {
+          return null;
+        }
+
+        return `${FIELD_LABELS[fieldName]} is required`;
+      }
+
+      if (fieldName === "name" && field.isEmpty) return null;
       if (field.isEmpty) return `${FIELD_LABELS[fieldName]} is required`;
       if (!field.isValid) return `${FIELD_LABELS[fieldName]} is invalid`;
       return null;
@@ -83,7 +103,8 @@ export const useCardFieldsValidation = () => {
   const isFormValid =
     fieldsState.number.isValid &&
     fieldsState.cvv.isValid &&
-    fieldsState.expiry.isValid;
+    fieldsState.expiry.isValid &&
+    (!fieldsState.name || fieldsState.name.isEmpty || fieldsState.name.isValid);
 
   return {
     fieldsState,
