@@ -1,6 +1,7 @@
 import {
   PayPalCardCvvField,
   PayPalCardExpiryField,
+  PayPalCardNameField,
   PayPalCardNumberField,
   usePayPalCardFields,
   usePayPalCardFieldsOneTimePaymentSession,
@@ -106,6 +107,14 @@ const PayPalCardFieldsOneTimePayment = ({
         }}
       >
         <div className="card-field-wrapper">
+          <PayPalCardNameField
+            containerStyles={{ height: "3rem" }}
+            placeholder="Enter name"
+            style={invalidFieldStyle}
+          />
+          {getFieldError("name") && (
+            <span className="card-field-error">{getFieldError("name")}</span>
+          )}
           <PayPalCardNumberField
             containerStyles={{ height: "3rem" }}
             placeholder="Enter card number"
