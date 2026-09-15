@@ -25,7 +25,6 @@ const INITIAL_FIELDS_STATE: FieldsState = {
   number: INITIAL_FIELD,
   cvv: INITIAL_FIELD,
   expiry: INITIAL_FIELD,
-  name: INITIAL_FIELD,
 };
 
 const INITIAL_TOUCHED: TouchedFields = {
@@ -46,13 +45,7 @@ export const useCardFieldsValidation = () => {
 
   const syncFieldsState = useCallback((event: EventPayload) => {
     const { number, cvv, expiry, name } = event.data;
-    setFieldsState((prev) => ({
-      ...prev,
-      number,
-      cvv,
-      expiry,
-      ...(name && { name }),
-    }));
+    setFieldsState({ number, cvv, expiry, name });
   }, []);
 
   const handleBlur = useCallback(
@@ -84,16 +77,10 @@ export const useCardFieldsValidation = () => {
     (fieldName: CardFieldName): string | null => {
       if (!touchedFields[fieldName] && !hasSubmitted) return null;
       const field = fieldsState[fieldName];
-      if (!field) {
-        if (fieldName === "name") {
-          return null;
-        }
+      const isEmptyOrMissing = !field || field.isEmpty;
 
-        return `${FIELD_LABELS[fieldName]} is required`;
-      }
-
-      if (fieldName === "name" && field.isEmpty) return null;
-      if (field.isEmpty) return `${FIELD_LABELS[fieldName]} is required`;
+      if (fieldName === "name" && isEmptyOrMissing) return null;
+      if (isEmptyOrMissing) return `${FIELD_LABELS[fieldName]} is required`;
       if (!field.isValid) return `${FIELD_LABELS[fieldName]} is invalid`;
       return null;
     },
