@@ -1,6 +1,7 @@
 import {
   PayPalCardCvvField,
   PayPalCardExpiryField,
+  PayPalCardNameField,
   PayPalCardNumberField,
   usePayPalCardFields,
   usePayPalCardFieldsSavePaymentSession,
@@ -69,6 +70,12 @@ const PayPalCardFieldsSavePayment = ({
           gap: "1rem",
         }}
       >
+        <PayPalCardNameField
+          containerStyles={{
+            height: "3rem",
+          }}
+          placeholder="Enter name"
+        />
         <PayPalCardNumberField
           containerStyles={{
             height: "3rem",
