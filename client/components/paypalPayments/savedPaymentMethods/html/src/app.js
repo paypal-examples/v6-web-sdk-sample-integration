@@ -97,7 +97,7 @@ async function configurePayPalButton(sdkInstance) {
   }
   savedPaymentMethodComponent.dataset.listenerAttached = "true";
 
-  savedPaymentMethodComponent.addEventListener("click", async () => {
+  const openEditSession = async () => {
     try {
       // get the promise reference by invoking createOrder()
       // do not await this async function since it can cause transient activation issues
@@ -114,6 +114,16 @@ async function configurePayPalButton(sdkInstance) {
       );
     } catch (error) {
       console.error(error);
+    }
+  };
+
+  savedPaymentMethodComponent.addEventListener("click", openEditSession);
+  // this component isn't a native <button>, so Enter/Space activation
+  // needs to be wired up manually for keyboard users
+  savedPaymentMethodComponent.addEventListener("keydown", (event) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openEditSession();
     }
   });
 
