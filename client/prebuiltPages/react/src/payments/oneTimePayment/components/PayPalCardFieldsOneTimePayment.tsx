@@ -115,6 +115,8 @@ const PayPalCardFieldsOneTimePayment = ({
           {getFieldError("name") && (
             <span className="card-field-error">{getFieldError("name")}</span>
           )}
+        </div>
+        <div className="card-field-wrapper">
           <PayPalCardNumberField
             containerStyles={{ height: "3rem" }}
             placeholder="Enter card number"
