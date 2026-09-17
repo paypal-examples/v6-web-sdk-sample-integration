@@ -38,7 +38,7 @@ async function initializePayPal() {
     });
     const sdkInstance = await window.paypal.createInstance({
       clientToken,
-      components: ["paypal-saved-payment-methods", "paypal-messages"]
+      components: ["paypal-saved-payment-methods", "paypal-messages"],
     });
 
     const paymentMethods = await sdkInstance.findEligibleMethods({
@@ -87,7 +87,9 @@ async function configurePayPalButton(sdkInstance) {
     paymentSessionOptions,
   );
 
-  const savedPaymentMethodComponent = document.querySelector("#saved-payment-method");
+  const savedPaymentMethodComponent = document.querySelector(
+    "#saved-payment-method",
+  );
   savedPaymentMethodComponent.removeAttribute("hidden");
 
   if (savedPaymentMethodComponent.dataset.listenerAttached) {
@@ -108,7 +110,7 @@ async function configurePayPalButton(sdkInstance) {
       const createOrderPromise = createOrder();
       await editSavedPaymentSession.start(
         { presentationMode: "auto" },
-        createOrderPromise
+        createOrderPromise,
       );
     } catch (error) {
       console.error(error);
@@ -131,12 +133,15 @@ async function getBrowserSafeClientToken({ targetCustomerId, vaultId } = {}) {
     queryParams.append("vaultId", vaultId);
   }
 
-  const response = await fetch(`/paypal-api/auth/browser-safe-client-token?${queryParams.toString()}`, {
-    method: "GET",
-    headers: {
-      "Content-Type": "application/json",
+  const response = await fetch(
+    `/paypal-api/auth/browser-safe-client-token?${queryParams.toString()}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
     },
-  });
+  );
   if (!response.ok) {
     throw new Error("Failed to fetch client token");
   }
@@ -241,9 +246,7 @@ async function captureOrder({ orderId }) {
   const data = await response.json();
 
   if (!response.ok) {
-    throw new Error(
-      `Order capture failed ${data ? JSON.stringify(data) : ""}`,
-    );
+    throw new Error(`Order capture failed ${data ? JSON.stringify(data) : ""}`);
   }
 
   return data;

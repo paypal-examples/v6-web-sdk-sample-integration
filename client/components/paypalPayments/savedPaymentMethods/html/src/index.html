@@ -99,22 +99,36 @@
   <body>
     <h1>PayPal Saved Payment Methods</h1>
     <p>
-      This is the recommended integration pattern for the returning buyer flow where the vaulted payment method is previewed, allowing the buyer to click and edit the payment method as needed.
+      This is the recommended integration pattern for the returning buyer flow
+      where the vaulted payment method is previewed, allowing the buyer to click
+      and edit the payment method as needed.
     </p>
     <p class="note">
       Need a Vault ID or Customer ID to try this flow? Run the
-      <a href="/client/components/paypalPayments/savePayment/html/src/index.html">PayPal Save Payment (vault without purchase)</a>
-      example first — after approving, it returns a <code>customerId</code> and a <code>paymentTokenId</code> (vault ID).
-      <strong>Only one is needed</strong>: enter either the vault ID or the target customer ID below (not both).
+      <a
+        href="/client/components/paypalPayments/savePayment/html/src/index.html"
+        >PayPal Save Payment (vault without purchase)</a
+      >
+      example first — after approving, it returns a <code>customerId</code> and
+      a <code>paymentTokenId</code> (vault ID).
+      <strong>Only one is needed</strong>: enter either the vault ID or the
+      target customer ID below (not both).
     </p>
 
     <div class="vault-config">
       <div class="custom-field">
         <label class="field-label" for="vault-id">Vault ID:</label>
-        <input type="text" id="vault-id" class="field-input" placeholder="Enter vault ID" />
+        <input
+          type="text"
+          id="vault-id"
+          class="field-input"
+          placeholder="Enter vault ID"
+        />
       </div>
       <div class="custom-field">
-        <label class="field-label" for="target-customer-id">Target Customer ID:</label>
+        <label class="field-label" for="target-customer-id"
+          >Target Customer ID:</label
+        >
         <input
           type="text"
           id="target-customer-id"
@@ -126,9 +140,16 @@
     </div>
 
     <div class="buttons-container">
-      <img src="https://www.paypalobjects.com/js-sdk-logos/2.3.2/paypal-mark.svg" alt="PayPal" width="45" />
+      <img
+        src="https://www.paypalobjects.com/js-sdk-logos/2.3.2/paypal-mark.svg"
+        alt="PayPal"
+        width="45"
+      />
       <span>PayPal</span>
-      <paypal-saved-payment-methods id="saved-payment-method" hidden></paypal-saved-payment-methods>
+      <paypal-saved-payment-methods
+        id="saved-payment-method"
+        hidden
+      ></paypal-saved-payment-methods>
       <paypal-message
         id="paypal-message"
         auto-bootstrap
