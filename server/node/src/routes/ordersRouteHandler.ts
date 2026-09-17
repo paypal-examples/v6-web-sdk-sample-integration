@@ -251,8 +251,14 @@ export async function createOrderForSavedPaymentMethodsRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { currencyCode, totalAmount, items, intent, processingInstruction, vaultId } =
-    OneTimePaymentSchema.parse(request.body ?? {});
+  const {
+    currencyCode,
+    totalAmount,
+    items,
+    intent,
+    processingInstruction,
+    vaultId,
+  } = OneTimePaymentSchema.parse(request.body ?? {});
 
   const orderRequestBody = {
     intent,
@@ -275,9 +281,9 @@ export async function createOrderForSavedPaymentMethodsRouteHandler(
     ...(vaultId && {
       paymentSource: {
         paypal: {
-          vaultId
-        }
-      }
+          vaultId,
+        },
+      },
     }),
     // `clientConfiguration` is a newer field not yet modeled by the
     // installed @paypal/paypal-server-sdk OrderApplicationContext type,
@@ -286,10 +292,10 @@ export async function createOrderForSavedPaymentMethodsRouteHandler(
       clientConfiguration: {
         productCode: "EXPRESS_CHECKOUT",
         experience: {
-          productFlow: "BUYER_APPROVAL_BILLING_AGREEMENT_WITH_PURCHASE"
-        }
-      }
-    }
+          productFlow: "BUYER_APPROVAL_BILLING_AGREEMENT_WITH_PURCHASE",
+        },
+      },
+    },
   } as OrderRequest;
 
   const { result, statusCode } = await ordersController.createOrder({
