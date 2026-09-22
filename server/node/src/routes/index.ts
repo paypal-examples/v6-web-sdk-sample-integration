@@ -16,6 +16,7 @@ import {
   getOrderRouteHandler,
   captureOrderRouteHandler,
   captureAchWalletOrderRouteHandler,
+  createOrderForSavedPaymentMethodsRouteHandler,
 } from "./ordersRouteHandler";
 
 import {
@@ -50,6 +51,11 @@ router.post(
 router.post(
   "/paypal-api/checkout/orders/create-order-for-paypal-one-time-payment-with-vault",
   createOrderForPayPalOneTimePaymentWithVaultRouteHandler,
+);
+
+router.post(
+  "/paypal-api/checkout/orders/create-order-for-paypal-saved-payment-methods",
+  createOrderForSavedPaymentMethodsRouteHandler,
 );
 
 router.post(

@@ -5,6 +5,7 @@ import express, { type Express } from "express";
 import {
   createOrderForOneTimePaymentRouteHandler,
   createOrderForPayPalOneTimePaymentRouteHandler,
+  createOrderForSavedPaymentMethodsRouteHandler,
   captureOrderRouteHandler,
 } from "./ordersRouteHandler";
 
@@ -336,6 +337,79 @@ describe("createOrderForPayPalOneTimePaymentRouteHandler", () => {
             },
           },
         },
+      }),
+    );
+  });
+});
+
+describe("createOrderForSavedPaymentMethodsRouteHandler", () => {
+  let app: Express;
+
+  beforeEach(() => {
+    app = express();
+    app.use(express.json());
+    app.post(
+      "/paypal-api/checkout/orders/create-order-for-paypal-saved-payment-methods",
+      createOrderForSavedPaymentMethodsRouteHandler,
+    );
+    app.use(errorMiddleware);
+  });
+
+  test("should return a successful response without a vaultId", async () => {
+    const response = await request(app)
+      .post(
+        "/paypal-api/checkout/orders/create-order-for-paypal-saved-payment-methods",
+      )
+      .send({});
+
+    expect(response.status).toBe(201);
+    expect(response.body).toEqual(
+      expect.objectContaining({
+        id: expect.any(String),
+        status: "CREATED",
+      }),
+    );
+    expect(createOrderMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          intent: "CAPTURE",
+          applicationContext: {
+            clientConfiguration: {
+              productCode: "EXPRESS_CHECKOUT",
+              experience: {
+                productFlow: "BUYER_APPROVAL_BILLING_AGREEMENT_WITH_PURCHASE",
+              },
+            },
+          },
+        }),
+      }),
+    );
+    expect(createOrderMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.not.objectContaining({
+          paymentSource: expect.anything(),
+        }),
+      }),
+    );
+  });
+
+  test("should include paymentSource.paypal.vaultId when vaultId is provided", async () => {
+    const response = await request(app)
+      .post(
+        "/paypal-api/checkout/orders/create-order-for-paypal-saved-payment-methods",
+      )
+      .send({ vaultId: "sample-vault-id" });
+
+    expect(response.status).toBe(201);
+    expect(createOrderMock).toHaveBeenCalledWith(
+      expect.objectContaining({
+        body: expect.objectContaining({
+          paymentSource: {
+            paypal: {
+              vaultId: "sample-vault-id",
+            },
+          },
+        }),
       }),
     );
   });
