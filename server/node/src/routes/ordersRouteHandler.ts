@@ -2,7 +2,6 @@ import {
   CheckoutPaymentIntent,
   OrdersCardVerificationMethod,
   OrdersController,
-  OrderRequest,
   PaypalExperienceUserAction,
   PaypalPaymentTokenCustomerType,
   PaypalPaymentTokenUsageType,
@@ -285,18 +284,7 @@ export async function createOrderForSavedPaymentMethodsRouteHandler(
         },
       },
     }),
-    // `clientConfiguration` is a newer field not yet modeled by the
-    // installed @paypal/paypal-server-sdk OrderApplicationContext type,
-    // so the body is asserted to OrderRequest below.
-    applicationContext: {
-      clientConfiguration: {
-        productCode: "EXPRESS_CHECKOUT",
-        experience: {
-          productFlow: "BUYER_APPROVAL_BILLING_AGREEMENT_WITH_PURCHASE",
-        },
-      },
-    },
-  } as OrderRequest;
+  };
 
   const { result, statusCode } = await ordersController.createOrder({
     body: orderRequestBody,

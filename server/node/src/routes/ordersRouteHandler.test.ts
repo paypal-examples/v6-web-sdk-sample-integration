@@ -373,14 +373,6 @@ describe("createOrderForSavedPaymentMethodsRouteHandler", () => {
       expect.objectContaining({
         body: expect.objectContaining({
           intent: "CAPTURE",
-          applicationContext: {
-            clientConfiguration: {
-              productCode: "EXPRESS_CHECKOUT",
-              experience: {
-                productFlow: "BUYER_APPROVAL_BILLING_AGREEMENT_WITH_PURCHASE",
-              },
-            },
-          },
         }),
       }),
     );
