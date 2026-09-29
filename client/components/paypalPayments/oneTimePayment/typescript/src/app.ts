@@ -108,27 +108,29 @@ function setupPayLaterButton({
   const { productCode, countryCode } = paylaterPaymentMethodDetails;
   const paylaterButton = document.querySelector("#paylater-button");
 
-  if (paylaterButton && productCode && countryCode) {
-    paylaterButton.setAttribute("productCode", productCode);
-    paylaterButton.setAttribute("countryCode", countryCode);
-    paylaterButton?.removeAttribute("hidden");
-
-    paylaterButton?.addEventListener("click", async () => {
-      try {
-        // get the promise reference by invoking createOrder()
-        // do not await this async function since it can cause transient activation issues
-        const createOrderPromise = createOrderApiCall();
-        await paylaterPaymentSession.start(
-          { presentationMode: "auto" },
-          createOrderPromise,
-        );
-
-        renderAlert({ type: "info", message: "Order successfully created" });
-      } catch (error) {
-        console.error(error);
-      }
-    });
+  if (!(paylaterButton && productCode && countryCode)) {
+    return;
   }
+
+  paylaterButton.setAttribute("productCode", productCode);
+  paylaterButton.setAttribute("countryCode", countryCode);
+  paylaterButton?.removeAttribute("hidden");
+
+  paylaterButton?.addEventListener("click", async () => {
+    try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrderApiCall();
+      await paylaterPaymentSession.start(
+        { presentationMode: "auto" },
+        createOrderPromise,
+      );
+
+      renderAlert({ type: "info", message: "Order successfully created" });
+    } catch (error) {
+      console.error(error);
+    }
+  });
 }
 
 function setupPayPalCreditButton({
@@ -146,26 +148,28 @@ function setupPayPalCreditButton({
   const { countryCode } = creditPaymentMethodDetails;
   const paypalCreditButton = document.querySelector("#paypal-credit-button");
 
-  if (paypalCreditButton && countryCode) {
-    paypalCreditButton.setAttribute("countryCode", countryCode);
-    paypalCreditButton.removeAttribute("hidden");
-
-    paypalCreditButton.addEventListener("click", async () => {
-      try {
-        // get the promise reference by invoking createOrder()
-        // do not await this async function since it can cause transient activation issues
-        const createOrderPromise = createOrderApiCall();
-        await paypalCreditPaymentSession.start(
-          { presentationMode: "auto" },
-          createOrderPromise,
-        );
-
-        renderAlert({ type: "info", message: "Order successfully created" });
-      } catch (error) {
-        console.error(error);
-      }
-    });
+  if (!(paypalCreditButton && countryCode)) {
+    return;
   }
+
+  paypalCreditButton.setAttribute("countryCode", countryCode);
+  paypalCreditButton.removeAttribute("hidden");
+
+  paypalCreditButton.addEventListener("click", async () => {
+    try {
+      // get the promise reference by invoking createOrder()
+      // do not await this async function since it can cause transient activation issues
+      const createOrderPromise = createOrderApiCall();
+      await paypalCreditPaymentSession.start(
+        { presentationMode: "auto" },
+        createOrderPromise,
+      );
+
+      renderAlert({ type: "info", message: "Order successfully created" });
+    } catch (error) {
+      console.error(error);
+    }
+  });
 }
 
 function getSharedPaymentSessionOptions() {
