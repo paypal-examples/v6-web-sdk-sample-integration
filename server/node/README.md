@@ -364,3 +364,45 @@ Accepts serveral optional parameters like currency and customer country code. Ch
     }
   }
   ```
+
+---
+
+### Webhooks
+
+PayPal sends webhook notifications to your server when events happen, like a completed payment capture. This endpoint verifies each notification's signature offline against PayPal's public certificate. For more details, visit PayPal's [Webhooks documentation](https://developer.paypal.com/api/rest/webhooks/).
+
+To enable it, set `PAYPAL_WEBHOOK_ID` in the .env file to the webhook ID from your sandbox app. Until then, the endpoint stays off and returns `404 Not Found`.
+
+To test locally with the PayPal CLI, start the server with `paypal dev -- npm start`. In this dev mode, the endpoint also accepts events sent by `paypal webhook trigger` and `paypal webhook listen`, and by PayPal's Webhooks Simulator. Dev mode is always off when `NODE_ENV=production`.
+
+This handler is a starting point for development. Production code should also store processed event IDs durably (not in memory), rate-limit the endpoint, and handle failures in its own event processing.
+
+#### `POST /paypal-api/webhooks/events`
+
+**Description:**
+Verifies the webhook signature, ignores duplicate event IDs, and responds quickly so PayPal doesn't retry the delivery. Rejects a request that isn't JSON with `415 Unsupported Media Type`, and one that fails verification (an invalid signature, or a transmission time more than 5 minutes off) with `401 Unauthorized`.
+
+**Request Body:**
+A webhook event sent by PayPal, along with its signature headers (`paypal-transmission-*` and `paypal-cert-url`).
+
+```json
+{
+  "id": "WH-58D329510W468432D-8HN650336L201105X",
+  "event_type": "PAYMENT.CAPTURE.COMPLETED",
+  "resource": {
+    // event-specific details
+  }
+}
+```
+
+**Responses:**
+
+- `200 OK`  
+  Acknowledges a verified event, including a duplicate. `eventFidelity` says how the event was signed: `paypal_sandbox_signed`, `paypal_simulator_signed`, or `local_mock` (PayPal CLI).
+
+  ```json
+  {
+    "received": true,
+    "eventFidelity": "paypal_sandbox_signed"
+  }
+  ```
