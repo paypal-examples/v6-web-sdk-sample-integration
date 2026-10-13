@@ -3,6 +3,7 @@ import path from "node:path";
 import cors from "cors";
 
 import routes from "./routes/index";
+import { webhookRouter } from "./webhooks/webhookRouter";
 import errorMiddleware from "./middleware/errorMiddleware";
 import crossOriginOpenerPolicyMiddleware from "./middleware/crossOriginOpenerPolicyMiddleware";
 
@@ -20,6 +21,8 @@ const app = express();
 
 app.use(crossOriginOpenerPolicyMiddleware);
 app.use(cors());
+// mount before express.json() so the webhook route can read its raw body
+app.use(webhookRouter);
 app.use(express.json());
 app.use(routes);
 app.use("/client", express.static(CLIENT_STATIC_DIRECTORY));
