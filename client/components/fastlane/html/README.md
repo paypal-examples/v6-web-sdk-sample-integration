@@ -20,12 +20,33 @@ npm start
 - **Order Creation:** Submits a PayPal order using the Fastlane payment token.
 - **Card Testing Info:** Provides a link to PayPal's sandbox card testing documentation.
 
+## Sample Integrations
+
+| Sample Integration                          | Description                                                                                                                                            |
+| ------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| [Recommended](src/recommended/index.html)   | Start with this recommended sample integration. It looks up the buyer by email, renders the Fastlane member or guest experience, and creates an order. |
+| [3DS](src/advanced/threeDSecure/index.html) | This advanced integration runs 3D Secure on the Fastlane payment token before the order is created.                                                    |
+
+## 3D Secure
+
+The [3DS sample](src/advanced/threeDSecure/index.html) calls `sdkInstance.createFastlaneThreeDomainSecure()` after `getPaymentToken()`:
+
+1. `isEligible()` checks whether the card can be authenticated for the order amount.
+2. `show()` presents the challenge and resolves with `authenticationState`, `liabilityShift` and an enriched `nonce`.
+3. If the buyer authenticated and liability may shift to the issuer, the enriched `nonce` replaces the original token as the order's `singleUseToken`.
+
+This sample trusts the client-side result. In production, also confirm the 3DS outcome (`liability_shift`, `enrollment_status`) in the Orders API response before fulfilling the order.
+
+To trigger 3DS in the sandbox, add Mastercard `5186459910794125` (any future expiry, CVV `123`) to your [Fastlane sandbox profile](https://fastlane.sandbox.paypal.com/) or enter it as a guest.
+
 ## File Structure
 
-- [`src/index.html`](src/index.html): Main HTML page for the Fastlane demo.
-- [`src/fastlaneSdkComponent.js`](src/fastlaneSdkComponent.js): Loads the PayPal SDK and initializes Fastlane.
-- [`src/fastlane.js`](src/fastlane.js): Handles Fastlane logic, UI updates, and order creation.
-- [`src/fastlane.css`](src/fastlane.css): Basic styles for the demo.
+Each sample folder contains:
+
+- `index.html`: Main HTML page for the demo.
+- `fastlaneSdkComponent.js`: Loads the PayPal SDK and initializes Fastlane.
+- `fastlane.js`: Handles Fastlane logic, UI updates, and order creation (plus 3DS in the advanced sample).
+- `fastlane.css`: Basic styles for the demo.
 
 ## How It Works
 
