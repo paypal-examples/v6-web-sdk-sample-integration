@@ -29,12 +29,13 @@ async function authenticateWith3DS(paymentToken) {
     return paymentToken;
   }
 
+  // authenticationState: "succeeded" | "errored" | "cancelled"
+  // liabilityShift (optional): "POSSIBLE" | "YES" | "NO" | "UNKNOWN"
   const { authenticationState, liabilityShift, nonce } =
     await threeDomainSecure.show();
   console.log("3DS result", { authenticationState, liabilityShift });
 
-  // The v5 docs spell this "cancelled"; accept both until confirmed for v6.
-  if (["canceled", "cancelled"].includes(authenticationState)) {
+  if (authenticationState === "cancelled") {
     renderAlert({
       type: "warning",
       message: "3D Secure canceled. Try again or use a different card.",
