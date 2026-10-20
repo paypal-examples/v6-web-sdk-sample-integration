@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Fastlane - Advanced Integration - ThreeDSecure PayPal Web SDK</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/client/shared/styles.css" />
+    <link rel="stylesheet" href="fastlane.css" />
+  </head>
+  <body>
+    <h1>Fastlane - Advanced Integration - ThreeDSecure PayPal Web SDK</h1>
+
+    <div>
+      <form id="email-form">
+        <fieldset>
+          <legend>Email</legend>
+          <input type="email" id="email-input" />
+          <div id="watermark-container">
+            <img
+              src="https://www.paypalobjects.com/fastlane-v1/assets/fastlane-with-tooltip_en_sm_light.0808.svg"
+            />
+          </div>
+
+          <button id="email-submit-button">Submit</button>
+        </fieldset>
+      </form>
+
+      <p id="card-testing-info" hidden>
+        To trigger 3D Secure in the sandbox, use the Mastercard
+        <code>5186459910794125</code> (any future expiry, CVV <code>123</code>).
+        For more info on testing cards with PayPal, see
+        <a href="https://developer.paypal.com/tools/sandbox/card-testing/"
+          >https://developer.paypal.com/tools/sandbox/card-testing/</a
+        >.
+      </p>
+      <div id="card-container"></div>
+
+      <div id="shipping-display-container" hidden></div>
+      <button id="change-shipping-button" hidden>
+        Change Shipping Address
+      </button>
+
+      <div id="payment-container"></div>
+      <button id="submit-button" hidden>Submit Order</button>
+      <alert-component></alert-component>
+    </div>
+
+    <script src="fastlaneSdkComponent.js"></script>
+    <script src="fastlane.js"></script>
+    <script
+      async
+      onload="onPayPalWebSdkLoaded()"
+      src="https://www.sandbox.paypal.com/web-sdk/v6/core"
+    ></script>
+
+    <script async src="/client/shared/alert-component.js"></script>
+  </body>
+</html>
