@@ -10,7 +10,7 @@ describe("getAuthCredentials", () => {
     });
   });
 
-  test("uses the access token `paypal dev` injects, with no client secret", async () => {
+  test("uses an access token instead of the client secret", async () => {
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "");
     vi.stubEnv("PAYPAL_ACCESS_TOKEN", "injected-token");
 

@@ -3,7 +3,7 @@ import { describe, expect, test, vi } from "vitest";
 import { getFullScopeAccessToken } from "./authorization";
 
 describe("getFullScopeAccessToken", () => {
-  test("returns the access token `paypal dev` injects, without calling PayPal", async () => {
+  test("returns an access token that is set, without calling PayPal", async () => {
     vi.stubEnv("PAYPAL_ACCESS_TOKEN", "injected-token");
     const fetchSpy = vi.spyOn(globalThis, "fetch");
 

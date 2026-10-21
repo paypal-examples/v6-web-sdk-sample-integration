@@ -22,7 +22,7 @@ export async function getFullScopeAccessToken() {
     PAYPAL_ACCESS_TOKEN,
   } = process.env;
 
-  // `paypal dev` injects a ready access token instead of the client secret
+  // an access token, when set (e.g. by `paypal dev`), is used as is
   if (PAYPAL_ACCESS_TOKEN) {
     return PAYPAL_ACCESS_TOKEN;
   }

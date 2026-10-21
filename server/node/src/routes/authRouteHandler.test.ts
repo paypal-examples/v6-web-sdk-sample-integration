@@ -56,15 +56,17 @@ describe("clientTokenRouteHandler", () => {
     );
   });
 
-  test("explains which features need the client secret when it's missing", async () => {
+  test("fails with a clear error when the client secret is missing", async () => {
     vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "");
 
     const response = await request(app).get(
       "/paypal-api/auth/browser-safe-client-token",
     );
 
-    expect(response.status).toBe(503);
-    expect(response.body.errorDescription).toMatch(/Card Fields, Fastlane/);
+    expect(response.status).toBe(500);
+    expect(response.text).toMatch(
+      /PAYPAL_SANDBOX_CLIENT_SECRET environment variable is not defined/,
+    );
   });
 });
 

@@ -12,15 +12,11 @@ export async function clientTokenRouteHandler(
   const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
     process.env;
 
-  // a client token needs the client secret; the access token `paypal dev`
-  // injects can't create one
+  // a client token can't be created with an access token alone
   if (!PAYPAL_SANDBOX_CLIENT_SECRET) {
-    response.status(503).json({
-      error: "Client token unavailable",
-      errorDescription:
-        "Card Fields, Fastlane and saved payment methods need PAYPAL_SANDBOX_CLIENT_SECRET in the .env file.",
-    });
-    return;
+    throw new Error(
+      "PAYPAL_SANDBOX_CLIENT_SECRET environment variable is not defined; Card Fields, Fastlane and saved payment methods need it",
+    );
   }
 
   const auth = Buffer.from(
