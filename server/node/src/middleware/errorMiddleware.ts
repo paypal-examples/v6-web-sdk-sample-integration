@@ -17,6 +17,12 @@ export default async function errorMiddleware(
     });
   } else if (error instanceof ApiError || error instanceof CustomApiError) {
     const { result, statusCode } = error;
+    // the access token `paypal dev` injects can't be refreshed
+    if (statusCode === 401 && process.env.PAYPAL_ACCESS_TOKEN) {
+      console.error(
+        "PayPal rejected the access token from `paypal dev`; it may have expired. Restart `paypal dev`.",
+      );
+    }
     response.status(statusCode).json(result);
   } else {
     response.status(500).json({

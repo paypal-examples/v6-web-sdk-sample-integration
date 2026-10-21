@@ -1,8 +1,6 @@
 import { CustomApiError } from "./customApiError";
 import { BASE_URL } from "./constants";
 
-const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
-
 type AuthTokenSuccessResponse = {
   scope: string;
   access_token: string;
@@ -18,6 +16,17 @@ type AuthTokenErrorResponse = {
 };
 
 export async function getFullScopeAccessToken() {
+  const {
+    PAYPAL_SANDBOX_CLIENT_ID,
+    PAYPAL_SANDBOX_CLIENT_SECRET,
+    PAYPAL_ACCESS_TOKEN,
+  } = process.env;
+
+  // `paypal dev` injects a ready access token instead of the client secret
+  if (PAYPAL_ACCESS_TOKEN) {
+    return PAYPAL_ACCESS_TOKEN;
+  }
+
   const encodedClientCredentials = Buffer.from(
     `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
   ).toString("base64");

@@ -13,6 +13,18 @@ npm start
 # go to http://localhost:8080
 ```
 
+To run with the PayPal CLI instead of a client secret in the .env file:
+
+```bash
+paypal project connect
+paypal dev -- npm start
+```
+
+`paypal dev` gives the server a short-lived access token (`PAYPAL_ACCESS_TOKEN`), which it uses instead of the client secret. The client ID still comes from `PAYPAL_SANDBOX_CLIENT_ID`. Without the client secret:
+
+- Card Fields, Fastlane and saved payment methods don't work, since their client token needs the secret.
+- The access token can't be refreshed. When it expires, restart `paypal dev`.
+
 ---
 
 ## API Endpoints
@@ -42,6 +54,9 @@ Generates and returns a browser-safe client token for initializing the PayPal We
     "expiresIn": "900"
   }
   ```
+
+- `503 Service Unavailable`  
+  Without `PAYPAL_SANDBOX_CLIENT_SECRET`, for example when run with `paypal dev`.
 
 #### `GET /paypal-api/auth/browser-safe-client-id`
 

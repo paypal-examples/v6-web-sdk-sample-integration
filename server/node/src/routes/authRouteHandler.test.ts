@@ -55,6 +55,17 @@ describe("clientTokenRouteHandler", () => {
       }),
     );
   });
+
+  test("explains which features need the client secret when it's missing", async () => {
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/browser-safe-client-token",
+    );
+
+    expect(response.status).toBe(503);
+    expect(response.body.errorDescription).toMatch(/Card Fields, Fastlane/);
+  });
 });
 
 describe("clientIdRouteHandler", () => {

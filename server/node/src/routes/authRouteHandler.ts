@@ -3,15 +3,26 @@ import type { Request, Response } from "express";
 
 import { client } from "../paypalServerSdkClient";
 
-const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
-  process.env;
-
 const oAuthAuthorizationController = new OAuthAuthorizationController(client);
 
 export async function clientTokenRouteHandler(
   request: Request,
   response: Response,
 ) {
+  const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
+    process.env;
+
+  // a client token needs the client secret; the access token `paypal dev`
+  // injects can't create one
+  if (!PAYPAL_SANDBOX_CLIENT_SECRET) {
+    response.status(503).json({
+      error: "Client token unavailable",
+      errorDescription:
+        "Card Fields, Fastlane and saved payment methods need PAYPAL_SANDBOX_CLIENT_SECRET in the .env file.",
+    });
+    return;
+  }
+
   const auth = Buffer.from(
     `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
   ).toString("base64");
