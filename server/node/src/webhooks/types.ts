@@ -23,3 +23,11 @@ export interface WebhookEvent {
   event_type: string;
 }
 
+/** One event in the webhook inbox, in the shape the shared component reads. */
+export interface InboxEvent {
+  id: string;
+  type: string;
+  receivedAt: string;
+  // masked; see maskWebhookPayload.ts
+  payload: Record<string, unknown>;
+}

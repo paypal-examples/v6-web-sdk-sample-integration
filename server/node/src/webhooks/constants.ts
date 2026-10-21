@@ -34,6 +34,20 @@ export const CLI_SIGNATURE_AUDIENCE = "PAYPALCLIDEVWEBHOOKV1";
 // dev process. A production handler would use a persistent store.
 export const MAX_TRACKED_EVENT_IDS = 1000;
 
+// the webhook inbox shows the most recent events only
+export const MAX_INBOX_EVENTS = 25;
+
+// friendly names for the webhook inbox; other event types show as-is
+export const WEBHOOK_EVENT_NAMES: Readonly<Record<string, string>> = {
+  "CHECKOUT.ORDER.APPROVED": "Order approved",
+  "CHECKOUT.ORDER.COMPLETED": "Order completed",
+  "PAYMENT.CAPTURE.PENDING": "Payment pending",
+  "PAYMENT.CAPTURE.COMPLETED": "Payment captured",
+  "PAYMENT.CAPTURE.DENIED": "Payment denied",
+  "PAYMENT.CAPTURE.REFUNDED": "Payment refunded",
+  "PAYMENT.CAPTURE.REVERSED": "Payment reversed",
+};
+
 export const NOT_VERIFIED: VerifyPayPalWebhookResult = {
   verified: false,
   eventFidelity: undefined,

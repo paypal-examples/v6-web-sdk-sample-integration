@@ -5,6 +5,14 @@ import {
   isPayPalWebhookIdSet,
   isWebhookDevelopmentModeEnabled,
 } from "./verifyPayPalWebhook";
+import {
+  clearInboxEventsRouteHandler,
+  listInboxEventsRouteHandler,
+} from "./inboxEvents";
+import {
+  webhookAssistantPageHandler,
+  webhookAssistantScriptRouteHandler,
+} from "./webhookAssistant";
 import { webhookRouteHandler } from "./webhookRouteHandler";
 
 // Registered here rather than in routes/index.ts so `paypal init` scaffolds,
@@ -19,6 +27,29 @@ webhookRouter.post(
   express.raw({ type: "application/json" }),
   webhookRouteHandler,
 );
+
+// the webhook inbox's list and Clear all; dev mode only, since the list
+// includes payloads
+webhookRouter.get(
+  "/paypal-api/webhooks/events",
+  skipUnless(isWebhookDevelopmentModeEnabled),
+  listInboxEventsRouteHandler,
+);
+
+webhookRouter.delete(
+  "/paypal-api/webhooks/events",
+  skipUnless(isWebhookDevelopmentModeEnabled),
+  clearInboxEventsRouteHandler,
+);
+
+webhookRouter.get(
+  "/paypal-api/webhooks/webhook-assistant.js",
+  skipUnless(isWebhookDevelopmentModeEnabled),
+  webhookAssistantScriptRouteHandler,
+);
+
+// in dev mode, adds the webhook inbox to each sample page
+webhookRouter.use("/client", webhookAssistantPageHandler);
 
 // skips the route, so Express answers 404, unless the condition holds
 function skipUnless(condition: () => boolean) {

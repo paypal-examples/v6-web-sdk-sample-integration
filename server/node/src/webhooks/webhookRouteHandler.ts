@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 
 import { MAX_TRACKED_EVENT_IDS } from "./constants";
+import { recordInboxEvent } from "./inboxEvents";
 import type { WebhookEvent } from "./types";
 import { verifyPayPalWebhook } from "./verifyPayPalWebhook";
 
@@ -36,6 +37,9 @@ export async function webhookRouteHandler(
   // acknowledge every verified event, duplicates included, since PayPal
   // retries anything other than a prompt 2xx
   response.status(200).json({ received: true, eventFidelity });
+
+  // the inbox keeps its own list, so a redelivery shows again after Clear all
+  recordInboxEvent(event);
 
   if (recordEvent(event.id)) {
     console.log(
