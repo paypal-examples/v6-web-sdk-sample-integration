@@ -12,7 +12,8 @@ async function onPayPalWebSdkLoaded() {
       currencyCode: "TZS",
     });
 
-    const isAirtelTanzaniaEligible = paymentMethods.isEligible("airtel_tanzania");
+    const isAirtelTanzaniaEligible =
+      paymentMethods.isEligible("airtel_tanzania");
 
     if (isAirtelTanzaniaEligible) {
       configureAirtelTanzaniaPayment(sdkInstance);
@@ -35,11 +36,12 @@ async function onPayPalWebSdkLoaded() {
 function configureAirtelTanzaniaPayment(sdkInstance) {
   try {
     // Create Airtel Tanzania checkout session
-    const airtelTanzaniaCheckout = sdkInstance.createAirtelTanzaniaOneTimePaymentSession({
-      onApprove: handleApprove,
-      onCancel: handleCancel,
-      onError: handleError,
-    });
+    const airtelTanzaniaCheckout =
+      sdkInstance.createAirtelTanzaniaOneTimePaymentSession({
+        onApprove: handleApprove,
+        onCancel: handleCancel,
+        onError: handleError,
+      });
 
     // Setup payment fields
     configurePaymentFields(airtelTanzaniaCheckout);
@@ -87,7 +89,9 @@ function configurePaymentFields(checkout) {
   });
 
   // Mount the fields to the containers
-  document.querySelector("#airtel-tanzania-full-name").appendChild(fullNameField);
+  document
+    .querySelector("#airtel-tanzania-full-name")
+    .appendChild(fullNameField);
   document.querySelector("#airtel-tanzania-email").appendChild(emailField);
 }
 

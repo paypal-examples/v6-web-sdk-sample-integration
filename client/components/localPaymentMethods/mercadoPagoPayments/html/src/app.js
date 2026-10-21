@@ -35,11 +35,12 @@ async function onPayPalWebSdkLoaded() {
 function configureMercadoPagoPayment(sdkInstance) {
   try {
     // Create Mercado Pago checkout session
-    const mercadopagoCheckout = sdkInstance.createMercadoPagoOneTimePaymentSession({
-      onApprove: handleApprove,
-      onCancel: handleCancel,
-      onError: handleError,
-    });
+    const mercadopagoCheckout =
+      sdkInstance.createMercadoPagoOneTimePaymentSession({
+        onApprove: handleApprove,
+        onCancel: handleCancel,
+        onError: handleError,
+      });
 
     // Setup payment fields
     configurePaymentFields(mercadopagoCheckout);

@@ -35,11 +35,12 @@ async function onPayPalWebSdkLoaded() {
 function configureNigeriaBanksPayment(sdkInstance) {
   try {
     // Create Nigeria Banks checkout session
-    const nigeriaBanksCheckout = sdkInstance.createNigeriaBanksOneTimePaymentSession({
-      onApprove: handleApprove,
-      onCancel: handleCancel,
-      onError: handleError,
-    });
+    const nigeriaBanksCheckout =
+      sdkInstance.createNigeriaBanksOneTimePaymentSession({
+        onApprove: handleApprove,
+        onCancel: handleCancel,
+        onError: handleError,
+      });
 
     // Setup payment fields
     configurePaymentFields(nigeriaBanksCheckout);

@@ -35,11 +35,12 @@ async function onPayPalWebSdkLoaded() {
 function configurePromptPayQRPayment(sdkInstance) {
   try {
     // Create PromptPay QR checkout session
-    const promptpayQrCheckout = sdkInstance.createPromptpayQrOneTimePaymentSession({
-      onApprove: handleApprove,
-      onCancel: handleCancel,
-      onError: handleError,
-    });
+    const promptpayQrCheckout =
+      sdkInstance.createPromptpayQrOneTimePaymentSession({
+        onApprove: handleApprove,
+        onCancel: handleCancel,
+        onError: handleError,
+      });
 
     // Setup payment fields
     configurePaymentFields(promptpayQrCheckout);
