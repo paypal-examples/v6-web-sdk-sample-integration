@@ -364,3 +364,93 @@ Accepts serveral optional parameters like currency and customer country code. Ch
     }
   }
   ```
+
+---
+
+### Webhooks
+
+PayPal sends webhook notifications to your server when events happen, like a completed payment capture. This endpoint verifies each notification's signature offline against PayPal's public certificate. For more details, visit PayPal's [Webhooks documentation](https://developer.paypal.com/api/rest/webhooks/).
+
+To enable it, set `PAYPAL_WEBHOOK_ID` in the .env file to the webhook ID from your sandbox app. Until then, the endpoint stays off and returns `404 Not Found`.
+
+To test locally with the PayPal CLI, start the server with `paypal dev -- npm start`. In this dev mode, the endpoint also accepts events sent by `paypal webhook trigger` and `paypal webhook listen`, and by PayPal's Webhooks Simulator. Dev mode is always off when `NODE_ENV=production`.
+
+In dev mode, every sample page also shows a webhook inbox: a floating button with a new-event count, a toast for the latest event, and a panel listing recent events with their payloads (personal values masked). The pages don't include it themselves. The server adds these two tags before `</body>` when it serves a page in dev mode, so new pages get the inbox too:
+
+```html
+<script type="module" src="/paypal-api/webhooks/webhook-assistant.js"></script>
+<paypal-webhook-assistant
+  endpoint="/paypal-api/webhooks/events"
+></paypal-webhook-assistant>
+```
+
+The inbox is `client/shared/webhook-assistant.js`, shared with the other PayPal samples, so don't edit it here. Outside dev mode, the server serves pages unchanged and the inbox routes return `404 Not Found`.
+
+This handler is a starting point for development. Production code should also store processed event IDs durably (not in memory), rate-limit the endpoint, and handle failures in its own event processing.
+
+#### `POST /paypal-api/webhooks/events`
+
+**Description:**
+Verifies the webhook signature, ignores duplicate event IDs, and responds quickly so PayPal doesn't retry the delivery. Rejects a request that isn't JSON with `415 Unsupported Media Type`, and one that fails verification (an invalid signature, or a transmission time more than 5 minutes off) with `401 Unauthorized`.
+
+**Request Body:**
+A webhook event sent by PayPal, along with its signature headers (`paypal-transmission-*` and `paypal-cert-url`).
+
+```json
+{
+  "id": "WH-58D329510W468432D-8HN650336L201105X",
+  "event_type": "PAYMENT.CAPTURE.COMPLETED",
+  "resource": {
+    // event-specific details
+  }
+}
+```
+
+**Responses:**
+
+- `200 OK`  
+  Acknowledges a verified event, including a duplicate. `eventFidelity` says how the event was signed: `paypal_sandbox_signed`, `paypal_simulator_signed`, or `local_mock` (PayPal CLI).
+
+  ```json
+  {
+    "received": true,
+    "eventFidelity": "paypal_sandbox_signed"
+  }
+  ```
+
+#### `GET /paypal-api/webhooks/events`
+
+**Description:**
+Lists the last 25 verified webhook events, newest first, for the webhook inbox, with personal values masked. Events are kept in memory and cleared when the server restarts. Dev mode only; otherwise returns `404 Not Found`, even when `PAYPAL_WEBHOOK_ID` is set.
+
+**Responses:**
+
+- `200 OK`  
+  `names` maps event types to the friendly names the inbox shows, and `now` is the server's time.
+
+  ```json
+  {
+    "entries": [
+      {
+        "id": "WH-58D329510W468432D-8HN650336L201105X",
+        "type": "PAYMENT.CAPTURE.COMPLETED",
+        "receivedAt": "2026-10-20T04:05:06.789Z",
+        "payload": {
+          // the webhook event as received, with personal values masked
+        }
+      }
+    ],
+    "names": { "PAYMENT.CAPTURE.COMPLETED": "Payment captured" },
+    "now": "2026-10-20T04:05:08.000Z"
+  }
+  ```
+
+#### `DELETE /paypal-api/webhooks/events?through=:eventId`
+
+**Description:**
+The inbox's **Clear all**: removes the given event and every older one. Dev mode only.
+
+**Responses:**
+
+- `204 No Content`
+- `400 Bad Request` when `through` is missing.
