@@ -1,7 +1,7 @@
 import { OAuthAuthorizationController } from "@paypal/paypal-server-sdk";
 import type { Request, Response } from "express";
 
-import { client } from "../paypalServerSdkClient";
+import { client, getClientId } from "../paypalServerSdkClient";
 
 const oAuthAuthorizationController = new OAuthAuthorizationController(client);
 
@@ -77,12 +77,12 @@ export async function clientTokenRouteHandler(
  * It is safe for merchant developers to hardcode Client ID values in front-end JavaScript/HTML files.
  */
 export function clientIdRouteHandler(_request: Request, response: Response) {
-  const { PAYPAL_SANDBOX_CLIENT_ID } = process.env;
+  const clientId = getClientId();
 
-  if (!PAYPAL_SANDBOX_CLIENT_ID) {
+  if (!clientId) {
     throw new Error(
       "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
     );
   }
-  response.status(200).json({ clientId: PAYPAL_SANDBOX_CLIENT_ID });
+  response.status(200).json({ clientId });
 }

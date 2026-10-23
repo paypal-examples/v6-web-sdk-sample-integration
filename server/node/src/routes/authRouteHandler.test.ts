@@ -91,4 +91,15 @@ describe("clientIdRouteHandler", () => {
       }),
     );
   });
+
+  test("returns the client ID of the app that issued the access token", async () => {
+    vi.stubEnv("PAYPAL_ACCESS_TOKEN", "injected-token");
+    vi.stubEnv("PAYPAL_CLIENT_ID", "tokenClientId");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/browser-safe-client-id",
+    );
+
+    expect(response.body).toEqual({ clientId: "tokenClientId" });
+  });
 });

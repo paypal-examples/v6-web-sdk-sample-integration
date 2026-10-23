@@ -13,7 +13,7 @@ npm start
 # go to http://localhost:8080
 ```
 
-Instead of the client secret, the server can use an access token from `PAYPAL_ACCESS_TOKEN`; the client ID still comes from `PAYPAL_SANDBOX_CLIENT_ID`. The PayPal CLI sets the token for you:
+Instead of the client secret, the server can use an access token from `PAYPAL_ACCESS_TOKEN`; the client ID then comes from `PAYPAL_CLIENT_ID`, falling back to `PAYPAL_SANDBOX_CLIENT_ID`. The PayPal CLI sets both for you:
 
 ```bash
 paypal project connect
