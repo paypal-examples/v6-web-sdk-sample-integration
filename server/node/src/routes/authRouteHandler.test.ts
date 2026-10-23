@@ -55,6 +55,19 @@ describe("clientTokenRouteHandler", () => {
       }),
     );
   });
+
+  test("fails with a clear error when the client secret is missing", async () => {
+    vi.stubEnv("PAYPAL_SANDBOX_CLIENT_SECRET", "");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/browser-safe-client-token",
+    );
+
+    expect(response.status).toBe(500);
+    expect(response.text).toMatch(
+      /PAYPAL_SANDBOX_CLIENT_SECRET environment variable is not defined/,
+    );
+  });
 });
 
 describe("clientIdRouteHandler", () => {
@@ -77,5 +90,16 @@ describe("clientIdRouteHandler", () => {
         clientId: expect.any(String),
       }),
     );
+  });
+
+  test("returns the client ID of the app that issued the access token", async () => {
+    vi.stubEnv("PAYPAL_ACCESS_TOKEN", "injected-token");
+    vi.stubEnv("PAYPAL_CLIENT_ID", "tokenClientId");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/browser-safe-client-id",
+    );
+
+    expect(response.body).toEqual({ clientId: "tokenClientId" });
   });
 });
