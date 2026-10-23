@@ -32,7 +32,13 @@ export async function webhookRouteHandler(
     return;
   }
 
-  const event: WebhookEvent = JSON.parse(request.body.toString("utf8"));
+  const event = parseWebhookEvent(request.body);
+  if (!event) {
+    response
+      .status(400)
+      .json({ error: "Webhook body must be a webhook event in JSON" });
+    return;
+  }
 
   // acknowledge every verified event, duplicates included, since PayPal
   // retries anything other than a prompt 2xx
@@ -45,6 +51,20 @@ export async function webhookRouteHandler(
     console.log(
       `Received verified webhook event (${eventFidelity}): ${event.event_type} [${event.id}]`,
     );
+  }
+}
+
+// returns the event, or undefined if the body isn't JSON with an id and
+// event_type
+function parseWebhookEvent(body: Buffer): WebhookEvent | undefined {
+  try {
+    const event = JSON.parse(body.toString("utf8"));
+    return typeof event?.id === "string" &&
+      typeof event?.event_type === "string"
+      ? event
+      : undefined;
+  } catch {
+    return undefined;
   }
 }
 

@@ -373,7 +373,7 @@ PayPal sends webhook notifications to your server when events happen, like a com
 
 To enable it, set `PAYPAL_WEBHOOK_ID` in the .env file to the webhook ID from your sandbox app. Until then, the endpoint stays off and returns `404 Not Found`.
 
-To test locally with the PayPal CLI, start the server with `paypal dev -- npm start`. In this dev mode, the endpoint also accepts events sent by `paypal webhook trigger` and `paypal webhook listen`, and by PayPal's Webhooks Simulator. Dev mode is always off when `NODE_ENV=production`.
+To test locally with the [PayPal CLI](https://www.npmjs.com/package/@paypal/cli), start the server with `paypal dev -- npm start`. In this dev mode, the endpoint also accepts events sent by `paypal webhook trigger` and `paypal webhook listen`, and by PayPal's Webhooks Simulator. Dev mode is always off when `NODE_ENV=production`.
 
 In dev mode, every sample page also shows a webhook inbox: a floating button with a new-event count, a toast for the latest event, and a panel listing recent events with their payloads (personal values masked). The pages don't include it themselves. The server adds these two tags before `</body>` when it serves a page in dev mode, so new pages get the inbox too:
 
@@ -391,7 +391,7 @@ This handler is a starting point for development. Production code should also st
 #### `POST /paypal-api/webhooks/events`
 
 **Description:**
-Verifies the webhook signature, ignores duplicate event IDs, and responds quickly so PayPal doesn't retry the delivery. Rejects a request that isn't JSON with `415 Unsupported Media Type`, and one that fails verification (an invalid signature, or a transmission time more than 5 minutes off) with `401 Unauthorized`.
+Verifies the webhook signature, ignores duplicate event IDs, and responds quickly so PayPal doesn't retry the delivery. Rejects a request that isn't JSON with `415 Unsupported Media Type`, one that fails verification (an invalid signature, or a transmission time more than 5 minutes off) with `401 Unauthorized`, and a verified body that isn't a webhook event (malformed JSON, or no `id` or `event_type`) with `400 Bad Request`.
 
 **Request Body:**
 A webhook event sent by PayPal, along with its signature headers (`paypal-transmission-*` and `paypal-cert-url`).

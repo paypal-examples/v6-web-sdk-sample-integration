@@ -14,8 +14,8 @@ const DEV_WEBHOOK_SECRET = "dGVzdC1kZXYtc2VjcmV0LXRleHQ";
 // JSON.stringifies a Buffer passed to `.send()` rather than writing it raw, so
 // we send the JSON string itself and sign over the exact same string, which is
 // what the route's express.raw() hands the handler.
-function cliSignedPayload(body: Record<string, unknown>) {
-  const json = JSON.stringify(body);
+function cliSignedPayload(body: Record<string, unknown> | string) {
+  const json = typeof body === "string" ? body : JSON.stringify(body);
   const transmissionId = randomUUID();
   const transmissionTime = new Date().toISOString();
   const canonical = `${transmissionId}|${transmissionTime}|PAYPALCLIDEVWEBHOOKV1|${crc32(Buffer.from(json, "utf8"))}`;
@@ -151,6 +151,21 @@ describe("webhookRouteHandler", () => {
       );
     },
   );
+
+  test.each([
+    ["malformed JSON", "{not json"],
+    ["JSON that isn't an event", "null"],
+    ["an event without an event_type", JSON.stringify({ id: "evt-no-type" })],
+  ])("rejects a verified body of %s with 400", async (_label, body) => {
+    const { json, headers } = cliSignedPayload(body);
+
+    const response = await request(app)
+      .post("/paypal-api/webhooks/events")
+      .set(headers)
+      .send(json);
+
+    expect(response.status).toBe(400);
+  });
 
   test("rejects a non-JSON request with 415 before verifying", async () => {
     const response = await request(app)
