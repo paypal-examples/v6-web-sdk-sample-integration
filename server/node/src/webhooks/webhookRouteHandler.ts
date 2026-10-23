@@ -20,12 +20,12 @@ export async function webhookRouteHandler(
     return;
   }
 
-  const { verified, eventFidelity } = await verifyPayPalWebhook(
+  const eventFidelity = await verifyPayPalWebhook(
     request.headers,
     request.body,
   );
 
-  if (!verified) {
+  if (!eventFidelity) {
     response
       .status(401)
       .json({ error: "Webhook signature verification failed" });
@@ -36,7 +36,7 @@ export async function webhookRouteHandler(
 
   // acknowledge every verified event, duplicates included, since PayPal
   // retries anything other than a prompt 2xx
-  response.status(200).json({ received: true, eventFidelity });
+  response.sendStatus(200);
 
   // the inbox keeps its own list, so a redelivery shows again after Clear all
   recordInboxEvent(event);
@@ -56,7 +56,9 @@ function recordEvent(eventId: string): boolean {
 
   processedEventIds.add(eventId);
   if (processedEventIds.size > MAX_TRACKED_EVENT_IDS) {
-    processedEventIds.delete(processedEventIds.values().next().value as string);
+    // a Set keeps insertion order, so the first ID is the oldest
+    const [oldestId] = processedEventIds;
+    processedEventIds.delete(oldestId);
   }
   return true;
 }

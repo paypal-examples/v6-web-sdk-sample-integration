@@ -7,11 +7,6 @@
 export type EventFidelity =
   "paypal_sandbox_signed" | "paypal_simulator_signed" | "local_mock";
 
-export interface VerifyPayPalWebhookResult {
-  verified: boolean;
-  eventFidelity: EventFidelity | undefined;
-}
-
 export interface PayPalSignature {
   cert: string;
   signature: string;

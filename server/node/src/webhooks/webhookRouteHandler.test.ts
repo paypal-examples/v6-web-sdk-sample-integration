@@ -67,10 +67,6 @@ describe("webhookRouteHandler", () => {
       .send(json);
 
     expect(response.status).toBe(200);
-    expect(response.body).toEqual({
-      received: true,
-      eventFidelity: "local_mock",
-    });
   });
 
   test("acknowledges a CLI-signed delivery when `paypal dev` injected no PAYPAL_WEBHOOK_ID", async () => {

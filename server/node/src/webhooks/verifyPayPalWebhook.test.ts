@@ -2,7 +2,6 @@ import { createHmac, createSign, generateKeyPairSync } from "node:crypto";
 import { crc32 } from "node:zlib";
 import { afterEach, beforeEach, describe, expect, test, vi } from "vitest";
 
-import { NOT_VERIFIED } from "./constants";
 import { verifyPayPalWebhook } from "./verifyPayPalWebhook";
 
 const WEBHOOK_ID = "WH-123456789";
@@ -111,10 +110,9 @@ const verify = (headers: Record<string, string>, body = rawBody) =>
 
 describe("verifyPayPalWebhook — PayPal-signed sandbox deliveries", () => {
   test("accepts a correctly signed event", async () => {
-    expect(await verify(paypalSignedHeaders(rawBody))).toEqual({
-      verified: true,
-      eventFidelity: "paypal_sandbox_signed",
-    });
+    expect(await verify(paypalSignedHeaders(rawBody))).toBe(
+      "paypal_sandbox_signed",
+    );
   });
 
   test("reports sandbox fidelity even if a request claims to be CLI-simulated", async () => {
@@ -122,38 +120,35 @@ describe("verifyPayPalWebhook — PayPal-signed sandbox deliveries", () => {
       ...paypalSignedHeaders(rawBody),
       "paypal-cli-simulated": "true",
     };
-    expect(await verify(headers)).toEqual({
-      verified: true,
-      eventFidelity: "paypal_sandbox_signed",
-    });
+    expect(await verify(headers)).toBe("paypal_sandbox_signed");
   });
 
   test("rejects a tampered body", async () => {
     const tampered = Buffer.from(JSON.stringify({ id: "evt-1-tampered" }));
-    expect(await verify(paypalSignedHeaders(rawBody), tampered)).toEqual(
-      NOT_VERIFIED,
-    );
+    expect(
+      await verify(paypalSignedHeaders(rawBody), tampered),
+    ).toBeUndefined();
   });
 
   test("rejects a signature over a different webhook ID", async () => {
     const headers = paypalSignedHeaders(rawBody, {
       signingWebhookId: "some-other-id",
     });
-    expect(await verify(headers)).toEqual(NOT_VERIFIED);
+    expect(await verify(headers)).toBeUndefined();
   });
 
   test.each([
-    ["4 minutes old", minutesFromTransmission(-4), true],
-    ["6 minutes old (replay)", minutesFromTransmission(-6), false],
-    ["6 minutes in the future", minutesFromTransmission(6), false],
-    ["malformed", "not-a-date", false],
+    ["4 minutes old", minutesFromTransmission(-4), "paypal_sandbox_signed"],
+    ["6 minutes old (replay)", minutesFromTransmission(-6), undefined],
+    ["6 minutes in the future", minutesFromTransmission(6), undefined],
+    ["malformed", "not-a-date", undefined],
   ])(
     "accepts only a transmission time within 5 minutes: %s",
     async (_label, transmissionTime, expected) => {
       const result = await verify(
         paypalSignedHeaders(rawBody, { transmissionTime }),
       );
-      expect(result.verified).toBe(expected);
+      expect(result).toBe(expected);
     },
   );
 
@@ -185,9 +180,9 @@ describe("verifyPayPalWebhook — PayPal-signed sandbox deliveries", () => {
         "https://api.sandbox.paypal.com/v1/oauth2/token",
       ],
     ])("rejects a cert URL %s without fetching it", async (_label, certUrl) => {
-      expect(await verify(paypalSignedHeaders(rawBody, { certUrl }))).toEqual(
-        NOT_VERIFIED,
-      );
+      expect(
+        await verify(paypalSignedHeaders(rawBody, { certUrl })),
+      ).toBeUndefined();
       expect(fetch).not.toHaveBeenCalled();
     });
 
@@ -200,7 +195,10 @@ describe("verifyPayPalWebhook — PayPal-signed sandbox deliveries", () => {
       const first = await verify(headers);
       const second = await verify(headers);
 
-      expect([first.verified, second.verified]).toEqual([true, true]);
+      expect([first, second]).toEqual([
+        "paypal_sandbox_signed",
+        "paypal_sandbox_signed",
+      ]);
       expect(fetch).toHaveBeenCalledTimes(1);
       expect(fetch).toHaveBeenCalledWith(
         expect.any(String),
@@ -230,27 +228,23 @@ describe("verifyPayPalWebhook — Webhooks Simulator deliveries (dev mode only)"
 
   test("accepts a simulator delivery in dev mode", async () => {
     enableDevelopmentMode();
-    expect(await verify(simulatorHeaders)).toEqual({
-      verified: true,
-      eventFidelity: "paypal_simulator_signed",
-    });
+    expect(await verify(simulatorHeaders)).toBe("paypal_simulator_signed");
   });
 
   test("accepts a simulator delivery in dev mode with no webhook ID configured", async () => {
     enableDevelopmentMode();
     vi.stubEnv("PAYPAL_WEBHOOK_ID", "");
-    const result = await verify(simulatorHeaders);
-    expect(result.eventFidelity).toBe("paypal_simulator_signed");
+    expect(await verify(simulatorHeaders)).toBe("paypal_simulator_signed");
   });
 
   test("rejects a simulator delivery outside dev mode — anyone can point the public simulator at any URL", async () => {
-    expect(await verify(simulatorHeaders)).toEqual(NOT_VERIFIED);
+    expect(await verify(simulatorHeaders)).toBeUndefined();
   });
 
   test("rejects a simulator delivery when NODE_ENV is production, even with PAYPAL_DEV=1", async () => {
     enableDevelopmentMode();
     vi.stubEnv("NODE_ENV", "production");
-    expect(await verify(simulatorHeaders)).toEqual(NOT_VERIFIED);
+    expect(await verify(simulatorHeaders)).toBeUndefined();
   });
 });
 
@@ -275,16 +269,13 @@ describe("verifyPayPalWebhook — PayPal CLI deliveries (dev mode only)", () => 
       ),
     );
 
-    expect(result).toEqual({ verified: true, eventFidelity: "local_mock" });
+    expect(result).toBe("local_mock");
   });
 
   test("accepts a CLI-signed delivery with no webhook ID configured", async () => {
     enableDevelopmentMode();
     vi.stubEnv("PAYPAL_WEBHOOK_ID", "");
-    expect(await verify(cliSignedHeaders(rawBody))).toEqual({
-      verified: true,
-      eventFidelity: "local_mock",
-    });
+    expect(await verify(cliSignedHeaders(rawBody))).toBe("local_mock");
   });
 
   // `webhook listen --poll` forwards old events, signed with the time it sends them
@@ -297,10 +288,9 @@ describe("verifyPayPalWebhook — PayPal CLI deliveries (dev mode only)", () => 
         create_time: "2026-01-01T00:00:00.000Z",
       }),
     );
-    expect(await verify(cliSignedHeaders(historyEvent), historyEvent)).toEqual({
-      verified: true,
-      eventFidelity: "local_mock",
-    });
+    expect(await verify(cliSignedHeaders(historyEvent), historyEvent)).toBe(
+      "local_mock",
+    );
   });
 
   test.each([
@@ -308,26 +298,22 @@ describe("verifyPayPalWebhook — PayPal CLI deliveries (dev mode only)", () => 
     ["signed with a different secret", { secret: "some-other-secret" }],
   ])("rejects a delivery %s", async (_label, options) => {
     enableDevelopmentMode();
-    expect(await verify(cliSignedHeaders(rawBody, options))).toEqual(
-      NOT_VERIFIED,
-    );
+    expect(await verify(cliSignedHeaders(rawBody, options))).toBeUndefined();
   });
 
   test("rejects a tampered body", async () => {
     enableDevelopmentMode();
     const tampered = Buffer.from(JSON.stringify({ id: "evt-1-tampered" }));
-    expect(await verify(cliSignedHeaders(rawBody), tampered)).toEqual(
-      NOT_VERIFIED,
-    );
+    expect(await verify(cliSignedHeaders(rawBody), tampered)).toBeUndefined();
   });
 
   test("rejects a correctly signed delivery when PAYPAL_DEV isn't set", async () => {
-    expect(await verify(cliSignedHeaders(rawBody))).toEqual(NOT_VERIFIED);
+    expect(await verify(cliSignedHeaders(rawBody))).toBeUndefined();
   });
 
   test("rejects a correctly signed delivery when NODE_ENV is production, even with PAYPAL_DEV=1", async () => {
     enableDevelopmentMode();
     vi.stubEnv("NODE_ENV", "production");
-    expect(await verify(cliSignedHeaders(rawBody))).toEqual(NOT_VERIFIED);
+    expect(await verify(cliSignedHeaders(rawBody))).toBeUndefined();
   });
 });

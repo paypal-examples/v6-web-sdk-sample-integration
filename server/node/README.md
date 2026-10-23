@@ -409,14 +409,7 @@ A webhook event sent by PayPal, along with its signature headers (`paypal-transm
 **Responses:**
 
 - `200 OK`  
-  Acknowledges a verified event, including a duplicate. `eventFidelity` says how the event was signed: `paypal_sandbox_signed`, `paypal_simulator_signed`, or `local_mock` (PayPal CLI).
-
-  ```json
-  {
-    "received": true,
-    "eventFidelity": "paypal_sandbox_signed"
-  }
-  ```
+  Acknowledges a verified event, including a duplicate. PayPal only checks the status, so the response has no body.
 
 #### `GET /paypal-api/webhooks/events`
 

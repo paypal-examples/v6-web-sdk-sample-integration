@@ -37,10 +37,12 @@ export async function webhookAssistantPageHandler(
   response: Response,
   next: NextFunction,
 ) {
-  const html =
-    request.method === "GET" && isWebhookDevelopmentModeEnabled()
-      ? await readPage(request.path)
-      : undefined;
+  if (request.method !== "GET" || !isWebhookDevelopmentModeEnabled()) {
+    next();
+    return;
+  }
+
+  const html = await readPage(request.path);
   const bodyEnd = html?.lastIndexOf("</body>") ?? -1;
   if (html === undefined || bodyEnd === -1) {
     next();

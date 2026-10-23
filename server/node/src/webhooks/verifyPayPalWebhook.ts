@@ -8,11 +8,10 @@ import {
   CLI_SIGNATURE_AUDIENCE,
   HEADERS,
   TRANSMISSION_TIME_TOLERANCE_MS,
-  NOT_VERIFIED,
   SIMULATOR_WEBHOOK_ID,
   TRUSTED_CERT_HOSTS,
 } from "./constants";
-import type { PayPalSignature, VerifyPayPalWebhookResult } from "./types";
+import type { EventFidelity, PayPalSignature } from "./types";
 
 const certCache = new Map<string, string>();
 
@@ -27,15 +26,16 @@ export function isWebhookDevelopmentModeEnabled(): boolean {
   );
 }
 
+/** Returns how the webhook was signed, or undefined if it isn't verified. */
 export async function verifyPayPalWebhook(
   headers: IncomingHttpHeaders,
   rawBody: Buffer,
-): Promise<VerifyPayPalWebhookResult> {
+): Promise<EventFidelity | undefined> {
   const { PAYPAL_WEBHOOK_ID, PAYPAL_DEV_WEBHOOK_SECRET } = process.env;
   const transmissionId = getHeader(headers, HEADERS.transmissionId);
   const transmissionTime = getHeader(headers, HEADERS.transmissionTime);
   if (!transmissionId || !transmissionTime || !isRecent(transmissionTime)) {
-    return NOT_VERIFIED;
+    return undefined;
   }
 
   const bodyCrc = crc32(rawBody);
@@ -49,18 +49,18 @@ export async function verifyPayPalWebhook(
     PAYPAL_WEBHOOK_ID &&
     verifyPayPalSignature(paypalSignature, signedMessage(PAYPAL_WEBHOOK_ID))
   ) {
-    return { verified: true, eventFidelity: "paypal_sandbox_signed" };
+    return "paypal_sandbox_signed";
   }
 
   if (!isWebhookDevelopmentModeEnabled()) {
-    return NOT_VERIFIED;
+    return undefined;
   }
 
   if (
     paypalSignature &&
     verifyPayPalSignature(paypalSignature, signedMessage(SIMULATOR_WEBHOOK_ID))
   ) {
-    return { verified: true, eventFidelity: "paypal_simulator_signed" };
+    return "paypal_simulator_signed";
   }
 
   // the CLI requires checking its marker header before trusting its signature
@@ -73,10 +73,10 @@ export async function verifyPayPalWebhook(
       signedMessage(CLI_SIGNATURE_AUDIENCE),
     )
   ) {
-    return { verified: true, eventFidelity: "local_mock" };
+    return "local_mock";
   }
 
-  return NOT_VERIFIED;
+  return undefined;
 }
 
 function getHeader(

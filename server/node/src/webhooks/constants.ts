@@ -1,5 +1,3 @@
-import type { VerifyPayPalWebhookResult } from "./types";
-
 export const HEADERS = {
   transmissionId: "paypal-transmission-id",
   transmissionTime: "paypal-transmission-time",
@@ -46,9 +44,4 @@ export const WEBHOOK_EVENT_NAMES: Readonly<Record<string, string>> = {
   "PAYMENT.CAPTURE.DENIED": "Payment denied",
   "PAYMENT.CAPTURE.REFUNDED": "Payment refunded",
   "PAYMENT.CAPTURE.REVERSED": "Payment reversed",
-};
-
-export const NOT_VERIFIED: VerifyPayPalWebhookResult = {
-  verified: false,
-  eventFidelity: undefined,
 };
