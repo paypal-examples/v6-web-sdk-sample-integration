@@ -9,8 +9,7 @@ export async function clientTokenRouteHandler(
   request: Request,
   response: Response,
 ) {
-  const { DOMAINS, PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET } =
-    process.env;
+  const { DOMAINS, PAYPAL_SANDBOX_CLIENT_SECRET } = process.env;
 
   // a client token can't be created with an access token alone
   if (!PAYPAL_SANDBOX_CLIENT_SECRET) {
@@ -20,7 +19,7 @@ export async function clientTokenRouteHandler(
   }
 
   const auth = Buffer.from(
-    `${PAYPAL_SANDBOX_CLIENT_ID}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
+    `${getClientId()}:${PAYPAL_SANDBOX_CLIENT_SECRET}`,
   ).toString("base64");
 
   const { targetCustomerId, vaultId } = request.query;
@@ -80,9 +79,7 @@ export function clientIdRouteHandler(_request: Request, response: Response) {
   const clientId = getClientId();
 
   if (!clientId) {
-    throw new Error(
-      "PAYPAL_SANDBOX_CLIENT_ID environment variable is not defined",
-    );
+    throw new Error("No client ID is set");
   }
   response.status(200).json({ clientId });
 }

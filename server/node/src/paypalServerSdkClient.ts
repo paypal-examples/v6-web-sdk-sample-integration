@@ -24,8 +24,8 @@ export const client = new Client({
 export function getClientId() {
   const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_ACCESS_TOKEN } = process.env;
 
-  // read apart from the destructuring above: `paypal init` renames
-  // PAYPAL_SANDBOX_CLIENT_ID to PAYPAL_CLIENT_ID, which would declare it twice
+  // read apart from the destructuring above: `paypal init` renames the sandbox
+  // variable to PAYPAL_CLIENT_ID, which would declare it twice
   return PAYPAL_ACCESS_TOKEN
     ? process.env.PAYPAL_CLIENT_ID || PAYPAL_SANDBOX_CLIENT_ID
     : PAYPAL_SANDBOX_CLIENT_ID;
