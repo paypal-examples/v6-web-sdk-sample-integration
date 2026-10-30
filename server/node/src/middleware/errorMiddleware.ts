@@ -17,6 +17,12 @@ export default async function errorMiddleware(
     });
   } else if (error instanceof ApiError || error instanceof CustomApiError) {
     const { result, statusCode } = error;
+    // PAYPAL_ACCESS_TOKEN can't be refreshed, so point at the likely causes
+    if (statusCode === 401 && process.env.PAYPAL_ACCESS_TOKEN) {
+      console.error(
+        "PayPal returned 401 while PAYPAL_ACCESS_TOKEN is set: the token may have expired (with `paypal dev`, restart it), or PAYPAL_SANDBOX_CLIENT_SECRET belongs to a different app than PAYPAL_CLIENT_ID.",
+      );
+    }
     response.status(statusCode).json(result);
   } else {
     response.status(500).json({
