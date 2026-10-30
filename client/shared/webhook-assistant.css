@@ -1,0 +1,236 @@
+/* Loaded inside the component's shadow root, isolated from the page's styles */
+
+:host {
+  all: initial;
+  font-family:
+    PayPalOpen-Regular, Helvetica, Arial, "Liberation Sans", sans-serif;
+  font-size: 0.875rem;
+  line-height: 1.4;
+  color: #212529;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
+
+button {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+h3 {
+  margin: 0;
+  font-size: 1rem;
+}
+
+.mono {
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+}
+
+.fab,
+.stack {
+  position: fixed;
+  right: 1.5rem;
+  z-index: 2147483000;
+}
+
+/* above the button: the toast, then the panel when it's open */
+.stack {
+  bottom: 6rem;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 0.75rem;
+}
+
+.toast,
+.panel {
+  max-width: calc(100vw - 2rem);
+  border: 1px solid #dee2e6;
+  border-radius: 0.625rem;
+  background: #ffffff;
+}
+
+.fab {
+  bottom: 1.5rem;
+  display: grid;
+  place-items: center;
+  width: 3.5rem;
+  height: 3.5rem;
+  border-radius: 50%;
+  background: #0f4bff;
+  color: #ffffff;
+}
+
+.fab svg {
+  width: 1.625rem;
+}
+
+.badge {
+  position: absolute;
+  top: -0.25rem;
+  right: -0.25rem;
+  min-width: 1.375rem;
+  padding: 0 0.375rem;
+  border: 2px solid #0f4bff;
+  border-radius: 0.6875rem;
+  background: #ffffff;
+  color: #0f4bff;
+  font-size: 0.75rem;
+  font-weight: 700;
+  text-align: center;
+}
+
+.toast {
+  position: relative;
+  width: 21rem;
+  overflow: hidden;
+  padding: 0.875rem 2rem 1rem 1rem;
+}
+
+.toast .open > span {
+  display: block;
+}
+
+.title,
+.name {
+  font-weight: 700;
+}
+
+.toast .type {
+  color: #0f4bff;
+  font-size: 0.75rem;
+  word-break: break-all;
+}
+
+.close {
+  position: absolute;
+  top: 0.25rem;
+  right: 0.5rem;
+  color: #6c757d;
+  font-size: 1.125rem;
+}
+
+.bar {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 3px;
+  background: #0f4bff;
+}
+
+.panel {
+  display: flex;
+  flex-direction: column;
+  width: 26rem;
+  max-height: 70vh;
+}
+
+.head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.head,
+.foot {
+  padding: 1rem 1.125rem;
+}
+
+.link,
+.empty,
+.time,
+.sub,
+dt,
+.foot {
+  color: #6c757d;
+}
+
+.link + .link {
+  margin-left: 0.75rem;
+}
+
+.link:disabled {
+  opacity: 0.4;
+  cursor: default;
+}
+
+.body {
+  flex: 1;
+  overflow: auto;
+  padding: 0 1.125rem;
+}
+
+.empty {
+  padding: 2rem 0;
+  text-align: center;
+}
+
+.row {
+  display: block;
+  width: 100%;
+  padding: 0.6875rem 0;
+  border-bottom: 1px solid #dee2e6;
+}
+
+.row .top {
+  display: flex;
+  justify-content: space-between;
+}
+
+.time,
+.sub,
+.foot,
+dl,
+pre {
+  font-size: 0.75rem;
+}
+
+.row > span {
+  display: block;
+  word-break: break-all;
+}
+
+dl {
+  display: grid;
+  grid-template-columns: 6.5rem 1fr;
+  gap: 0.375rem 0.75rem;
+}
+
+dd {
+  margin: 0;
+  word-break: break-all;
+}
+
+pre {
+  max-height: 18rem;
+  overflow: auto;
+  padding: 0.875rem;
+  border-radius: 0.5rem;
+  background: #f8f9fa;
+}
+
+.back {
+  padding-top: 0.5rem;
+}
+
+.copy {
+  margin-bottom: 0.875rem;
+  padding: 0.375rem 0.75rem;
+  border-radius: 0.5rem;
+  background: #0f4bff;
+  color: #ffffff;
+}
+
+.foot {
+  border-top: 1px solid #dee2e6;
+}
