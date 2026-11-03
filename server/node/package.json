@@ -23,7 +23,7 @@
     "@paypal/paypal-server-sdk": "^2.5.0",
     "cors": "^2.8.6",
     "express": "^5.2.1",
-    "zod": "^4.5.4"
+    "zod": "^4.6.6"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
