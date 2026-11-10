@@ -1,19 +1,11 @@
 import { Client, Environment, LogLevel } from "@paypal/paypal-server-sdk";
 
-const { PAYPAL_SANDBOX_CLIENT_ID, PAYPAL_SANDBOX_CLIENT_SECRET, LOG_LEVEL } =
-  process.env;
-
-if (!PAYPAL_SANDBOX_CLIENT_ID || !PAYPAL_SANDBOX_CLIENT_SECRET) {
-  throw new Error("Missing API credentials");
-}
+const { LOG_LEVEL } = process.env;
 
 const { logLevel, logBody, logHeaders } = getLoggingConfig(LOG_LEVEL);
 
 export const client = new Client({
-  clientCredentialsAuthCredentials: {
-    oAuthClientId: PAYPAL_SANDBOX_CLIENT_ID,
-    oAuthClientSecret: PAYPAL_SANDBOX_CLIENT_SECRET,
-  },
+  clientCredentialsAuthCredentials: getAuthCredentials(),
   timeout: 0,
   environment: Environment.Sandbox,
   logging: {
@@ -26,6 +18,39 @@ export const client = new Client({
     },
   },
 });
+
+// with an access token, the client ID comes from PAYPAL_CLIENT_ID, which
+// `paypal dev` sets to the app that issued the token
+export function getClientId() {
+  const { env } = process;
+  return (
+    (env.PAYPAL_ACCESS_TOKEN && env.PAYPAL_CLIENT_ID) ||
+    env.PAYPAL_SANDBOX_CLIENT_ID
+  );
+}
+
+export function getAuthCredentials() {
+  const { PAYPAL_SANDBOX_CLIENT_SECRET, PAYPAL_ACCESS_TOKEN } = process.env;
+  const oAuthClientId = getClientId();
+
+  // an access token, when set (e.g. by `paypal dev`), replaces the client secret
+  if (oAuthClientId && PAYPAL_ACCESS_TOKEN) {
+    return {
+      oAuthClientId,
+      oAuthClientSecret: "",
+      oAuthTokenProvider: async () => ({
+        accessToken: PAYPAL_ACCESS_TOKEN,
+        tokenType: "Bearer",
+      }),
+    };
+  }
+
+  if (oAuthClientId && PAYPAL_SANDBOX_CLIENT_SECRET) {
+    return { oAuthClientId, oAuthClientSecret: PAYPAL_SANDBOX_CLIENT_SECRET };
+  }
+
+  throw new Error("Missing API credentials");
+}
 
 function getLoggingConfig(logLevel?: string) {
   switch (logLevel) {

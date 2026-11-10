@@ -7,9 +7,13 @@ import {
   clientIdRouteHandler,
 } from "./authRouteHandler";
 
+const { requestTokenMock } = vi.hoisted(() => ({
+  requestTokenMock: vi.fn(),
+}));
+
 vi.mock("@paypal/paypal-server-sdk", async () => {
   const actual = await vi.importActual("@paypal/paypal-server-sdk");
-  const requestTokenMock = vi.fn().mockResolvedValue({
+  requestTokenMock.mockResolvedValue({
     statusCode: 200,
     result: {
       accessToken: "fakeValue",
@@ -55,6 +59,20 @@ describe("clientTokenRouteHandler", () => {
       }),
     );
   });
+
+  test("creates the client token for the app that issued the access token", async () => {
+    vi.stubEnv("PAYPAL_ACCESS_TOKEN", "injected-token");
+    vi.stubEnv("PAYPAL_CLIENT_ID", "tokenClientId");
+
+    await request(app).get("/paypal-api/auth/browser-safe-client-token");
+
+    expect(requestTokenMock).toHaveBeenLastCalledWith(
+      {
+        authorization: `Basic ${Buffer.from("tokenClientId:fakeClientSecret").toString("base64")}`,
+      },
+      expect.any(Object),
+    );
+  });
 });
 
 describe("clientIdRouteHandler", () => {
@@ -77,5 +95,16 @@ describe("clientIdRouteHandler", () => {
         clientId: expect.any(String),
       }),
     );
+  });
+
+  test("returns the client ID of the app that issued the access token", async () => {
+    vi.stubEnv("PAYPAL_ACCESS_TOKEN", "injected-token");
+    vi.stubEnv("PAYPAL_CLIENT_ID", "tokenClientId");
+
+    const response = await request(app).get(
+      "/paypal-api/auth/browser-safe-client-id",
+    );
+
+    expect(response.body).toEqual({ clientId: "tokenClientId" });
   });
 });
