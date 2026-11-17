@@ -160,6 +160,7 @@ function validateExtraFields() {
   if (!phoneCountryCode) errors.push("Phone Country Code");
   if (!phoneNationalNumber) errors.push("Phone National Number");
   if (!addressLine1) errors.push("Address Line 1");
+  if (!addressLine2) errors.push("Address Line 2");
   if (!adminArea1) errors.push("Admin Area 1");
   if (!adminArea2) errors.push("Admin Area 2");
   if (!postalCode) errors.push("Postal Code");
