@@ -20,7 +20,31 @@ async function onPayPalWebSdkLoaded() {
   }
 }
 
+// Add a country code here (for example "US") to try the reject path.
+const BLOCKED_COUNTRY_CODES = [];
+
 const paymentSessionOptions = {
+  // Called with the buyer's billing address: adminArea1, adminArea2,
+  // countryCode and postalCode, each a string or null. Resolve to accept the
+  // address. To reject it, throw an Error whose message is one of the values
+  // in `errors` (ADDRESS_ERROR, COUNTRY_ERROR, POSTAL_ERROR, REGION_ERROR).
+  // Any other message shows the buyer a generic error instead.
+  async onBillingAddressChange({ billingAddress, errors }) {
+    // Fields can be missing if the buyer has no usable profile address.
+    const { countryCode } = billingAddress ?? {};
+    if (countryCode && BLOCKED_COUNTRY_CODES.includes(countryCode)) {
+      renderAlert({
+        type: "danger",
+        message: `onBillingAddressChange() rejected the billing address: ${errors.COUNTRY_ERROR}`,
+      });
+      throw new Error(errors.COUNTRY_ERROR);
+    }
+
+    renderAlert({
+      type: "info",
+      message: `onBillingAddressChange() accepted the billing address: ${JSON.stringify(billingAddress)}`,
+    });
+  },
   async onApprove(data) {
     console.log("onApprove", data);
     renderAlert({
